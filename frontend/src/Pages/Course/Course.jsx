@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import './Course.css';
+import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSessionModal';
 
 const sessions = [
     {title: 'Tú no eres tu mente', description: 'Y aceptarlo es el primer paso', img: '/images/socrates.jpg'},
@@ -13,6 +14,7 @@ const Course = () => {
 
     return (
         <div className='sessions-page'>
+            <BlockedSessionModal />
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
             <div className="sessions-container">
