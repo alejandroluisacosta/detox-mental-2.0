@@ -1,9 +1,14 @@
 import './BlockedSessionModal.css';
 
-const BlockedSessionModal = () => {
+const BlockedSessionModal = ({ setOpenModal, setSessions }) => {
+    const handleCloseModal = () => { setOpenModal(false) }
+    const handleUnblockSession = (id) => {
+
+    }
+
     return (
         <div className="blocked-session-modal">
-            <img className="blocked-session-modal__close" src='/icons/close.svg' alt="Cerrar pantalla de sesión bloqueada" />
+            <img className="blocked-session-modal__close" src='/icons/close.svg' onClick={handleCloseModal} alt="Cerrar pantalla de sesión bloqueada" />
             <h3 className="blocked-session-modal__title">Desbloquear sesión #4</h3>
             <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
             <p className="blocked-session-modal__text">Escríbenos a <strong>pensamientosqueatormentan@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
@@ -14,7 +19,7 @@ const BlockedSessionModal = () => {
             <p className="blocked-session-modal__text">Opción 2: Compra el curso completo en Hotmart por 10€</p>
             <button className="blocked-session-modal__button">COMPRAR</button>
             <p className="blocked-session-modal__more-info">¿Qué es Hotmart?</p>
-            <p className="blocked-session-modal__close-text">Cerrar</p>
+            <p className="blocked-session-modal__close-text" onClick={handleCloseModal}>Cerrar</p>
             
         </div>
     )

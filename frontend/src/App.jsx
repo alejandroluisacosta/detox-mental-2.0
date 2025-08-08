@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ReactDOM from 'react-dom/client';
 import Article from './Pages/Article/Article.jsx';
 import Course from './Pages/Course/Course.jsx';
-import Session from './Pages/Session/Session.jsx';
+import Session from './Components/Session/Session.jsx';
 
 function App() {
     return (
