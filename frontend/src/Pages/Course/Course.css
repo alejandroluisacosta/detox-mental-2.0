@@ -1,0 +1,80 @@
+.sessions-page {
+    text-align: center;
+    padding: 75px 15%;
+}
+
+.sessions-title {
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.sessions-subtitle {
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 50px;
+}
+
+.sessions-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.session {
+    width: 100%;
+    box-sizing: border-box;
+    background: white;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 24px;
+    margin: 0 0 50px;
+    transition: box-shadow 0.2s;
+}
+.session:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.session__image {
+    width: 220px;
+    height: 145px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    margin-bottom: 16px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+.session__header, .session__title {
+    font-weight: 400;
+    font-size: 18px;
+    margin-top: 0;
+}
+
+.session__header {
+    margin-bottom: 4px;
+}
+
+.session__title {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.session__description {
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+
+.session__button {
+    width: 100%;
+    padding: 12px 64px;
+    border-radius: 16px;
+    border: none;
+    background-color: var(--mid-light-brown);
+    font-weight: 700;
+    color: white;
+    font-size: 16px;
+}
