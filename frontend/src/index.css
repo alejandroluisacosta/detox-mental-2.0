@@ -35,7 +35,7 @@ strong {
 
 button {
     width: 100%;
-    padding: 12px 64px;
+    padding: 12px 0;
     border-radius: 16px;
     border: none;
     background-color: var(--mid-light-brown);

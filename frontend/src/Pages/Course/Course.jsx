@@ -12,7 +12,7 @@ const originalSessions = [
 ]
 
 const Course = () => {
-    const [openModal, setOpenModal] = useState(true);
+    const [openModal, setOpenModal] = useState(false);
     const [sessions, setSessions] = useState([...originalSessions]);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
@@ -25,13 +25,6 @@ const Course = () => {
         } else {
             <Navigate to={`${sessionToOpen.id}`} />
         }
-    }
-
-    const isSessionBlocked = (isBlocked) => {
-        if (isBlocked) {
-            return { backgroundColor: 'black' };
-        }
-        return {};
     }
 
     return (
@@ -47,7 +40,7 @@ const Course = () => {
                         <h2 className='session__header'>{`Sesión ${session.id}:`}</h2>
                         <h2 className='session__title'>{session.title}</h2>
                         <p className='session__description'>{session.description}</p>
-                        <button className='session__button'>ESCUCHAR</button>
+                        <button className={`session__button${session.isBlocked ? ' session__button--blocked' : ''}`}>{session.isBlocked ? 'DESBLOQUEAR' : 'ESCUCHAR'}</button>
                     </div>
                 ))}
 
