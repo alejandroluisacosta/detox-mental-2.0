@@ -37,6 +37,17 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
+.session__blocked-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 16px;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 51%;
+}
+
 .session__image {
     width: 220px;
     height: 145px;
@@ -66,15 +77,4 @@
 .session__description {
     font-size: 12px;
     margin-bottom: 16px;
-}
-
-.session__button {
-    width: 100%;
-    padding: 12px 64px;
-    border-radius: 16px;
-    border: none;
-    background-color: var(--mid-light-brown);
-    font-weight: 700;
-    color: white;
-    font-size: 16px;
 }

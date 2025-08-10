@@ -1,5 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom';
-import AudioPlayer from '../../Components/AudioPlayer/AudioPlayer'
+import AudioPlayer from '../AudioPlayer/AudioPlayer'
 
 const Session = () => {
     const { session } = useParams();
