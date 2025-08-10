@@ -2,6 +2,7 @@ import './BlockedSessionModal.css';
 
 const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => {
     const handleCloseModal = () => { setOpenModal(false) }
+
     const handleUnblockSession = (id) => {
         setSessions(prev => prev.map(session => {
             let returnValue = {...session}
@@ -12,6 +13,7 @@ const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => 
             }))
         setOpenModal(false);
     }
+    
     return (
         <div className="blocked-session-modal">
             <img className="blocked-session-modal__close" src='/icons/close.svg' onClick={handleCloseModal} alt="Cerrar pantalla de sesión bloqueada" />

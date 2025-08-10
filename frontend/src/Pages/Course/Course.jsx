@@ -20,11 +20,9 @@ const Course = () => {
     const handleGoToSession = (id) => {
         const sessionToOpen = sessions.find(session => session.id === id);
         if (sessionToOpen.isBlocked) {
-            console.log('hayu')
             setOpenModal(true);
             selectedSession.current = sessionToOpen;
         } else {
-            console.log('hey');
             <Navigate to={`${sessionToOpen.id}`} />
         }
     }
@@ -43,7 +41,8 @@ const Course = () => {
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
             <div className="sessions-container">
                 {sessions.map((session, index) => (
-                    <div key={index} className='session' onClick={() => handleGoToSession(session.id)} style={isSessionBlocked(session.isBlocked)}>
+                    <div key={index} className='session' onClick={() => handleGoToSession(session.id)}>
+                        {session.isBlocked && <div className='session__blocked-layer'></div>}
                         <img src={session.img} className='session__image' alt={`Imagen de lección ${session.id}`}/>
                         <h2 className='session__header'>{`Sesión ${session.id}:`}</h2>
                         <h2 className='session__title'>{session.title}</h2>
