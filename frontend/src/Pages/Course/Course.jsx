@@ -5,10 +5,10 @@ import './Course.css';
 import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSessionModal';
 
 const originalSessions = [
-    {id: 1,title: 'Tú no eres tu mente', description: 'Y aceptarlo es el primer paso', img: '/images/socrates.jpg', isBlocked: false,},
-    {id: 2,title: 'Cómo funcionan los pensamientos', description: 'Pista: nadie lo sabe', img: '/images/plato.webp', isBlocked: false,},
-    {id: 3,title: 'El gimnasio de la mente', description: 'La vía rápida del Detox Mental', img: '/images/aristotle.webp', isBlocked: false,},
-    {id: 4,title: 'Los pensamientos son inofensivos', description: 'Aunque no lo creas', img: '/images/marcus.jpg', isBlocked: true,},
+    {id: 1,title: 'Tú no eres tu mente', description: 'Y aceptarlo es el primer paso', img: '/images/socrates.jpg', isBlocked: false, unblockQuestion: null,},
+    {id: 2,title: 'Cómo funcionan los pensamientos', description: 'Pista: nadie lo sabe', img: '/images/plato.webp', isBlocked: false, unblockQuestion: null,},
+    {id: 3,title: 'El gimnasio de la mente', description: 'La vía rápida del Detox Mental', img: '/images/aristotle.webp', isBlocked: false, unblockQuestion: null,},
+    {id: 4,title: 'Los pensamientos son inofensivos', description: 'Aunque no lo creas', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.'},
 ]
 
 const Course = () => {
@@ -38,7 +38,7 @@ const Course = () => {
 
     return (
         <div className='sessions-page'>
-            {openModal && <BlockedSessionModal setOpenModal={setOpenModal} setSessions={setSessions}/>}
+            {openModal && <BlockedSessionModal setOpenModal={setOpenModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
             <div className="sessions-container">
