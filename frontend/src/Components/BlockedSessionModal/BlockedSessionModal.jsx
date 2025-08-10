@@ -3,7 +3,14 @@ import './BlockedSessionModal.css';
 const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => {
     const handleCloseModal = () => { setOpenModal(false) }
     const handleUnblockSession = (id) => {
-
+        setSessions(prev => prev.map(session => {
+            let returnValue = {...session}
+            if (session.id === id) {
+                returnValue.isBlocked = false;
+            }
+            return returnValue;
+            }))
+        setOpenModal(false);
     }
     return (
         <div className="blocked-session-modal">
@@ -13,7 +20,7 @@ const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => 
             <p className="blocked-session-modal__text">Escríbenos a <strong>pensamientosqueatormentan@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
             <p className="blocked-session-modal__text">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
             <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
-            <button className="blocked-session-modal__button">YA TENGO EL CÓDIGO</button>
+            <button className="blocked-session-modal__button" onClick={() => handleUnblockSession(selectedSession.id)}>YA TENGO EL CÓDIGO</button>
             <hr className="blocked-session-modal__line"/>
             <p className="blocked-session-modal__text">Opción 2: Compra el curso completo en Hotmart por 10€</p>
             <button className="blocked-session-modal__button">COMPRAR</button>
