@@ -16,7 +16,7 @@ const EnterCodeModal = ({ selectedSessionId, handleUnblockSession }) => {
     }
 
     return (
-        <form className="enter-code-modal" onSubmit={handleSubmit}>
+        <form className={`enter-code-modal ${isCodeIncorrect ? 'shake' : ''}`} onSubmit={handleSubmit} onAnimationEnd={() => setIsCodeIncorrect(false)}>
             <img className="enter-code-modal__close-icon" src='/icons/close.svg' alt="Cerrar pantalla de sesión bloqueada" />
             <label htmlFor="unblock-code-input" className="enter-code-modal__title">CÓDIGO</label>
             {isCodeIncorrect && <p className='enter-code-modal__error-message'>Código incorrecto</p>}
