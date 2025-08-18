@@ -5,14 +5,19 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
     const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
     const handleUnblockSession = (id, code) => {
-        setSessions(prev => prev.map(session => {
-            let returnValue = {...session}
-            if (session.id === id && session.unblockCode === code) {
-                returnValue.isBlocked = false;
-            }
-            return returnValue;
-            }))
-        setOpenBlockedSessionModal(false);
+        if (selectedSession.unblockCode === code) {
+            setSessions(prev => prev.map(session => {
+                let returnValue = {...session}
+                if (session.id === id && session.unblockCode === code) {
+                    returnValue.isBlocked = false;
+                }
+                return returnValue;
+                }))
+            setOpenBlockedSessionModal(false);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     return (
