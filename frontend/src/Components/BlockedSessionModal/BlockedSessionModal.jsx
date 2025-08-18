@@ -1,10 +1,10 @@
 import './BlockedSessionModal.css';
-import UnblockSessionmodal from '../UnblockSessionModal/UnblockSessionModal';
+import EnterCodeModal from '../EnterCodeModal/EnterCodeModal';
 
-const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => {
-    const handleCloseModal = () => { setOpenModal(false) }
+const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setSessions }) => {
+    const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
-    const handleUnblockSession = (id) => {
+    const handleUnblockSession = (id, code) => {
         setSessions(prev => prev.map(session => {
             let returnValue = {...session}
             if (session.id === id) {
@@ -12,14 +12,14 @@ const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => 
             }
             return returnValue;
             }))
-        setOpenModal(false);
+        setOpenBlockedSessionModal(false);
     }
 
     return (
         <>
-            <UnblockSessionmodal />
+            <EnterCodeModal />
             <div className="blocked-session-modal">
-                <img className="blocked-session-modal__close" src='/icons/close.svg' onClick={handleCloseModal} alt="Cerrar pantalla de sesión bloqueada" />
+                <img className="blocked-session-modal__close" src='/icons/close.svg' onClick={handleCloseBlockedSessionModal} alt="Cerrar pantalla de sesión bloqueada" />
                 <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
                 <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
                 <p className="blocked-session-modal__text">Escríbenos a <strong>pensamientosqueatormentan@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
@@ -30,7 +30,7 @@ const BlockedSessionModal = ({ setOpenModal, selectedSession, setSessions }) => 
                 <p className="blocked-session-modal__text">Opción 2: Compra el curso completo en Hotmart por 10€</p>
                 <button className="blocked-session-modal__button">COMPRAR</button>
                 <p className="blocked-session-modal__more-info">¿Qué es Hotmart?</p>
-                <p className="blocked-session-modal__close-text" onClick={handleCloseModal}>Cerrar</p>
+                <p className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</p>
                 
             </div>
         </>

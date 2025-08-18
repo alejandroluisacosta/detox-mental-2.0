@@ -1,4 +1,4 @@
-.unblock-session-modal {
+.enter-code-modal {
     position: fixed;
     width: 80%;
     top: 50%;
@@ -14,17 +14,17 @@
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
 }
 
-.unblock-session-modal__close-icon {
+.enter-code-modal__close-icon {
     position: absolute;
     top: 5px;
     right: 10px;
 }
 
-.unblock-session-modal__title {
+.enter-code-modal__title {
     margin-bottom: 10px;
 }
 
-.unblock-session-modal__input {
+.enter-code-modal__input {
     margin-bottom: 15px;
     width: 100%;
     border-radius: 16px;
@@ -35,13 +35,13 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-.unblock-session-modal__button {
+.enter-code-modal__button {
     font-size: 14px;
     margin-bottom: 10px;
     padding: 8px 0;
 }
 
-.unblock-session-modal__close-text {
+.enter-code-modal__close-text {
     font-size: 12px;
     text-decoration: underline;
     font-weight: 600;
