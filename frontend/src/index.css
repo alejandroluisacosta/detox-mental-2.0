@@ -74,9 +74,9 @@ code {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(-50%); }
-  20%, 60% { transform: translateX(-51%); }
-  40%, 80% { transform: translateX(-49%); }
+  0%, 100% { transform: translate(-50%, -50%); }
+  20%, 60% { transform: translate(-51%, -50%); }
+  40%, 80% { transform: translate(-49%, -50%); }
 }
 
 .shake {
