@@ -35,7 +35,7 @@ strong {
 
 button {
     width: 100%;
-    padding: 12px 64px;
+    padding: 12px 0;
     border-radius: 16px;
     border: none;
     background-color: var(--mid-light-brown);
@@ -72,3 +72,14 @@ code {
   font-style: normal;
   font-display: swap;
 }
+
+@keyframes shake {
+  0%, 100% { transform: translate(-50%, -50%); }
+  20%, 60% { transform: translate(-51%, -50%); }
+  40%, 80% { transform: translate(-49%, -50%); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
