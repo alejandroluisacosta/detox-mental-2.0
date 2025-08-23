@@ -30,7 +30,7 @@ const Course = () => {
             setOpenBlockedSessionModal(true);
             selectedSession.current = sessionToOpen;
         } else {
-            <Navigate to={`${sessionToOpen.id}`} />
+            navigate(`/session/${sessionToOpen.id}`);
         }
     }
 
