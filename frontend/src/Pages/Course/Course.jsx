@@ -5,17 +5,17 @@ import './Course.css';
 import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSessionModal';
 
 const originalSessions = [
-    {id: 1,title: 'Tú no eres tu mente', description: 'Y aceptarlo es el primer paso', img: '/images/socrates.jpg', isBlocked: false, unblockQuestion: null, unblockCode: null,},
-    {id: 2,title: 'Cómo funcionan los pensamientos', description: 'Pista: nadie lo sabe', img: '/images/plato.webp', isBlocked: false, unblockQuestion: null, unblockCode: null,},
-    {id: 3,title: 'El gimnasio de la mente', description: 'La vía rápida del Detox Mental', img: '/images/aristotle.webp', isBlocked: false, unblockQuestion: null, unblockCode: null,},
-    {id: 4,title: 'Los pensamientos son inofensivos', description: 'Aunque no lo creas', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: 'XAATZP'},
-    {id: 5,title: 'Sufrimiento imaginario', description: 'El tormento del ser humano', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
-    {id: 6,title: 'Emoción + Pensamiento', description: 'La clave. El truco. El secreto', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
-    {id: 7,title: 'La utilidad de los PQAs', description: 'Y no lo dudes: la tienen', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
-    {id: 8,title: 'La raíz de tus PQSs', description: '"Emoción atendida, emoción superada"', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
-    {id: 9,title: 'Cómo se mata un pensamiento', description: 'Aprende a asesinarlos sin piedad', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
-    {id: 10,title: 'Quietud', description: 'Aprende a reconocer tus PQSs', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
-    {id: 11,title: 'Meditar sin meditar', description: '8 herramientas para tu salud mental', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
+    {id: 1, title: 'Tú no eres tu mente', description: 'Y aceptarlo es el primer paso', img: '/images/socrates.jpg', isBlocked: false, unblockQuestion: null, unblockCode: null,},
+    {id: 2, title: 'Cómo funcionan los pensamientos', description: 'Pista: nadie lo sabe', img: '/images/plato.webp', isBlocked: false, unblockQuestion: null, unblockCode: null,},
+    {id: 3, title: 'El gimnasio de la mente', description: 'La vía rápida del Detox Mental', img: '/images/aristotle.webp', isBlocked: false, unblockQuestion: null, unblockCode: null,},
+    {id: 4, title: 'Los pensamientos son inofensivos', description: 'Aunque no lo creas', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: 'XAATZP'},
+    {id: 5, title: 'Sufrimiento imaginario', description: 'El tormento del ser humano', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: 'TYNNKL',},
+    {id: 6, title: 'Emoción + Pensamiento', description: 'La clave. El truco. El secreto', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
+    {id: 7, title: 'La utilidad de los PQAs', description: 'Y no lo dudes: la tienen', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
+    {id: 8, title: 'La raíz de tus PQSs', description: '"Emoción atendida, emoción superada"', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
+    {id: 9, title: 'Cómo se mata un pensamiento', description: 'Aprende a asesinarlos sin piedad', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
+    {id: 10, title: 'Quietud', description: 'Aprende a reconocer tus PQSs', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
+    {id: 11, title: 'Meditar sin meditar', description: '8 herramientas para tu salud mental', img: '/images/marcus.jpg', isBlocked: true, unblockQuestion: 'Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente.', unblockCode: null,},
 ]
 
 const Course = () => {
