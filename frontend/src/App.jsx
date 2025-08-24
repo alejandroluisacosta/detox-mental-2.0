@@ -12,7 +12,7 @@ function App() {
             <Routes>
                 <Route path='/' element={<Article />} />
                 <Route path='course' element={<Course />} />
-                <Route path='session/:session' element={<Session />} />
+                <Route path='session/:sessionId' element={<Session />} />
             </Routes>
             </BrowserRouter>
         </React.StrictMode>
