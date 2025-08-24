@@ -28,13 +28,13 @@ const Course = () => {
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
             <div className="sessions-container">
                 {sessions.map((session, index) => (
-                    <div key={index} className='session' onClick={() => handleGoToSession(session.id)}>
-                        {session.isBlocked && <div className='session__blocked-layer'></div>}
-                        <img src={session.img} className='session__image' alt={`Imagen de lección ${session.id}`}/>
-                        <h2 className='session__header'>{`Sesión ${session.id}:`}</h2>
-                        <h2 className='session__title'>{session.title}</h2>
-                        <p className='session__description'>{session.description}</p>
-                        <button className={`session__button${session.isBlocked ? ' session__button--blocked' : ''}`}>{session.isBlocked ? 'DESBLOQUEAR' : 'ESCUCHAR'}</button>
+                    <div key={index} className='session-card' onClick={() => handleGoToSession(session.id)}>
+                        {session.isBlocked && <div className='session-card__blocked-layer'></div>}
+                        <img src={session.img} className='session-card__image' alt={`Imagen de lección ${session.id}`}/>
+                        <h2 className='session-card__header'>{`Sesión ${session.id}:`}</h2>
+                        <h2 className='session-card__title'>{session.title}</h2>
+                        <p className='session-card__description'>{session.description}</p>
+                        <button className={`session-card__button${session.isBlocked ? ' session-card__button--blocked' : ''}`}>{session.isBlocked ? 'DESBLOQUEAR' : 'ESCUCHAR'}</button>
                     </div>
                 ))}
 
