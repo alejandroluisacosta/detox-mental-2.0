@@ -30,7 +30,7 @@ const Course = () => {
                 {sessions.map((session, index) => (
                     <div key={index} className='session-card' onClick={() => handleGoToSession(session.id)}>
                         {session.isBlocked && <div className='session-card__blocked-layer'></div>}
-                        <img src={session.img} className='session-card__image' alt={`Imagen de lección ${session.id}`}/>
+                        <img src={session.img} className='session-card__image' alt={`Imagen de sesión ${session.id}`}/>
                         <h2 className='session-card__header'>{`Sesión ${session.id}:`}</h2>
                         <h2 className='session-card__title'>{session.title}</h2>
                         <p className='session-card__description'>{session.description}</p>
