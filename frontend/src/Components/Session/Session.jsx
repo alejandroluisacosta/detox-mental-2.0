@@ -1,14 +1,16 @@
+import { useContext } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../AudioPlayer/AudioPlayer'
-import { sessionsData } from '../../data';
 import './Session.css';
+import { SessionsContext } from '../../Context/SessionsContext';
 
 const Session = () => {
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
+    const { sessions } = useContext(SessionsContext)
     
-    const session = sessionsData.find(session => session.id === sessionNumber);
+    const session = sessions.find(session => session.id === sessionNumber);
     
     if (Number.isNaN(sessionNumber) || sessionNumber < 1 || sessionNumber > TOTAL_SESSIONS) {
         return <Navigate to='/404' replace /> 

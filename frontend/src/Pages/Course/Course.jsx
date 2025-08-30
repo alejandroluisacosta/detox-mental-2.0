@@ -1,15 +1,15 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom'
 import './Course.css';
 import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSessionModal';
-import { sessionsData } from '../../data';
+import { SessionsContext } from '../../Context/SessionsContext';
 
 
 const Course = () => {
     const [openBlockedSessionModal, setOpenBlockedSessionModal] = useState(false);
-    const [sessions, setSessions] = useState(sessionsData);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
+    const { sessions, setSessions } = useContext(SessionsContext)
 
     const handleGoToSession = (id) => {
         const sessionToOpen = sessions.find(session => session.id === id);
