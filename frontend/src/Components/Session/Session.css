@@ -1,0 +1,26 @@
+.session {
+    text-align: center;
+    padding: 100px 5% 40px;
+}
+
+.session__number {
+    margin-bottom: 10px;
+}
+
+.session__title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.session__image {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.session__audio {
+    margin-bottom: 10px;
+}
+
+.session__unblock-activity {
+    width: 80%;
+}

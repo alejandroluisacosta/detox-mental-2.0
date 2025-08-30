@@ -21,7 +21,7 @@
     align-items: center;
 }
 
-.session {
+.session-card {
     width: 100%;
     box-sizing: border-box;
     background: white;
@@ -33,11 +33,11 @@
     margin: 0 0 50px;
     transition: box-shadow 0.2s;
 }
-.session:hover {
+.session-card:hover {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.session__blocked-layer {
+.session-card__blocked-layer {
     position: absolute;
     top: 0;
     left: 0;
@@ -48,7 +48,7 @@
     opacity: 51%;
 }
 
-.session__image {
+.session-card__image {
     width: 220px;
     height: 145px;
     object-fit: cover;
@@ -59,27 +59,27 @@
     border-top-right-radius: 16px;
 }
 
-.session__header, .session__title {
+.session-card__header, .session-card__title {
     font-weight: 400;
     font-size: 18px;
     margin-top: 0;
 }
 
-.session__header {
+.session-card__header {
     margin-bottom: 4px;
 }
 
-.session__title {
+.session-card__title {
     font-weight: 600;
     margin-bottom: 8px;
 }
 
-.session__description {
+.session-card__description {
     font-size: 12px;
     margin-bottom: 16px;
 }
 
-.session__button--blocked {
+.session-card__button--blocked {
     position: relative;
     z-index: 2;
     background-color: #6F1A07;

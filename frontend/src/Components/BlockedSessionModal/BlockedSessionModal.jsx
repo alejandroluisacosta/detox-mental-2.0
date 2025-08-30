@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './BlockedSessionModal.css';
 import EnterCodeModal from '../EnterCodeModal/EnterCodeModal';
+import { codes } from '../../data';
 
 const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setSessions }) => {
     const [openEnterCodeModal, setOpenEnterCodeModal] = useState(false);
@@ -8,10 +9,10 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
     const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
     const handleUnblockSession = (id, code) => {
-        if (selectedSession.unblockCode === code) {
+        if (codes[selectedSession.id] === code) {
             setSessions(prev => prev.map(session => {
                 let returnValue = {...session}
-                if (session.id === id && session.unblockCode === code) {
+                if (session.id === id && codes[selectedSession.id] === code) {
                     returnValue.isBlocked = false;
                 }
                 return returnValue;
