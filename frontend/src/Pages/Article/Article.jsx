@@ -104,12 +104,12 @@ const Article = () => {
           <p>Un mal pensamiento no te hace una mala persona. Todos pensamos cosas locas, y siempre y cuando no actuemos en consecuencia, no habrá problema. Seguirán siendo ideas que pasaron por nuestra cabeza y luego se desvanecieron en el olvido.</p>
           <p>Aunque en mi caso fueron los escenarios de muertes dolorosas, los PQAs tiene todos los colores y texturas que puedas imaginar. Algunos ejemplos son:</p>
           <ul>
-            <li>Cometer un error y machacarte constantemente con que no eres suficiente.</li>
-            <li>Tener “pensamientos oscuros” que normalmente involucran eventos negativos e irremediables (mi caso).</li>
-            <li>Imaginar escenarios donde alguien que te hizo daño recibe un castigo desmedido.</li>
-            <li>Tener pensamientos racistas a pesar de odiar el racismo.</li>
-            <li>Exagerar alguno de tus defectos para victimizarte.</li>
-            <li>Pensamientos suicidas.</li>
+            <li>- Cometer un error y machacarte constantemente con que no eres suficiente.</li>
+            <li>- Tener “pensamientos oscuros” que normalmente involucran eventos negativos e irremediables (mi caso).</li>
+            <li>- Imaginar escenarios donde alguien que te hizo daño recibe un castigo desmedido.</li>
+            <li>- Tener pensamientos racistas a pesar de odiar el racismo.</li>
+            <li>- Exagerar alguno de tus defectos para victimizarte.</li>
+            <li>- Pensamientos suicidas.</li>
           </ul>
           <p>La lista sigue y sigue, pero en todos los casos, quien logra reconocer que estos pensamientos no lo definen, consigue verlos por lo que son: ideas que van y vienen a nuestro cerebro de forma infinita y que necesitan de nuestra atención para sobrevivir.</p>
           <p>Lo que nos lleva al tercer paso.</p>
@@ -119,7 +119,7 @@ const Article = () => {
           <h3><span className="step-number">3</span> Comprende: ¿Cómo se mata un pensamiento?</h3>
           <p>¿Por qué existen los pensamientos tormentosos? ¿Qué utilidad tienen? Conocer la respuesta a la pregunta marcada en negritas podría ser todo lo que necesitas para resolver todos y cada uno de tus problemas personales—no solo los relacionados con los PQAs.</p>
           <p>Las teorías basadas en la evolución suelen dar respuestas convincentes a este tipo de preguntas importantes, y en el caso de los pensamientos tormentosos, dichas teorías son tan útiles que se ganaron una sección en este artículo. Si crees en la evolución (o si eres alguien religioso pero escuchas otras creencias con mente abierta), lo que leerás a continuación será clave si de verdad quieres retomar el control de tu mente.</p>
-          <p><strong>¿Cuál es la utilidad de los PQAs?</strong></p>
+          <h4>¿Cuál es la utilidad de los PQAs?</h4>
           <p>Desde el punto de vista evolutivo, los PQAs representan innumerables ventajas para nuestra especie.</p>
           <p>Los humanos estamos en la cima de la cadena alimenticia no gracias a nuestra fuerza física, sino a nuestra inteligencia y capacidad de preocuparnos por cosas que aún no han sucedido. Ser los animales más neuróticos del planeta trajo como resultado una especie que puede planificar su alimentación teniendo en cuenta épocas de sequía y lluvia, que puede evitar ser cazada por otros animales más poderosos y que también puede abandonar un sitio particular si las reservas de agua parecen agotarse. Un perro, un elefante o una señora hipopótamo pueden desarrollar cierta planificación, pero nunca en el nivel de complejidad que el cerebro humano es capaz de manejar.</p>
           <p>Por otro lado, este nivel de conciencia acerca de todos los posibles escenarios tiene un precio: si no es controlado, es fácil terminar dentro de un interminable bucle de preocupaciones que nos permite sobrevivir pero, al mismo, tiempo nos hace miserables.</p>
@@ -136,13 +136,13 @@ const Article = () => {
           <p>El segundo, relacionado con entender el mensaje de los PQAs valiosos, será discutido ahora mismo con un ejemplo:</p>
           <p>Si tienes meses atormentado por problemas de convivencia[3], una situación que azota tu paz y tranquilidad día tras día, debes hacer lo posible por observar el diálogo dentro de tu cabeza y hacer preguntas constructivas que ayuden a solucionar el problema.</p>
           <p>Mira este diálogo interno intervenido por el poder de las preguntas constructivas:</p>
-          <blockquote>
-            Tú, molesto: «¡Mi compañero de cuarto es lo peor! Mira lo que hizo esta vez: el baño lleno de pelo después de afeitarse. ¡Este tipo es asqueroso!»<br/>
-            Pregunta constructiva: ¿Y por qué vives con esa persona si te parece tan asquerosa?<br/>
-            Tú, aún molesto: «¡Porque lo necesito! Es la única forma de ahorrar dinero mientras sigo en ese trabajo mal pagado en el que estoy. Apenas consiga otro empleo me voy de esta casa.<br/>
-            Pregunta constructiva: ¿Y cuánto tiempo tienes sin hacer nada productivo por conseguir ese nuevo empleo?<br/>
-            Tú, aún molesto pero un poco más calmado porque te estás diciendo a ti mismo tus verdades en la cara: «Llevo un mes sin buscar nada, pero eso no quiere decir que lo he abandonado».<br/>
-            Pregunta constructiva: Entonces, ¿Vale la pena quejarte por algo que es también tu culpa? Si no has hecho todo lo que podrías por tu nuevo empleo, ¿No podrías al menos buscar formas creativas de hablar con tu compañero de cuarto para convencerlo de que sea más organizado mientras tú sigas viviendo con él? Si solo estás con él porque así ahorras dinero, ¿Por qué no te buscas otro compañero con el que compartir gastos que sea más aseado?
+          <blockquote className='article__internal-dialogue'>
+            <strong>Tú, molesto:</strong> «¡Mi compañero de cuarto es lo peor! Mira lo que hizo esta vez: el baño lleno de pelo después de afeitarse. ¡Este tipo es asqueroso!»<br/><br/>
+            <strong>Pregunta constructiva:</strong> ¿Y por qué vives con esa persona si te parece tan asquerosa?<br/><br/>
+            <strong>Tú, aún molesto:</strong> «¡Porque lo necesito! Es la única forma de ahorrar dinero mientras sigo en ese trabajo mal pagado en el que estoy. Apenas consiga otro empleo me voy de esta casa.<br/><br/>
+            <strong>Pregunta constructiva:</strong> ¿Y cuánto tiempo tienes sin hacer nada productivo por conseguir ese nuevo empleo?<br/><br/>
+            <strong>Tú, aún molesto pero un poco más calmado porque te estás diciendo a ti mismo tus verdades en la cara:</strong> «Llevo un mes sin buscar nada, pero eso no quiere decir que lo he abandonado».<br/><br/>
+            <strong>Pregunta constructiva:</strong> Entonces, ¿Vale la pena quejarte por algo que es también tu culpa? Si no has hecho todo lo que podrías por tu nuevo empleo, ¿No podrías al menos buscar formas creativas de hablar con tu compañero de cuarto para convencerlo de que sea más organizado mientras tú sigas viviendo con él? Si solo estás con él porque así ahorras dinero, ¿Por qué no te buscas otro compañero con el que compartir gastos que sea más aseado?
           </blockquote>
           <p>Si sigues con este proceso por suficiente tiempo (días o semanas), terminarás por darte cuenta de que tu problema no está tanto en tu compañero de cuarto como en ti, que no has hecho lo suficiente por cambiar de empleo. Tu molestia es más contigo que con él, solo que no lo sabes.</p>
           <p>Si a partir de ese momento empiezas a hacer todo lo posible por fortalecer tus puntos débiles y actuar, el problema con tu sucio compañero pasará a un segundo plano y podrás enfocar tu energía en lo que deberías estar haciendo en lugar de quejarte.</p>
@@ -194,10 +194,10 @@ const Article = () => {
           <p>En todo caso, si se te hace insoportable, esto es una señal de que tu problema de atención es más grave de lo que piensas (esto también es normal), lo que significa que en lugar de evitarla deberías entrarle con todo.</p>
           <p>Nota: si eres una de esas personas que ha tenido experiencias negativas con la meditación, no dudes en dejar un comentario en este artículo si lo sientes conveniente. Yo sé que hay casos de casos.</p>
           <p><em>Comentario de edición [1 año y 2 meses después]: En todo el tiempo que ha transcurrido después de escribir este artículo, he aprendido mucho más acerca de la meditación (además de haber tenido un año más de práctica), y a pesar de que lo dicho anteriormente sigue pareciéndome correcto, debo hacer un par de aclaratorias:</em></p>
-          <ul>
-            <li>La meditación es una práctica de exploración personal, y a pesar de que tiene enormes beneficios terapéuticos, no es terapia. No puedes (o al menos no deberías) pretender que todos tus problemas de pensamientos se solucionen con la meditación, y si tienes problemas profundos que ni siquiera puedes comprender, lo más recomendable es que vayas a terapia o, alternativamente, adquieras un curso explicativo como Detox Mental[4]. Esto se debe a que:</li>
-            <li>Observar tus pensamientos es un primer (y necesario) paso, mas no el único que debes tomar. Tu verdadera intención debe ser: primero, aprender a escucharlos, y luego, aprender a descifrarlos: comprender lo que dicen para poder tomar acción. Esto es explicado en detalle en Detox Mental, y cualquier psicoterapeuta capacitado puede ayudarte con ello.[5]</li>
-          </ul>
+          <ol>
+            <li>La meditación es una práctica de exploración personal, y a pesar de que tiene enormes beneficios terapéuticos, no es terapia. No puedes (o al menos no deberías) pretender que todos tus problemas de pensamientos se solucionen con la meditación, y si tienes problemas profundos que ni siquiera puedes comprender, lo más recomendable es que vayas a terapia. Esto se debe a que:</li>
+            <li>Observar tus pensamientos es un primer (y necesario) paso, mas no el único que debes tomar. Tu verdadera intención debe ser: primero, aprender a escucharlos, y luego, aprender a descifrarlos: comprender lo que dicen para poder tomar acción.</li>
+          </ol>
           <p><em>[Fin del comentario].</em></p>
           <p>Dicho esto, pasemos al último paso de la estrategia: a matar esos PQAs.</p>
         </section>
@@ -210,7 +210,7 @@ const Article = () => {
           <p>Tuviste tus primeras experiencias como asesino de PQAs. Mataste a un par de ellos de hambre y comprobaste que una vez muertos, no suelen revivir—y si lo hacen, vuelven debilitados.</p>
           <p>Aprendiste un par de cosas acerca de la quietud. La probaste algunas veces y aunque no te sentiste «iluminado» como el Buda, llegaste a ver el tremendo potencial de esta práctica.</p>
           <p>¿Qué viene ahora?</p>
-          <p><strong>Práctica, práctica, práctica.</strong></p>
+          <h4>Práctica, práctica, práctica.</h4>
           <p>Si crees que tus PQAs se darán por vencidos después de un par de días, estás equivocade[6]. Los pensamientos que te atormentan tienen años gestándose dentro de tu mente y están cómodos allí.</p>
           <p>Peor aún, tú estás cómodo con ellos porque son familiares, los de siempre. ¿Sabes qué es lo único que da más miedo que tus PQAs? El cambio. La mayoría somos alérgicos al cambio y adictos a lo conocido, así que no te sorprendas si después de un tiempo practicando esta estrategia tu mente sigue siendo un campo de batalla.</p>
           <p>A fin de cuentas, posiblemente tú quieras que sea así.</p>
