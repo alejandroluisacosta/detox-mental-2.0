@@ -3,7 +3,7 @@ import './Article.css'
 
 const Article = () => {
     return (
-    <div className="article-root">
+    <div className="article">
       <header className="sticky-header">
         <h1>Cómo liberarte de los pensamientos que te atormentan en 5 pasos</h1>
       </header>
@@ -32,14 +32,21 @@ const Article = () => {
           <h2>El inicio</h2>
           <p>A mediados del 2019, mi hermano me mostró un video que me perturbó profundamente aunque no era su intención. Este video trataba de un juego/simulación donde el protagonista es una persona ahogándose y el objetivo es nadar lo más que puedas antes de una inevitable muerte.</p>
           <p>Aparentemente este juego fue diseñado para concientizar a los usuarios de botes acerca del uso de salvavidas, y luego de verlo, puedo asegurar que fui concientizado efectivamente.</p>
-          <p>La experiencia es muy real. Aquí te dejo el video para que puedas comprobarlo por ti misme[1]:</p>
-          <p><em>Este es el video. Ver a partir del 1:30.</em></p>
+          <p>La experiencia es muy real. Aquí te dejo el video para que puedas comprobarlo por ti mismo/a:</p>
+          <iframe
+              className='article__youtube-video' 
+              width="100%" 
+              height="315" 
+              src="https://www.youtube.com/embed/olzAKkQMMNc?start=90" 
+              title="YouTube video player" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" >
+          </iframe>
           <p>Esta simulación, que incluye alucinaciones y al protagonista rompiéndose una uña para mantenerse alerta, fue demasiado para mí.</p>
           <p>Me sacudió. Por un momento me convertí en esa persona ahogándose y sentí la desesperación que sentía. Esas imágenes se repitieron en mi mente por más tiempo del que deberían y esa noche experimenté unos extraños escalofríos que recorrían mi cuerpo de arriba abajo.</p>
           <p>Fue tal y como suena: ese video me traumatizó.</p>
           <p>Mi hermano, por otro lado, estaba completamente relajado.</p>
-          <p>¿Y por qué no debía de estarlo? Era un video y ya. El chico que lo subió a YouTube, quien está jugando mientras graba, tampoco parecía tan conmocionado como yo.</p>
-          <p>Lo mismo en otro video donde se muestra la reacción de varios salvavidas ante la simulación: todos estaban impactados, pero ninguno dijo “por un momento me convertí en esa persona ahogándose y sentí la desesperación que sentía. Estoy traumatizado”.</p>
+          <p>¿Y por qué no debía de estarlo? Era un video y ya.</p>
+          <p>Ese día mismo vimos otro video donde se muestra la reacción de varios salvavidas ante la simulación: todos estaban impactados, pero ninguno dijo “por un momento me convertí en esa persona ahogándose y sentí la desesperación que sentía. Estoy traumatizado”.</p>
           <p>No. Todos normales.</p>
           <p>¿Por qué a mí me afectó tanto?</p>
         </section>
@@ -49,12 +56,13 @@ const Article = () => {
           <p>A pesar de eso, algo seguía mal en mi cerebro. Había una especie de corto circuito y yo lo sabía.</p>
           <p>Lo que me había impactado no era la muerte del protagonista del juego sino la desesperación que este había experimentado justo antes de morir. Fue una experiencia ficticia pero poderosa que me marcó a nivel emocional.</p>
           <p>Ya había superado el evento que inició todo, pero aún sentía los escalofríos de aquella noche mientras me imaginaba en otro tipo de situaciones igual de desesperantes:</p>
-          <blockquote>«¿Cómo se sentirán los segundos previos a un accidente de tránsito mortal? Ese momento en el que caes en cuenta de que lo que sea que vas a golpear es inevitable. ¿Qué te pasará por la mente cuando sabes que vas a morir?»<br/>«¿Y el golpe? ¿Cómo se sentirá un golpe tan fuerte que es capaz de matarte? ¿Y si la muerte no es inmediata? ¿Si quedas sufriendo por unos minutos antes de dejar esta vida? ¿Cómo se siente una persona un instante antes de provocar un choque que le costará la vida a toda su…?»</blockquote>
+          <blockquote>«¿Cómo se sentirán los segundos previos a un accidente de tránsito mortal? Ese momento en el que caes en cuenta de que lo que sea que vas a golpear es inevitable. ¿Qué te pasará por la mente cuando sabes que vas a morir?»</blockquote>
+          <blockquote>«¿Y el golpe? ¿Cómo se sentirá un golpe tan fuerte que es capaz de matarte? ¿Y si la muerte no es inmediata? ¿Si quedas sufriendo por unos minutos antes de dejar esta vida? ¿Cómo se siente una persona un instante antes de provocar un choque que le costará la vida a toda su…?»</blockquote>
           <p>(En este punto podría seguir ahondando en los oscuros pensamientos que solía tener, pero para no herir la sensibilidad del lector sin necesidad, cortaré aquí esta dinámica).</p>
           <p>Y no eran solo pensamientos relacionados con accidentes de tránsito. También pensaba en incendios, la pérdida de un brazo o pierna, aplastamientos, muerte de familiares por mi culpa… Tú nómbralo y seguramente ya pensé en ello.</p>
           <p>Fue una época loca y sé que esto parece una historia de terror, pero quizás te reconforte saber que estos pensamientos no me afectaron en lo más mínimo.</p>
           <p>Lo viví muy tranquilo y fue todo gracias a algo que aprendí hace años en un libro: Una Nueva Tierra de Eckhart Tolle. Pasemos a la estrategia para explicarte lo que hice.</p>
-          <p><em>(*Nota de edición [1 año y 2 meses después]: releyendo esto, me doy cuenta de que es injusto decir que solo leer el libro me permitió sobrellevar la situación. Leer Una Nueva Tierra fue el paso más importante de todo este proceso porque fue lo que me abrió las puertas del mundo de la mente, lo que despertó mi curiosidad por ella, pero luego de eso me convertí en un friki de la psicología, la consciencia y la espiritualidad (lo sigo siendo) y en los últimos años he invertido cientos de horas leyendo y escuchando acerca de estos temas. Lo más importante de todo lo aprendido está resumido en el artículo que estás por leer).</em></p>
+          <p><em>(*Nota de edición [1 año y 2 meses después]: releyendo esto, me doy cuenta de que es injusto decir que solo leer el libro me permitió sobrellevar la situación. Leer Una Nueva Tierra fue el paso más importante de todo este proceso porque fue lo que me abrió las puertas del mundo de la mente, lo que despertó mi curiosidad por ella, pero luego de eso me convertí en un fanático de la psicología, la consciencia y la espiritualidad, y en los últimos años he invertido cientos de horas leyendo y escuchando acerca de estos temas. Lo más importante de todo lo aprendido está resumido en el artículo que estás por leer).</em></p>
         </section>
         {/* Step 1 */}
         <section className="step-section">
