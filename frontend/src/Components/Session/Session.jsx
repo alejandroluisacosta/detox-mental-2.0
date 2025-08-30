@@ -15,15 +15,20 @@ const Session = () => {
     if (Number.isNaN(sessionNumber) || sessionNumber < 1 || sessionNumber > TOTAL_SESSIONS) {
         return <Navigate to='/404' replace /> 
     }
-    
     return (
-        <div className='session'>
-            <p className='session__number'>{`Sesión #${session.id}`}</p>
-            <h1 className='session__title'>{session.title}</h1>
-            <img className='session__image' src={session.img} alt='Imagen de la sesión' />
-            <AudioPlayer src={`/session_${sessionNumber}.mp3`} />
-            <button className='session__unblock-activity'>DESBLOQUEAR ACTIVIDAD</button>
-        </div>
+        <>
+            {session.isBlocked ?
+                <p>blocked</p>
+                :
+                <div className='session'>
+                    <p className='session__number'>{`Sesión #${session.id}`}</p>
+                    <h1 className='session__title'>{session.title}</h1>
+                    <img className='session__image' src={session.img} alt='Imagen de la sesión' />
+                    <AudioPlayer src={`/session_${sessionNumber}.mp3`} />
+                    <button className='session__unblock-activity'>DESBLOQUEAR ACTIVIDAD</button>
+                </div>
+            }
+        </>
     )
 }
 

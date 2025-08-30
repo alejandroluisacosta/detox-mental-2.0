@@ -20,7 +20,6 @@ const Course = () => {
             navigate(`/session/${sessionToOpen.id}`);
         }
     }
-
     return (
         <div className='sessions-page'>
             {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
