@@ -3,6 +3,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../AudioPlayer/AudioPlayer'
 import './Session.css';
 import { SessionsContext } from '../../Context/SessionsContext';
+import BlockedSession from '../BlockedSession/BlockedSession';
 
 const Session = () => {
     const { sessionId } = useParams();
@@ -18,7 +19,7 @@ const Session = () => {
     return (
         <>
             {session.isBlocked ?
-                <p>blocked</p>
+                <BlockedSession />
                 :
                 <div className='session'>
                     <p className='session__number'>{`Sesión #${session.id}`}</p>

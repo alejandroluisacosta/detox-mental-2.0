@@ -1,0 +1,17 @@
+.blocked-session {
+    padding: 80px 5%;
+    text-align: center;
+}
+
+.blocked-session__title, .blocked-session__text {
+    margin-bottom: 10px;
+}
+
+.blocked-session__image {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.blocked-session__button {
+    margin-top: 10px;
+}
