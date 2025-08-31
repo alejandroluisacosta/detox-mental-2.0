@@ -1,0 +1,16 @@
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background: var(--header-bg);
+  box-shadow: var(--shadow);
+  z-index: 10;
+  padding: 1.5rem 5% 1rem;
+  text-align: center;
+  border-bottom: 2px solid var(--accent);
+  transition: transform 0.3s ease-in-out;
+  z-index: 10;
+}
+
+.sticky-header--hidden {
+  transform: translateY(-100%);
+}

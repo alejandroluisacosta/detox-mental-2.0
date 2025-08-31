@@ -1,12 +1,11 @@
 import React from 'react';
 import './Article.css'
+import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
 
 const Article = () => {
     return (
     <div className="article">
-      <header className="sticky-header">
-        <h1>Cómo liberarte de los pensamientos que te atormentan en 5 pasos</h1>
-      </header>
+      <ArticleHeader />
       <main className="article-content">
         {/* Introduction */}
         <section className="intro-section">
