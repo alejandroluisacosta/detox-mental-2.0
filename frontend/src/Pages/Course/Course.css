@@ -84,3 +84,22 @@
     z-index: 2;
     background-color: #6F1A07;
 }
+
+.intro-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: black;
+  color: white;
+  font-size: 2rem;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 2s; /* fade after 2s, gone at ~3s */
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
