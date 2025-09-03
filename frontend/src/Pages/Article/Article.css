@@ -1,19 +1,8 @@
-.article-root {
+.article {
   min-height: 100vh;
   background: var(--background);
   display: flex;
   flex-direction: column;
-}
-
-.sticky-header {
-  position: sticky;
-  top: 0;
-  background: var(--header-bg);
-  box-shadow: var(--shadow);
-  z-index: 10;
-  padding: 1.5rem 0 1rem 0;
-  text-align: center;
-  border-bottom: 2px solid var(--accent);
 }
 
 .sticky-header h1 {
@@ -24,17 +13,32 @@
   letter-spacing: -1px;
 }
 
-.article-content {
+  .article-content {
   max-width: 700px;
   margin: 2rem auto 0 auto;
-  padding: 0 1.5rem 2rem 1.5rem;
+  padding: 0 1.5rem 2rem;
   background: var(--background);
   border-radius: 12px;
   box-shadow: var(--shadow);
 }
 
+.article h1, h2, h3, h4 {
+  margin: 20px 0 15px;
+}
+
+.article p {
+  margin-bottom: 10px;
+}
+
+.article__youtube-video {
+  margin: 20px 0;
+}
+
 .intro-section p,
-.recommendations-section p {
+.recommendations-section p,
+.article p,
+blockquote,
+li {
   font-size: 1.15rem;
   line-height: 1.7;
   margin-bottom: 1.2rem;
@@ -46,12 +50,23 @@ blockquote {
   border-left: 4px solid var(--accent);
   margin: 1.2rem 0;
   padding: 0.5rem 1rem;
-  background: #fff6ee;
+  font-weight: 600;
+}
+
+ol ul {
+  padding: 0 5%;
+}
+
+ul li {
+  list-style: none;
+}
+
+ol li {
+  margin-left: 1.5rem;
 }
 
 .steps-overview {
   margin: 2.5rem 0 2rem 0;
-  background: #fff6ee;
   border-left: 6px solid var(--accent);
   padding: 1.2rem 1.5rem;
   border-radius: 8px;
@@ -69,25 +84,24 @@ blockquote {
   padding: 0;
   margin: 0.5rem 0 0 0;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 1.2rem;
 }
 
 .steps-list li {
   font-size: 1.1rem;
-  font-weight: 500;
-  background: var(--step-bg);
-  border: 1.5px solid var(--step-border);
   border-radius: 6px;
-  padding: 0.5rem 1.1rem;
+  padding: 0.5rem 0;
   display: flex;
   align-items: center;
   box-shadow: 0 1px 4px rgba(44,62,80,0.04);
+  color: var(--accent)
 }
 
 .step-number {
   background: var(--accent);
-  color: #fff;
+  color: var(--background);
   font-weight: bold;
   border-radius: 50%;
   width: 2rem;
@@ -101,16 +115,11 @@ blockquote {
 }
 
 .step-section {
-  margin: 2.5rem 0;
-  padding: 1.5rem 1.2rem;
-  background: #fff;
-  border-left: 6px solid var(--accent);
   border-radius: 10px;
   box-shadow: 0 1px 8px rgba(44,62,80,0.04);
 }
 
 .step-section h3 {
-  margin-top: 0;
   color: var(--primary);
   font-size: 1.25rem;
   font-weight: 700;
@@ -124,10 +133,13 @@ blockquote {
   margin-bottom: 0.8rem;
 }
 
+.article__internal-dialogue {
+  font-weight: 400;
+}
+
 .recommendations-section {
   margin: 2.5rem 0 1.5rem 0;
   padding: 1.5rem 1.2rem;
-  background: #f3f7fa;
   border-radius: 10px;
   border-left: 6px solid var(--primary);
   box-shadow: 0 1px 8px rgba(44,62,80,0.04);
@@ -150,12 +162,13 @@ blockquote {
 
 @media (max-width: 600px) {
   .article-content {
-    padding: 0 0.5rem 2rem 0.5rem;
+    padding: 0 1rem 2rem;
   }
   .sticky-header h1 {
     font-size: 1.25rem;
   }
-  .step-section, .recommendations-section {
-    padding: 1rem 0.5rem;
+  
+  .step-number {
+    padding: 5%;
   }
 }
