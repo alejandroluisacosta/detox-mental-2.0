@@ -1,26 +1,27 @@
 import { useEffect, useState } from "react";
 import Course from "./Course";
 
-export default function CourseWrapper() {
+export default function CourseWithIntro() {
   const [showIntro, setShowIntro] = useState(true);
+  const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowIntro(false);
-    }, 3000); // 3 seconds
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setShowIntro(false), 3000);
+    return () => clearTimeout(t);
   }, []);
 
-  return (
-    <div className="course-wrapper">
-      {showIntro ? (
-        <div className="intro-screen">
-          <h1>Detox Mental...</h1>
-        </div>
-      ) : (
-        <Course />
-      )}
+  useEffect(() => {
+    if (!showIntro) {
+      const id = requestAnimationFrame(() => setFadeIn(true));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [showIntro]);
+
+  return showIntro ? (
+    <div className="intro-screen"><h1 className="intro-screen__title">Detox Mental</h1></div>
+  ) : (
+    <div className={`course-container ${fadeIn ? "fade-in" : ""}`}>
+      <Course />
     </div>
   );
 }
