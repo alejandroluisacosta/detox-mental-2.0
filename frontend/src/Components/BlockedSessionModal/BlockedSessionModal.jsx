@@ -27,7 +27,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
     return (
         <>
             {openEnterCodeModal && <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>}
-            <div className="blocked-session-modal">
+            <div className="blocked-session-modal modal-fade-in">
                 <img className="blocked-session-modal__close" src='/icons/close.svg' onClick={handleCloseBlockedSessionModal} alt="Cerrar pantalla de sesión bloqueada" />
                 <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
                 <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
