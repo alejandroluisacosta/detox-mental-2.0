@@ -18,3 +18,19 @@
 .coming-soon-modal--buy-course {
     transform: translate(-50%, 100%);
 }
+
+.modal-fade-in--buy-course {
+  opacity: 0;
+  animation: modalBuyCourseFadeIn 0.5s ease forwards;
+}
+
+@keyframes modalBuyCourseFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 155%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 145%);
+  }
+}
