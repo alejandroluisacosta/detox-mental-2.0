@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import './BlockedSessionModal.css';
 import EnterCodeModal from '../EnterCodeModal/EnterCodeModal';
+import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
 import { codes } from '../../data';
 
 const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setSessions }) => {
     const [openEnterCodeModal, setOpenEnterCodeModal] = useState(false);
+    const [openComingSoonModal,  setOpenComingSoonModal] = useState(false);
 
     const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
@@ -24,9 +26,10 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
         }
     }
 
-    return (
+    return (    
         <>
             {openEnterCodeModal && <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>}
+            {openComingSoonModal && <ComingSoonModal />}
             <div className="blocked-session-modal modal-fade-in">
                 <img className="blocked-session-modal__close" src='/icons/close.svg' onClick={handleCloseBlockedSessionModal} alt="Cerrar pantalla de sesión bloqueada" />
                 <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
@@ -37,9 +40,8 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
                 <button className="blocked-session-modal__button" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
                 <hr className="blocked-session-modal__line"/>
                 <p className="blocked-session-modal__text">Opción 2: Compra el curso completo por 10€</p>
-                <button className="blocked-session-modal__button">COMPRAR</button>
+                <button className="blocked-session-modal__button" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
                 <p className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</p>
-                
             </div>
         </>
     )
