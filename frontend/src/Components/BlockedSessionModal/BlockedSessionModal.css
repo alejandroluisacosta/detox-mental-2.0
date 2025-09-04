@@ -27,19 +27,12 @@
     word-wrap: break-word;
 }
 
-.blocked-session-modal__more-info {
-    text-align: center;
-    font-size: 12px;
-    margin-bottom: 2rem;
-    color: #0B2FFF;
-    text-decoration: underline;
-}
-
 .blocked-session-modal__close-text {
     text-align: center;
     font-size: 16px;
     font-weight: 600;
     text-decoration: underline;
+    margin-top: 12px;
 }
 
 .blocked-session-modal__button {
