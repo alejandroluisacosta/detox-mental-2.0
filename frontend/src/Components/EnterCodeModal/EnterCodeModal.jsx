@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CloseIcon from '../CloseIcon/CloseIcon';
 import './EnterCodeModal.css'
 
 const EnterCodeModal = ({ selectedSessionId, handleUnblockSession, setOpenEnterCodeModal }) => {
@@ -27,7 +28,7 @@ const EnterCodeModal = ({ selectedSessionId, handleUnblockSession, setOpenEnterC
 
     return (
         <form className={formClass} onSubmit={handleSubmit} key={errorCount} >
-            <img className="enter-code-modal__close-icon" src='/icons/close.svg' alt="Cerrar pantalla de sesión bloqueada" onClick={handleCloseModal}/>
+            <CloseIcon handleCloseModal={handleCloseModal} />
             <label htmlFor="unblock-code-input" className="enter-code-modal__title">CÓDIGO</label>
             {errorCount > 0 && <p className='enter-code-modal__error-message' role='alert' aria-live='assertive'>Código incorrecto</p>}
             <input type="text" id="unblock-code-input" className="enter-code-modal__input" value={userInput} onChange={handleInputChange}/>
