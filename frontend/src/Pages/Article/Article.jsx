@@ -278,6 +278,28 @@ const Article = () => {
               <p className='article__final-point article__final-point--3'>•</p>
               <p className='article__final-point article__final-point--4'>•</p>
             </div>
+            <h3 className='article__want-more-title'>¿Quieres más?</h3>
+            <button className='article__want-more-button'>QUIERO MÁS</button>
+            <section className='article__want-more'>
+              <p>Si llegaste hasta este punto, dos cosas están claras:</p>
+              <ol>
+                <li>Tienes pensamientos que te atormentan.</li>
+                <li>Tienes cierto compromiso con la misión de lidiar con ellos.</li>
+              </ol>
+              <p>La pregunta es:</p>
+              <p>¿Suficiente compromiso como para tomar acción real?</p>
+              <p>Seamos honestos: ni el mejor de los artículos podrá liberarte por completo de tus PQAs.</p>
+              <p>¿Cuánto tardaste en leer este artículo? ¿20 minutos? ¿Media hora? ¿Una hora si fuiste despacio y tomaste apuntes?</p>
+              <p>¿Y qué edad tienes? ¿18? ¿28? ¿Más de 30?</p>
+              <p>Cualquiera que sean tus respuestas, algo es seguro: tus PQAs tienen más de 10 años gestándose en tu mente. Por múltiples horas cada día.</p>
+              <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el artículo es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
+              <p>Al menos... Un mes.</p>
+              <p>En Detox Mental creemos en cambios reales. Por eso creamos un audiocurso completo que expande los 5 pasos de la estrategia discutida en el artículo.</p>
+              <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan. Para ayudarte a dar los primeros pasos en este camino que posiblemente durará toda tu vida, pero que necesitas empezar con el pie derecho.</p>
+              <p>Pero de nuevo, la pregunta es...</p>
+              <p>¿Tu compromiso es suficiente como para tomar acción real?</p>
+              <button className='article__want-more__button'>IR AL CURSO</button>
+            </section>
       </main>
       <footer className="article-footer">
         <p>Artículo original por Detox Mental</p>

@@ -187,6 +187,17 @@ ol li {
   font-size: 60px !important;
 }
 
+.article__want-more-title {
+  margin-top: 80px;
+  margin-bottom: 50px;
+  text-align: center;
+  font-size: 32px;
+}
+
+.article__want-more {
+  .
+}
+
 @media (max-width: 600px) {
   .article-content {
     padding: 0 1rem 2rem;
