@@ -194,8 +194,16 @@ ol li {
   font-size: 32px;
 }
 
-.article__want-more {
-  .
+.article__want-more-revealer.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.article__want-more__button {
+  margin-top: 30px;
 }
 
 @media (max-width: 600px) {

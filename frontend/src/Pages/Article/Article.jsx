@@ -1,8 +1,17 @@
 import React from 'react';
-import './Article.css'
+import './Article.css';
+import { useState } from 'react';
 import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
 
 const Article = () => {
+    const [isWantMoreVisible, setIsWantMoreVisible] = useState(false);
+    const [isRevealerVisible, setIsRevealerVisbile] = useState(true);
+
+    const revealWantMoreHandler = () => {
+      setIsWantMoreVisible(true);
+      setIsRevealerVisbile(false);
+    }
+
     return (
     <div className="article">
       <ArticleHeader />
@@ -279,8 +288,8 @@ const Article = () => {
               <p className='article__final-point article__final-point--4'>•</p>
             </div>
             <h3 className='article__want-more-title'>¿Quieres más?</h3>
-            <button className='article__want-more-button'>QUIERO MÁS</button>
-            <section className='article__want-more'>
+            <button className={`article__want-more-revealer ${isWantMoreVisible ? 'hidden' : ''}`} onClick={() => revealWantMoreHandler()}>QUIERO MÁS</button>
+            <section className={`article__want-more fade ${!isWantMoreVisible ? 'hidden' : ''}`} >
               <p>Si llegaste hasta este punto, dos cosas están claras:</p>
               <ol>
                 <li>Tienes pensamientos que te atormentan.</li>
