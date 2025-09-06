@@ -89,7 +89,7 @@ code {
 
 .fade {
   opacity: 1;
-  transform: translateY(-50px);
+  transform: translateY(-140px);
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;

@@ -162,7 +162,7 @@ ol li {
 
 .article__final-line {
   margin-top: 75px;
-  margin-bottom: 75px;
+  margin-bottom: 200px;
 }
 
 .article__final-points-container {
@@ -172,34 +172,43 @@ ol li {
 }
 
 .article__final-point--1 {
-  font-size: 24px !important;
+  font-size: 24px;
 }
 
 .article__final-point--2 {
-  font-size: 36px !important;
+  font-size: 36px;
 }
 
 .article__final-point--3 {
-  font-size: 48px !important;
+  font-size: 48px;
 }
 
 .article__final-point--4 {
-  font-size: 60px !important;
+  font-size: 60px;
 }
 
 .article__want-more-title {
-  margin-top: 80px;
+  margin-top: 200px;
   margin-bottom: 50px;
   text-align: center;
   font-size: 32px;
 }
 
+.article__want-more-revealer {
+  margin-bottom: 30px;
+}
+
 .article__want-more-revealer.hidden {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-30px);
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
+}
+
+.article__want-more.hidden {
+  /* height: 150px; */
+  overflow: hidden;
 }
 
 .article__want-more__button {

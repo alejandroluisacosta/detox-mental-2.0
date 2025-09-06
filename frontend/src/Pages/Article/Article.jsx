@@ -2,15 +2,35 @@ import React from 'react';
 import './Article.css';
 import { useState } from 'react';
 import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
+import { useNavigate } from 'react-router-dom';
 
 const Article = () => {
-    const [isWantMoreVisible, setIsWantMoreVisible] = useState(false);
-    const [isRevealerVisible, setIsRevealerVisbile] = useState(true);
-
+    const [isWantMoreRevealed, setIsWantMoreRevealed] = useState(() => localStorage.getItem("wantMore") !== null);
+    const navigate = useNavigate();
+    
     const revealWantMoreHandler = () => {
-      setIsWantMoreVisible(true);
-      setIsRevealerVisbile(false);
+      setIsWantMoreRevealed(true);
+      localStorage.setItem("wantMore", "")
     }
+
+    const goToCourseHandler = () => {
+      setIsWantMoreRevealed(false);
+
+      setTimeout(() => {
+        navigate('/course')
+      }, 1500)
+    }
+
+    const wantMoreButtonClasses = [
+      'article__want-more-revealer',
+      isWantMoreRevealed && 'hidden'
+    ].filter(Boolean).join(' ');
+
+    const wantMoreClasses = [
+      'article__want-more',
+      'fade',
+      !isWantMoreRevealed && 'hidden',
+    ].filter(Boolean).join(' ');
 
     return (
     <div className="article">
@@ -282,14 +302,15 @@ const Article = () => {
             <p>Haz uso de estos conocimientos y las recomendaciones expuestas en el artículo y en menos tiempo del que imaginas volverás a vivir libre de los pensamientos que te atormentan.</p>
             <hr className='article__final-line'/>
             <div className='article__final-points-container'>
-              <p className='article__final-point article__final-point--1'>•</p>
-              <p className='article__final-point article__final-point--2'>•</p>
-              <p className='article__final-point article__final-point--3'>•</p>
-              <p className='article__final-point article__final-point--4'>•</p>
+              <span className='article__final-point article__final-point--1'>•</span>
+              <span className='article__final-point article__final-point--2'>•</span>
+              <span className='article__final-point article__final-point--3'>•</span>
+              <span className='article__final-point article__final-point--4'>•</span>
             </div>
             <h3 className='article__want-more-title'>¿Quieres más?</h3>
-            <button className={`article__want-more-revealer ${isWantMoreVisible ? 'hidden' : ''}`} onClick={() => revealWantMoreHandler()}>QUIERO MÁS</button>
-            <section className={`article__want-more fade ${!isWantMoreVisible ? 'hidden' : ''}`} >
+            <button className={wantMoreButtonClasses} onClick={() => revealWantMoreHandler()}>QUIERO MÁS</button>
+            <button className={wantMoreButtonClasses} onClick={() => revealWantMoreHandler()}>SALIR</button>
+            <section className={wantMoreClasses}>
               <p>Si llegaste hasta este punto, dos cosas están claras:</p>
               <ol>
                 <li>Tienes pensamientos que te atormentan.</li>
@@ -299,7 +320,7 @@ const Article = () => {
               <p>¿Suficiente compromiso como para tomar acción real?</p>
               <p>Seamos honestos: ni el mejor de los artículos podrá liberarte por completo de tus PQAs.</p>
               <p>¿Cuánto tardaste en leer este artículo? ¿20 minutos? ¿Media hora? ¿Una hora si fuiste despacio y tomaste apuntes?</p>
-              <p>¿Y qué edad tienes? ¿18? ¿28? ¿Más de 30?</p>
+              <p>¿Y qué edad tienes? ¿18? ¿28? ¿Más de 30? ¿Más de 40?</p>
               <p>Cualquiera que sean tus respuestas, algo es seguro: tus PQAs tienen más de 10 años gestándose en tu mente. Por múltiples horas cada día.</p>
               <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el artículo es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
               <p>Al menos... Un mes.</p>
@@ -307,12 +328,9 @@ const Article = () => {
               <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan. Para ayudarte a dar los primeros pasos en este camino que posiblemente durará toda tu vida, pero que necesitas empezar con el pie derecho.</p>
               <p>Pero de nuevo, la pregunta es...</p>
               <p>¿Tu compromiso es suficiente como para tomar acción real?</p>
-              <button className='article__want-more__button'>IR AL CURSO</button>
+              <button className='article__want-more__button' onClick={() => goToCourseHandler()}>IR AL CURSO</button>
             </section>
       </main>
-      <footer className="article-footer">
-        <p>Artículo original por Detox Mental</p>
-      </footer>
     </div>
   );
 }
