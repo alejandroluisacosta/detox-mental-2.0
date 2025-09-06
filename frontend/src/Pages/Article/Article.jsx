@@ -13,7 +13,7 @@ const Article = () => {
           <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?”</blockquote>
           <p>Nota: este artículo contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomiendo abstenerte de leerlo.</p>
           <p>Luego de superar un incidente particularmente desagradable, decidí utilizar mi historia para compartir la estrategia de cinco pasos que me sacó de apuros cuando las cosas empezaron a ponerse feas.</p>
-          <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas y algunas herramientas de alejandroluis.com que te ayudarán a iniciarte en el proceso de limpieza mental.</p>
+          <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas que te ayudarán a iniciarte en el proceso de limpieza mental. Quizás alguna sorpresa adicional.</p>
         </section>
         {/* 5 Steps Overview */}
         <section className="steps-overview">
@@ -269,11 +269,18 @@ const Article = () => {
             <li>En mi opinión, todos debemos aprender cómo funciona nuestra propia mente y desarrollar prácticas y herramientas para controlarla cuando sea necesario.</li>
             <li>Empieza por no juzgar lo que pasa por tu cabeza y empezarás a ver resultados positivos. Menos estrés, menos ansiedad, más felicidad, más tranquilidad, más libertad.</li>
             <li>Entiende tus pensamientos y no les des más importancia de la que tienen. Tu salud mental se verá beneficiada a partir del día en que empieces a hacerlo.</li>
-            <li>Haz uso de estos conocimientos y las recomendaciones expuestas en el artículo y en menos tiempo del que imaginas volverás a vivir libre de los pensamientos que te atormentan.</li>
           </ul>
+            <p>Haz uso de estos conocimientos y las recomendaciones expuestas en el artículo y en menos tiempo del que imaginas volverás a vivir libre de los pensamientos que te atormentan.</p>
+            <hr className='article__final-line'/>
+            <div className='article__final-points-container'>
+              <p className='article__final-point article__final-point--1'>•</p>
+              <p className='article__final-point article__final-point--2'>•</p>
+              <p className='article__final-point article__final-point--3'>•</p>
+              <p className='article__final-point article__final-point--4'>•</p>
+            </div>
       </main>
       <footer className="article-footer">
-        <p>Artículo original por Alejandro Luis | <a href="https://alejandroluis.com" target="_blank" rel="noopener noreferrer">alejandroluis.com</a></p>
+        <p>Artículo original por Detox Mental</p>
       </footer>
     </div>
   );
