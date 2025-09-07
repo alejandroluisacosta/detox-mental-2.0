@@ -42,7 +42,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
                 <hr className="blocked-session-modal__line"/>
                 <p className="blocked-session-modal__text">Opción 2: Compra el curso completo por 10€</p>
                 <button className="blocked-session-modal__button" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
-                <p className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</p>
+                <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</span>
             </div>
         </>
     )
