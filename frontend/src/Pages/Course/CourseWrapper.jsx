@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import Course from "./Course";
 
 export default function CourseWithIntro() {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(localStorage.getItem('courseRevealed') === null);
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setShowIntro(false), 3000);
+    localStorage.setItem("courseRevealed", "");
     return () => clearTimeout(t);
   }, []);
 
