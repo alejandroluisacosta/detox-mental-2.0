@@ -1,6 +1,12 @@
 .session {
     text-align: center;
     padding: 100px 5% 40px;
+    opacity: 0;
+    transition: opacity 1s ease
+}
+
+.session.fade-in {
+    opacity: 1;
 }
 
 .session__number {
