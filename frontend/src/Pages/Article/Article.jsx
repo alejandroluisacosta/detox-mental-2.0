@@ -18,11 +18,16 @@ const Article = () => {
 
       setTimeout(() => {
         navigate('/course')
-      }, 1500)
+      }, 1250)
     }
 
-    const wantMoreButtonClasses = [
+    const wantMoreRevealerClasses = [
       'article__want-more-revealer',
+      isWantMoreRevealed && 'hidden'
+    ].filter(Boolean).join(' ');
+
+    const wantMoreExpellerClasses = [
+      'article__want-more-expeller',
       isWantMoreRevealed && 'hidden'
     ].filter(Boolean).join(' ');
 
@@ -39,7 +44,7 @@ const Article = () => {
         {/* Introduction */}
         <section className="intro-section">
           <p>A principios del 2020 se libraba en mi interior una lucha que tenía meses de antigüedad. Mi cerebro, el campo de batalla, había sido infectado por un tóxico pensamiento, una idea que en poco tiempo se convirtió en una trampa que no mata pero tampoco afloja:</p>
-          <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?”</blockquote>
+          <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?frontend/src/Pages/Article/Article.jsx”</blockquote>
           <p>Nota: este artículo contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomiendo abstenerte de leerlo.</p>
           <p>Luego de superar un incidente particularmente desagradable, decidí utilizar mi historia para compartir la estrategia de cinco pasos que me sacó de apuros cuando las cosas empezaron a ponerse feas.</p>
           <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas que te ayudarán a iniciarte en el proceso de limpieza mental. Quizás alguna sorpresa adicional.</p>
@@ -308,8 +313,8 @@ const Article = () => {
               <span className='article__final-point article__final-point--4'>•</span>
             </div>
             <h3 className='article__want-more-title'>¿Quieres más?</h3>
-            <button className={wantMoreButtonClasses} onClick={() => revealWantMoreHandler()}>QUIERO MÁS</button>
-            <button className={wantMoreButtonClasses} onClick={() => revealWantMoreHandler()}>SALIR</button>
+            <button className={wantMoreRevealerClasses} onClick={() => revealWantMoreHandler()}>QUIERO MÁS</button>
+            <a className={wantMoreExpellerClasses} href='https://tiktok.com' >SALIR</a>
             <section className={wantMoreClasses}>
               <p>Si llegaste hasta este punto, dos cosas están claras:</p>
               <ol>
@@ -325,7 +330,7 @@ const Article = () => {
               <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el artículo es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
               <p>Al menos... Un mes.</p>
               <p>En Detox Mental creemos en cambios reales. Por eso creamos un audiocurso completo que expande los 5 pasos de la estrategia discutida en el artículo.</p>
-              <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan. Para ayudarte a dar los primeros pasos en este camino que posiblemente durará toda tu vida, pero que necesitas empezar con el pie derecho.</p>
+              <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan.</p>
               <p>Pero de nuevo, la pregunta es...</p>
               <p>¿Tu compromiso es suficiente como para tomar acción real?</p>
               <button className='article__want-more__button' onClick={() => goToCourseHandler()}>IR AL CURSO</button>

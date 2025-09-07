@@ -198,7 +198,21 @@ ol li {
   margin-bottom: 30px;
 }
 
-.article__want-more-revealer.hidden {
+.article__want-more-expeller {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    border-radius: 16px;
+    border: 1px solid var(--accent);
+    background-color: var(--background);
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.article__want-more-revealer.hidden, .article__want-more-expeller.hidden {
   opacity: 0;
   transform: translateY(-30px);
   transition:
