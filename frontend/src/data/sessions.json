@@ -97,8 +97,8 @@
     },
     {
         "id": 13,
-        "title": "Increíble, pero cierto",
-        "description": "8 herramientas para tu salud mental",
+        "title": "Tú quieres a tus PQSs",
+        "description": "Increíble, pero cierto",
         "img": "/images/marcus.jpg",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
