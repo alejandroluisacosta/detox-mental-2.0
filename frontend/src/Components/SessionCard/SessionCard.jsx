@@ -1,3 +1,5 @@
+import './SessionCard.css'
+
 const SessionCard = ({ session, index, handleGoToSession }) => {
     return (
         <div key={index} className='session-card' onClick={() => handleGoToSession(session.id)}>
