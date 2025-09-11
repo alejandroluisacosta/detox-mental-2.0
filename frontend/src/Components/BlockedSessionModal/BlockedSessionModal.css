@@ -11,12 +11,6 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.blocked-session-modal__close {
-    position: absolute;
-    right: 13px;
-    top: 13px;
-}
-
 .blocked-session-modal__title {
     margin-bottom: 1rem;
 }
@@ -27,19 +21,12 @@
     word-wrap: break-word;
 }
 
-.blocked-session-modal__more-info {
-    text-align: center;
-    font-size: 12px;
-    margin-bottom: 2rem;
-    color: #0B2FFF;
-    text-decoration: underline;
-}
-
 .blocked-session-modal__close-text {
     text-align: center;
     font-size: 16px;
     font-weight: 600;
     text-decoration: underline;
+    margin-top: 12px;
 }
 
 .blocked-session-modal__button {

@@ -1,8 +1,42 @@
 import React from 'react';
-import './Article.css'
+import './Article.css';
+import { useState } from 'react';
 import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
+import { useNavigate } from 'react-router-dom';
 
 const Article = () => {
+    const [isWantMoreRevealed, setIsWantMoreRevealed] = useState(() => localStorage.getItem("wantMore") !== null);
+    const navigate = useNavigate();
+    
+    const revealWantMoreHandler = () => {
+      setIsWantMoreRevealed(true);
+      localStorage.setItem("wantMore", "")
+    }
+
+    const goToCourseHandler = () => {
+      setIsWantMoreRevealed(false);
+
+      setTimeout(() => {
+        navigate('/course')
+      }, 1250)
+    }
+
+    const wantMoreRevealerClasses = [
+      'article__want-more-revealer',
+      isWantMoreRevealed && 'hidden'
+    ].filter(Boolean).join(' ');
+
+    const wantMoreExpellerClasses = [
+      'article__want-more-expeller',
+      isWantMoreRevealed && 'hidden'
+    ].filter(Boolean).join(' ');
+
+    const wantMoreClasses = [
+      'article__want-more',
+      'fade',
+      !isWantMoreRevealed && 'hidden',
+    ].filter(Boolean).join(' ');
+
     return (
     <div className="article">
       <ArticleHeader />
@@ -10,10 +44,10 @@ const Article = () => {
         {/* Introduction */}
         <section className="intro-section">
           <p>A principios del 2020 se libraba en mi interior una lucha que tenía meses de antigüedad. Mi cerebro, el campo de batalla, había sido infectado por un tóxico pensamiento, una idea que en poco tiempo se convirtió en una trampa que no mata pero tampoco afloja:</p>
-          <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?”</blockquote>
+          <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?frontend/src/Pages/Article/Article.jsx”</blockquote>
           <p>Nota: este artículo contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomiendo abstenerte de leerlo.</p>
           <p>Luego de superar un incidente particularmente desagradable, decidí utilizar mi historia para compartir la estrategia de cinco pasos que me sacó de apuros cuando las cosas empezaron a ponerse feas.</p>
-          <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas y algunas herramientas de alejandroluis.com que te ayudarán a iniciarte en el proceso de limpieza mental.</p>
+          <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas que te ayudarán a iniciarte en el proceso de limpieza mental. Quizás alguna sorpresa adicional.</p>
         </section>
         {/* 5 Steps Overview */}
         <section className="steps-overview">
@@ -269,12 +303,39 @@ const Article = () => {
             <li>En mi opinión, todos debemos aprender cómo funciona nuestra propia mente y desarrollar prácticas y herramientas para controlarla cuando sea necesario.</li>
             <li>Empieza por no juzgar lo que pasa por tu cabeza y empezarás a ver resultados positivos. Menos estrés, menos ansiedad, más felicidad, más tranquilidad, más libertad.</li>
             <li>Entiende tus pensamientos y no les des más importancia de la que tienen. Tu salud mental se verá beneficiada a partir del día en que empieces a hacerlo.</li>
-            <li>Haz uso de estos conocimientos y las recomendaciones expuestas en el artículo y en menos tiempo del que imaginas volverás a vivir libre de los pensamientos que te atormentan.</li>
           </ul>
+            <p>Haz uso de estos conocimientos y las recomendaciones expuestas en el artículo y en menos tiempo del que imaginas volverás a vivir libre de los pensamientos que te atormentan.</p>
+            <hr className='article__final-line'/>
+            <div className='article__final-points-container'>
+              <span className='article__final-point article__final-point--1'>•</span>
+              <span className='article__final-point article__final-point--2'>•</span>
+              <span className='article__final-point article__final-point--3'>•</span>
+              <span className='article__final-point article__final-point--4'>•</span>
+            </div>
+            <h3 className='article__want-more-title'>¿Quieres más?</h3>
+            <button className={wantMoreRevealerClasses} onClick={() => revealWantMoreHandler()}>QUIERO MÁS</button>
+            <a className={wantMoreExpellerClasses} href='https://tiktok.com' >SALIR</a>
+            <section className={wantMoreClasses}>
+              <p>Si llegaste hasta este punto, dos cosas están claras:</p>
+              <ol>
+                <li>Tienes pensamientos que te atormentan.</li>
+                <li>Tienes cierto compromiso con la misión de lidiar con ellos.</li>
+              </ol>
+              <p>La pregunta es:</p>
+              <p>¿Suficiente compromiso como para tomar acción real?</p>
+              <p>Seamos honestos: ni el mejor de los artículos podrá liberarte por completo de tus PQAs.</p>
+              <p>¿Cuánto tardaste en leer este artículo? ¿20 minutos? ¿Media hora? ¿Una hora si fuiste despacio y tomaste apuntes?</p>
+              <p>¿Y qué edad tienes? ¿18? ¿28? ¿Más de 30? ¿Más de 40?</p>
+              <p>Cualquiera que sean tus respuestas, algo es seguro: tus PQAs tienen más de 10 años gestándose en tu mente. Por múltiples horas cada día.</p>
+              <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el artículo es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
+              <p>Al menos... Un mes.</p>
+              <p>En Detox Mental creemos en cambios reales. Por eso creamos un audiocurso completo que expande los 5 pasos de la estrategia discutida en el artículo.</p>
+              <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan.</p>
+              <p>Pero de nuevo, la pregunta es...</p>
+              <p>¿Tu compromiso es suficiente como para tomar acción real?</p>
+              <button className='article__want-more__button' onClick={() => goToCourseHandler()}>IR AL CURSO</button>
+            </section>
       </main>
-      <footer className="article-footer">
-        <p>Artículo original por Alejandro Luis | <a href="https://alejandroluis.com" target="_blank" rel="noopener noreferrer">alejandroluis.com</a></p>
-      </footer>
     </div>
   );
 }

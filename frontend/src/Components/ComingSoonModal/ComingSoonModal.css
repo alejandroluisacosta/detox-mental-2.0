@@ -1,0 +1,36 @@
+.coming-soon-modal {
+    position: fixed;
+    width: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 10%;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 1s ease;
+}
+
+.coming-soon-modal--buy-course {
+    transform: translate(-50%, 100%);
+}
+
+.modal-fade-in--buy-course {
+  opacity: 0;
+  animation: modalBuyCourseFadeIn 0.5s ease forwards;
+}
+
+@keyframes modalBuyCourseFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 155%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 145%);
+  }
+}

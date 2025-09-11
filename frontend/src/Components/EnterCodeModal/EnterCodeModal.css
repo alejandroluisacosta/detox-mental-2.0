@@ -19,12 +19,6 @@
     box-shadow: 0 4px 18px rgba(255, 0, 0, 0.2);
 }
 
-.enter-code-modal__close-icon {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-}
-
 .enter-code-modal__title {
     margin-bottom: 10px;
 }
