@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useState, useEffect,   useContext } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import AudioPlayer from '../AudioPlayer/AudioPlayer'
 import './Session.css';
@@ -6,6 +6,7 @@ import { SessionsContext } from '../../Context/SessionsContext';
 import BlockedSession from '../BlockedSession/BlockedSession';
 
 const Session = () => {
+    const [revealSession, setRevealSession] = useState(false);
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
@@ -16,12 +17,18 @@ const Session = () => {
     if (Number.isNaN(sessionNumber) || sessionNumber < 1 || sessionNumber > TOTAL_SESSIONS) {
         return <Navigate to='/404' replace /> 
     }
+
+    useEffect(() => {
+        setTimeout(() => {
+            setRevealSession(true);
+        }, 10)
+    }, [])
     return (
         <>
             {session.isBlocked ?
                 <BlockedSession />
                 :
-                <div className='session'>
+                <div className={`session ${revealSession ? "fade-in" : ""}`}>
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>
                     <img className='session__image' src={session.img} alt='Imagen de la sesión' />
