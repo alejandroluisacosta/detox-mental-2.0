@@ -86,5 +86,37 @@
         "img": "/images/marcus.jpg",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+    },
+    {
+        "id": 12,
+        "title": "Estados de flujo",
+        "description": "El oasis de la mente",
+        "img": "/images/marcus.jpg",
+        "isBlocked": true,
+        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+    },
+    {
+        "id": 13,
+        "title": "Tú quieres a tus PQSs",
+        "description": "Increíble, pero cierto",
+        "img": "/images/marcus.jpg",
+        "isBlocked": true,
+        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+    },
+    {
+        "id": 14,
+        "title": "Planificando tu práctica",
+        "description": "Con ímpetu, pero con calma",
+        "img": "/images/marcus.jpg",
+        "isBlocked": true,
+        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+    },
+    {
+        "id": 15,
+        "title": "Planificando tus fracasos",
+        "description": "Sella tu proceso con el compromiso que amerita",
+        "img": "/images/marcus.jpg",
+        "isBlocked": true,
+        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     }
 ]

@@ -13,13 +13,21 @@
   letter-spacing: -1px;
 }
 
-  .article-content {
+.article-content {
   max-width: 700px;
-  margin: 2rem auto 0 auto;
+  width: 100%;
+  margin: 0 auto;
   padding: 0 1.5rem 2rem;
   background: var(--background);
   border-radius: 12px;
   box-shadow: var(--shadow);
+}
+
+.article-content__article-title {
+  font-size: 20px;
+  text-align: center;
+  padding: 1.5rem 0 1rem;
+  min-height: 126px;
 }
 
 .article h1, h2, h3, h4 {
@@ -42,6 +50,10 @@ li {
   font-size: 1.15rem;
   line-height: 1.7;
   margin-bottom: 1.2rem;
+}
+
+.intro-section__written-by {
+  font-size: 14px !important;
 }
 
 blockquote {
