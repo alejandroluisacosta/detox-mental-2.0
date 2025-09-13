@@ -1,6 +1,6 @@
 .session {
     text-align: center;
-    padding: 100px 5% 40px;
+    padding: 50px 5% 40px;
     opacity: 0;
     transition: opacity 1s ease
 }
