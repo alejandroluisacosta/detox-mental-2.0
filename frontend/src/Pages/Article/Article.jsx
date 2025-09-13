@@ -43,6 +43,7 @@ const Article = () => {
         {/* Introduction */}
         <h1 className='article-content__article-title'>Cómo liberarte de los pensamientos que te atormentan en 5 pasos</h1>
         <section className="intro-section">
+          <p className='intro-section__written-by'><i>Historia por: Marco Ferrani - Detox Mental</i></p>
           <p>A principios del 2020 se libraba en mi interior una lucha que tenía meses de antigüedad. Mi cerebro, el campo de batalla, había sido infectado por un tóxico pensamiento, una idea que en poco tiempo se convirtió en una trampa que no mata pero tampoco afloja:</p>
           <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?”</blockquote>
           <p>Nota: este artículo contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomiendo abstenerte de leerlo.</p>
