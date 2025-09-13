@@ -1,4 +1,3 @@
-import React from 'react';
 import './Article.css';
 import { useState } from 'react';
 import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
@@ -42,9 +41,10 @@ const Article = () => {
       <ArticleHeader />
       <main className="article-content">
         {/* Introduction */}
+        <h1 className='article-content__article-title'>Cómo liberarte de los pensamientos que te atormentan en 5 pasos</h1>
         <section className="intro-section">
           <p>A principios del 2020 se libraba en mi interior una lucha que tenía meses de antigüedad. Mi cerebro, el campo de batalla, había sido infectado por un tóxico pensamiento, una idea que en poco tiempo se convirtió en una trampa que no mata pero tampoco afloja:</p>
-          <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?frontend/src/Pages/Article/Article.jsx”</blockquote>
+          <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?”</blockquote>
           <p>Nota: este artículo contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomiendo abstenerte de leerlo.</p>
           <p>Luego de superar un incidente particularmente desagradable, decidí utilizar mi historia para compartir la estrategia de cinco pasos que me sacó de apuros cuando las cosas empezaron a ponerse feas.</p>
           <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas que te ayudarán a iniciarte en el proceso de limpieza mental. Quizás alguna sorpresa adicional.</p>

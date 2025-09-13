@@ -13,14 +13,20 @@
   letter-spacing: -1px;
 }
 
-  .article-content {
+.article-content {
   max-width: 700px;
   width: 100%;
-  margin: 2rem auto 0 auto;
+  margin: 0 auto;
   padding: 0 1.5rem 2rem;
   background: var(--background);
   border-radius: 12px;
   box-shadow: var(--shadow);
+}
+
+.article-content__article-title {
+  font-size: 20px;
+  text-align: center;
+  padding: 1.5rem 0 1rem;
 }
 
 .article h1, h2, h3, h4 {
