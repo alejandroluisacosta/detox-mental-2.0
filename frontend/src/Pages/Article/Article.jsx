@@ -329,7 +329,6 @@ const Article = () => {
               <p>¿Y qué edad tienes? ¿18? ¿28? ¿Más de 30? ¿Más de 40?</p>
               <p>Cualquiera que sean tus respuestas, algo es seguro: tus PQAs tienen más de 10 años gestándose en tu mente. Por múltiples horas cada día.</p>
               <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el artículo es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
-              <p>Al menos... Un mes.</p>
               <p>En Detox Mental creemos en cambios reales. Por eso creamos un audiocurso completo que expande los 5 pasos de la estrategia discutida en el artículo.</p>
               <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan.</p>
               <p>Pero de nuevo, la pregunta es...</p>

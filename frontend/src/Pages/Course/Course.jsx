@@ -31,6 +31,7 @@ const Course = () => {
                     <SessionCard session={session} key={index} handleGoToSession={handleGoToSession}/>
                 ))}
             </div>
+            <p className="course-credits">Creado con compromiso por Detox Mental™ • 2025</p>
         </div>
     )
 }

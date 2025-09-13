@@ -27,9 +27,9 @@
 
 .session-card__image {
     width: 220px;
-    height: 145px;
+    height: 180px;
     object-fit: cover;
-    object-position: center;
+    object-position: center 30%;
     display: block;
     margin-bottom: 16px;
     border-top-left-radius: 16px;

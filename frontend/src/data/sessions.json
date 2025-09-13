@@ -3,7 +3,7 @@
         "id": 1,
         "title": "Tú no eres tu mente",
         "description": "Y aceptarlo es el primer paso",
-        "img": "/images/socrates.jpg",
+        "img": "/images/socrates.webp",
         "isBlocked": false,
         "unblockQuestion": null
     },
@@ -19,7 +19,7 @@
         "id": 3,
         "title": "El gimnasio de la mente",
         "description": "La vía rápida del Detox Mental",
-        "img": "/images/aristotle.webp",
+        "img": "/images/brain.webp",
         "isBlocked": false,
         "unblockQuestion": null
     },
@@ -27,7 +27,7 @@
         "id": 4,
         "title": "Los pensamientos son inofensivos",
         "description": "Aunque no lo creas",
-        "img": "/images/marcus.jpg",
+        "img": "/images/marcus.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -35,7 +35,7 @@
         "id": 5,
         "title": "Sufrimiento imaginario",
         "description": "El tormento del ser humano",
-        "img": "/images/marcus.jpg",
+        "img": "/images/seneca.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -43,7 +43,7 @@
         "id": 6,
         "title": "Emoción + Pensamiento",
         "description": "La clave. El truco. El secreto",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -51,7 +51,7 @@
         "id": 7,
         "title": "La utilidad de los PQAs",
         "description": "Y no lo dudes: la tienen",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -59,7 +59,7 @@
         "id": 8,
         "title": "La raíz de tus PQSs",
         "description": "\"Emoción atendida, emoción superada\"",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -67,7 +67,7 @@
         "id": 9,
         "title": "Cómo se mata un pensamiento",
         "description": "Aprende a asesinarlos sin piedad",
-        "img": "/images/marcus.jpg",
+        "img": "/images/napoleon.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -75,7 +75,7 @@
         "id": 10,
         "title": "Quietud",
         "description": "Aprende a reconocer tus PQSs",
-        "img": "/images/marcus.jpg",
+        "img": "/images/buddha.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -83,7 +83,7 @@
         "id": 11,
         "title": "Meditar sin meditar",
         "description": "8 herramientas para tu salud mental",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -91,7 +91,7 @@
         "id": 12,
         "title": "Estados de flujo",
         "description": "El oasis de la mente",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -99,7 +99,7 @@
         "id": 13,
         "title": "Tú quieres a tus PQSs",
         "description": "Increíble, pero cierto",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -107,7 +107,7 @@
         "id": 14,
         "title": "Planificando tu práctica",
         "description": "Con ímpetu, pero con calma",
-        "img": "/images/marcus.jpg",
+        "img": "/images/brain.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -115,7 +115,7 @@
         "id": 15,
         "title": "Planificando tus fracasos",
         "description": "Sella tu proceso con el compromiso que amerita",
-        "img": "/images/marcus.jpg",
+        "img": "/images/ferriss.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     }

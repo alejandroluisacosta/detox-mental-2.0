@@ -1,6 +1,6 @@
 .sessions-page {
     text-align: center;
-    padding: 75px 15%;
+    padding: 75px 15% 35px;
 }
 
 .sessions-title {
@@ -33,7 +33,7 @@
   animation: fadeInOut 3s ease forwards;
 }
 
-.intro-screen__title {
+.intro-screen__intro-image {
   text-align: center;
 }
 
