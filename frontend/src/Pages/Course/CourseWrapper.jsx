@@ -19,7 +19,7 @@ export default function CourseWithIntro() {
   }, [showIntro]);
 
   return showIntro ? (
-    <div className="intro-screen"><h1 className="intro-screen__title">Detox Mental</h1></div>
+    <div className="intro-screen"><h1 className="intro-screen__intro-image">Detox Mental</h1></div>
   ) : (
     <div className={`course-container ${fadeIn ? "fade-in" : ""}`}>
       <Course />
