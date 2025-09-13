@@ -3,7 +3,7 @@
         "id": 1,
         "title": "Tú no eres tu mente",
         "description": "Y aceptarlo es el primer paso",
-        "img": "/images/socrates.jpg",
+        "img": "/images/socrates.webp",
         "isBlocked": false,
         "unblockQuestion": null
     },
@@ -27,7 +27,7 @@
         "id": 4,
         "title": "Los pensamientos son inofensivos",
         "description": "Aunque no lo creas",
-        "img": "/images/marcus.jpg",
+        "img": "/images/marcus.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -67,7 +67,7 @@
         "id": 9,
         "title": "Cómo se mata un pensamiento",
         "description": "Aprende a asesinarlos sin piedad",
-        "img": "/images/marcus.jpg",
+        "img": "/images/napoleon.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
@@ -75,7 +75,7 @@
         "id": 10,
         "title": "Quietud",
         "description": "Aprende a reconocer tus PQSs",
-        "img": "/images/marcus.jpg",
+        "img": "/images/buddha.webp",
         "isBlocked": true,
         "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
     },
