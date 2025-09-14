@@ -2,9 +2,11 @@ import './Article.css';
 import { useState } from 'react';
 import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
 import { useNavigate } from 'react-router-dom';
+import Navigation from '../../Components/Navigation/Navigation'
 
 const Article = () => {
     const [isWantMoreRevealed, setIsWantMoreRevealed] = useState(() => localStorage.getItem("wantMore") !== null);
+    const [isCourseRevealed, setIsCourseRevealed] = useState(() => localStorage.getItem("courseRevealed") !== null);
     const navigate = useNavigate();
     
     const revealWantMoreHandler = () => {
@@ -40,6 +42,7 @@ const Article = () => {
     <div className="article">
       <ArticleHeader />
       <main className="article-content">
+        {isCourseRevealed && <Navigation />}
         {/* Introduction */}
         <h1 className='article-content__article-title'>Cómo liberarte de los pensamientos que te atormentan en 5 pasos</h1>
         <section className="intro-section">
