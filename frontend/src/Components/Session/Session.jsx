@@ -1,16 +1,19 @@
-import { useState, useEffect,   useContext } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import AudioPlayer from '../AudioPlayer/AudioPlayer'
 import './Session.css';
 import { SessionsContext } from '../../Context/SessionsContext';
 import BlockedSession from '../BlockedSession/BlockedSession';
+import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
 
 const Session = () => {
     const [revealSession, setRevealSession] = useState(false);
+    const [openComingSoonModal,  setOpenComingSoonModal] = useState(false);
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
     const { sessions } = useContext(SessionsContext)
+    const navigate = useNavigate();
     
     const session = sessions.find(session => session.id === sessionNumber);
     
@@ -29,11 +32,13 @@ const Session = () => {
                 <BlockedSession />
                 :
                 <div className={`session ${revealSession ? "fade-in" : ""}`}>
+                    {openComingSoonModal && <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>}
+                    <img className='session__go-back' src='/images/arrow_back.svg' alt='Ir atrás' onClick={() => navigate('/course')} />
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>
                     <img className='session__image' src={session.img} alt='Imagen de la sesión' />
                     <AudioPlayer src={`/session_${sessionNumber}.mp3`} />
-                    <button className='session__unblock-activity'>DESBLOQUEAR ACTIVIDAD</button>
+                    <button className='session__unblock-activity' onClick={() => setOpenComingSoonModal(true)}>DESBLOQUEAR ACTIVIDAD</button>
                 </div>
             }
         </>
