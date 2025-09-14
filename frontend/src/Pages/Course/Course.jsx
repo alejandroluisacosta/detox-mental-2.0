@@ -4,6 +4,7 @@ import './Course.css';
 import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSessionModal';
 import { SessionsContext } from '../../Context/SessionsContext';
 import SessionCard from '../../Components/SessionCard/SessionCard';
+import Navigation from '../../Components/Navigation/Navigation';
 
 
 const Course = () => {
@@ -24,6 +25,7 @@ const Course = () => {
     return (
         <div className='sessions-page'>
             {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+            <Navigation />
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
             <div className="sessions-container">
