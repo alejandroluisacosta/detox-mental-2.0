@@ -1,5 +1,5 @@
-import { useState, useEffect,   useContext } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import AudioPlayer from '../AudioPlayer/AudioPlayer'
 import './Session.css';
 import { SessionsContext } from '../../Context/SessionsContext';
@@ -11,6 +11,7 @@ const Session = () => {
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
     const { sessions } = useContext(SessionsContext)
+    const navigate = useNavigate();
     
     const session = sessions.find(session => session.id === sessionNumber);
     
@@ -29,6 +30,7 @@ const Session = () => {
                 <BlockedSession />
                 :
                 <div className={`session ${revealSession ? "fade-in" : ""}`}>
+                    <img className='session__go-back' src='/images/arrow_back.svg' alt='Ir atrás' onClick={() => navigate('/course')} />
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>
                     <img className='session__image' src={session.img} alt='Imagen de la sesión' />
