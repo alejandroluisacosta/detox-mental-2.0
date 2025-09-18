@@ -29,7 +29,7 @@
         "description": "Aunque no lo creas",
         "img": "/images/marcus.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Describe en máximo dos párrafos los pensamientos que te atormentan / sabotean actualmente."
     },
     {
         "id": 5,
@@ -37,7 +37,7 @@
         "description": "El tormento del ser humano",
         "img": "/images/seneca.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Describe en máximo dos párrafos un recuerdo o situación actual que te genere PQAs."
     },
     {
         "id": 6,
@@ -45,7 +45,7 @@
         "description": "La clave. El truco. El secreto",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Cuéntanos brevemente cómo es el diálogo interno que tienes cuando se activan tus PQAs."
     },
     {
         "id": 7,
@@ -53,7 +53,7 @@
         "description": "Y no lo dudes: la tienen",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Cuéntanos cómo conociste Detox Mental."
     },
     {
         "id": 8,
@@ -61,7 +61,7 @@
         "description": "\"Emoción atendida, emoción superada\"",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "¿Qué emoción predomina en ti cuando tus PQAs se activan? (Tristeza, miedo, ira...)"
     },
     {
         "id": 9,
