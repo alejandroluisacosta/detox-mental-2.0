@@ -40,7 +40,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
                 <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
                 <button className="blocked-session-modal__button" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
                 <hr className="blocked-session-modal__line"/>
-                <p className="blocked-session-modal__text">Opción 2: Compra el curso completo por 10€</p>
+                <p className="blocked-session-modal__text">Opción 2: Compra el curso completo (15 sesiones + 15 ejercicios) por 10€</p>
                 <button className="blocked-session-modal__button" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
                 <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</span>
             </div>
