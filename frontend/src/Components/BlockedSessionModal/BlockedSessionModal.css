@@ -23,7 +23,7 @@
 
 .blocked-session-modal__close-text {
     text-align: center;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     text-decoration: underline;
     margin-top: 12px;
@@ -32,6 +32,12 @@
 .blocked-session-modal__button {
     padding: 12px 0;
     margin-bottom: 1rem;
+}
+
+.blocked-session-modal__button--buy {
+    background-color: white;
+    color: var(--accent);
+    border: 2px solid var(--accent);
 }
 
 .blocked-session-modal__line {
