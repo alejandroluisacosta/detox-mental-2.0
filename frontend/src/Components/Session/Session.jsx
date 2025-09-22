@@ -38,7 +38,10 @@ const Session = () => {
                     <h1 className='session__title'>{session.title}</h1>
                     <img className='session__image' src={session.img} alt='Imagen de la sesión' />
                     <AudioPlayer src={`/session_${sessionNumber}.mp3`} />
-                    <button className='session__unblock-activity' onClick={() => setOpenComingSoonModal(true)}>DESBLOQUEAR ACTIVIDAD</button>
+                    <button className='session__unblock-activity' onClick={() => setOpenComingSoonModal(true)}>
+                        <img src="/icons/lock.svg" alt="Ícono de candado" className="session__lock-icon" />
+                        EJERCICIO DE LA SESION
+                    </button>
                 </div>
             }
         </>

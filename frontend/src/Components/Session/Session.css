@@ -37,4 +37,14 @@
 
 .session__unblock-activity {
     width: 80%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+}
+
+.session__lock-icon {
+    transform: translate(0, -2px);
 }
