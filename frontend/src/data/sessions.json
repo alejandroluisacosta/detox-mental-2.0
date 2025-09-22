@@ -69,7 +69,7 @@
         "description": "Aprende a asesinarlos sin piedad",
         "img": "/images/napoleon.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "¿Qué actividades o situaciones de tu día a día te ayudan a separarte de tus PQAs o PQSs?"
     },
     {
         "id": 10,
