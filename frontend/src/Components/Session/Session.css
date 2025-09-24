@@ -38,3 +38,13 @@
 .session__unblock-activity {
     width: 80%;
 }
+
+@media (min-width: 1000px) {
+    .session {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .session__go-back {
+        left: 35%;
+    }
+}
