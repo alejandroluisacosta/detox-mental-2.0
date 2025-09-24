@@ -37,6 +37,18 @@
 
 .session__unblock-activity {
     width: 80%;
+}
+
+@media (min-width: 1000px) {
+    .session {
+        max-width: 500px;
+        margin: 0 auto;
+        padding-top: 80px;
+    }
+    .session__go-back {
+        top: 80px;
+        left: 35%;
+    }
     margin: 0 auto;
     display: flex;
     align-items: center;

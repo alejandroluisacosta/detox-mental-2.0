@@ -61,3 +61,11 @@
 .course-container.fade-in {
   opacity: 1;
 }
+
+@media (min-width: 1000px) {
+  .sessions-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 0;
+  }
+}
