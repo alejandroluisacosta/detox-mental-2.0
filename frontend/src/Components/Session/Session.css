@@ -43,8 +43,10 @@
     .session {
         max-width: 500px;
         margin: 0 auto;
+        padding-top: 80px;
     }
     .session__go-back {
+        top: 80px;
         left: 35%;
     }
 }
