@@ -7,17 +7,16 @@
 
 .sticky-header h1 {
   margin: 0;
-  font-size: 2.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -1px;
 }
 
 .article-content {
-  max-width: 700px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 1.5rem 2rem;
+  padding: 0 1rem 2rem;
   background: var(--background);
   border-radius: 12px;
   box-shadow: var(--shadow);
@@ -246,12 +245,19 @@ p.article__note {
   margin-top: 30px;
 }
 
+@media (min-width: 1000px) {
+  .article-content {
+    max-width: 700px;
+  }
+  .sticky-header {
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+}
+
 @media (max-width: 600px) {
   .article-content {
     padding: 0 1rem 2rem;
-  }
-  .sticky-header h1 {
-    font-size: 1.25rem;
   }
   
   .step-number {

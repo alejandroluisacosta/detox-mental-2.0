@@ -61,3 +61,12 @@
     z-index: 2;
     background-color: #6F1A07;
 }
+
+@media (min-width: 1000px) {
+    .session-card {
+        max-width: 350px;
+    }
+    .session-card__image {
+        margin: 0 auto 16px;
+    }
+}

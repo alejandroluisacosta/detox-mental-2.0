@@ -14,3 +14,9 @@
 .sticky-header--hidden {
   transform: translateY(-100%);
 }
+
+@media (min-width: 1000px) {
+  .sticky-header {
+    display: none;
+  }
+}
