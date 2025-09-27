@@ -46,3 +46,10 @@
     margin-bottom: 2rem;
     border: 0.5px solid black;
 }
+
+@media (min-width: 1000px) {
+    .blocked-session-modal {
+        max-width: 500px;
+        padding: 40px;
+    }
+}

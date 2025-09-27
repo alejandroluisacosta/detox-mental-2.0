@@ -38,7 +38,16 @@
 
 @media (min-width: 1000px) {
     .navigation {
-        top: 10%;
+        top: 5%;
         right: unset;
+        left: 20%;
+        max-height: 150px;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+    }
+    .navigation__icon {
+        width: 48px;
+        margin-bottom: auto;
     }
 }

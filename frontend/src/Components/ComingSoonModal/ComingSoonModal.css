@@ -34,3 +34,9 @@
     transform: translate(-50%, 145%);
   }
 }
+
+@media (min-width: 1000px) {
+  .coming-soon-modal {
+    max-width: 500px;
+  }
+}
