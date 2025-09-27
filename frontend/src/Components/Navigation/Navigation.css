@@ -38,7 +38,8 @@
 
 @media (min-width: 1000px) {
     .navigation {
-        top: 10%;
+        top: 5%;
         right: unset;
+        left: 20%;
     }
 }
