@@ -45,7 +45,7 @@
         "description": "La clave. El truco. El secreto",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Cuéntanos brevemente cómo es el diálogo interno que tienes cuando se activan tus PQAs."
+        "unblockQuestion": "Describe tus PQAs en 3 palabras."
     },
     {
         "id": 7,
@@ -69,7 +69,7 @@
         "description": "Aprende a asesinarlos sin piedad",
         "img": "/images/napoleon.webp",
         "isBlocked": true,
-        "unblockQuestion": "TBD"
+        "unblockQuestion": "¿Quién es el filósofo antiguo que representa la sesión #1 de Detox Mental?"
     },
     {
         "id": 10,
@@ -85,7 +85,7 @@
         "description": "8 herramientas para tu salud mental",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Dinos tu edad, de qué país eres, y una cosa que te guste de Detox Mental."
     },
     {
         "id": 12,
@@ -93,7 +93,7 @@
         "description": "El oasis de la mente",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Dinos tu país, tu edad y una cosa que cambiarías / mejorarías de Detox Mental."
     },
     {
         "id": 13,
@@ -101,7 +101,7 @@
         "description": "Increíble, pero cierto",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "¿Te gustan las sesiones en audio o las preferirías escritas?"
     },
     {
         "id": 14,
@@ -109,7 +109,7 @@
         "description": "Con ímpetu, pero con calma",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "¿Quién es el filósofo estoico que representa la sesión #4 de Detox Mental?"
     },
     {
         "id": 15,
@@ -117,6 +117,6 @@
         "description": "Sella tu proceso con el compromiso que amerita",
         "img": "/images/ferriss.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en menos de 300 palabras los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Cuéntanos tu experiencia con Detox Mental. ¿Has notado algún cambio positivo?"
     }
 ]
