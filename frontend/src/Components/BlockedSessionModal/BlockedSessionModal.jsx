@@ -36,7 +36,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
                 <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
                 <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
                 <p className="blocked-session-modal__text">Escríbenos a <strong>detoxmental4@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
-                <p className="blocked-session-modal__text">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
+                <p className="blocked-session-modal__text blocked-session-modal__text--question">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
                 <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
                 <button className="blocked-session-modal__button" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
                 <hr className="blocked-session-modal__line"/>

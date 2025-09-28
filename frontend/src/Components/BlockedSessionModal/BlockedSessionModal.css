@@ -21,6 +21,10 @@
     word-wrap: break-word;
 }
 
+.blocked-session-modal__text--question {
+    font-weight: 600;
+}
+
 .blocked-session-modal__close-text {
     text-align: center;
     font-size: 15px;
