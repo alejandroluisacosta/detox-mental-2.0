@@ -29,7 +29,7 @@
         "description": "Aunque no lo creas",
         "img": "/images/marcus.webp",
         "isBlocked": true,
-        "unblockQuestion": "Describe en máximo dos párrafos los pensamientos que te atormentan / sabotean actualmente."
+        "unblockQuestion": "Describe en máximo dos párrafos los pensamientos que te atormentan o sabotean actualmente."
     },
     {
         "id": 5,
@@ -69,7 +69,7 @@
         "description": "Aprende a asesinarlos sin piedad",
         "img": "/images/napoleon.webp",
         "isBlocked": true,
-        "unblockQuestion": "¿Quién es el filósofo antiguo que representa la sesión #1 de Detox Mental?"
+        "unblockQuestion": "¿Sabías que el famoso libro 'Meditaciones' es una especie de diario donde el emperador Marco Aurelio escribía sus PQAs durante sus campañas de guerra? ¿Cuál es tu guerra actual?"
     },
     {
         "id": 10,
@@ -93,7 +93,7 @@
         "description": "El oasis de la mente",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "Dinos tu país, tu edad y una cosa que cambiarías / mejorarías de Detox Mental."
+        "unblockQuestion": "¿Recuerdas el momento exacto en el que empezaron tus PQAs? ¿Puedes describirlo?"
     },
     {
         "id": 13,
@@ -101,7 +101,7 @@
         "description": "Increíble, pero cierto",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "¿Te gustan las sesiones en audio o las preferirías escritas?"
+        "unblockQuestion": "¿En cuál de los 5 pasos de la estrategia de Detox Mental necesitas más práctica? (Reconoce - Comprende - Ármate - Practica - Mata)."
     },
     {
         "id": 14,
@@ -109,7 +109,7 @@
         "description": "Con ímpetu, pero con calma",
         "img": "/images/brain.webp",
         "isBlocked": true,
-        "unblockQuestion": "¿Quién es el filósofo estoico que representa la sesión #4 de Detox Mental?"
+        "unblockQuestion": "Dinos algo que mejorarías o cambiarías de Detox Mental."
     },
     {
         "id": 15,
