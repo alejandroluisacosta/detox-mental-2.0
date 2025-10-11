@@ -4,7 +4,6 @@ import AudioPlayer from '../AudioPlayer/AudioPlayer'
 import './Session.css';
 import { SessionsContext } from '../../Context/SessionsContext';
 import BlockedSession from '../BlockedSession/BlockedSession';
-import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
 import ExerciseModal from '../ExerciseModal/ExerciseModal';
 
 const Session = () => {
@@ -13,7 +12,7 @@ const Session = () => {
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
-    const { sessions } = useContext(SessionsContext)
+    const { sessions } = useContext(SessionsContext);
     const navigate = useNavigate();
     
     const session = sessions.find(session => session.id === sessionNumber);
@@ -33,7 +32,7 @@ const Session = () => {
                 <BlockedSession />
                 :
                 <div className={`session ${revealSession ? "fade-in" : ""}`}>
-                    {openExerciseModal && <ExerciseModal setOpenExerciseModal={setOpenExerciseModal}/>}
+                    {openExerciseModal && <ExerciseModal setOpenExerciseModal={setOpenExerciseModal} exercise={session.exercise} exerciseId={session.id}/>}
                     <img className='session__go-back' src='/images/arrow_back.svg' alt='Ir atrás' onClick={() => navigate('/course')} />
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>

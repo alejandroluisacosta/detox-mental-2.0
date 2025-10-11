@@ -36,6 +36,10 @@
     font-size: 18px;
 }
 
+.exercise-modal__exercise-text {
+    white-space: pre-line;
+}
+
 .exercise-modal__close-text {
     font-weight: 600;
     text-decoration: underline;
