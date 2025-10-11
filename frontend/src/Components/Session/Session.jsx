@@ -9,7 +9,7 @@ import ExerciseModal from '../ExerciseModal/ExerciseModal';
 
 const Session = () => {
     const [revealSession, setRevealSession] = useState(false);
-    const [openExerciseModal, setOpenExerciseModal] = useState(true);
+    const [openExerciseModal, setOpenExerciseModal] = useState(false);
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
