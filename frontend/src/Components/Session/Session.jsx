@@ -5,12 +5,12 @@ import './Session.css';
 import { SessionsContext } from '../../Context/SessionsContext';
 import BlockedSession from '../BlockedSession/BlockedSession';
 import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
-import UnblockExerciseModal from '../UnblockExerciseModal/UnblockExerciseModal';
+import ExerciseModal from '../ExerciseModal/ExerciseModal';
 
 const Session = () => {
     const [revealSession, setRevealSession] = useState(false);
     const [openComingSoonModal,  setOpenComingSoonModal] = useState(false);
-    const [openUnblockExerciseModal, setOpenUnblockExerciseModal] = useState(true);
+    const [openExerciseModal, setOpenExerciseModal] = useState(true);
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
@@ -35,7 +35,7 @@ const Session = () => {
                 :
                 <div className={`session ${revealSession ? "fade-in" : ""}`}>
                     {openComingSoonModal && <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>}
-                    {openUnblockExerciseModal && <UnblockExerciseModal />}
+                    {openExerciseModal && <ExerciseModal setOpenExerciseModal={setOpenExerciseModal}/>}
                     <img className='session__go-back' src='/images/arrow_back.svg' alt='Ir atrás' onClick={() => navigate('/course')} />
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>

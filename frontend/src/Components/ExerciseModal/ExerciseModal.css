@@ -1,4 +1,4 @@
-.unblock-exercise-modal-overlay {
+.exercise-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,11 +11,17 @@
     background-color: rgba(0,0,0,0.25);
 }
 
-.unblock-exercise-modal {
+.exercise-modal {
+    position: relative;
     width: 80%;
-    height: 80vh;
+    max-height: 80vh;
     overflow-y: auto;
     border-radius: 16px;
     background-color: var(--background);
     padding: 5%;
+}
+
+.exercise-modal__close-text {
+    font-weight: 600;
+    text-decoration: underline;
 }
