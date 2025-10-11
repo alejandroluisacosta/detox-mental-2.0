@@ -1,10 +1,7 @@
 .blocked-session-modal {
     position: fixed;
-    z-index: 2;
     width: 80%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin: auto;
     background-color: white;
     border-radius: 16px;
     padding: 40px 8%;

@@ -1,16 +1,3 @@
-.exercise-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0,0,0,0.25);
-}
-
 .exercise-modal {
     position: relative;
     width: 80%;

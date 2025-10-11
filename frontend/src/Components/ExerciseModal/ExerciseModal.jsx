@@ -7,8 +7,8 @@ const ExerciseModal = ({ setOpenExerciseModal }) => {
     const [isExerciseBlocked, setIsExerciseBlocked] = useState(true);
     
     return (
-        <div className='exercise-modal-overlay'>
-            <div className='exercise-modal'>
+        <div className='modal-overlay'>
+            <div className='exercise-modal modal-fade-in'>
                 <CloseIcon handleCloseModal={handleCloseModal}/>
                 <h2 className='exercise-modal__title'>Ejercicio #1</h2>
                 {isExerciseBlocked ? 
