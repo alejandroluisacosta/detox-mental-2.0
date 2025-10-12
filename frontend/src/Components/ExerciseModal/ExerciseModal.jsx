@@ -2,27 +2,38 @@ import { useState, useContext } from 'react';
 import CloseIcon from '../CloseIcon/CloseIcon';
 import './ExerciseModal.css';
 
-const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId }) => {
+const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleUnblockExercise }) => {
     const handleCloseModal = () => setOpenExerciseModal(false);
-    const [isExerciseBlocked, setIsExerciseBlocked] = useState(exercise.blocked);
+    const [isExerciseBlocked, setIsExerciseBlocked] = useState(exercise.isBlocked);
     const [userInput, setUserInput] = useState('');
+    const [errorCount, setErrorCount] = useState(0);
 
     const handleInputChange = ({ target }) => {
         setUserInput(target.value.toUpperCase());
     }
 
-    const handleUnblockSession = ({ target }) => {
-        if (userInput === exercise.answer) {
+    const handleUnblockSession = (e) => {
+        e.preventDefault();
+        const input = userInput.trim();
+        const success = handleUnblockExercise(exerciseId, input);
+        if (success) {
             setIsExerciseBlocked(false);
-            exercise.blocked = false;
+        } else {
+            setErrorCount(prev => prev + 1);
         }
     }
 
+    const formClass = [
+        'exercise-modal',
+        errorCount > 0 && 'modal-incorrect-code',
+        errorCount > 0 && 'shake'
+    ].filter(Boolean).join(' ');
+
     return (
         <div className='modal-overlay'>
-            <div className='exercise-modal modal-fade-in'>
+            <form className={formClass}>
                 <CloseIcon handleCloseModal={handleCloseModal}/>
-                <h2 className='exercise-modal__title'>{`Ejercicio #${exerciseId}`}</h2>
+                <h2 className="exercise-modal__title">{`Ejercicio #${exerciseId}`}</h2>
                 {isExerciseBlocked ? 
                 <div className='exercise-modal__unblock-container'>
                     <p className='exercise-modal__question'>{exercise.question}</p>
@@ -33,7 +44,7 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId }) => {
                 <p className='exercise-modal__exercise-text'>{exercise.text}</p>
                 }
                 <span className="exercise-modal__close-text" onClick={handleCloseModal}>Cerrar</span>
-            </div>
+            </form>
         </div>
     )
 }

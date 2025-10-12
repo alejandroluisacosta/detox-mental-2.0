@@ -12,7 +12,7 @@ const Session = () => {
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
-    const { sessions } = useContext(SessionsContext);
+    const { sessions, setSessions } = useContext(SessionsContext);
     const navigate = useNavigate();
     
     const session = sessions.find(session => session.id === sessionNumber);
@@ -26,13 +26,40 @@ const Session = () => {
             setRevealSession(true);
         }, 10)
     }, [])
+
+    const handleUnblockExercise = (id, answer) => {
+        if (session.exercise.answer === answer) {
+            setSessions(prev => prev.map(session => {
+                if (sessionId === id && session.exercise.answer === answer) {
+                    return {
+                        ...session,
+                        exercise: {
+                            ...session.exercise,
+                            isBlocked: false
+                        }
+                    }
+                }
+                return session
+            }))
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     return (
         <>
             {session.isBlocked ?
                 <BlockedSession />
                 :
                 <div className={`session ${revealSession ? "fade-in" : ""}`}>
-                    {openExerciseModal && <ExerciseModal setOpenExerciseModal={setOpenExerciseModal} exercise={session.exercise} exerciseId={session.id}/>}
+                    {openExerciseModal && <ExerciseModal 
+                        setOpenExerciseModal={setOpenExerciseModal} 
+                        exercise={session.exercise} 
+                        exerciseId={sessionId} 
+                        handleUnblockExercise={handleUnblockExercise}
+                    />}
                     <img className='session__go-back' src='/images/arrow_back.svg' alt='Ir atrás' onClick={() => navigate('/course')} />
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>
