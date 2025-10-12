@@ -31,7 +31,7 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleUnblo
 
     return (
         <div className='modal-overlay'>
-            <form className={formClass}>
+            <form className={formClass} key={errorCount}>
                 <CloseIcon handleCloseModal={handleCloseModal}/>
                 <h2 className="exercise-modal__title">{`Ejercicio #${exerciseId}`}</h2>
                 {isExerciseBlocked ? 
