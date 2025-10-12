@@ -21,8 +21,8 @@ const sessionsData = [
     isBlocked: false,
     unblockQuestion: null,
     exercise: {
-      question: '¿Quién fundó el psicoanálisis?',
-      answer: 'FREUD',
+      question: "¿Quién fundó el psicoanálisis?",
+      answer: "FREUD",
       text: 'Reflexiona sobre un pensamiento recurrente que notes hoy.',
       isBlocked: true
     }
@@ -35,9 +35,9 @@ const sessionsData = [
     isBlocked: false,
     unblockQuestion: null,
     exercise: {
-      question: '¿Quién dijo "Conócete a ti mismo"?',
-      answer: 'SÓCRATES',
-      text: 'Escribe un patrón de pensamiento que notes y observa cómo influye en tus decisiones.',
+      question: "¿Quién dijo 'Una vida sin examinar no merece ser vivida'?",
+      answer: "SOCRATES",
+      text: "Escribe un patrón de pensamiento que notes y observa cómo influye en tus decisiones.",
       isBlocked: true
     }
   },
@@ -49,9 +49,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Describe en máximo dos párrafos los pensamientos que te atormentan o sabotean actualmente.",
     exercise: {
-      question: '¿Qué emperador romano escribió "Meditaciones"?',
-      answer: 'MARCO AURELIO',
-      text: 'Escribe un pensamiento repetitivo y observa cómo te afecta.',
+      question: "Según Detox Mental, ¿Cuál es la herramienta #1 para comprender y liberarte de tus PQAs?",
+      answer: "ESCRIBIR",
+      text: "Escribe un pensamiento repetitivo y observa cómo te afecta.",
       isBlocked: true
     }
   },
@@ -63,9 +63,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Describe en máximo dos párrafos un recuerdo o situación actual que te genere PQAs.",
     exercise: {
-      question: '¿Qué filósofo estoico escribió "Sobre la brevedad de la vida"?',
-      answer: 'SÉNECA',
-      text: 'Escribe un pensamiento recurrente y analiza su impacto en tu día.',
+      question: "¿De qué país era el filósofo Friedrich Nietzsche?",
+      answer: "ALEMANIA",
+      text: "Escribe un pensamiento recurrente y analiza su impacto en tu día.",
       isBlocked: true
     }
   },
@@ -77,7 +77,7 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Describe tus PQAs en 3 palabras.",
     exercise: {
-      question: '¿Quién estudió la teoría de la emoción conocida como "teoría de James-Lange"?',
+      question: "",
       answer: 'JAMES',
       text: 'Anota tres pensamientos con sus emociones asociadas y observa patrones.',
       isBlocked: true
@@ -117,7 +117,7 @@ const sessionsData = [
     description: "Aprende a asesinarlos sin piedad",
     img: "/images/napoleon.webp",
     isBlocked: true,
-    unblockQuestion: "¿Cuál es tu guerra actual?",
+    unblockQuestion: "¿Sabías que el famoso libro 'Meditaciones' es una especie de diario donde el emperador Marco Aurelio escribía sus PQAs durante sus campañas de guerra? ¿Cuál es tu guerra actual?",
     exercise: {
       question: '¿Quién enseñó la práctica de mindfulness en Occidente moderna?',
       answer: 'KABAT-ZINN',
@@ -173,7 +173,7 @@ const sessionsData = [
     description: "Increíble, pero cierto",
     img: "/images/brain.webp",
     isBlocked: true,
-    unblockQuestion: "¿En cuál de los 5 pasos necesitas más práctica?",
+    unblockQuestion: "¿En cuál de los 5 pasos de la estrategia de Detox Mental necesitas más práctica? (Toma distancia - Reconoce - Comprende - Ármate - Mata).",
     exercise: {
       question: '¿Qué filósofo decía que aceptar un pensamiento lo debilita?',
       answer: 'EPICURO',
