@@ -29,7 +29,10 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, selectedSession, setS
 
     return (    
         <>
-            {openEnterCodeModal && <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>}
+            {openEnterCodeModal && 
+            <div className='modal-overlay modal-overlay--layer-2'>
+                <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>
+            </div>}
             {openComingSoonModal && <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>}
             <div className='modal-overlay'>
                 <div className="blocked-session-modal modal-fade-in">
