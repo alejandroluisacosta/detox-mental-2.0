@@ -4,9 +4,20 @@ import './ExerciseModal.css';
 
 const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId }) => {
     const handleCloseModal = () => setOpenExerciseModal(false);
-    const [isExerciseBlocked, setIsExerciseBlocked] = useState(false);
-    
-    console.log(exercise.question);
+    const [isExerciseBlocked, setIsExerciseBlocked] = useState(exercise.blocked);
+    const [userInput, setUserInput] = useState('');
+
+    const handleInputChange = ({ target }) => {
+        setUserInput(target.value.toUpperCase());
+    }
+
+    const handleUnblockSession = ({ target }) => {
+        if (userInput === exercise.answer) {
+            setIsExerciseBlocked(false);
+            exercise.blocked = false;
+        }
+    }
+
     return (
         <div className='modal-overlay'>
             <div className='exercise-modal modal-fade-in'>
@@ -15,7 +26,8 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId }) => {
                 {isExerciseBlocked ? 
                 <div className='exercise-modal__unblock-container'>
                     <p className='exercise-modal__question'>{exercise.question}</p>
-                    <input className='exercise-modal__input' placeholder='Tu respuesta'/>
+                    <input className='exercise-modal__input' placeholder='Tu respuesta'onChange={handleInputChange} value={userInput} maxLength="18"/>
+                    <button className="exercise-modal__button" type="submit" onClick={handleUnblockSession}>DESBLOQUEAR</button>
                 </div>
                 :
                 <p className='exercise-modal__exercise-text'>{exercise.text}</p>
