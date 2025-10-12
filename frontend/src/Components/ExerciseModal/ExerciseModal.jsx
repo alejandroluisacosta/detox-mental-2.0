@@ -25,7 +25,7 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleUnblo
 
     const formClass = [
         'exercise-modal',
-        errorCount > 0 && 'modal-incorrect-code',
+        errorCount > 0 && isExerciseBlocked && 'modal-incorrect-code',
         errorCount > 0 && 'shake'
     ].filter(Boolean).join(' ');
 
