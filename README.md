@@ -60,4 +60,4 @@ If you’re interested in exploring or extending the code, feel free to fork the
 🧾 License
 
 This project is licensed under the MIT License.
-See the [LICENSE] (./LICENSE) file for details.
+See the [LICENSE](./LICENSE) file for details.
