@@ -9,6 +9,7 @@ import Navigation from '../../Components/Navigation/Navigation';
 
 const Course = () => {
     const [openBlockedSessionModal, setOpenBlockedSessionModal] = useState(false);
+    const [unblockedSessionsCount, setUnblockedSessionsCount] = useState(0);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
     const { sessions, setSessions } = useContext(SessionsContext)
@@ -22,18 +23,21 @@ const Course = () => {
             navigate(`/session/${sessionToOpen.id}`);
         }
     }
+    console.log(unblockedSessionsCount);
     return (
         <div className='sessions-page'>
-          {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
-          <div className='animation-overlay'>
-              <video
-                  src="/animations/unblock_animation.webm"
-                  autoPlay
-                  muted
-                  playsInline
-                  className="session-unblock-animation"
-              />
-          </div>
+          {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setUnblockedSessionsCount={setUnblockedSessionsCount} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+          {unblockedSessionsCount > 0 && 
+              <div className='animation-overlay'>
+                  <video
+                      src="/animations/unblock_animation.webm"
+                      autoPlay
+                      muted
+                      playsInline
+                      className="session-unblock-animation"
+                  />
+              </div>
+            }
             <Navigation />
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
