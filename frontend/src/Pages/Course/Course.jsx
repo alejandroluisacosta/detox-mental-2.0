@@ -24,7 +24,16 @@ const Course = () => {
     }
     return (
         <div className='sessions-page'>
-            {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+          {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+          <div className='animation-overlay'>
+              <video
+                  src="/animations/unblock_animation.webm"
+                  autoPlay
+                  muted
+                  playsInline
+                  className="session-unblock-animation"
+              />
+          </div>
             <Navigation />
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
