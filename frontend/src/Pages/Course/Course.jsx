@@ -9,7 +9,7 @@ import Navigation from '../../Components/Navigation/Navigation';
 
 const Course = () => {
     const [openBlockedSessionModal, setOpenBlockedSessionModal] = useState(false);
-    const [unblockedSessionsCount, setUnblockedSessionsCount] = useState(0);
+    const [isSessionUnblocked, setIsSessionUnblocked] = useState(0);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
     const { sessions, setSessions } = useContext(SessionsContext)
@@ -23,17 +23,18 @@ const Course = () => {
             navigate(`/session/${sessionToOpen.id}`);
         }
     }
-    console.log(unblockedSessionsCount);
+    console.log(isSessionUnblocked);
     return (
         <div className='sessions-page'>
-          {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setUnblockedSessionsCount={setUnblockedSessionsCount} setSessions={setSessions} selectedSession={selectedSession.current}/>}
-          {unblockedSessionsCount > 0 && 
+          {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setIsSessionUnblocked={setIsSessionUnblocked} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+          {isSessionUnblocked > 0 && 
               <div className='animation-overlay'>
                   <video
                       src="/animations/unblock_animation.webm"
                       autoPlay
                       muted
                       playsInline
+                      onEnded={() => setIsSessionUnblocked(false)}
                       className="session-unblock-animation"
                   />
               </div>

@@ -5,7 +5,7 @@ import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
 import CloseIcon from '../CloseIcon/CloseIcon';
 import { codes } from '../../data';
 
-const BlockedSessionModal = ({ setOpenBlockedSessionModal, setUnblockedSessionsCount, selectedSession, setSessions }) => {
+const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked, selectedSession, setSessions }) => {
     const [openEnterCodeModal, setOpenEnterCodeModal] = useState(false);
     const [openComingSoonModal,  setOpenComingSoonModal] = useState(false);
 
@@ -21,7 +21,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setUnblockedSessionsC
                 return returnValue;
                 }))
             setOpenBlockedSessionModal(false);
-            setUnblockedSessionsCount(prev => prev + 1);
+            setIsSessionUnblocked(prev => prev + 1);
             return true;
         } else {
             return false;
