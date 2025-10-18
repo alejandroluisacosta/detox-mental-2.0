@@ -33,9 +33,9 @@ const Course = () => {
               <div className='animation-overlay'>
                   <Lottie
                     animationData={unblockAnimation}
-                    play
                     loop={false}
                     style={{ width: 300, height: 300 }}
+                    onComplete={() => setIsSessionUnblocked(false)}
                     />
               </div>
             }
