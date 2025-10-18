@@ -129,6 +129,10 @@ code {
     align-items: center;
     background-color: rgba(0,0,0,0.25);
   }
+
+  .animation-overlay--unblock-session {
+    background-color: rgba(0,0,0,0.6) !important;
+  }
   
   .modal-overlay--layer-2 {
     z-index: 3;

@@ -6,7 +6,7 @@ import { SessionsContext } from '../../Context/SessionsContext';
 import SessionCard from '../../Components/SessionCard/SessionCard';
 import Navigation from '../../Components/Navigation/Navigation';
 import Lottie from 'lottie-react';
-import unblockAnimation from './unblockAnimation/unblock_animation.json';
+import unblockAnimation from './unblockAnimation/unblock_animation_1.json';
 
 
 const Course = () => {
@@ -30,7 +30,7 @@ const Course = () => {
         <div className='sessions-page'>
           {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setIsSessionUnblocked={setIsSessionUnblocked} setSessions={setSessions} selectedSession={selectedSession.current}/>}
           {isSessionUnblocked && 
-              <div className='animation-overlay'>
+              <div className='animation-overlay animation-overlay--unblock-session'>
                   <Lottie
                     animationData={unblockAnimation}
                     loop={false}
