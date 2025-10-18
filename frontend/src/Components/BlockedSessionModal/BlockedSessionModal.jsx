@@ -21,7 +21,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
                 return returnValue;
                 }))
             setOpenBlockedSessionModal(false);
-            setIsSessionUnblocked(prev => prev + 1);
+            setIsSessionUnblocked(true);
             return true;
         } else {
             return false;

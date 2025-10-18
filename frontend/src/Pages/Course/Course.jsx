@@ -5,11 +5,13 @@ import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSes
 import { SessionsContext } from '../../Context/SessionsContext';
 import SessionCard from '../../Components/SessionCard/SessionCard';
 import Navigation from '../../Components/Navigation/Navigation';
+import Lottie from 'lottie-react';
+import unblockAnimation from './unblockAnimation/unblock_animation.json';
 
 
 const Course = () => {
     const [openBlockedSessionModal, setOpenBlockedSessionModal] = useState(false);
-    const [isSessionUnblocked, setIsSessionUnblocked] = useState(0);
+    const [isSessionUnblocked, setIsSessionUnblocked] = useState(false);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
     const { sessions, setSessions } = useContext(SessionsContext)
@@ -23,20 +25,18 @@ const Course = () => {
             navigate(`/session/${sessionToOpen.id}`);
         }
     }
-    console.log(isSessionUnblocked);
+
     return (
         <div className='sessions-page'>
           {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setIsSessionUnblocked={setIsSessionUnblocked} setSessions={setSessions} selectedSession={selectedSession.current}/>}
-          {isSessionUnblocked > 0 && 
+          {isSessionUnblocked && 
               <div className='animation-overlay'>
-                  <video
-                      src="/animations/unblock_animation.webm"
-                      autoPlay
-                      muted
-                      playsInline
-                      onEnded={() => setIsSessionUnblocked(false)}
-                      className="session-unblock-animation"
-                  />
+                  <Lottie
+                    animationData={unblockAnimation}
+                    play
+                    loop={false}
+                    style={{ width: 300, height: 300 }}
+                    />
               </div>
             }
             <Navigation />
