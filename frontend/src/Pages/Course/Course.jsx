@@ -32,9 +32,9 @@ const Course = () => {
           {isSessionUnblocked && 
               <div className='animation-overlay animation-overlay--unblock-session'>
                   <Lottie
+                    className='unblock-session-animation'
                     animationData={unblockAnimation}
                     loop={false}
-                    style={{ width: 300, height: 300 }}
                     onComplete={() => setIsSessionUnblocked(false)}
                     />
               </div>

@@ -130,8 +130,9 @@ code {
     background-color: rgba(0,0,0,0.25);
   }
 
+  .animation-overlay,
   .animation-overlay--unblock-session {
-    background-color: rgba(0,0,0,0.6) !important;
+    background-color: rgba(0,0,0,0.6);
   }
   
   .modal-overlay--layer-2 {
