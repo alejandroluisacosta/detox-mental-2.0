@@ -5,10 +5,13 @@ import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSes
 import { SessionsContext } from '../../Context/SessionsContext';
 import SessionCard from '../../Components/SessionCard/SessionCard';
 import Navigation from '../../Components/Navigation/Navigation';
+import Lottie from 'lottie-react';
+import unblockAnimation from './unblockAnimation/unblock_animation_1.json';
 
 
 const Course = () => {
     const [openBlockedSessionModal, setOpenBlockedSessionModal] = useState(false);
+    const [isSessionUnblocked, setIsSessionUnblocked] = useState(false);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
     const { sessions, setSessions } = useContext(SessionsContext)
@@ -22,9 +25,20 @@ const Course = () => {
             navigate(`/session/${sessionToOpen.id}`);
         }
     }
+
     return (
         <div className='sessions-page'>
-            {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+          {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setIsSessionUnblocked={setIsSessionUnblocked} setSessions={setSessions} selectedSession={selectedSession.current}/>}
+          {isSessionUnblocked && 
+              <div className='animation-overlay animation-overlay--unblock-session'>
+                  <Lottie
+                    className='unblock-session-animation'
+                    animationData={unblockAnimation}
+                    loop={false}
+                    onComplete={() => setIsSessionUnblocked(false)}
+                    />
+              </div>
+            }
             <Navigation />
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>30 días para limpiar tu mente</p>

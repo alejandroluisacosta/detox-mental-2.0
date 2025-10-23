@@ -115,3 +115,40 @@ code {
     transform: translate(-50%, -50%);
   }
 }
+
+.modal-overlay,
+.animation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.25);
+  }
+
+  div .animation-overlay--unblock-session {
+    background-color: rgba(1,1,1,0.6);
+  }
+  
+  .modal-overlay--layer-2 {
+    z-index: 3;
+  }
+  
+  body .modal-incorrect-code {
+    box-shadow: 0 4px 18px rgba(255, 0, 0, 0.2);
+  }
+  
+  .animation-overlay {
+    background-color: rgba(0,0,0,0.5);
+  }
+  
+.session-unblock-animation {
+  position: absolute;
+  z-index: 4;
+  width: 50%;
+  height: 50%;
+}
