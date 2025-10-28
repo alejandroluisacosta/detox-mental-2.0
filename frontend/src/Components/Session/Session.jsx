@@ -5,10 +5,13 @@ import './Session.css';
 import { SessionsContext } from '../../Context/SessionsContext';
 import BlockedSession from '../BlockedSession/BlockedSession';
 import ExerciseModal from '../ExerciseModal/ExerciseModal';
+import Lottie from 'lottie-react';
+import unblockAnimation from './unblockAnimation/unblock_animation.json';
 
 const Session = () => {
     const [revealSession, setRevealSession] = useState(false);
     const [openExerciseModal, setOpenExerciseModal] = useState(false);
+    const [isExerciseUnblocked, setIsExerciseUnblocked] = useState(false);
     const { sessionId } = useParams();
     const sessionNumber = Number(sessionId);
     const TOTAL_SESSIONS = 15;
@@ -29,6 +32,7 @@ const Session = () => {
 
     const handleUnblockExercise = (id, answer) => {
         if (session.exercise.answer === answer) {
+            setIsExerciseUnblocked(true);
             setSessions(prev => prev.map(session => {
                 if (sessionId === id && session.exercise.answer === answer) {
                     return {
@@ -60,6 +64,16 @@ const Session = () => {
                         exerciseId={sessionId} 
                         handleUnblockExercise={handleUnblockExercise}
                     />}
+                    {isExerciseUnblocked &&
+                        <div className='animation-overlay animation-overlay--unblock-session'>
+                            <Lottie
+                                className='unblock-session-animation'
+                                animationData={unblockAnimation}
+                                loop={false}
+                                onComplete={() => setIsExerciseUnblocked(false)}
+                                />
+                        </div>
+                    }
                     <img className='session__go-back' src='/images/arrow_back.svg' alt='Ir atrás' onClick={() => navigate('/course')} />
                     <p className='session__number'>{`Sesión #${session.id}`}</p>
                     <h1 className='session__title'>{session.title}</h1>
