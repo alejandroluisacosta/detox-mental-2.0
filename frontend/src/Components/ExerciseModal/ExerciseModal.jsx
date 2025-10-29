@@ -1,8 +1,8 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import CloseIcon from '../CloseIcon/CloseIcon';
 import './ExerciseModal.css';
 
-const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleUnblockExercise }) => {
+const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheckAnswer }) => {
     const handleCloseModal = () => setOpenExerciseModal(false);
     const [isExerciseBlocked, setIsExerciseBlocked] = useState(exercise.isBlocked);
     const [userInput, setUserInput] = useState('');
@@ -15,10 +15,8 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleUnblo
     const handleUnblockSession = (e) => {
         e.preventDefault();
         const input = userInput.trim();
-        const success = handleUnblockExercise(exerciseId, input);
-        if (success) {
-            setIsExerciseBlocked(false);
-        } else {
+        const success = handleCheckAnswer(input);
+        if (!success) {
             setErrorCount(prev => prev + 1);
         }
     }
@@ -28,6 +26,10 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleUnblo
         errorCount > 0 && isExerciseBlocked && 'modal-incorrect-code',
         errorCount > 0 && 'shake'
     ].filter(Boolean).join(' ');
+
+    useEffect(() => {
+        setIsExerciseBlocked(exercise.isBlocked);
+    }, [exercise])
 
     return (
         <div className='modal-overlay'>

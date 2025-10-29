@@ -24,34 +24,36 @@ const Session = () => {
         return <Navigate to='/404' replace /> 
     }
 
+    const handleCheckAnswer = (answer) => {
+        if (session.exercise.answer === answer) {
+            setIsExerciseUnblocked(true);
+            return true;
+        }
+        return false;
+    }
+    
+    const handleUnblockExercise = () => {
+        setSessions(prev => prev.map(session => {
+            if (session.id === sessionNumber) {
+                return {
+                    ...session,
+                    exercise: {
+                        ...session.exercise,
+                        isBlocked: false
+                    }
+                }
+            }
+            return session
+        }))
+        setIsExerciseUnblocked(false);
+    }
+
     useEffect(() => {
         setTimeout(() => {
             setRevealSession(true);
         }, 10)
     }, [])
-
-    const handleUnblockExercise = (id, answer) => {
-        if (session.exercise.answer === answer) {
-            setIsExerciseUnblocked(true);
-            setSessions(prev => prev.map(session => {
-                if (sessionId === id && session.exercise.answer === answer) {
-                    return {
-                        ...session,
-                        exercise: {
-                            ...session.exercise,
-                            isBlocked: false
-                        }
-                    }
-                }
-                return session
-            }))
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
+    
     return (
         <>
             {session.isBlocked ?
@@ -62,7 +64,7 @@ const Session = () => {
                         setOpenExerciseModal={setOpenExerciseModal} 
                         exercise={session.exercise} 
                         exerciseId={sessionId} 
-                        handleUnblockExercise={handleUnblockExercise}
+                        handleCheckAnswer={handleCheckAnswer}
                     />}
                     {isExerciseUnblocked &&
                         <div className='animation-overlay animation-overlay--unblock-session'>
@@ -70,7 +72,7 @@ const Session = () => {
                                 className='unblock-session-animation'
                                 animationData={unblockAnimation}
                                 loop={false}
-                                onComplete={() => setIsExerciseUnblocked(false)}
+                                onComplete={() => handleUnblockExercise()}
                                 />
                         </div>
                     }
