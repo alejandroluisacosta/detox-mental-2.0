@@ -55,6 +55,6 @@
 
 @media (max-width: 1000px) {
     .exercise-modal {
-        transform: translate(0, -35px);
+        transform: translate(0, -45px);
     }
 }
