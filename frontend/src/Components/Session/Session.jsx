@@ -67,7 +67,7 @@ const Session = () => {
                         handleCheckAnswer={handleCheckAnswer}
                     />}
                     {isExerciseUnblocked &&
-                        <div className='animation-overlay animation-overlay--unblock-session'>
+                        <div className='animation-overlay animation-overlay--unblock-exercise'>
                             <Lottie
                                 className='unblock-session-animation'
                                 animationData={unblockAnimation}

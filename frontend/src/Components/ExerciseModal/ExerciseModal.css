@@ -52,3 +52,9 @@
         margin: 0 auto;
     }
 }
+
+@media (max-width: 1000px) {
+    .exercise-modal {
+        transform: translate(0, -35px);
+    }
+}
