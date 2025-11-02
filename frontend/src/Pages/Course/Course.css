@@ -62,6 +62,11 @@
   opacity: 1;
 }
 
+.unblock-session-animation {
+  width: 200px;
+  height: 200px;
+}
+
 @media (min-width: 1000px) {
   .sessions-page {
     max-width: 700px;

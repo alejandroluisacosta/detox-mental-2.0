@@ -63,7 +63,7 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Describe en máximo dos párrafos un recuerdo o situación actual que te genere PQAs.",
     exercise: {
-      question: "¿De qué país era el filósofo Friedrich Nietzsche?",
+      question: "¿En qué país nació el filósofo Friedrich Nietzsche?",
       answer: "ALEMANIA",
       text: "Escribe un pensamiento recurrente y analiza su impacto en tu día.",
       isBlocked: true
@@ -77,9 +77,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Describe tus PQAs en 3 palabras.",
     exercise: {
-      question: "",
-      answer: 'JAMES',
-      text: 'Anota tres pensamientos con sus emociones asociadas y observa patrones.',
+      question: "¿Quién es considerado el primer filósofo de la historia?",
+      answer: "TALES DE MILETO",
+      text: "Anota tres pensamientos con sus emociones asociadas y observa patrones.",
       isBlocked: true
     }
   },
@@ -91,9 +91,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Cuéntanos cómo conociste Detox Mental.",
     exercise: {
-      question: '¿Quién escribió "Interpretación de los sueños"?',
-      answer: 'FREUD',
-      text: 'Escribe un sueño reciente o pensamiento recurrente y reflexiona sobre él.',
+      question: "¿Como murió el filósofo Séneca?",
+      answer: "SUICIDIO FORZADO",
+      text: "Escribe un sueño reciente o pensamiento recurrente y reflexiona sobre él.",
       isBlocked: true
     }
   },
@@ -105,9 +105,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "¿Qué emoción predomina en ti cuando tus PQAs se activan? (Tristeza, miedo, ira...)",
     exercise: {
-      question: '¿Quién definió la “ventana de tolerancia emocional” en psicología?',
-      answer: 'PERRY',
-      text: 'Identifica una emoción dominante y anótala.',
+      question: "La habilidad de conocerse a sí mismo y observarse desde otras perspectivas.",
+      answer: "AUTOCONOCIMIENTO",
+      text: "Identifica una emoción dominante y anótala.",
       isBlocked: true
     }
   },
@@ -119,9 +119,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "¿Sabías que el famoso libro 'Meditaciones' es una especie de diario donde el emperador Marco Aurelio escribía sus PQAs durante sus campañas de guerra? ¿Cuál es tu guerra actual?",
     exercise: {
-      question: '¿Quién enseñó la práctica de mindfulness en Occidente moderna?',
-      answer: 'KABAT-ZINN',
-      text: 'Escribe un pensamiento intrusivo y observa cómo puedes distanciarte de él.',
+      question: "Sinónimo moderno de la meditación.",
+      answer: "MINDFULNESS",
+      text: "Escribe un pensamiento intrusivo y observa cómo puedes distanciarte de él.",
       isBlocked: true
     }
   },
@@ -133,9 +133,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "¿Qué actividades te ayudan a separarte de tus PQAs o PQSs?",
     exercise: {
-      question: '¿Quién es conocido como el fundador del budismo?',
-      answer: 'BUDDHA',
-      text: 'Elige una actividad diaria y observa tus pensamientos mientras la realizas.',
+      question: "Filosofía del emperador Marco Aurelio.",
+      answer: "ESTOICISMO",
+      text: "Elige una actividad diaria y observa tus pensamientos mientras la realizas.",
       isBlocked: true
     }
   },
@@ -147,9 +147,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Dinos tu edad, de qué país eres, y una cosa que te guste de Detox Mental.",
     exercise: {
-      question: '¿Qué filósofo japonés popularizó la meditación Zen?',
-      answer: 'DŌGEN',
-      text: 'Describe un momento breve de observación de tus pensamientos hoy, sin juzgarlos.',
+      question: "¿Cuál es el libro de filosofía más famoso de China?",
+      answer: "TAO TE CHING",
+      text: "Describe un momento breve de observación de tus pensamientos hoy, sin juzgarlos.",
       isBlocked: true
     }
   },
@@ -161,9 +161,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "¿Recuerdas el momento exacto en el que empezaron tus PQAs? ¿Puedes describirlo?",
     exercise: {
-      question: '¿Quién definió el concepto de "flow"?',
-      answer: 'CSIKSZENTMIHALYI',
-      text: 'Describe una actividad donde pierdes la noción del tiempo y cómo tu mente se siente en calma.',
+      question: "¿Quién definió el concepto de 'flow'?",
+      answer: "CSIKSZENTMIHALYI",
+      text: "Describe una actividad donde pierdes la noción del tiempo y cómo tu mente se siente en calma.",
       isBlocked: true
     }
   },
@@ -175,9 +175,9 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "¿En cuál de los 5 pasos de la estrategia de Detox Mental necesitas más práctica? (Toma distancia - Reconoce - Comprende - Ármate - Mata).",
     exercise: {
-      question: '¿Qué filósofo decía que aceptar un pensamiento lo debilita?',
-      answer: 'EPICURO',
-      text: 'Escoge un pensamiento recurrente y observa sin reaccionar emocionalmente.',
+      question: "Filosofía orientada al placer.",
+      answer: "HEDONISMO",
+      text: "Escoge un pensamiento recurrente y observa sin reaccionar emocionalmente.",
       isBlocked: true
     }
   },
