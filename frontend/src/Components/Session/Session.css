@@ -29,6 +29,7 @@
     position: absolute;
     top: 20px;
     left: 5%;
+    cursor: pointer;
 }
 
 .session__audio {
@@ -44,6 +45,10 @@
     gap: 8px;
 }
 
+.session__lock-icon {
+    transform: translate(0, -2px);
+}
+
 @media (min-width: 1000px) {
     .session {
         max-width: 500px;
@@ -54,8 +59,8 @@
         top: 80px;
         left: 35%;
     }
-}
-
-.session__lock-icon {
-    transform: translate(0, -2px);
+    .unblock-session-animation {
+        max-width: 350px;
+        max-height: 350px;
+    }
 }

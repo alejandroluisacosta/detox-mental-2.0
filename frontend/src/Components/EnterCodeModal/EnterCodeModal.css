@@ -1,9 +1,6 @@
 .enter-code-modal {
     position: fixed;
     width: 80%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     z-index: 3;
     background-color: white;
     display: flex;
@@ -13,10 +10,6 @@
     border-radius: 16px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
     transition: box-shadow 1s ease;
-}
-
-.enter-code-modal--incorrect-code {
-    box-shadow: 0 4px 18px rgba(255, 0, 0, 0.2);
 }
 
 .enter-code-modal__title {

@@ -22,7 +22,7 @@ const EnterCodeModal = ({ selectedSessionId, handleUnblockSession, setOpenEnterC
 
     const formClass = [
         'enter-code-modal',
-        errorCount > 0 && 'enter-code-modal--incorrect-code',
+        errorCount > 0 && 'modal-incorrect-code',
         errorCount > 0 && 'shake'
     ].filter(Boolean).join(' ');
 

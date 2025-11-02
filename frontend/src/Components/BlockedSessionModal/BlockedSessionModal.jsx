@@ -30,20 +30,25 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
 
     return (    
         <>
-            {openEnterCodeModal && <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>}
+            {openEnterCodeModal && 
+            <div className='modal-overlay modal-overlay--layer-2'>
+                <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>
+            </div>}
             {openComingSoonModal && <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>}
-            <div className="blocked-session-modal modal-fade-in">
-                <CloseIcon handleCloseModal={handleCloseBlockedSessionModal} />
-                <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
-                <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
-                <p className="blocked-session-modal__text">Escríbenos a <strong>detoxmental4@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
-                <p className="blocked-session-modal__text blocked-session-modal__text--question">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
-                <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
-                <button className="blocked-session-modal__button" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
-                <hr className="blocked-session-modal__line"/>
-                <p className="blocked-session-modal__text">Opción 2: Compra el curso completo (15 sesiones + 15 ejercicios) por 10€</p>
-                <button className="blocked-session-modal__button blocked-session-modal__button--buy" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
-                <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</span>
+            <div className='modal-overlay'>
+                <div className="blocked-session-modal modal-fade-in">
+                    <CloseIcon handleCloseModal={handleCloseBlockedSessionModal} />
+                    <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
+                    <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
+                    <p className="blocked-session-modal__text">Escríbenos a <strong>detoxmental4@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
+                    <p className="blocked-session-modal__text blocked-session-modal__text--question">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
+                    <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
+                    <button className="blocked-session-modal__button" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
+                    <hr className="blocked-session-modal__line"/>
+                    <p className="blocked-session-modal__text">Opción 2: Compra el curso completo (15 sesiones + 15 ejercicios) por 10€</p>
+                    <button className="blocked-session-modal__button blocked-session-modal__button--buy" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
+                    <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</span>
+                </div>
             </div>
         </>
     )

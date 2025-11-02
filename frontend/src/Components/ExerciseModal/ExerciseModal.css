@@ -1,0 +1,54 @@
+.exercise-modal {
+    position: relative;
+    width: 80%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    background-color: white;
+    padding: 40px 5% 30px;
+}
+
+.exercise-modal__title {
+    margin: 0 0 20px;
+}
+
+.exercise-modal__unblock-container,
+.exercise-modal__exercise-text {
+    margin-bottom: 30px;
+}
+
+.exercise-modal__unblock-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.exercise-modal__input {
+    width: 100%;
+    border-radius: 16px;
+    border: 0;
+    background-color: #E9E9E9;
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+}
+
+.exercise-modal__exercise-text {
+    white-space: pre-line;
+}
+
+.exercise-modal__close-text {
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+@media (min-width: 1000px) {
+    .exercise-modal {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
