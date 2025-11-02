@@ -49,6 +49,11 @@
     transform: translate(0, -2px);
 }
 
+.unblock-session-animation {
+    width: 550px;
+    height: 550px;
+}
+
 @media (min-width: 1000px) {
     .session {
         max-width: 500px;
