@@ -49,7 +49,7 @@
     transform: translate(0, -2px);
 }
 
-.unblock-session-animation {
+.unblock-exercise-animation {
     width: 550px;
     height: 550px;
 }
@@ -64,7 +64,7 @@
         top: 80px;
         left: 35%;
     }
-    .unblock-session-animation {
+    .unblock-exercise-animation {
         max-width: 350px;
         max-height: 350px;
     }
