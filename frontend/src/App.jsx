@@ -6,6 +6,7 @@ import Article from './Pages/Article/Article.jsx';
 import Course from './Pages/Course/Course.jsx';
 import Session from './Components/Session/Session.jsx';
 import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
+import Chat from './Pages/Chat/Chat.jsx';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
             <BrowserRouter>
                 <SessionsProvider>
                     <Routes>
+                        <Route path='/chat' element={<Chat />} />
                         <Route path='/' element={<Article />} />
                         <Route path='course' element={<CourseWrapper />} />
                         <Route path='session/:sessionId' element={<Session />} />
