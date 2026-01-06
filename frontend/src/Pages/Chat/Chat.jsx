@@ -4,6 +4,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(crypto.randomUUID());
 
   async function sendMessage(e) {
     e.preventDefault();
@@ -18,7 +19,7 @@ export default function Chat() {
       const res = await fetch("http://localhost:3000/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMessage.content })
+          body: JSON.stringify({ sessionId: sessionId, message: userMessage.content })
       });
 
       const data = await res.json();
@@ -45,7 +46,7 @@ export default function Chat() {
         const res = await fetch("http://localhost:3000/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({})
+            body: JSON.stringify({ sessionId: sessionId })
         });
 
         const data = await res.json();

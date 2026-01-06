@@ -2,7 +2,7 @@ import { STATES } from "../conversationFlow.js";
 import { timeSelectionPrompt } from "../../prompts/timeSelectionPrompt.js";
 import { parseTimeSelection } from "../../parsers/parseTimeSelection.js"
 
-export async function timeSelectionHandler({ client, session, message }) {
+export async function timeSelectionHandler({ session, message }) {
   // No user input yet → open the conversation
   if (!message) {
       return {
@@ -36,7 +36,7 @@ export async function timeSelectionHandler({ client, session, message }) {
   session.data.timeBudget = minutes;
 
   return {
-    reply: "Perfecto. Continuemos.",
+    reply: null,
     state: session.state
   };
 }

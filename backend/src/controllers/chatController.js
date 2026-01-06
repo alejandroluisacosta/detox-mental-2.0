@@ -1,11 +1,13 @@
 import { InferenceClient } from "@huggingface/inference";
-import { timeSelectionHandler } from "../conversation/handlers/timeSelectionHandler.js";
 import { detoxMentalSystemPrompt } from "../prompts/systemPrompt.js";
 import { sessions } from "../conversation/sessionStore.js";
 import { STATES } from "../conversation/conversationFlow.js";
+import { timeSelectionHandler } from "../conversation/handlers/timeSelectionHandler.js";
+import { compressedGuideHandler } from "../conversation/handlers/compressedGuideHandler.js";
 
 const handlers = {
-  [STATES.TIME_SELECTION]: timeSelectionHandler
+  [STATES.TIME_SELECTION]: timeSelectionHandler,
+  [STATES.COMPRESSED_GUIDE]: compressedGuideHandler
 };
 
 export const chatController = async (req, res) => {
@@ -13,23 +15,32 @@ export const chatController = async (req, res) => {
   try {
     const { message, sessionId } = req.body;
 
-    const session = sessions[sessionId] ?? { state: STATES.TIME_SELECTION, data: {} };
+    let session = sessions[sessionId];
 
-    const handler = handlers[session.state];
-    if (!handler) {
-      throw new Error(`No handler for state: ${session.state}`);
+    if (!session) {
+      session = { state: STATES.TIME_SELECTION, data: {} };
+      sessions[sessionId] = session;
     }
 
-    const { reply, state } = await handler({
+  let reply;
+
+  while (!reply) {
+    const handler = handlers[session.state];
+    if (!handler) throw new Error(`No handler for state ${session.state}`);
+
+    const result = await handler({
       client,
       session,
       message,
-      systemPrompt: detoxMentalSystemPrompt,
+      systemPrompt: detoxMentalSystemPrompt
     });
-
+    reply = result.reply;
+  }
+    
+    console.log(sessions)
     return res.json({
       reply,
-      state
+      state: session.state
     });
   } catch (err) {
     console.error("CHAT ERROR:", err);
