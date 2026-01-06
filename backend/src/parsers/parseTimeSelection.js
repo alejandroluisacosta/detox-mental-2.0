@@ -1,9 +1,12 @@
-function parseTimeSelection(userMessage) {
-  const normalized = userMessage.toLowerCase();
+export function parseTimeSelection(userMessage) {
+  const match = userMessage.trim().match(/^(\d+)\b/);
+  if (!match) return null;
 
-  if (normalized.includes("2")) return 2;
-  if (normalized.includes("5")) return 5;
-  if (normalized.includes("15")) return 15;
+  const value = Number(match[1]);
+
+  if (value === 2 || value === 5 || value === 15) {
+    return value;
+  }
 
   return null;
 }

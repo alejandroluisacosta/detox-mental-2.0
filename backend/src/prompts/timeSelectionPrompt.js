@@ -1,4 +1,4 @@
-function timeSelectionPrompt() {
+export function timeSelectionPrompt() {
   return [
     {
       role: "system",
@@ -13,7 +13,7 @@ Do not explain more than necessary.
       content: `
 Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
 
-Para empezar, ¿cuánto tiempo puedes dedicar ahora mismo?
+Yo soy Tales, tu guía al inicio de este proceso. Para empezar, ¿cuánto tiempo puedes dedicar ahora mismo?
 
 Responde con una sola opción:
 - 2 minutos

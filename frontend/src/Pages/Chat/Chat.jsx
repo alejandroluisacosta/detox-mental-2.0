@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Chat() {
   const [input, setInput] = useState("");
@@ -16,25 +16,57 @@ export default function Chat() {
 
     try {
       const res = await fetch("http://localhost:3000/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage.content })
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage.content })
       });
 
       const data = await res.json();
 
       const assistantMessage = {
-        role: "assistant",
-        content: data.reply
+          role: "assistant",
+          content: data.reply
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     }
-  }
+
+    useEffect(() => {
+    let cancelled = false;
+
+    async function initChat() {
+        setLoading(true);
+        try {
+        const res = await fetch("http://localhost:3000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({})
+        });
+
+        const data = await res.json();
+
+        if (!cancelled) {
+            setMessages([{ role: "assistant", content: data.reply }]);
+        }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            if (!cancelled) setLoading(false);
+        }
+    }
+
+    initChat();
+
+    return () => {
+        cancelled = true;
+    };
+    }, []);
+
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto" }}>
