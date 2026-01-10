@@ -4,10 +4,12 @@ import { sessions } from "../conversation/sessionStore.js";
 import { STATES } from "../conversation/conversationFlow.js";
 import { timeSelectionHandler } from "../conversation/handlers/timeSelectionHandler.js";
 import { compressedGuideHandler } from "../conversation/handlers/compressedGuideHandler.js";
+import { pqaPromptHandler } from "../conversation/handlers/pqaPromptHandler.js";
 
 const handlers = {
   [STATES.TIME_SELECTION]: timeSelectionHandler,
-  [STATES.COMPRESSED_GUIDE]: compressedGuideHandler
+  [STATES.COMPRESSED_GUIDE]: compressedGuideHandler,
+  [STATES.PQA_PROMPT]: pqaPromptHandler
 };
 
 export const chatController = async (req, res) => {

@@ -50,7 +50,7 @@ export async function compressedGuideHandler({ client, session, message, systemP
     Tu turno.
     `;
 
-    session.state = STATES.PQA_ARTICULATION;
+    session.state = STATES.PQA_PROMPT;
 
     return {
         reply: openingPrompt + result.choices[0].message.content + challengePrompt,
