@@ -1,4 +1,21 @@
-.welcome {
+.onboarding {
     min-height: 100vh;
     padding: 40px 1rem 2rem;
+}
+.onboarding__message-container
+.onboarding__message,
+.onboarding__input {
+    margin-bottom: 20px;
+}
+
+.onboarding__message-container {
+}
+
+.onboarding__message {
+}
+
+.onboarding__input {
+    width: 100%;
+    border-radius: 16px;
+    padding: 12px;
 }

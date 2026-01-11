@@ -71,10 +71,10 @@ export default function Onboarding() {
 
 
   return (
-    <div className='welcome' style={{ maxWidth: 600, margin: "0 auto" }}>
-      <div>
+    <div className="onboarding">
+      <div className="onboarding__message-container">
         {messages.map((m, i) => (
-          <p key={i}>
+          <p className="onboarding__message" key={i}>
             <strong>{m.role}:</strong> {m.content}
           </p>
         ))}
@@ -82,9 +82,10 @@ export default function Onboarding() {
 
       <form onSubmit={sendMessage}>
         <input
+          className="onboarding__input"
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder="Type your message"
+          placeholder="Escribe tu respuesta"
         />
         <button type="submit" disabled={loading}>
           Send
