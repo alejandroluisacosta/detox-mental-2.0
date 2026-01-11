@@ -14,7 +14,7 @@ function App() {
             <BrowserRouter>
                 <SessionsProvider>
                     <Routes>
-                        <Route path='/chat' element={<Onboarding />} />
+                        <Route path='/onboarding' element={<Onboarding />} />
                         <Route path='/' element={<Article />} />
                         <Route path='course' element={<CourseWrapper />} />
                         <Route path='session/:sessionId' element={<Session />} />
