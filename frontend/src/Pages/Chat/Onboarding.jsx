@@ -6,6 +6,16 @@ export default function Onboarding() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(crypto.randomUUID());
+  
+  const handleRoleName = (role) => {
+    switch (role) {
+      case "user":
+        return "Tú";
+      default:
+        return "Tales";
+    }
+       
+  }
 
   async function sendMessage(e) {
     e.preventDefault();
@@ -39,34 +49,34 @@ export default function Onboarding() {
     }
 
     useEffect(() => {
-    let cancelled = false;
+      let cancelled = false;
 
-    async function initChat() {
-        setLoading(true);
-        try {
-        const res = await fetch("http://localhost:3000/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sessionId: sessionId })
-        });
+      async function initChat() {
+          setLoading(true);
+          try {
+          const res = await fetch("http://localhost:3000/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ sessionId: sessionId })
+          });
 
-        const data = await res.json();
+          const data = await res.json();
 
-        if (!cancelled) {
-            setMessages([{ role: "assistant", content: data.reply }]);
-        }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            if (!cancelled) setLoading(false);
-        }
-    }
+          if (!cancelled) {
+              setMessages([{ role: "assistant", content: data.reply }]);
+          }
+          } catch (err) {
+              console.error(err);
+          } finally {
+              if (!cancelled) setLoading(false);
+          }
+      }
 
-    initChat();
+      initChat();
 
-    return () => {
-        cancelled = true;
-    };
+      return () => {
+          cancelled = true;
+      };
     }, []);
 
 
@@ -75,7 +85,7 @@ export default function Onboarding() {
       <div className="onboarding__message-container">
         {messages.map((m, i) => (
           <p className="onboarding__message" key={i}>
-            <strong>{m.role}:</strong> {m.content}
+            <strong>{handleRoleName(m.role)}:</strong> {m.content}
           </p>
         ))}
       </div>
