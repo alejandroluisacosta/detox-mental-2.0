@@ -14,7 +14,6 @@ export async function compressedGuideHandler({ client, session, message, systemP
     const openingPrompt = `
     Perfecto, aquí tienes un resumen de nuestra filosofía para que puedas leerlo en ${timeBudget} minutos.\n`
 
-    // Main summary prompt based on user's time
     const summaryPrompt = [
         {
         role: "system",
