@@ -1,4 +1,3 @@
-import { buildRecommendationReply } from "../../parsers/buildRecommendationReply.js";
 import { buildPqaEvaluationPrompt } from "../../prompts/buildPqaEvaluationPrompt.js";
 import { STATES } from "../conversationFlow.js";
 
@@ -34,7 +33,7 @@ export async function pqaEvaluationHandler({ client, session }) {
   session.state = STATES.RECOMMENDATION;
 
   return {
-    reply: buildRecommendationReply(recommendation),
+    reply: null,
     state: session.state
   };
 }

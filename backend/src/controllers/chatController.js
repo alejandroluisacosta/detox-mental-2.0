@@ -6,12 +6,14 @@ import { timeSelectionHandler } from "../conversation/handlers/timeSelectionHand
 import { compressedGuideHandler } from "../conversation/handlers/compressedGuideHandler.js";
 import { pqaPromptHandler } from "../conversation/handlers/pqaPromptHandler.js";
 import { pqaEvaluationHandler } from "../conversation/handlers/pqaEvaluationHandler.js";
+import { recommendationHandler } from "../conversation/handlers/recommendationHandler.js";
 
 const handlers = {
   [STATES.TIME_SELECTION]: timeSelectionHandler,
   [STATES.COMPRESSED_GUIDE]: compressedGuideHandler,
   [STATES.PQA_PROMPT]: pqaPromptHandler,
-  [STATES.PQA_EVALUATION]: pqaEvaluationHandler
+  [STATES.PQA_EVALUATION]: pqaEvaluationHandler,
+  [STATES.RECOMMENDATION]: recommendationHandler
 };
 
 export const chatController = async (req, res) => {
