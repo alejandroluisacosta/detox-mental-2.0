@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import "./Onboarding.css";
 
+const ROLE_LABLES = {
+  user: "Tú",
+  assisntant: "Tales",
+};
+
+const getRoleLable = (role) => ROLE_LABLES[role] ?? "Tales";
+
 export default function Onboarding() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -34,11 +41,6 @@ export default function Onboarding() {
       });
 
       const data = await res.json();
-
-      const assistantMessage = {
-          role: "assistant",
-          content: data.reply
-      };
 
       setMessages(prev => [...prev, assistantMessage]);
         } catch (err) {
@@ -85,7 +87,7 @@ export default function Onboarding() {
       <div className="onboarding__message-container">
         {messages.map((m, i) => (
           <p className="onboarding__message" key={i}>
-            <strong>{handleRoleName(m.role)}:</strong> {m.content}
+            <strong>{getRoleLable(m.role)}:</strong> {m.content}
           </p>
         ))}
       </div>
