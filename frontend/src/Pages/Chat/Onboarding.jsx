@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import "./Onboarding.css";
 
-export default function Chat() {
+export default function Onboarding() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -70,7 +71,7 @@ export default function Chat() {
 
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto" }}>
+    <div className='welcome' style={{ maxWidth: 600, margin: "0 auto" }}>
       <div>
         {messages.map((m, i) => (
           <p key={i}>
