@@ -13,8 +13,9 @@ export async function timeSelectionHandler({ session, message }) {
   Para empezar, ¿cuánto tiempo puedes dedicar ahora mismo?
 
   Responde con una sola opción:
+  
   - 2 minutos
-  - 5 minutos
+  - 5 minutos 
   - 15 minutos
   `,
         state: session.state,

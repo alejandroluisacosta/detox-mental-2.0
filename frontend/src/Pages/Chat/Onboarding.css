@@ -1,6 +1,7 @@
 .onboarding {
     min-height: 100vh;
     padding: 40px 1rem 2rem;
+    /* overflow-x: hidden; */
 }
 .onboarding__message-container
 .onboarding__message,
@@ -12,6 +13,23 @@
 }
 
 .onboarding__message {
+    line-height: 25px;
+    word-break: break-word;
+}
+
+.onboarding__message p {
+    margin-bottom: 8px;
+}
+
+.onboarding__message li {
+    list-style: unset;
+    list-style-position: inside;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.onboarding__message__role {
+    display: block;
 }
 
 .onboarding__input {

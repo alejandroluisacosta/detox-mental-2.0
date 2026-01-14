@@ -11,8 +11,7 @@ export async function compressedGuideHandler({ client, session, message, systemP
     const { timeBudget } = session.data;
     const maxTokens = TOKEN_BUDGET_BY_TIME[session.data.timeBudget] ?? 700;
 
-    const openingPrompt = `
-    Perfecto, aquí tienes un resumen de nuestra filosofía para que puedas leerlo en ${timeBudget} minutos.\n`
+    const openingPrompt = `Perfecto, aquí tienes un resumen de nuestra filosofía para que puedas leerlo en ${timeBudget} minutos.`;
 
     const summaryPrompt = [
         {
@@ -37,22 +36,16 @@ export async function compressedGuideHandler({ client, session, message, systemP
     });
 
     // Append the "challenge" prompt after the summary
-    const challengePrompt = `
-    \nEn Detox Mental valoramos la práctica, la experimentación. Creemos que la única forma de lidiar con tus pensamientos problemáticos es clarificándolos para luego trabajar en ellos eficientemente, teniendo el máximo impacto en el menor tiempo posible.
-
-    Somos también amantes de los desafíos, así que este es mi primer desafío para ti: ¿puedes describir tus PQAs (Pensamientos Que Atormentan) en solo una (1) frase?
-
-    Dame tu mejor respuesta y te diré qué camino es mejor para ti en este punto: una exploración más profunda de nuestros conceptos o nuestro programa de práctica estructurada.
-
-    Recuerda: una sola frase.
-
-    Tu turno.
-    `;
+    const challengePrompt = `En Detox Mental valoramos la práctica, la experimentación. Creemos que la única forma de lidiar con tus pensamientos problemáticos es clarificándolos para luego trabajar en ellos eficientemente, teniendo el máximo impacto en el menor tiempo posible.\n\nSomos también amantes de los desafíos, así que este es mi primer desafío para ti: ¿puedes describir tus PQAs (Pensamientos Que Atormentan) en solo una (1) frase?\n\nDame tu mejor respuesta y te diré qué camino es mejor para ti en este punto: una exploración más profunda de nuestros conceptos o nuestro programa de práctica estructurada.\n\nRecuerda: una sola frase.\n\nTu turno.`;
 
     session.state = STATES.PQA_PROMPT;
 
     return {
-        reply: openingPrompt + result.choices[0].message.content + challengePrompt,
+        reply: [
+            openingPrompt,
+            result.choices[0].message.content,
+            challengePrompt,
+        ].join("\n\n"),
         state: session.state
     };
 }

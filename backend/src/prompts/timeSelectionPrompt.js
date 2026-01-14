@@ -15,8 +15,7 @@ Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
 
 Yo soy Tales, tu guía al inicio de este proceso. Para empezar, ¿cuánto tiempo puedes dedicar ahora mismo?
 
-Responde con una sola opción:
-- 2 minutos
+Responde con una sola opción:2 minutosx
 - 5 minutos
 - 15 minutos
 `

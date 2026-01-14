@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ReactMarkdown from 'react-markdown';
 import "./Onboarding.css";
 
 const ROLE_LABLES = {
@@ -6,7 +7,7 @@ const ROLE_LABLES = {
   assisntant: "Tales",
 };
 
-const getRoleLable = (role) => ROLE_LABLES[role] ?? "Tales";
+const getRoleLabel = (role) => ROLE_LABLES[role] ?? "Tales";
 
 export default function Onboarding() {
   const [input, setInput] = useState("");
@@ -14,22 +15,14 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(crypto.randomUUID());
   
-  const handleRoleName = (role) => {
-    switch (role) {
-      case "user":
-        return "Tú";
-      default:
-        return "Tales";
-    }
-       
-  }
-
   async function sendMessage(e) {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => [
+      ...prev,
+      { role: "user", content: input },
+    ]);
     setInput("");
     setLoading(true);
 
@@ -37,18 +30,26 @@ export default function Onboarding() {
       const res = await fetch("http://localhost:3000/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId: sessionId, message: userMessage.content })
+          body: JSON.stringify({ sessionId: sessionId, message: input })
       });
 
+      if (!res.ok) {
+        throw new Error("Chat request failed");
+      }
       const data = await res.json();
 
-      setMessages(prev => [...prev, assistantMessage]);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: data.reply },
+      ]);
+
+
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setLoading(false);
     }
+  }
 
     useEffect(() => {
       let cancelled = false;
@@ -86,9 +87,16 @@ export default function Onboarding() {
     <div className="onboarding">
       <div className="onboarding__message-container">
         {messages.map((m, i) => (
-          <p className="onboarding__message" key={i}>
-            <strong>{getRoleLable(m.role)}:</strong> {m.content}
-          </p>
+          <div className="onboarding__message" key={i}>
+            <strong className="onboarding__message__role">{getRoleLabel(m.role)}:</strong>
+            <div className="onboarding__message__content">
+              {m.role === "assistant" ? (
+                <ReactMarkdown>{m.content}</ReactMarkdown>
+              ) : (
+                <span>{m.content}</span>
+              )}
+            </div>
+          </div>
         ))}
       </div>
 
