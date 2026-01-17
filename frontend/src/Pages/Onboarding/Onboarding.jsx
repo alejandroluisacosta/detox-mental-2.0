@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from 'react-markdown';
 import "./Onboarding.css";
 
@@ -14,6 +14,7 @@ export default function Onboarding() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(crypto.randomUUID());
+  const messagesEndRef = useRef(null);
   
   async function sendMessage(e) {
     e.preventDefault();
@@ -82,6 +83,11 @@ export default function Onboarding() {
       };
     }, []);
 
+  useEffect(() => {
+    if (loading) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [loading]);
 
   return (
     <div className="onboarding">
@@ -110,6 +116,7 @@ export default function Onboarding() {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <form onSubmit={sendMessage}>
