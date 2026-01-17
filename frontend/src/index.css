@@ -170,7 +170,10 @@ body .modal-incorrect-code {
   animation: fadeInOut 3s ease forwards;
 }
 
-.intro-screen__intro-image {
+.intro-screen__intro-image,
+.intro-screen__title,
+.intro-screen__image,
+.intro-screen__name {
   text-align: center;
 }
 
