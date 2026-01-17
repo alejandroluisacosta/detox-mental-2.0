@@ -8,11 +8,6 @@
     flex-direction: column;
 }
 
-.onboarding__message,
-.onboarding__input {
-    margin-bottom: 20px;
-}
-
 .onboarding__message {
     line-height: 25px;
     word-break: break-word;
@@ -20,6 +15,7 @@
     border-radius: 18px;
     background-color: #f0f0f0;
     max-width: 80%;
+    margin-bottom: 20px;
 }
 
 .onboarding__message p {
@@ -48,17 +44,50 @@
     border-radius: 16px;
     padding: 12px;
     font-size: 18px;
+    border: 1.25px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #d4a574 0%, #ffb5a7 25%, #a8e6cf 50%, #ffd89b 75%, #c49564 100%) border-box;
+    background-clip: padding-box, border-box;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.onboarding__input:focus {
+    outline: none;
 }
 
 .onboarding__button {
     font-size: 18px;
     font-weight: 400;
     letter-spacing: 2px;
+    border: 2px solid transparent;
+    background: linear-gradient(#845d43, #845d43) padding-box,
+                linear-gradient(135deg, #d4a574 0%, #ffb5a7 25%, 50%, #ffd89b 75%, #c49564 100%) border-box;
+    background-clip: padding-box, border-box;
+    border-radius: 16px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.onboarding__button:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.onboarding__button:active:not(:disabled) {
+    transform: scale(0.98);
 }
 
 .onboarding__input:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    animation: none;
+}
+
+.onboarding__button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
 }
 
 .onboarding__loading-indicator {
