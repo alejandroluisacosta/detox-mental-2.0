@@ -6,7 +6,7 @@ import Article from './Pages/Article/Article.jsx';
 import Course from './Pages/Course/Course.jsx';
 import Session from './Components/Session/Session.jsx';
 import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
-import Onboarding from './Pages/Chat/Onboarding.jsx';
+import Onboarding from './Pages/Onboarding/Onboarding.jsx';
 
 function App() {
     return (

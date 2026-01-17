@@ -4,7 +4,7 @@ import "./Onboarding.css";
 
 const ROLE_LABLES = {
   user: "Tú",
-  assisntant: "Tales",
+  assistant: "Tales",
 };
 
 const getRoleLabel = (role) => ROLE_LABLES[role] ?? "Tales";
@@ -87,9 +87,9 @@ export default function Onboarding() {
     <div className="onboarding">
       <div className="onboarding__message-container">
         {messages.map((m, i) => (
-          <div className="onboarding__message" key={i}>
+          <div className={"onboarding__message" + (m.role === "user" ? " user-message" : "")} key={i}>
             <strong className="onboarding__message__role">{getRoleLabel(m.role)}:</strong>
-            <div className="onboarding__message__content">
+            <div className={"onboarding__message__content"}>
               {m.role === "assistant" ? (
                 <ReactMarkdown>{m.content}</ReactMarkdown>
               ) : (

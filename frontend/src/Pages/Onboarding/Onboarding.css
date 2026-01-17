@@ -9,9 +9,6 @@
     margin-bottom: 20px;
 }
 
-.onboarding__message-container {
-}
-
 .onboarding__message {
     line-height: 25px;
     word-break: break-word;
@@ -30,6 +27,10 @@
 
 .onboarding__message__role {
     display: block;
+}
+
+.onboarding__message.user-message {
+    text-align: end;
 }
 
 .onboarding__input {
