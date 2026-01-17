@@ -93,25 +93,41 @@ export default function Onboarding() {
     <div className="onboarding">
       <div className="onboarding__message-container">
         {messages.map((m, i) => (
-          <div className={"onboarding__message" + (m.role === "user" ? " user-message" : "")} key={i}>
-            <strong className="onboarding__message__role">{getRoleLabel(m.role)}:</strong>
-            <div className={"onboarding__message__content"}>
-              {m.role === "assistant" ? (
-                <ReactMarkdown>{m.content}</ReactMarkdown>
-              ) : (
-                <span>{m.content}</span>
-              )}
+          <div className={"onboarding__message-wrapper" + (m.role === "user" ? " user-message-wrapper" : "")} key={i}>
+            {m.role === "assistant" && (
+              <img 
+                src="/images/thales.webp" 
+                alt="Thales" 
+                className="onboarding__message__avatar"
+              />
+            )}
+            <div className={"onboarding__message" + (m.role === "user" ? " user-message" : "")}>
+              <strong className="onboarding__message__role">{getRoleLabel(m.role)}:</strong>
+              <div className={"onboarding__message__content"}>
+                {m.role === "assistant" ? (
+                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                ) : (
+                  <span>{m.content}</span>
+                )}
+              </div>
             </div>
           </div>
         ))}
         {loading && (
-          <div className="onboarding__message onboarding__message--loading">
-            <strong className="onboarding__message__role">{getRoleLabel("assistant")}:</strong>
-            <div className="onboarding__message__content">
-              <div className="onboarding__loading-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
+          <div className="onboarding__message-wrapper">
+            <img 
+              src="/images/thales.webp" 
+              alt="Thales" 
+              className="onboarding__message__avatar"
+            />
+            <div className="onboarding__message onboarding__message--loading">
+              <strong className="onboarding__message__role">{getRoleLabel("assistant")}:</strong>
+              <div className="onboarding__message__content">
+                <div className="onboarding__loading-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
               </div>
             </div>
           </div>
