@@ -98,6 +98,18 @@ export default function Onboarding() {
             </div>
           </div>
         ))}
+        {loading && (
+          <div className="onboarding__message onboarding__message--loading">
+            <strong className="onboarding__message__role">{getRoleLabel("assistant")}:</strong>
+            <div className="onboarding__message__content">
+              <div className="onboarding__loading-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <form onSubmit={sendMessage}>
@@ -106,6 +118,7 @@ export default function Onboarding() {
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Escribe tu respuesta"
+          disabled={loading}
         />
         <button type="submit" disabled={loading}>
           Send

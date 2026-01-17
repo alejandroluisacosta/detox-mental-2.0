@@ -3,7 +3,11 @@
     padding: 40px 1rem 2rem;
     /* overflow-x: hidden; */
 }
-.onboarding__message-container
+.onboarding__message-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .onboarding__message,
 .onboarding__input {
     margin-bottom: 20px;
@@ -12,6 +16,10 @@
 .onboarding__message {
     line-height: 25px;
     word-break: break-word;
+    padding: 12px 16px;
+    border-radius: 18px;
+    background-color: #f0f0f0;
+    max-width: 80%;
 }
 
 .onboarding__message p {
@@ -30,11 +38,52 @@
 }
 
 .onboarding__message.user-message {
-    text-align: end;
+    margin-left: auto;
+    text-align: left;
+    background-color: #ffe1d2;
 }
 
 .onboarding__input {
     width: 100%;
     border-radius: 16px;
     padding: 12px;
+}
+
+.onboarding__input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.onboarding__loading-indicator {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.onboarding__loading-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #666;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.onboarding__loading-indicator span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.onboarding__loading-indicator span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
