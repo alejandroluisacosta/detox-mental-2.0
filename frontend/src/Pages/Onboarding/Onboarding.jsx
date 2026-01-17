@@ -120,8 +120,8 @@ export default function Onboarding() {
           placeholder="Escribe tu respuesta"
           disabled={loading}
         />
-        <button type="submit" disabled={loading}>
-          Send
+        <button className="onboarding__button" type="submit" disabled={loading}>
+          ENVIAR
         </button>
       </form>
     </div>

@@ -47,6 +47,13 @@
     width: 100%;
     border-radius: 16px;
     padding: 12px;
+    font-size: 18px;
+}
+
+.onboarding__button {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 2px;
 }
 
 .onboarding__input:disabled {
