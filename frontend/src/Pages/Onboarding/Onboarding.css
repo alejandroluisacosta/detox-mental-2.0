@@ -1,3 +1,12 @@
+.onboarding-container {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.onboarding-container.fade-in {
+  opacity: 1;
+}
+
 .onboarding {
     min-height: 100vh;
     padding: 40px 1rem 2rem;

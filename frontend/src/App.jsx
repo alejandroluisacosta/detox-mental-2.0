@@ -6,7 +6,7 @@ import Article from './Pages/Article/Article.jsx';
 import Course from './Pages/Course/Course.jsx';
 import Session from './Components/Session/Session.jsx';
 import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
-import Onboarding from './Pages/Onboarding/Onboarding.jsx';
+import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';
 
 function App() {
     return (
@@ -14,7 +14,7 @@ function App() {
             <BrowserRouter>
                 <SessionsProvider>
                     <Routes>
-                        <Route path='/onboarding' element={<Onboarding />} />
+                        <Route path='/onboarding' element={<OnboardingWrapper />} />
                         <Route path='/' element={<Article />} />
                         <Route path='course' element={<CourseWrapper />} />
                         <Route path='session/:sessionId' element={<Session />} />
