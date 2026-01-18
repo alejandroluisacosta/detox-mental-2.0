@@ -40,7 +40,7 @@ export default function OnboardingWrapper() {
 
   if (introState === 'first') {
     return (
-      <div className="intro-screen">
+      <div className="intro-screen--onboarding-1">
         <h1 className="intro-screen__intro-image">Detox Mental</h1>
       </div>
     );
@@ -48,7 +48,7 @@ export default function OnboardingWrapper() {
 
   if (introState === 'second') {
     return (
-      <div className="intro-screen">
+      <div className="intro-screen--onboarding-2">
         <div className="intro-screen__content">
           <img 
             src="/images/thales.webp" 
