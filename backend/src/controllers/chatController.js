@@ -1,6 +1,5 @@
 import { InferenceClient } from "@huggingface/inference";
 import { detoxMentalSystemPrompt } from "../prompts/systemPrompt.js";
-import { sessions } from "../conversation/sessionStore.js";
 import { STATES } from "../conversation/conversationFlow.js";
 import { timeSelectionHandler } from "../conversation/handlers/timeSelectionHandler.js";
 import { compressedGuideHandler } from "../conversation/handlers/compressedGuideHandler.js";
@@ -16,17 +15,22 @@ const handlers = {
   [STATES.RECOMMENDATION]: recommendationHandler
 };
 
-export const chatController = async (req, res) => {
+/**
+ * Serverless-compatible chat handler.
+ * 
+ * Input: { message, sessionState: { state, data } }
+ * Output: { reply, state, data }
+ * 
+ * sessionState is passed in/out explicitly (no in-memory storage).
+ */
+export const chatController = async ({ message, sessionState }) => {
   const client = new InferenceClient(process.env.HF_TOKEN);
-  try {
-    const { message, sessionId } = req.body;
-
-    let session = sessions[sessionId];
-
-    if (!session) {
-      session = { state: STATES.TIME_SELECTION, data: {} };
-      sessions[sessionId] = session;
-    }
+  
+  // Initialize session state from input (defaults to TIME_SELECTION if not provided)
+  const session = {
+    state: sessionState?.state ?? STATES.TIME_SELECTION,
+    data: sessionState?.data ?? {}
+  };
 
   let reply;
 
@@ -42,12 +46,25 @@ export const chatController = async (req, res) => {
     });
     reply = result.reply;
   }
-    
-    console.log(sessions)
-    return res.json({
-      reply,
-      state: session.state
-    });
+
+  return {
+    reply,
+    state: session.state,
+    data: session.data
+  };
+};
+
+/**
+ * Express middleware wrapper for backward compatibility.
+ * This can be used in existing Express routes.
+ */
+export const chatControllerExpressMiddleware = async (req, res) => {
+  try {
+    const { message, sessionState } = req.body;
+
+    const result = await chatController({ message, sessionState });
+
+    return res.json(result);
   } catch (err) {
     console.error("CHAT ERROR:", err);
     return res.status(500).json({ error: err.response?.data || err.message || "Internal error while processing chat." });
