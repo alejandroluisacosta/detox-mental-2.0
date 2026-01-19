@@ -33,8 +33,9 @@ export const chatController = async ({ message, sessionState }) => {
   };
 
   let reply;
+  let safety = 0;
 
-  while (!reply) {
+  while (!reply && safety < 3) {
     const handler = handlers[session.state];
     if (!handler) throw new Error(`No handler for state ${session.state}`);
 
@@ -45,6 +46,7 @@ export const chatController = async ({ message, sessionState }) => {
       systemPrompt: detoxMentalSystemPrompt
     });
     reply = result.reply;
+    safety++;
   }
 
   return {
@@ -53,6 +55,10 @@ export const chatController = async ({ message, sessionState }) => {
     data: session.data
   };
 };
+
+if (!reply) {
+  throw new Error("No reply generated after safety limit");
+}
 
 /**
  * Express middleware wrapper for backward compatibility.
