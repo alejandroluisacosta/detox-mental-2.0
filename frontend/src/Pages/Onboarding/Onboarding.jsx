@@ -28,7 +28,7 @@ export default function Onboarding() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/chat", {
+      const res = await fetch("http://detox-mental-backend-il0t1neek.vercel.app/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: input, sessionState: sessionState })
@@ -58,7 +58,7 @@ export default function Onboarding() {
       async function initChat() {
         setLoading(true);
         try {
-          const res = await fetch("http://localhost:3000/api/chat", {
+          const res = await fetch("http://detox-mental-backend-il0t1neek.vercel.app/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: "", sessionState: undefined })
