@@ -48,6 +48,10 @@ export const chatController = async ({ message, sessionState }) => {
     reply = result.reply;
     safety++;
   }
+  
+  if (!reply) {
+    throw new Error("No reply generated after safety limit");
+  }
 
   return {
     reply,
@@ -55,10 +59,6 @@ export const chatController = async ({ message, sessionState }) => {
     data: session.data
   };
 };
-
-if (!reply) {
-  throw new Error("No reply generated after safety limit");
-}
 
 /**
  * Express middleware wrapper for backward compatibility.

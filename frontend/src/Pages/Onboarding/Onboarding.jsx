@@ -13,7 +13,7 @@ export default function Onboarding() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sessionId, setSessionId] = useState(crypto.randomUUID());
+  const [sessionState, setSessionState] = useState(null);
   const messagesEndRef = useRef(null);
   
   async function sendMessage(e) {
@@ -28,10 +28,10 @@ export default function Onboarding() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/chat", {
+      const res = await fetch("http://localhost:3000/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId: sessionId, message: input })
+          body: JSON.stringify({ message: input, sessionState: sessionState })
       });
 
       if (!res.ok) {
@@ -39,6 +39,7 @@ export default function Onboarding() {
       }
       const data = await res.json();
 
+      setSessionState(data.sessionState);
       setMessages(prev => [
         ...prev,
         { role: "assistant", content: data.reply },
@@ -54,19 +55,19 @@ export default function Onboarding() {
 
     useEffect(() => {
       let cancelled = false;
-
       async function initChat() {
-          setLoading(true);
-          try {
-          const res = await fetch("http://localhost:3000/chat", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ sessionId: sessionId })
+        setLoading(true);
+        try {
+          const res = await fetch("http://localhost:3000/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "", sessionState: undefined })
           });
 
           const data = await res.json();
 
           if (!cancelled) {
+              setSessionState(data.sessionState);
               setMessages([{ role: "assistant", content: data.reply }]);
           }
           } catch (err) {
