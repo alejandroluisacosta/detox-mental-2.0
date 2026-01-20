@@ -1,0 +1,232 @@
+.onboarding-container {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.onboarding-container.fade-in {
+  opacity: 1;
+}
+
+.intro-screen--onboarding-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: var(--background);
+  color: var(--accent);
+  font-size: 2rem;
+  animation: fadeInOutOnboarding1 3s ease forwards;
+}
+
+.intro-screen--onboarding-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: var(--background);
+  color: var(--accent);
+  font-size: 2rem;
+  animation: fadeInOutOnboarding2 3s ease forwards;
+}
+
+@keyframes fadeInOutOnboarding1 {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes fadeInOutOnboarding2 {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.intro-screen__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.intro-screen__title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.intro-screen__image {
+  width: 220px;
+  height: 220px;
+  border-radius: 16px;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.intro-screen__name {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+.onboarding {
+    min-height: 100vh;
+    padding: 40px 1rem 2rem;
+    /* overflow-x: hidden; */
+}
+.onboarding__message-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.onboarding__message-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.onboarding__message-wrapper.user-message-wrapper {
+    justify-content: flex-end;
+}
+
+.onboarding__message__avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    object-position: center top;
+}
+
+.onboarding__message {
+    line-height: 25px;
+    word-break: break-word;
+    padding: 12px 16px;
+    border-radius: 18px;
+    background-color: #f0f0f0;
+    max-width: calc(80% - 46px);
+}
+
+.onboarding__message p {
+    margin-bottom: 8px;
+}
+
+.onboarding__message li {
+    list-style: unset;
+    list-style-position: inside;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.onboarding__message__role {
+    display: block;
+}
+
+.onboarding__message.user-message {
+    text-align: left;
+    background-color: #ffe1d2;
+}
+
+.onboarding__input {
+    width: 100%;
+    border-radius: 16px;
+    padding: 12px;
+    font-size: 18px;
+    border: 1.25px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #d4a574 0%, #ffb5a7 25%, #a8e6cf 50%, #ffd89b 75%, #c49564 100%) border-box;
+    background-clip: padding-box, border-box;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.onboarding__input:focus {
+    outline: none;
+}
+
+.onboarding__button {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    border: 2px solid transparent;
+    background: linear-gradient(#845d43, #845d43) padding-box,
+                linear-gradient(135deg, #d4a574 0%, #ffb5a7 25%, 50%, #ffd89b 75%, #c49564 100%) border-box;
+    background-clip: padding-box, border-box;
+    border-radius: 16px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.onboarding__button:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.onboarding__button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.onboarding__input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+}
+
+.onboarding__button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+}
+
+.onboarding__loading-indicator {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.onboarding__loading-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #666;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.onboarding__loading-indicator span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.onboarding__loading-indicator span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
