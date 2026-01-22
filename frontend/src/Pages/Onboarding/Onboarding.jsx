@@ -28,7 +28,7 @@ export default function Onboarding() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://detox-mental-backend-5vgvhs4c4.vercel.app/api/chat", {
+      const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: input, sessionState: sessionState })
@@ -58,7 +58,7 @@ export default function Onboarding() {
       async function initChat() {
         setLoading(true);
         try {
-          const res = await fetch("https://detox-mental-backend-5vgvhs4c4.vercel.app/api/chat", {
+          const res = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: "", sessionState: undefined })
