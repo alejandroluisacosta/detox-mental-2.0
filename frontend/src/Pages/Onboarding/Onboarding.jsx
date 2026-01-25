@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from 'react-markdown';
 import "./Onboarding.css";
 
+const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || "http://localhost:3000/chat";
+
 const ROLE_LABLES = {
   user: "Tú",
   assistant: "Tales",
@@ -28,7 +30,7 @@ export default function Onboarding() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch(CHAT_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: input, sessionState: sessionState })
@@ -58,10 +60,10 @@ export default function Onboarding() {
       async function initChat() {
         setLoading(true);
         try {
-          const res = await fetch("/api/chat", {
+          const res = await fetch(CHAT_API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: "", sessionState: undefined })
+            body: JSON.stringify({ message: "", sessionState: null })
           });
 
           const data = await res.json();

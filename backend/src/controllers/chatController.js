@@ -6,6 +6,7 @@ import { compressedGuideHandler } from "../conversation/handlers/compressedGuide
 import { pqaPromptHandler } from "../conversation/handlers/pqaPromptHandler.js";
 import { pqaEvaluationHandler } from "../conversation/handlers/pqaEvaluationHandler.js";
 import { recommendationHandler } from "../conversation/handlers/recommendationHandler.js";
+import { sessions } from "../conversation/sessionStore.js";
 
 const handlers = {
   [STATES.TIME_SELECTION]: timeSelectionHandler,
@@ -31,10 +32,10 @@ export const chatController = async ({ message, sessionState }) => {
     state: sessionState?.state ?? STATES.TIME_SELECTION,
     data: sessionState?.data ?? {}
   };
-
+  
   let reply;
   let safety = 0;
-
+  
   while (!reply && safety < 3) {
     const handler = handlers[session.state];
     if (!handler) throw new Error(`No handler for state ${session.state}`);
@@ -52,7 +53,6 @@ export const chatController = async ({ message, sessionState }) => {
   if (!reply) {
     throw new Error("No reply generated after safety limit");
   }
-
   return {
     reply,
     state: session.state,

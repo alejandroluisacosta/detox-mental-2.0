@@ -16,9 +16,9 @@ export default async function handler(req, res) {
   try {
     const { message, sessionState } = req.body;
 
-  if (typeof message !== "string") {
-    return res.status(400).json({ error: "message must be a string" });
-  }
+    if (message != null && typeof message !== "string") {
+      return res.status(400).json({ error: "Message must be a string" });
+    }
 
     const result = await chatController({ message, sessionState });
 
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     console.error("CHAT ERROR:", err);
     
     return res.status(500).json({
-      error: err.response?.data || err.message || "Internal error while processing chat."
+      error: err.message || "Internal server error"
     });
   }
 }
