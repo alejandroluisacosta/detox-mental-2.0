@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 import "./Onboarding.css";
 
@@ -17,6 +18,7 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [sessionState, setSessionState] = useState(null);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
   
   async function sendMessage(e) {
     e.preventDefault();
@@ -28,8 +30,6 @@ export default function Onboarding() {
     ]);
     setInput("");
     setLoading(true);
-
-    console.log(`Session state before handler call: ${sessionState}`);
 
     try {
       const res = await fetch(CHAT_API_URL, {
@@ -49,7 +49,8 @@ export default function Onboarding() {
         { role: "assistant", content: data.reply },
       ]);
 
-      console.log(`Session state **after** handler call: ${sessionState}`);
+      console.log(sessionState.state);
+
     } catch (err) {
         console.error(err);
     } finally {
@@ -140,18 +141,35 @@ export default function Onboarding() {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={sendMessage}>
-        <input
-          className="onboarding__input"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Escribe tu respuesta"
-          disabled={loading}
-        />
-        <button className="onboarding__button" type="submit" disabled={loading}>
-          ENVIAR
-        </button>
-      </form>
+      {sessionState?.state === "EXIT" ? (
+        <div className="onboarding__exit-buttons">
+          <button 
+            className="onboarding__exit-button" 
+            onClick={() => navigate("/")}
+          >
+            Artículo
+          </button>
+          <button 
+            className="onboarding__exit-button" 
+            onClick={() => navigate("/course")}
+          >
+            Curso
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={sendMessage}>
+          <input
+            className="onboarding__input"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Escribe tu respuesta"
+            disabled={loading}
+          />
+          <button className="onboarding__button" type="submit" disabled={loading}>
+            ENVIAR
+          </button>
+        </form>
+      )}
     </div>
   );
 }

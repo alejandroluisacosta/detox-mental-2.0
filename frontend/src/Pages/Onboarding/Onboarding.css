@@ -230,3 +230,31 @@
         opacity: 1;
     }
 }
+
+.onboarding__exit-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    justify-content: center;
+}
+
+.onboarding__exit-button {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: var(--background);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.onboarding__exit-button:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+.onboarding__exit-button:active {
+    transform: translateY(0);
+}
