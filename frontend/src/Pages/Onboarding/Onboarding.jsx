@@ -29,6 +29,8 @@ export default function Onboarding() {
     setInput("");
     setLoading(true);
 
+    console.log(`Session state before handler call: ${sessionState}`);
+
     try {
       const res = await fetch(CHAT_API_URL, {
           method: "POST",
@@ -41,13 +43,13 @@ export default function Onboarding() {
       }
       const data = await res.json();
 
-      setSessionState(data.sessionState);
+      setSessionState({ state: data.state, data: data.data });
       setMessages(prev => [
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
 
-
+      console.log(`Session state **after** handler call: ${sessionState}`);
     } catch (err) {
         console.error(err);
     } finally {
@@ -69,7 +71,7 @@ export default function Onboarding() {
           const data = await res.json();
 
           if (!cancelled) {
-              setSessionState(data.sessionState);
+              setSessionState({ state: data.state, data: data.data });
               setMessages([{ role: "assistant", content: data.reply }]);
           }
           } catch (err) {
