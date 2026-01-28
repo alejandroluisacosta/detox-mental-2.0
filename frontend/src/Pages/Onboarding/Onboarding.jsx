@@ -147,13 +147,23 @@ export default function Onboarding() {
             className="onboarding__exit-button" 
             onClick={() => navigate("/")}
           >
-            Artículo
+            <img
+              src="/icons/article.svg"
+              alt="Article"
+              className="icon icon--article"
+            />
+            ARTÍCULO
           </button>
           <button 
             className="onboarding__exit-button" 
             onClick={() => navigate("/course")}
           >
-            Curso
+            <img
+              src="/icons/star.svg"
+              alt="Article"
+              className="icon icon--star"
+            />
+            CURSO
           </button>
         </div>
       ) : (

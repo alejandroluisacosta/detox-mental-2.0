@@ -234,12 +234,23 @@
 .onboarding__exit-buttons {
     display: flex;
     gap: 12px;
-    padding: 16px;
+    padding: 8px;
     justify-content: center;
+    margin-bottom: 45px;
+}
+
+.onboarding__exit-buttons .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.onboarding__exit-buttons .icon--star {
+    transform: translate(0, -1px)
 }
 
 .onboarding__exit-button {
-    padding: 12px 32px;
+    padding: 16px 32px;
     border: none;
     border-radius: 8px;
     background-color: var(--accent);
@@ -248,6 +259,8 @@
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
 }
 
 .onboarding__exit-button:hover {
