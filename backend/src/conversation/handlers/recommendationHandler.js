@@ -2,9 +2,9 @@ import { buildRecommendationReply } from "../../parsers/buildRecommendationReply
 import { STATES } from "../conversationFlow.js";
 
 export async function recommendationHandler({ session }) {
-  const recommendation = session.data.recommendation;
+  const clarity = session.data.pqaClarity ?? 'low';
 
-  const reply = buildRecommendationReply(recommendation);
+  const reply = buildRecommendationReply(clarity);
 
   session.state = STATES.EXIT;
 

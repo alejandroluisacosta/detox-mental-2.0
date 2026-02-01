@@ -14,6 +14,8 @@ export async function pqaEvaluationHandler({ client, session }) {
   });
 
   const raw = modelResponse.choices[0].message.content;
+
+  // const raw = {"clarity": "high"};
   
   let clarity;
   try {
@@ -22,13 +24,8 @@ export async function pqaEvaluationHandler({ client, session }) {
   } catch {
     clarity = 'low';
   }
-  const recommendation =
-    clarity === 'high'
-      ? 'COURSE'
-      : 'ARTICLE';
 
   session.data.pqaClarity = clarity;
-  session.data.recommendation = recommendation;
 
   session.state = STATES.RECOMMENDATION;
 
