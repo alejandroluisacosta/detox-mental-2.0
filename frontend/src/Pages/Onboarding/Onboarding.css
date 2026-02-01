@@ -26,7 +26,7 @@
   background: var(--background);
   color: var(--accent);
   font-size: 2rem;
-  animation: fadeInOutOnboarding2 3s ease forwards;
+  animation: fadeInOutOnboarding2 6s ease forwards;
 }
 
 @keyframes fadeInOutOnboarding1 {
@@ -79,6 +79,14 @@
   border-radius: 16px;
   object-fit: cover;
   object-position: center top;
+}
+
+.intro-screen__video {
+  width: 220px;
+  height: 270px;
+  border-radius: 16px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .intro-screen__name {
