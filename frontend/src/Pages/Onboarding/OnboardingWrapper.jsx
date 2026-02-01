@@ -21,7 +21,7 @@ export default function OnboardingWrapper() {
     // Tales intro: video - shows for ~6 seconds
     const t3 = setTimeout(() => {
       setIntroState('complete');
-      localStorage.setItem("onboardingRevealed", "");
+      localStorage.setItem("onboardingRevealed", "true");
     }, 23000); // 3 + 14 + 6
 
     return () => {
