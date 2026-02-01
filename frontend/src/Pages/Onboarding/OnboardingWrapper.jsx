@@ -3,7 +3,7 @@ import Onboarding from "./Onboarding";
 
 export default function OnboardingWrapper() {
   const [introState, setIntroState] = useState(
-    localStorage.getItem('onboardingRevealed') === null ? 'first' : 'complete'
+    localStorage.getItem('onboardingRevealed') === null ? 'initial' : 'complete'
   );
   const [fadeIn, setFadeIn] = useState(false);
 
@@ -14,20 +14,20 @@ export default function OnboardingWrapper() {
       return;
     }
 
-    // First intro: "Detox Mental" - shows for 3 seconds
-    const t1 = setTimeout(() => {
-      setIntroState('second');
-    }, 3000);
-
-    // Second intro: Thales video - shows for ~6 seconds (video length)
-    const t2 = setTimeout(() => {
+    // Initial intro: "Detox Mental" - shows for 3 seconds
+    const t1 = setTimeout(() => setIntroState('onboarding-intent'), 3000);
+    // Onboarding intent: project description - 14s including fade-out
+    const t2 = setTimeout(() => setIntroState('tales'), 17000); // 3 + 14
+    // Tales intro: video - shows for ~6 seconds
+    const t3 = setTimeout(() => {
       setIntroState('complete');
       localStorage.setItem("onboardingRevealed", "");
-    }, 9000);
+    }, 23000); // 3 + 14 + 6
 
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
     };
   }, []);
 
@@ -38,17 +38,31 @@ export default function OnboardingWrapper() {
     }
   }, [introState]);
 
-  if (introState === 'first') {
+  if (introState === 'initial') {
     return (
-      <div className="intro-screen--onboarding-1">
+      <div className="intro-screen--onboarding-initial">
         <h1 className="intro-screen__intro-image">Detox Mental</h1>
       </div>
     );
   }
 
-  if (introState === 'second') {
+  if (introState === 'onboarding-intent') {
     return (
-      <div className="intro-screen--onboarding-2">
+      <div className="intro-screen--onboarding-intent">
+        <div className="intro-screen__text">
+          <p>Detox Mental nació en 2021 como un gimnasio mental virtual para aquellos que quieran liberarse de sus pensamientos tormentosos.</p>
+          <p>La meta es que adquieras <strong>dos</strong> hábitos principales para relacionarte mejor con tu mente: la escritura y la meditación.</p>
+          <p>Luego de practicar por 30 días, puedes seguir tu camino con apoyo profesional.</p>
+          <p>Este es un primer paso.</p>
+          <p>Para comenzar, te dejamos en manos de nuestro especial <strong>anfitrión</strong>:</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (introState === 'tales') {
+    return (
+      <div className="intro-screen--onboarding-tales">
         <div className="intro-screen__content">
           <video
             src="/videos/thales.mp4"
