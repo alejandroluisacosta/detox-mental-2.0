@@ -4,16 +4,18 @@ import { STATES } from "../conversation/conversationFlow.js";
 import { timeSelectionHandler } from "../conversation/handlers/timeSelectionHandler.js";
 import { compressedGuideHandler } from "../conversation/handlers/compressedGuideHandler.js";
 import { pqaPromptHandler } from "../conversation/handlers/pqaPromptHandler.js";
+import { pqaChallengeHandler } from "../conversation/handlers/pqaChallengeHandler.js";
 import { pqaEvaluationHandler } from "../conversation/handlers/pqaEvaluationHandler.js";
 import { recommendationHandler } from "../conversation/handlers/recommendationHandler.js";
-import { sessions } from "../conversation/sessionStore.js";
 
 const handlers = {
   [STATES.TIME_SELECTION]: timeSelectionHandler,
   [STATES.COMPRESSED_GUIDE]: compressedGuideHandler,
   [STATES.PQA_PROMPT]: pqaPromptHandler,
+  [STATES.PQA_CHALLENGE]: pqaChallengeHandler,
   [STATES.PQA_EVALUATION]: pqaEvaluationHandler,
-  [STATES.RECOMMENDATION]: recommendationHandler
+  [STATES.RECOMMENDATION]: recommendationHandler,
+  [STATES.EXIT]: () => {return 'EXIT'},
 };
 
 /**

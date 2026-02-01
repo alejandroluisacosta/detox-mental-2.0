@@ -35,7 +35,6 @@ export async function timeSelectionHandler({ session, message }) {
   // Valid → transition
   session.state = STATES.COMPRESSED_GUIDE;
   session.data.timeBudget = minutes;
-
   return {
     reply: null,
     state: session.state
