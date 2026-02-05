@@ -17,7 +17,9 @@ export default function Onboarding() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionState, setSessionState] = useState(null);
+  const [hasReachedExitButtons, setHasReachedExitButtons] = useState(false);
   const messagesEndRef = useRef(null);
+  const exitButtonsRef = useRef(null);
   const navigate = useNavigate();
   
   async function sendMessage(e) {
@@ -48,8 +50,6 @@ export default function Onboarding() {
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
-
-      console.log(sessionState.state);
 
     } catch (err) {
         console.error(err);
@@ -94,6 +94,38 @@ export default function Onboarding() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading]);
+
+  useEffect(() => {
+    if (sessionState?.state !== "EXIT") return;
+    const el = exitButtonsRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        setHasReachedExitButtons(true);
+        observer.disconnect();
+      },
+      { threshold: 0.1, rootMargin: "0px 0px 0px 0px" }
+    );
+
+    // Defer observing so the initial hidden state (opacity: 0) is painted first.
+    // Otherwise the observer can fire in the same tick and the fade-in never appears.
+    let cancelled = false;
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled || !exitButtonsRef.current) return;
+        observer.observe(exitButtonsRef.current);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, [sessionState?.state]);
 
   return (
     <div className="onboarding">
@@ -142,29 +174,34 @@ export default function Onboarding() {
       </div>
 
       {sessionState?.state === "EXIT" ? (
-        <div className="onboarding__exit-buttons">
-          <button 
-            className="onboarding__exit-button" 
-            onClick={() => navigate("/")}
-          >
-            <img
-              src="/icons/article.svg"
-              alt="Article"
-              className="icon icon--article"
-            />
-            ARTÍCULO
-          </button>
-          <button 
-            className="onboarding__exit-button" 
-            onClick={() => navigate("/course")}
-          >
-            <img
-              src="/icons/star.svg"
-              alt="Article"
-              className="icon icon--star"
-            />
-            CURSO
-          </button>
+        <div
+          ref={exitButtonsRef}
+          className={`onboarding__exit-buttons-wrapper${hasReachedExitButtons ? " onboarding__exit-buttons-wrapper--visible" : ""}`}
+        >
+          <div className="onboarding__exit-buttons">
+            <button 
+              className="onboarding__exit-button" 
+              onClick={() => navigate("/")}
+            >
+              <img
+                src="/icons/article.svg"
+                alt="Article"
+                className="icon icon--article"
+              />
+              ARTÍCULO
+            </button>
+            <button 
+              className="onboarding__exit-button" 
+              onClick={() => navigate("/course")}
+            >
+              <img
+                src="/icons/star.svg"
+                alt="Article"
+                className="icon icon--star"
+              />
+              CURSO
+            </button>
+          </div>
         </div>
       ) : (
         <form onSubmit={sendMessage}>
