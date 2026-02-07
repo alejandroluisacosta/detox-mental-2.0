@@ -5,11 +5,10 @@ export async function compressedGuideHandler({ session }) {
   const timeBudget = session.data.timeBudget;
   const effectiveMinutes = timeBudget === 5 ? 5 : 2;
   const guide = getCompressedGuide(effectiveMinutes);
-  const openingPrompt = `Perfecto, aquí tienes un resumen de nuestra filosofía para que puedas leerlo en ${effectiveMinutes} minutos.`;
 
   session.state = STATES.PQA_PROMPT;
   return {
-    reply: [openingPrompt, guide, CHALLENGE_PROMPT].join("\n\n"),
+    reply: [guide, CHALLENGE_PROMPT].join("\n\n"),
     state: session.state
   };
 }
