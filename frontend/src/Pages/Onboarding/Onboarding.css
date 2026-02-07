@@ -283,13 +283,13 @@
 }
 
 @keyframes fadeInOnboardingExit {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(50px);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(-20px);
   }
 }
 
@@ -301,8 +301,7 @@
 
 .onboarding__exit-buttons-wrapper--visible {
   opacity: 0;
-  transform: translateY(8px);
-  animation: fadeInOnboardingExit 0.5s ease forwards;
+  animation: fadeInOnboardingExit 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   pointer-events: auto;
 }
 
@@ -333,7 +332,7 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 1s ease, transform 1s ease;
     display: flex;
     align-items: center;
 }
