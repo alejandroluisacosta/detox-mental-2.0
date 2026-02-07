@@ -1,5 +1,4 @@
 import { STATES } from "../conversationFlow.js";
-import { timeSelectionPrompt } from "../../prompts/timeSelectionPrompt.js";
 import { parseTimeSelection } from "../../parsers/parseTimeSelection.js"
 
 export async function timeSelectionHandler({ session, message }) {
