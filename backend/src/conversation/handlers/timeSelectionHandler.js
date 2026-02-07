@@ -15,8 +15,7 @@ export async function timeSelectionHandler({ session, message }) {
   Responde con una sola opción:
   
   - 2 minutos
-  - 5 minutos 
-  - 15 minutos
+  - 5 minutos
   `,
         state: session.state,
       };
