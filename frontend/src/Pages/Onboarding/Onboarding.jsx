@@ -179,28 +179,34 @@ export default function Onboarding() {
           className={`onboarding__exit-buttons-wrapper${hasReachedExitButtons ? " onboarding__exit-buttons-wrapper--visible" : ""}`}
         >
           <div className="onboarding__exit-buttons">
-            <button 
-              className="onboarding__exit-button" 
+            <div
+              className="onboarding__exit-button"
+              role="button"
+              tabIndex={0}
               onClick={() => navigate("/")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate("/"); } }}
             >
               <img
-                src="/icons/article.svg"
-                alt="Article"
-                className="icon icon--article"
+                src="/images/article.png"
+                alt="Artículo"
+                className="onboarding__exit-button__icon onboarding__exit-button__icon--article"
               />
-              ARTÍCULO
-            </button>
-            <button 
-              className="onboarding__exit-button" 
+              <span className="onboarding__exit-button__label">ARTÍCULO</span>
+            </div>
+            <div
+              className="onboarding__exit-button"
+              role="button"
+              tabIndex={0}
               onClick={() => navigate("/course")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate("/course"); } }}
             >
               <img
-                src="/icons/star.svg"
-                alt="Article"
-                className="icon icon--star"
+                src="/images/course.png"
+                alt="Curso"
+                className="onboarding__exit-button__icon"
               />
-              CURSO
-            </button>
+              <span className="onboarding__exit-button__label">CURSO</span>
+            </div>
           </div>
         </div>
       ) : (
