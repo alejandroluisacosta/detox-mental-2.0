@@ -107,7 +107,7 @@ export default function Onboarding() {
         setHasReachedExitButtons(true);
         observer.disconnect();
       },
-      { threshold: 0.2, rootMargin: "0px 0px 0px 0px" }
+      { threshold: 0.5, rootMargin: "0px 0px 0px 0px" }
     );
 
     // Defer observing so the initial hidden state (opacity: 0) is painted first.

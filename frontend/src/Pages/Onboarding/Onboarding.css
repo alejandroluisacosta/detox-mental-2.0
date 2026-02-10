@@ -310,7 +310,7 @@
     gap: 55px;
     padding: 8px;
     justify-content: center;
-    margin-bottom: 45px;
+    margin-bottom: 20px;
 }
 
 .onboarding__exit-button__icon {
@@ -320,7 +320,7 @@
     display: block;
 }
 .onboarding__exit-button__icon--article {
-    width: 65px;git a
+    width: 65px;
 }
 
 .onboarding__exit-button__label {
