@@ -187,7 +187,7 @@ export default function Onboarding() {
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate("/"); } }}
             >
               <img
-                src="/images/article.png"
+                src="/icons/article.png"
                 alt="Artículo"
                 className="onboarding__exit-button__icon onboarding__exit-button__icon--article"
               />
@@ -201,7 +201,7 @@ export default function Onboarding() {
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate("/course"); } }}
             >
               <img
-                src="/images/course.png"
+                src="/icons/course.png"
                 alt="Curso"
                 className="onboarding__exit-button__icon"
               />

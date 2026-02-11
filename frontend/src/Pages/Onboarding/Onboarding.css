@@ -319,7 +319,7 @@
 
 .onboarding__exit-buttons {
     display: flex;
-    gap: 72px;
+    gap: 60px;
     padding: 8px;
     justify-content: center;
     margin-bottom: 20px;
@@ -333,7 +333,7 @@
 }
 
 .onboarding__exit-button__icon--article {
-    width: 78px;
+    width: 85px;
 }
 
 .onboarding__exit-button__label {
