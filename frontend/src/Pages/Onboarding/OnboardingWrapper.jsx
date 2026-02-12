@@ -6,6 +6,7 @@ export default function OnboardingWrapper() {
     localStorage.getItem('onboardingRevealed') === null ? 'initial' : 'complete'
   );
   const [fadeIn, setFadeIn] = useState(false);
+  const [showTapHint, setShowTapHint] = useState(false);
   const timeoutsRef = useRef({});
   const hasAdvancedRef = useRef(false);
 
@@ -59,6 +60,15 @@ export default function OnboardingWrapper() {
     }
   }, [introState]);
 
+  useEffect(() => {
+    if (introState !== 'onboarding-intent') {
+      setShowTapHint(false);
+      return;
+    }
+    const t = setTimeout(() => setShowTapHint(true), 10000);
+    return () => clearTimeout(t);
+  }, [introState]);
+
   if (introState === 'initial') {
     return (
       <div className="intro-screen--onboarding-initial">
@@ -77,7 +87,9 @@ export default function OnboardingWrapper() {
           <p>Este es un primer paso.</p>
           <p>Para comenzar, te dejamos en manos de nuestro especial <strong>anfitrión</strong>:</p>
         </div>
-        <p className="intro-screen__tap-hint">(Toca para continuar)</p>
+        {showTapHint && (
+          <span className="intro-screen__tap-hint intro-screen__tap-hint-icon" aria-hidden />
+        )}
       </div>
     );
   }
@@ -90,6 +102,7 @@ export default function OnboardingWrapper() {
             src="/videos/thales.mp4"
             className="intro-screen__video"
             autoPlay
+            muted
             playsInline
           />
           <p className="intro-screen__name">Tales</p>
