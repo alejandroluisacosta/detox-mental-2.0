@@ -20,6 +20,7 @@
 
 .intro-screen--onboarding-intent {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -28,6 +29,13 @@
   background: var(--background);
   color: var(--text);
   animation: fadeInOutOnboardingIntent 14s ease forwards;
+  cursor: pointer;
+}
+
+.intro-screen--onboarding-intent .intro-screen__tap-hint {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 1.5rem;
 }
 
 .intro-screen__text {
@@ -35,6 +43,7 @@
   font-size: 1rem;
   line-height: 1.6;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .intro-screen__text p {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Onboarding from "./Onboarding";
 
 export default function OnboardingWrapper() {
@@ -6,6 +6,8 @@ export default function OnboardingWrapper() {
     localStorage.getItem('onboardingRevealed') === null ? 'initial' : 'complete'
   );
   const [fadeIn, setFadeIn] = useState(false);
+  const timeoutsRef = useRef({});
+  const hasAdvancedRef = useRef(false);
 
   useEffect(() => {
     // If already revealed, skip intro animations
@@ -24,12 +26,31 @@ export default function OnboardingWrapper() {
       localStorage.setItem("onboardingRevealed", "true");
     }, 23000); // 3 + 14 + 6
 
+    timeoutsRef.current = { t1, t2, t3 };
+
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
+      Object.values(timeoutsRef.current).filter(Boolean).forEach(clearTimeout);
     };
   }, []);
+
+  function handleIntentClick() {
+    if (hasAdvancedRef.current) return;
+    hasAdvancedRef.current = true;
+
+    const { t2, t3 } = timeoutsRef.current;
+    if (t2) clearTimeout(t2);
+    if (t3) clearTimeout(t3);
+    timeoutsRef.current.t2 = null;
+    timeoutsRef.current.t3 = null;
+
+    setIntroState('tales');
+
+    const tComplete = setTimeout(() => {
+      setIntroState('complete');
+      localStorage.setItem("onboardingRevealed", "true");
+    }, 6000);
+    timeoutsRef.current.tComplete = tComplete;
+  }
 
   useEffect(() => {
     if (introState === 'complete') {
@@ -48,7 +69,7 @@ export default function OnboardingWrapper() {
 
   if (introState === 'onboarding-intent') {
     return (
-      <div className="intro-screen--onboarding-intent">
+      <div className="intro-screen--onboarding-intent" onClick={handleIntentClick}>
         <div className="intro-screen__text">
           <p>Detox Mental nació en 2021 como un gimnasio mental virtual para aquellos que quieran liberarse de sus pensamientos tormentosos.</p>
           <p>La meta es que adquieras <strong>dos</strong> hábitos principales para relacionarte mejor con tu mente: la escritura y la meditación.</p>
@@ -56,6 +77,7 @@ export default function OnboardingWrapper() {
           <p>Este es un primer paso.</p>
           <p>Para comenzar, te dejamos en manos de nuestro especial <strong>anfitrión</strong>:</p>
         </div>
+        <p className="intro-screen__tap-hint">(Toca para continuar)</p>
       </div>
     );
   }
