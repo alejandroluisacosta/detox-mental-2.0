@@ -23,6 +23,11 @@ export default function CourseWithIntro() {
       <div>
         <h1 className="intro-screen__intro-image">Detox Mental</h1>
         <p className="intro-screen__subtitle">en 30 días</p>
+        <img
+          src="/icons/course.webp"
+          alt="Ícono de curso decorativo"
+          className="intro-screen__course-icon"
+        />
       </div>
     </div>
   ) : (
