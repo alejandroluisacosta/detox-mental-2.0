@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Course from "./Course";
+import "./Course.css";
 
 export default function CourseWithIntro() {
   const [showIntro, setShowIntro] = useState(localStorage.getItem('courseRevealed') === null);
