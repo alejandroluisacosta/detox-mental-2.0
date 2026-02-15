@@ -1,5 +1,4 @@
 import { STATES } from "../conversationFlow.js";
-import { timeSelectionPrompt } from "../../prompts/timeSelectionPrompt.js";
 import { parseTimeSelection } from "../../parsers/parseTimeSelection.js"
 
 export async function timeSelectionHandler({ session, message }) {
@@ -15,8 +14,7 @@ export async function timeSelectionHandler({ session, message }) {
   Responde con una sola opción:
   
   - 2 minutos
-  - 5 minutos 
-  - 15 minutos
+  - 5 minutos
   `,
         state: session.state,
       };
@@ -35,7 +33,6 @@ export async function timeSelectionHandler({ session, message }) {
   // Valid → transition
   session.state = STATES.COMPRESSED_GUIDE;
   session.data.timeBudget = minutes;
-
   return {
     reply: null,
     state: session.state

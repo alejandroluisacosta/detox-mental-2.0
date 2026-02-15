@@ -6,7 +6,7 @@ export default function CourseWithIntro() {
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowIntro(false), 3000);
+    const t = setTimeout(() => setShowIntro(false), 4500);
     localStorage.setItem("courseRevealed", "");
     return () => clearTimeout(t);
   }, []);
@@ -19,7 +19,17 @@ export default function CourseWithIntro() {
   }, [showIntro]);
 
   return showIntro ? (
-    <div className="intro-screen"><h1 className="intro-screen__intro-image">Detox Mental</h1></div>
+    <div className="intro-screen">
+      <div>
+        <h1 className="intro-screen__intro-image">Detox Mental</h1>
+        <p className="intro-screen__subtitle">en 30 días</p>
+        <img
+          src="/icons/course.webp"
+          alt="Ícono de curso decorativo"
+          className="intro-screen__course-icon"
+        />
+      </div>
+    </div>
   ) : (
     <div className={`course-container ${fadeIn ? "fade-in" : ""}`}>
       <Course />

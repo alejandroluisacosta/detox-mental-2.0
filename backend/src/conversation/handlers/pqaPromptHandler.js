@@ -11,7 +11,7 @@ export async function pqaPromptHandler({ session, message }) {
 
   session.data.pqaSentence = message.trim();
 
-  session.state = STATES.PQA_EVALUATION;
+  session.state = STATES.PQA_CHALLENGE;
 
   return {
     reply: null,

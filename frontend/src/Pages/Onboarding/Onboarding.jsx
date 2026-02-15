@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 import "./Onboarding.css";
 
@@ -16,7 +17,10 @@ export default function Onboarding() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionState, setSessionState] = useState(null);
+  const [hasReachedExitButtons, setHasReachedExitButtons] = useState(false);
   const messagesEndRef = useRef(null);
+  const exitButtonsRef = useRef(null);
+  const navigate = useNavigate();
   
   async function sendMessage(e) {
     e.preventDefault();
@@ -41,12 +45,11 @@ export default function Onboarding() {
       }
       const data = await res.json();
 
-      setSessionState(data.sessionState);
+      setSessionState({ state: data.state, data: data.data });
       setMessages(prev => [
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
-
 
     } catch (err) {
         console.error(err);
@@ -69,7 +72,7 @@ export default function Onboarding() {
           const data = await res.json();
 
           if (!cancelled) {
-              setSessionState(data.sessionState);
+              setSessionState({ state: data.state, data: data.data });
               setMessages([{ role: "assistant", content: data.reply }]);
           }
           } catch (err) {
@@ -91,6 +94,38 @@ export default function Onboarding() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading]);
+
+  useEffect(() => {
+    if (sessionState?.state !== "EXIT") return;
+    const el = exitButtonsRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        setHasReachedExitButtons(true);
+        observer.disconnect();
+      },
+      { threshold: 0.5, rootMargin: "0px 0px 0px 0px" }
+    );
+
+    // Defer observing so the initial hidden state (opacity: 0) is painted first.
+    // Otherwise the observer can fire in the same tick and the fade-in never appears.
+    let cancelled = false;
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled || !exitButtonsRef.current) return;
+        observer.observe(exitButtonsRef.current);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, [sessionState?.state]);
 
   return (
     <div className="onboarding">
@@ -138,18 +173,56 @@ export default function Onboarding() {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={sendMessage}>
-        <input
-          className="onboarding__input"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Escribe tu respuesta"
-          disabled={loading}
-        />
-        <button className="onboarding__button" type="submit" disabled={loading}>
-          ENVIAR
-        </button>
-      </form>
+      {sessionState?.state === "EXIT" ? (
+        <div
+          ref={exitButtonsRef}
+          className={`onboarding__exit-buttons-wrapper${hasReachedExitButtons ? " onboarding__exit-buttons-wrapper--visible" : ""}`}
+        >
+          <div className="onboarding__exit-buttons">
+            <div
+              className="onboarding__exit-button"
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate("/"); } }}
+            >
+              <img
+                src="/icons/article.webp"
+                alt="Artículo"
+                className="onboarding__exit-button__icon onboarding__exit-button__icon--article"
+              />
+              <span className="onboarding__exit-button__label">ARTÍCULO</span>
+            </div>
+            <div
+              className="onboarding__exit-button"
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/course")}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate("/course"); } }}
+            >
+              <img
+                src="/icons/course.webp"
+                alt="Curso"
+                className="onboarding__exit-button__icon"
+              />
+              <span className="onboarding__exit-button__label">CURSO</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={sendMessage}>
+          <input
+            className="onboarding__input"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Escribe tu respuesta"
+            disabled={loading}
+          />
+          <button className="onboarding__button" type="submit" disabled={loading}>
+            ENVIAR
+          </button>
+        </form>
+      )}
     </div>
   );
 }
