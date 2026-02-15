@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Onboarding from "./Onboarding";
 
+// Intro-revealed: we set to "true"; OnboardingGate checks getItem(key) === "true".
 export default function OnboardingWrapper() {
   const [introState, setIntroState] = useState(
     localStorage.getItem('onboardingRevealed') === null ? 'initial' : 'complete'
