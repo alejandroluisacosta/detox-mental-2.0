@@ -59,6 +59,10 @@ export default function Onboarding() {
   }
 
     useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
       let cancelled = false;
       async function initChat() {
         setLoading(true);
@@ -90,10 +94,10 @@ export default function Onboarding() {
     }, []);
 
   useEffect(() => {
-    if (loading) {
+    if (loading && messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [loading]);
+  }, [loading, messages.length]);
 
   useEffect(() => {
     if (sessionState?.state !== "EXIT") return;
