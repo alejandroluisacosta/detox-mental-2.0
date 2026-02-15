@@ -4,9 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 export default function OnboardingGate() {
   try {
     const revealed = localStorage.getItem('onboardingRevealed') === 'true';
-    console.log(revealed)
     if (!revealed) {
-      console.log('onboarding not revealed');
       return <Navigate to="/onboarding" replace />;
     }
   } catch (e) {

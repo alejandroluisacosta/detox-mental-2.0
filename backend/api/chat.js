@@ -48,10 +48,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       reply: result.reply,
-      sessionState: {
-        state: result.state,
-        data: result.data,
-      },
+      state: result.state,
+      data: result.data,
     });
   } catch (err) {
     console.error("CHAT ERROR:", err);
