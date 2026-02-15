@@ -1,14 +1,16 @@
 /**
  * Vercel Serverless API Route: /api/chat
- * 
- * This route handles chat requests in a stateless manner, compatible with Vercel's
- * serverless environment. State is passed in the request body and returned in the response.
+ *
+ * Handles chat requests in a stateless manner for the backend Vercel deployment.
+ * State is passed in the request body and returned in the response.
  */
 
-import { chatController } from "../../backend/src/controllers/chatController.js";
+import dotenv from "dotenv";
+import { chatController } from "../src/controllers/chatController.js";
+
+dotenv.config();
 
 export default async function handler(req, res) {
-  
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -26,14 +28,14 @@ export default async function handler(req, res) {
       reply: result.reply,
       sessionState: {
         state: result.state,
-        data: result.data
-      }
+        data: result.data,
+      },
     });
   } catch (err) {
     console.error("CHAT ERROR:", err);
-    
+
     return res.status(500).json({
-      error: err.message || "Internal server error"
+      error: err.message || "Internal server error",
     });
   }
 }
