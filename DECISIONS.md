@@ -22,3 +22,25 @@ Onboarding is a **cross-cutting concern** [affects many parts at once] that appl
 - Consistent behavior across all current and future routes
 - No duplication of conditional checks inside individual components
 - Clear architectural intent: onboarding is a **precondition** for accessing the app
+
+### 2026-02-01 — Separate Vercel projects for frontend and backend
+
+**Decision:**  
+Deploy **frontend** and **backend** as **separate Vercel projects**. The API entry point lives in the backend repo (`backend/api/chat.js`), not in the frontend.
+
+**Why this option was chosen:**  
+The project is small enough to deploy as a single Vercel app (frontend + API together), and the next features (user auth + DB, Stripe) don’t strictly require a dedicated backend. Keeping a separate backend deployment is **preemptive**: it preserves clear boundaries and avoids organizational cost. Putting the API in the frontend repo would have forced one of two options: **(1)** move the Vercel root above both directories and use a single `package.json` / `package-lock.json` for frontend and backend, conflating dependencies; **(2)** move backend code into the frontend directory. (1) was undesirable for organization; (2) was worse and was discarded.
+
+Additional upsides:
+- Independent scaling and env/secrets per project
+- Frontend-only deploys don’t touch the backend
+- Backend remains easy to move to another host later
+
+**Why obvious alternatives were rejected:**  
+- **Single deployment with API in frontend:** Would require either merging dependencies (one root, one package.json) or nesting backend inside frontend; both hurt structure and clarity.  
+- **Keeping API in frontend with shared root:** Conflating frontend and backend dependencies in one `package.json` was not acceptable.
+
+**Downsides (accepted):**
+- Two projects to configure and monitor
+- CORS and `VITE_CHAT_API_URL` must be kept in sync
+- Response shape must match between Express (local) and serverless handler (Vercel) so the frontend works in both environments
