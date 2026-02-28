@@ -48,6 +48,13 @@
     border: 0.5px solid black;
 }
 
+.blocked-session-modal__coming-soon-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
 @media (min-width: 1000px) {
     .blocked-session-modal {
         max-width: 500px;

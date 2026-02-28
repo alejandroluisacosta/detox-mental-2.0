@@ -34,8 +34,20 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
             <div className='modal-overlay modal-overlay--layer-2'>
                 <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>
             </div>}
-            {openComingSoonModal && <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>}
-            <div className='modal-overlay'>
+            {openComingSoonModal && (
+                <div
+                    className="blocked-session-modal__coming-soon-backdrop"
+                    onClick={() => setOpenComingSoonModal(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>
+                    </div>
+                </div>
+            )}
+            <div
+                className='modal-overlay'
+                onClick={(e) => { if (e.target === e.currentTarget) setOpenBlockedSessionModal(false) }}
+            >
                 <div className="blocked-session-modal modal-fade-in">
                     <CloseIcon handleCloseModal={handleCloseBlockedSessionModal} />
                     <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
