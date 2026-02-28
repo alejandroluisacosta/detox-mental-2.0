@@ -49,7 +49,10 @@ export async function timeSelectionHandler({ session, message }) {
     };
   }
 
-  // Valid → transition
+  // Valid → transition (remember if they were in "Ignorándote" phase for compressed guide)
+  const IGNORING_THRESHOLD = 10;
+  const wasIgnored = (session.data.timeSelectionAttempts ?? 0) >= IGNORING_THRESHOLD;
+  if (wasIgnored) session.data.ignoredDuringTimeSelection = true;
   session.state = STATES.COMPRESSED_GUIDE;
   session.data.timeBudget = minutes;
   delete session.data.timeSelectionAttempts;
