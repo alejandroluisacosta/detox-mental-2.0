@@ -25,7 +25,7 @@ export async function timeSelectionHandler({ session, message }) {
 
   if (!minutes) {
     return {
-      reply: "Por favor, responde con 2, 5 o 15 minutos.",
+      reply: "Por favor, responde con 2 o 5 minutos.",
       state: session.state
     };
   }
