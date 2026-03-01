@@ -18,6 +18,8 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [sessionState, setSessionState] = useState(null);
   const [hasReachedExitButtons, setHasReachedExitButtons] = useState(false);
+  const [ctaPrompt, setCtaPrompt] = useState(null);
+  const [lastReplyFull, setLastReplyFull] = useState(null);
   const messagesEndRef = useRef(null);
   const exitButtonsRef = useRef(null);
   const inputRef = useRef(null);
@@ -27,18 +29,29 @@ export default function Onboarding() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    setMessages(prev => [
-      ...prev,
-      { role: "user", content: input },
-    ]);
+    const userContent = input;
     setInput("");
+
+    if (ctaPrompt && lastReplyFull) {
+      setMessages(prev => {
+        const next = [...prev];
+        if (next.length > 0 && next[next.length - 1].role === "assistant") {
+          next[next.length - 1] = { ...next[next.length - 1], content: lastReplyFull };
+        }
+        return [...next, { role: "user", content: userContent }];
+      });
+      setCtaPrompt(null);
+      setLastReplyFull(null);
+    } else {
+      setMessages(prev => [...prev, { role: "user", content: userContent }]);
+    }
     setLoading(true);
 
     try {
       const res = await fetch(CHAT_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: input, sessionState: sessionState })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userContent, sessionState: sessionState })
       });
 
       if (!res.ok) {
@@ -47,15 +60,18 @@ export default function Onboarding() {
       const data = await res.json();
 
       setSessionState({ state: data.state, data: data.data });
-      setMessages(prev => [
-        ...prev,
-        { role: "assistant", content: data.reply },
-      ]);
-
+      setMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
+      if (data.ctaPrompt != null) {
+        setCtaPrompt(data.ctaPrompt);
+        setLastReplyFull(data.replyFull ?? null);
+      } else {
+        setCtaPrompt(null);
+        setLastReplyFull(null);
+      }
     } catch (err) {
-        console.error(err);
+      console.error(err);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }
 
@@ -79,6 +95,10 @@ export default function Onboarding() {
           if (!cancelled) {
               setSessionState({ state: data.state, data: data.data });
               setMessages([{ role: "assistant", content: data.reply }]);
+              if (data.ctaPrompt != null) {
+                setCtaPrompt(data.ctaPrompt);
+                setLastReplyFull(data.replyFull ?? null);
+              }
           }
           } catch (err) {
               console.error(err);
@@ -223,6 +243,24 @@ export default function Onboarding() {
               <span className="onboarding__exit-button__label">CURSO</span>
             </div>
           </div>
+        </div>
+      ) : ctaPrompt ? (
+        <div className="onboarding__cta-box">
+          <form onSubmit={sendMessage}>
+            <h3 className="onboarding__cta-box__title">{ctaPrompt.title}</h3>
+            <p className="onboarding__cta-box__paragraph">{ctaPrompt.paragraph}</p>
+            <input
+              ref={inputRef}
+              className="onboarding__input"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Escribe tu respuesta"
+              disabled={loading}
+            />
+            <button className="onboarding__button" type="submit" disabled={loading}>
+              Enviar
+            </button>
+          </form>
         </div>
       ) : (
         <form onSubmit={sendMessage}>

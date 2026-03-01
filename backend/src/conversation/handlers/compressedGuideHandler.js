@@ -1,5 +1,11 @@
 import { STATES } from "../conversationFlow.js";
-import { getCompressedGuide, CHALLENGE_PROMPT } from "../../content/compressedGuide.js";
+import {
+  getCompressedGuide,
+  COMPRESSED_GUIDE_INTRO,
+  CTA_TITLE,
+  CTA_PARAGRAPH,
+  getCompressedGuideFullReply
+} from "../../content/compressedGuide.js";
 
 export async function compressedGuideHandler({ session }) {
   const timeBudget = session.data.timeBudget;
@@ -9,9 +15,12 @@ export async function compressedGuideHandler({ session }) {
   delete session.data.ignoredDuringTimeSelection;
 
   session.state = STATES.PQA_PROMPT;
-  const content = [guide, CHALLENGE_PROMPT].join("\n\n");
+  const introOnly = [guide, COMPRESSED_GUIDE_INTRO].join("\n\n");
+  const replyFull = [guide, getCompressedGuideFullReply()].join("\n\n");
+  const prefix = wasIgnored ? "Vaya joya.\n\n" : "";
   return {
-    reply: wasIgnored ? `Vaya joya.\n\n${content}` : content,
-    state: session.state
+    reply: prefix + introOnly,
+    replyFull: prefix + replyFull,
+    ctaPrompt: { title: CTA_TITLE, paragraph: CTA_PARAGRAPH }
   };
 }
