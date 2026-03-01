@@ -50,6 +50,8 @@ export default async function handler(req, res) {
       reply: result.reply,
       state: result.state,
       data: result.data,
+      ...(result.ctaPrompt != null && { ctaPrompt: result.ctaPrompt }),
+      ...(result.replyFull != null && { replyFull: result.replyFull }),
     });
   } catch (err) {
     console.error("CHAT ERROR:", err);
