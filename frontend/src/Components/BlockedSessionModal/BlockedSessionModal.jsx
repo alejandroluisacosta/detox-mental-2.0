@@ -34,19 +34,31 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
             <div className='modal-overlay modal-overlay--layer-2'>
                 <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>
             </div>}
-            {openComingSoonModal && <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>}
-            <div className='modal-overlay'>
+            {openComingSoonModal && (
+                <div
+                    className="blocked-session-modal__coming-soon-backdrop"
+                    onClick={() => setOpenComingSoonModal(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>
+                    </div>
+                </div>
+            )}
+            <div
+                className='modal-overlay'
+                onClick={(e) => { if (e.target === e.currentTarget) setOpenBlockedSessionModal(false) }}
+            >
                 <div className="blocked-session-modal modal-fade-in">
                     <CloseIcon handleCloseModal={handleCloseBlockedSessionModal} />
                     <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
-                    <p className="blocked-session-modal__text">Opción 1 (Gratis):</p>
+                    <p className="blocked-session-modal__text"><strong>Compra el curso completo</strong> (15 sesiones + 15 ejercicios) por 15€</p>
+                    <button className="blocked-session-modal__button" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
+                    <hr className="blocked-session-modal__line"/>
+                    <p className="blocked-session-modal__text">Alternativa gratis:</p>
                     <p className="blocked-session-modal__text">Escríbenos a <strong>detoxmental4@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
                     <p className="blocked-session-modal__text blocked-session-modal__text--question">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
                     <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
-                    <button className="blocked-session-modal__button" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
-                    <hr className="blocked-session-modal__line"/>
-                    <p className="blocked-session-modal__text">Opción 2: Compra el curso completo (15 sesiones + 15 ejercicios) por 10€</p>
-                    <button className="blocked-session-modal__button blocked-session-modal__button--buy" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
+                    <button className="blocked-session-modal__button blocked-session-modal__button--buy" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
                     <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</span>
                 </div>
             </div>

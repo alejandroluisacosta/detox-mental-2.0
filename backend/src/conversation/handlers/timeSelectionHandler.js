@@ -24,15 +24,38 @@ export async function timeSelectionHandler({ session, message }) {
   const minutes = parseTimeSelection(message);
 
   if (!minutes) {
+    const attempts = (session.data.timeSelectionAttempts ?? 0);
+    session.data.timeSelectionAttempts = attempts + 1;
+
+    const invalidReplies = [
+      "Por favor, responde con 2 o 5 minutos.",
+      "Por favor, dos o cinco minutos.",
+      "POR FAVOR, dos o cinco minutos.",
+      "¿Es en serio? 2 o 5.",
+      "2 o 5.",
+      "2 o 5.",
+      "2 o 5 por favor.",
+      "2 o 5, POR FAVOR.",
+      "Por Zeus. ¿Prefieres dos o cinco minutos? Ya habrías terminado.",
+      "Ya sabes lo que ofrezco. A partir de aquí te ignoro hasta que aclares si prefieres 2 o 5 minutos.",
+    ];
+    const reply = attempts >= invalidReplies.length
+      ? "Ignorándote."
+      : invalidReplies[attempts];
+
     return {
-      reply: "Por favor, responde con 2, 5 o 15 minutos.",
+      reply,
       state: session.state
     };
   }
 
-  // Valid → transition
+  // Valid → transition (remember if they were in "Ignorándote" phase for compressed guide)
+  const IGNORING_THRESHOLD = 10;
+  const wasIgnored = (session.data.timeSelectionAttempts ?? 0) >= IGNORING_THRESHOLD;
+  if (wasIgnored) session.data.ignoredDuringTimeSelection = true;
   session.state = STATES.COMPRESSED_GUIDE;
   session.data.timeBudget = minutes;
+  delete session.data.timeSelectionAttempts;
   return {
     reply: null,
     state: session.state

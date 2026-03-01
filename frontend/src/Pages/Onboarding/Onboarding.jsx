@@ -20,6 +20,7 @@ export default function Onboarding() {
   const [hasReachedExitButtons, setHasReachedExitButtons] = useState(false);
   const messagesEndRef = useRef(null);
   const exitButtonsRef = useRef(null);
+  const inputRef = useRef(null);
   const navigate = useNavigate();
   
   async function sendMessage(e) {
@@ -98,6 +99,16 @@ export default function Onboarding() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading, messages.length]);
+
+  useEffect(() => {
+    if (sessionState?.state === "EXIT") return;
+    if (loading) return;
+    if (!window.matchMedia("(min-width: 1000px)").matches) return;
+    const id = requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [loading, sessionState?.state]);
 
   useEffect(() => {
     if (sessionState?.state !== "EXIT") return;
@@ -216,6 +227,7 @@ export default function Onboarding() {
       ) : (
         <form onSubmit={sendMessage}>
           <input
+            ref={inputRef}
             className="onboarding__input"
             value={input}
             onChange={e => setInput(e.target.value)}
