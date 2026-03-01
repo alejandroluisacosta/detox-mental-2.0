@@ -242,6 +242,44 @@
     background-color: #ffeee494;
 }
 
+.onboarding__cta-box {
+    width: 95%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1.25rem;
+    border-radius: 16px;
+    background-color: #fafafa;
+    border: 0.5px solid rgba(255, 255, 255, 0.9);
+    box-sizing: border-box;
+}
+
+.onboarding__cta-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.onboarding__cta-box__title {
+    margin: 0 0 0.5rem;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.onboarding__cta-box__paragraph {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.onboarding__cta-box .onboarding__input {
+    margin-bottom: 10px;
+}
+
 .onboarding__input {
     width: 100%;
     border-radius: 16px;

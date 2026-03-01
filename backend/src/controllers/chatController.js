@@ -36,29 +36,32 @@ export const chatController = async ({ message, sessionState }) => {
   };
   
   let reply;
+  let lastResult;
   let safety = 0;
-  
+
   while (!reply && safety < 3) {
     const handler = handlers[session.state];
     if (!handler) throw new Error(`No handler for state ${session.state}`);
 
-    const result = await handler({
+    lastResult = await handler({
       client,
       session,
       message,
       systemPrompt: detoxMentalSystemPrompt
     });
-    reply = result.reply;
+    reply = lastResult.reply;
     safety++;
   }
-  
+
   if (!reply) {
     throw new Error("No reply generated after safety limit");
   }
   return {
     reply,
     state: session.state,
-    data: session.data
+    data: session.data,
+    ...(lastResult.ctaPrompt != null && { ctaPrompt: lastResult.ctaPrompt }),
+    ...(lastResult.replyFull != null && { replyFull: lastResult.replyFull })
   };
 };
 
