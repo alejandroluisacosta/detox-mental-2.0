@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, and cognitive behavioral therapy data storage.
+This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, and behavioral therapy data storage.
 
 ## Database Technology
 

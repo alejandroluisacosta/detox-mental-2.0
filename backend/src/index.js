@@ -3,7 +3,12 @@ import express from "express";
 import cors from "cors";
 import chatRoutes from "./routes/chat.js"
 
-dotenv.config();
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development.local";
+
+dotenv.config({ path: envFile });
 
 const app = express();
 app.use(cors());
