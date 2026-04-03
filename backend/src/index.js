@@ -5,12 +5,7 @@ import cookieParser from "cookie-parser";
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./auth/auth.routes.js";
 
-const envFile =
-  process.env.NODE_ENV === "production"
-    ? ".env.production"
-    : ".env.development.local";
-
-dotenv.config({ path: envFile });
+dotenv.config();
 
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
