@@ -10,7 +10,7 @@ import {
 } from './auth.service.js';
 
 const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
 
 export async function login(req, res) {
   const rawEmail = req.body?.email;
@@ -44,12 +44,12 @@ export async function verify(req, res) {
   const rawToken = req.query.token;
 
   if (!rawToken || typeof rawToken !== 'string') {
-    return res.redirect(`${FRONTEND_URL}/auth/error?reason=invalid_token`);
+    return res.redirect(`${FRONTEND_ORIGIN}/auth/error?reason=invalid_token`);
   }
 
   const email = extractEmailFromToken(rawToken);
   if (!email) {
-    return res.redirect(`${FRONTEND_URL}/auth/error?reason=invalid_token`);
+    return res.redirect(`${FRONTEND_ORIGIN}/auth/error?reason=invalid_token`);
   }
 
   try {
@@ -57,7 +57,7 @@ export async function verify(req, res) {
     const tokenRecord = await findValidToken(tokenHash);
 
     if (!tokenRecord) {
-      return res.redirect(`${FRONTEND_URL}/auth/error?reason=invalid_or_expired_token`);
+      return res.redirect(`${FRONTEND_ORIGIN}/auth/error?reason=invalid_or_expired_token`);
     }
 
     let user = await findUserByEmail(email);
@@ -71,10 +71,10 @@ export async function verify(req, res) {
     const token = signJwt({ user_id: user.id, role: user.role });
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
 
-    return res.redirect(`${FRONTEND_URL}/dashboard`);
+    return res.redirect(`${FRONTEND_ORIGIN}/dashboard`);
   } catch (err) {
     console.error('[auth/verify]', err);
-    return res.redirect(`${FRONTEND_URL}/auth/error?reason=server_error`);
+    return res.redirect(`${FRONTEND_ORIGIN}/auth/error?reason=server_error`);
   }
 }
 
