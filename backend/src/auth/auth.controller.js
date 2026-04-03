@@ -10,7 +10,7 @@ import {
 } from './auth.service.js';
 
 const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 export async function login(req, res) {
   const rawEmail = req.body?.email;
@@ -36,7 +36,7 @@ export async function login(req, res) {
   }
 
   return res.status(200).json({
-    message: 'If that email is registered, a login link has been sent.',
+    message: 'Si existe un usuario con ese email, se ha enviado un enlace de login.',
   });
 }
 
