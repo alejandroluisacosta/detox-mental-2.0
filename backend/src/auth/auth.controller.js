@@ -10,13 +10,13 @@ import {
 } from './auth.service.js';
 
 const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:3001';
 
 export async function login(req, res) {
   const rawEmail = req.body?.email;
 
   if (!rawEmail || typeof rawEmail !== 'string') {
-    return res.status(400).json({ message: 'Email is required.' });
+    return res.status(400).json({ message: 'Un email es requerido.' });
   }
 
   const email = rawEmail.trim().toLowerCase();
