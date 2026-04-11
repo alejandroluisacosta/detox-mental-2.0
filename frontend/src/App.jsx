@@ -9,6 +9,8 @@ import Session from './Components/Session/Session.jsx';
 import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
 import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';
 import OnboardingGate from './Pages/Onboarding/OnboardingGate.jsx';
+import Login from './Pages/Auth/Login.jsx';
+import AuthError from './Pages/Auth/AuthError.jsx';
 
 function App() {
     return (
@@ -18,6 +20,8 @@ function App() {
                 <SessionsProvider>
                     <Routes>
                         <Route path='/onboarding' element={<OnboardingWrapper />} />
+                        <Route path='/login' element={<Login />} />
+                        <Route path='/auth/error' element={<AuthError />} />
 
                         {/* Onboarding gate (exclude /onboarding to avoid redirect loop) */}
                         <Route element={<OnboardingGate />}>
