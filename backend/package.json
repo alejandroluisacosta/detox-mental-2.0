@@ -7,13 +7,18 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "NODE_ENV=development NODE_OPTIONS='--import=dotenv/config' nodemon src/index.js",
     "start": "node src/index.js"
   },
   "dependencies": {
     "@huggingface/inference": "^4.13.4",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0",
+    "resend": "^6.10.0",
+    "vercel": "^50.37.3"
   },
   "devDependencies": {
     "dotenv": "^17.3.1",
