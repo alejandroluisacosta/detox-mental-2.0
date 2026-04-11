@@ -1,5 +1,6 @@
 import { generateLoginToken, hashToken, extractEmailFromToken } from './token.js';
 import { signJwt, COOKIE_NAME, COOKIE_OPTIONS } from './jwt.js';
+import { sendMagicLinkEmail } from './email.service.js';
 import {
   storeLoginToken,
   findValidToken,
@@ -28,8 +29,7 @@ export async function login(req, res) {
 
     await storeLoginToken(tokenHash, expiresAt);
 
-    // TODO: send magic link email via Resend
-    // The magic link URL will be: https://api.detoxmental.com/auth/verify?token=<rawToken>
+    await sendMagicLinkEmail(email, rawToken);
   } catch (err) {
     console.error('[auth/login]', err);
     // Intentional fall-through: always return generic response to prevent email enumeration
