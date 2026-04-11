@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ReactDOM from 'react-dom/client';
+import AuthProvider from './Context/AuthContext.jsx';
 import SessionsProvider from './Context/SessionsContext.jsx';
 import ArticleWrapper from './Pages/Article/ArticleWrapper.jsx';
 import Course from './Pages/Course/Course.jsx';
@@ -13,6 +14,7 @@ function App() {
     return (
         <React.StrictMode>
             <BrowserRouter>
+                <AuthProvider>
                 <SessionsProvider>
                     <Routes>
                         <Route path='/onboarding' element={<OnboardingWrapper />} />
@@ -25,6 +27,7 @@ function App() {
                         </Route>
                     </Routes>
                 </SessionsProvider>
+                </AuthProvider>
             </BrowserRouter>
         </React.StrictMode>
     )
