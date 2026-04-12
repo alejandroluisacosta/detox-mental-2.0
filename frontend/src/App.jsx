@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom/client';
 import AuthProvider from './Context/AuthContext.jsx';
 import SessionsProvider from './Context/SessionsContext.jsx';
 import ArticleWrapper from './Pages/Article/ArticleWrapper.jsx';
-import Course from './Pages/Course/Course.jsx';
 import Session from './Components/Session/Session.jsx';
 import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
 import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';

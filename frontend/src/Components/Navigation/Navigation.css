@@ -33,6 +33,19 @@
     cursor: pointer;
 }
 
+.navigation__user-email {
+    padding: 8px 20px 4px;
+    max-width: 220px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--background);
+    opacity: 0.92;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .navigation hr {
     width: 60%;
     margin: 0 auto;
