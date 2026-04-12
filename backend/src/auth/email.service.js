@@ -35,7 +35,7 @@ function buildEmailHtml(loginUrl) {
           Haz clic en el botón de abajo para iniciar sesión. Este enlace es válido por <strong>15 minutos</strong> y solo puede usarse una vez.
         </p>
         <a href="${loginUrl}"
-           style="display: inline-block; padding: 12px 28px; background: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 15px;">
+           style="display: inline-block; padding: 12px 28px; background: #845d43; color: #F4F2F0; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 15px;">
           Iniciar sesión
         </a>
         <p style="margin: 24px 0 0; color: #999; font-size: 13px;">
