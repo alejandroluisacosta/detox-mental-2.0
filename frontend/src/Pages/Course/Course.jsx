@@ -14,9 +14,10 @@ const Course = () => {
     const [isSessionUnblocked, setIsSessionUnblocked] = useState(false);
     const selectedSession = useRef(null);
     const navigate = useNavigate();
-    const { sessions, setSessions } = useContext(SessionsContext)
+    const { sessions, setSessions, sessionsLoading } = useContext(SessionsContext)
 
     const handleGoToSession = (id) => {
+        if (sessionsLoading && id >= 4) return;
         const sessionToOpen = sessions.find(session => session.id === id);
         if (sessionToOpen.isBlocked) {
             setOpenBlockedSessionModal(true);

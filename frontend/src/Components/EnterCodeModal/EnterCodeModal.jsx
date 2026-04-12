@@ -12,10 +12,10 @@ const EnterCodeModal = ({ selectedSessionId, handleUnblockSession, setOpenEnterC
         setUserInput(target.value.toUpperCase());
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const input = userInput.trim();
-        const success = handleUnblockSession(selectedSessionId, input);
+        const success = await handleUnblockSession(selectedSessionId, input);
         if (!success)
             setErrorCount(count => count + 1);
     }

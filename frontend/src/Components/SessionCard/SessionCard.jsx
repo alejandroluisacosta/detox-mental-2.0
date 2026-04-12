@@ -1,9 +1,20 @@
 import './SessionCard.css'
+import { useSessions } from '../../Context/SessionsContext.jsx';
 
 const SessionCard = ({ session, index, handleGoToSession }) => {
+    const { sessionsLoading } = useSessions();
+
+    const showLoading =
+        sessionsLoading && session.id >= 4;
+
     return (
         <div key={index} className='session-card' onClick={() => handleGoToSession(session.id)}>
-            {session.isBlocked && <div className='session-card__blocked-layer'></div>}
+            {showLoading && (
+                <div className="session-card__loading-overlay" aria-hidden>
+                    <span className="session-card__spinner" />
+                </div>
+            )}
+            {session.isBlocked && !showLoading && <div className='session-card__blocked-layer'></div>}
             <img src={session.img} className='session-card__image' alt={`Imagen de sesión ${session.id}`}/>
             <h2 className='session-card__header'>{`Sesión ${session.id}:`}</h2>
             <h2 className='session-card__title'>{session.title}</h2>

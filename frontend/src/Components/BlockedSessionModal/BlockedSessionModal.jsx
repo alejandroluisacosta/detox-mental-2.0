@@ -4,6 +4,8 @@ import EnterCodeModal from '../EnterCodeModal/EnterCodeModal';
 import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
 import CloseIcon from '../CloseIcon/CloseIcon';
 import { codes } from '../../data';
+import { apiFetch } from '../../api/client.js';
+import { emitToast } from '../../lib/toastBus.js';
 
 const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked, selectedSession, setSessions }) => {
     const [openEnterCodeModal, setOpenEnterCodeModal] = useState(false);
@@ -11,22 +13,32 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
 
     const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
-    const handleUnblockSession = (id, code) => {
-        if (codes[selectedSession.id] === code) {
-            setSessions(prev => prev.map(session => {
-                let returnValue = {...session}
-                if (session.id === id && codes[selectedSession.id] === code) {
-                    returnValue.isBlocked = false;
-                }
-                return returnValue;
-                }))
-            setOpenBlockedSessionModal(false);
-            setIsSessionUnblocked(true);
-            return true;
-        } else {
+    const handleUnblockSession = async (id, code) => {
+        if (codes[selectedSession.id] !== code) {
             return false;
         }
-    }
+        setSessions((prev) =>
+            prev.map((session) => {
+                if (session.id === id) {
+                    return { ...session, isBlocked: false };
+                }
+                return session;
+            }),
+        );
+        setOpenBlockedSessionModal(false);
+        setIsSessionUnblocked(true);
+        try {
+            const res = await apiFetch('/auth/me/unblocked-sessions', {
+                method: 'POST',
+                body: { sessionId: id },
+            });
+            if (!res.ok) throw new Error('save failed');
+        } catch (err) {
+            console.error('[unblock-session]', err);
+            emitToast('No se pudo guardar el desbloqueo. Inténtalo de nuevo.');
+        }
+        return true;
+    };
 
     return (    
         <>
