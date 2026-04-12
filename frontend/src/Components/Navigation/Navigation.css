@@ -53,7 +53,6 @@
 }
 
 @media (min-width: 1000px) {
-    /* Icon stays under top: 5%; panel stacks below (same DOM as mobile: panel then icon). */
     .navigation {
         top: 5%;
         right: unset;

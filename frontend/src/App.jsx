@@ -10,12 +10,14 @@ import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';
 import OnboardingGate from './Pages/Onboarding/OnboardingGate.jsx';
 import Login from './Pages/Auth/Login.jsx';
 import AuthError from './Pages/Auth/AuthError.jsx';
+import AuthSessionToast from './Components/AuthSessionToast/AuthSessionToast.jsx';
 
 function App() {
     return (
         <React.StrictMode>
             <BrowserRouter>
                 <AuthProvider>
+                    <AuthSessionToast />
                 <SessionsProvider>
                     <Routes>
                         <Route path='/onboarding' element={<OnboardingWrapper />} />

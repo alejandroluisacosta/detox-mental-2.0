@@ -29,7 +29,7 @@
   color: var(--text);
   opacity: 0.85;
   line-height: 1.5;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   text-align: center;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .auth-page__message--success {
-  color: #1d6b3a;
+  font-weight: 600;
 }
 
 .auth-page__message--error {

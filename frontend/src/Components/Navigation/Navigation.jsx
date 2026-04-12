@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import './Navigation.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { emitToast } from '../../lib/toastBus.js';
 
 const Navigation = () => {
     const [isLinksVisible, setIsLinksVisible] = useState(false);
@@ -17,6 +18,7 @@ const Navigation = () => {
     const handleLogout = async (e) => {
         e.stopPropagation();
         await logout();
+        emitToast('Sesión cerrada');
         setIsLinksVisible(false);
     };
 
