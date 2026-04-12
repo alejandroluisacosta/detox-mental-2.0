@@ -53,17 +53,25 @@
 }
 
 @media (min-width: 1000px) {
+    /* Icon stays under top: 5%; panel stacks below (same DOM as mobile: panel then icon). */
     .navigation {
         top: 5%;
         right: unset;
         left: 20%;
-        max-height: 150px;
         display: flex;
-        flex-direction: column-reverse;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: flex-start;
     }
+
     .navigation__icon {
+        order: -1;
         width: 48px;
-        margin-bottom: auto;
+        flex-shrink: 0;
+    }
+
+    .navigation__links-container {
+        margin-bottom: 0;
+        margin-top: 8px;
+        order: 0;
     }
 }
