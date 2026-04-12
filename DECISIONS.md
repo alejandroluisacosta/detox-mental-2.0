@@ -44,3 +44,34 @@ Additional upsides:
 - Two projects to configure and monitor
 - CORS and `VITE_CHAT_API_URL` must be kept in sync
 - Response shape must match between Express (local) and serverless handler (Vercel) so the frontend works in both environments
+
+### 2026-04-04 — Authentication layer (passwordless, JWT cookies, SPA)
+
+**Decision:**  
+Implement **passwordless authentication** for Detox Mental: magic links by email, **PostgreSQL** for users and token rows, **JWT** sessions delivered as **HTTP-only cookies**, **Resend** for mail, and a small **Express** surface (`/auth/*`, `/auth/me`) integrated with the existing backend—while the **chat** path may remain **serverless** on Vercel where applicable.
+
+**Design choices (why we chose them):**
+
+- **Magic links (no passwords):** Frictionless, modern sign-in that matches the **UX-focused** positioning of the product; avoids password storage, reset flows, and related support burden.
+- **JWT in an HTTP-only cookie (not `localStorage`):** The browser sends the session on API calls automatically; JS cannot read the token, which **reduces XSS risk** compared to bearer tokens in storage.
+- **Store only a hash (HMAC) of the magic link token in the DB; never the raw token:** Limits damage if the DB is leaked; the **HMAC uses `MAGIC_LINK_SECRET`**, stronger than an unkeyed hash against offline guessing.
+- **Encode email (and a nonce) inside the raw magic link token:** Lets verification recover identity **without** an `email` column on `magic_link_tokens`, keeping the table minimal while keeping tokens high-entropy.
+- **Create the `users` row only after a successful `/auth/verify`, not on `/auth/login`:** Ensures accounts exist only after **proof of email access**; avoids creating users from login spam alone.
+- **Generic JSON response for `POST /auth/login`:** **Anti-enumeration**—attackers cannot use the login endpoint to learn whether an email is registered.
+- **Cookie settings (HttpOnly, `Secure` in production, `SameSite=Lax`, path `/`, max-age, optional `Domain`):** Balance security and usability; `Secure` aligns with HTTPS in prod; `Lax` works with same-site navigation patterns used by the app. [This decision was made with more reliance on AI than the others. It needs to be further reviewed to fully understand the implications of using a different approach. Kept as it for time management reasons].
+- **CORS: allow a single explicit `FRONTEND_ORIGIN` with `credentials: true`:** Required for the SPA to send cookies on **cross-origin** requests to the API during local dev and deployed setups.
+- **`GET /auth/me` protected by middleware:** The SPA **cannot read** the HTTP-only cookie; a lightweight **session bootstrap** call lets the UI know who is logged in after refresh or new tabs **without** duplicating secrets client-side.
+- **Resend + `API_PUBLIC_URL` (or equivalent) for magic link URLs:** Emails must point at the **real API** host per environment so links work from any device; configuration stays in env, not hardcoded.
+- **Auth-related UI in the shared `Navigation` menu (login / email / logout):** Keeps **one** global navigation pattern instead of a second floating control; reduces layout clutter while auth is still lightweight.
+- **`requireAuth` loads the user from the DB and rejects soft-deleted users (`deleted_at`):** JWT alone is not enough. Server-side checks enforce **account state** and align with the product’s soft-delete model.
+
+### 2026-04-04 — Magic link email HTML kept inline in the backend
+
+**Decision:**  
+Keep the **magic link email** as **HTML with inline styles** implemented in **`email.service.js`** (template strings), without separate template files or an email framework/inliner pipeline.
+
+**Why this option was chosen:**  
+Only **one** transactional email exists today, and it is **unlikely to change often**. Extracting templates or adding **MJML / inlining** would introduce **dependencies and build complexity** disproportionate to the need. Inline styles are the **norm for HTML email** because many clients ignore external or embedded stylesheets.
+
+**Why obvious alternatives were deferred:**  
+Separate `.html` files improve readability but still require **inlined CSS in the final payload** unless we add tooling. Revisit if the number of templates grows or marketing owns ongoing email design.
