@@ -1,20 +1,20 @@
 import {
   isValidSessionId,
-  listUnblockedSessionIdsForUser,
-  recordUnblockedSession,
-} from './unblockedSessions.service.js';
+  listSessionUnblockIdsForUser,
+  recordSessionUnblock,
+} from './sessionUnblocks.service.js';
 
-export async function getUnblockedSessions(req, res) {
+export async function getSessionUnblocks(req, res) {
   try {
-    const sessionIds = await listUnblockedSessionIdsForUser(req.user.id);
+    const sessionIds = await listSessionUnblockIdsForUser(req.user.id);
     return res.status(200).json({ sessionIds });
   } catch (err) {
-    console.error('[auth/unblocked-sessions GET]', err);
+    console.error('[session-unblocks GET]', err);
     return res.status(500).json({ message: 'Error al cargar sesiones desbloqueadas.' });
   }
 }
 
-export async function postUnblockedSession(req, res) {
+export async function postSessionUnblock(req, res) {
   const raw = req.body?.sessionId;
   const sessionId = typeof raw === 'string' ? parseInt(raw, 10) : raw;
 
@@ -23,10 +23,10 @@ export async function postUnblockedSession(req, res) {
   }
 
   try {
-    await recordUnblockedSession(req.user.id, sessionId);
+    await recordSessionUnblock(req.user.id, sessionId);
     return res.status(201).json({ ok: true, sessionId });
   } catch (err) {
-    console.error('[auth/unblocked-sessions POST]', err);
+    console.error('[session-unblocks POST]', err);
     return res.status(500).json({ message: 'No se pudo guardar el desbloqueo.' });
   }
 }

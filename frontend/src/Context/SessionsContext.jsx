@@ -32,8 +32,7 @@ const SessionsProvider = ({ children }) => {
     }
 
     let cancelled = false;
-
-    (async () => {
+    async function loadSessions() {
       try {
         const res = await apiFetch("/auth/me/unblocked-sessions");
         if (!res.ok) throw new Error("unblocked fetch failed");
@@ -47,7 +46,9 @@ const SessionsProvider = ({ children }) => {
       } finally {
         if (!cancelled) setSessionsLoading(false);
       }
-    })();
+    }
+
+    loadSessions();
 
     return () => {
       cancelled = true;

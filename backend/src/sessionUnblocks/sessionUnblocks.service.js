@@ -11,7 +11,7 @@ export function isValidSessionId(sessionId) {
   );
 }
 
-export async function listUnblockedSessionIdsForUser(userId) {
+export async function listSessionUnblockIdsForUser(userId) {
   const { rows } = await pool.query(
     `SELECT session_id FROM user_unblocked_sessions WHERE user_id = $1 ORDER BY session_id`,
     [userId],
@@ -19,7 +19,7 @@ export async function listUnblockedSessionIdsForUser(userId) {
   return rows.map((r) => r.session_id);
 }
 
-export async function recordUnblockedSession(userId, sessionId) {
+export async function recordSessionUnblock(userId, sessionId) {
   await pool.query(
     `INSERT INTO user_unblocked_sessions (user_id, session_id)
      VALUES ($1, $2)
