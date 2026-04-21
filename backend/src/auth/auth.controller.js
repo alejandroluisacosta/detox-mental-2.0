@@ -71,7 +71,7 @@ export async function verify(req, res) {
     const token = signJwt({ user_id: user.id, role: user.role });
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
 
-    return res.redirect(`${FRONTEND_ORIGIN}/course`);
+    return res.redirect(`${FRONTEND_ORIGIN}/course?auth=success`);
   } catch (err) {
     console.error('[auth/verify]', err);
     return res.redirect(`${FRONTEND_ORIGIN}/auth/error?reason=server_error`);
@@ -84,4 +84,10 @@ export function logout(_req, res) {
     ...(COOKIE_OPTIONS.domain ? { domain: COOKIE_OPTIONS.domain } : {}),
   });
   return res.status(200).json({ message: 'Logged out.' });
+}
+
+/** Session bootstrap for the SPA. Requires a valid JWT cookie (see requireAuth). */
+export function me(req, res) {
+  const { id, email, role } = req.user;
+  return res.status(200).json({ id, email, role });
 }
