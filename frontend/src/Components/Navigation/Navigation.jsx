@@ -1,73 +1,59 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import './Navigation.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
-import { emitToast } from '../../lib/toastBus.js';
 
 const Navigation = () => {
-    const [isLinksVisible, setIsLinksVisible] = useState(false);
-    const linksContainerRef = useRef(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
-    const { user, status, logout } = useAuth();
+    const { user, status } = useAuth();
 
     const goLogin = () => {
         navigate('/login');
-        setIsLinksVisible(false);
+        setIsMenuOpen(false);
     };
 
-    const handleLogout = async (e) => {
-        e.stopPropagation();
-        await logout();
-        emitToast('Sesión cerrada');
-        setIsLinksVisible(false);
+    const goCourse = () => {
+        navigate('/course');
+        setIsMenuOpen(false);
     };
 
-    useEffect(() => {
-        if (!isLinksVisible) return;
-        const onDocumentClick = (e) => {
-            if (linksContainerRef.current && !linksContainerRef.current.contains(e.target)) {
-                setIsLinksVisible(false);
-            }
-        };
-        document.addEventListener('click', onDocumentClick);
-        return () => document.removeEventListener('click', onDocumentClick);
-    }, [isLinksVisible]);
+    const goArticle = () => {
+        navigate('/');
+        setIsMenuOpen(false);
+    };
 
     return (
-        <div className="navigation">
-            {isLinksVisible && (
-                <div ref={linksContainerRef} className='navigation__links-container'>
-                    <span className='navigation__link' onClick={() => navigate('/')}>ARTÍCULO</span>
-                    <hr/>
-                    <span className='navigation__link' onClick={() => navigate('/course')}>CURSO</span>
-                    {user && (
-                        <>
-                            <hr />
-                            <div className="navigation__user-email" title={user.email}>
-                                {user.email}
-                            </div>
-                            <span className='navigation__link' onClick={handleLogout}>
-                                CERRAR SESIÓN
-                            </span>
-                        </>
-                    )}
-                    {!user && status === 'ready' && (
-                        <>
-                            <hr />
-                            <span className='navigation__link' onClick={goLogin}>
-                                INICIAR SESIÓN
-                            </span>
-                        </>
-                    )}
+        <>
+            {isMenuOpen && (
+                <div className='navigation__menu-overlay'>
+                    <div className='navigation__menu-header'>
+                        <button className='navigation__menu-close' onClick={() => setIsMenuOpen(false)}>
+                            Cerrar
+                        </button>
+                    </div>
+                    <div className='navigation__menu-links'>
+                        <button className='navigation__menu-link' onClick={goArticle}>ARTÍCULO</button>
+                        <button className='navigation__menu-link' onClick={goCourse}>CURSO</button>
+                    </div>
                 </div>
             )}
-            <img
-                className="navigation__icon"
-                src='/images/menu.svg'
-                onClick={(e) => { e.stopPropagation(); setIsLinksVisible(v => !v); }}
-                alt="Menú"
-            />
-        </div>
+            <div className="navigation">
+                <button className='navigation__section navigation__section--left' onClick={() => setIsMenuOpen(true)}>
+                    <img
+                        className="navigation__icon"
+                        src='/images/menu.svg'
+                        alt="Menú"
+                    />
+                </button>
+                <button
+                    className='navigation__section navigation__section--right'
+                    onClick={!user && status === 'ready' ? goLogin : undefined}
+                >
+                    {user?.email || 'Login'}
+                </button>
+            </div>
+        </>
     );
 }
 
