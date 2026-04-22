@@ -13,6 +13,13 @@ const Navigation = () => {
         () => location.pathname.startsWith('/course') || location.pathname.startsWith('/session'),
         [location.pathname],
     );
+    const emailLabel = useMemo(() => {
+        if (!user?.email) return '';
+        const visibleChars = 10;
+        return user.email.length > visibleChars
+            ? `${user.email.slice(0, visibleChars)}...`
+            : user.email;
+    }, [user]);
 
     const goLogin = () => {
         navigate('/login');
@@ -98,10 +105,21 @@ const Navigation = () => {
                 </button>
                 <button
                     type='button'
-                    className='navigation__section navigation__section--right'
+                    className={`navigation__section navigation__section--right${user ? ' navigation__section--right-user' : ''}`}
                     onClick={!user && status === 'ready' ? goLogin : undefined}
                 >
-                    {user?.email || 'LOGIN'}
+                    {user ? (
+                        <>
+                            <span className='navigation__user-email' title={user.email}>
+                                {emailLabel}
+                            </span>
+                            <img
+                                className='navigation__account-icon'
+                                src='/icons/account.svg'
+                                alt='Cuenta'
+                            />
+                        </>
+                    ) : 'LOGIN'}
                 </button>
             </div>
         </>

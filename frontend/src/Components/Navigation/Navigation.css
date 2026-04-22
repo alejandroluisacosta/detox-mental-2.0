@@ -47,9 +47,24 @@
 .navigation__section--right {
     padding: 0 16px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 18px;
+}
+
+.navigation__section--right-user {
+    justify-content: center;
+    gap: 10px;
+}
+
+.navigation__user-email {
+    min-width: 0;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.navigation__account-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
 }
 
 .navigation__icon {
