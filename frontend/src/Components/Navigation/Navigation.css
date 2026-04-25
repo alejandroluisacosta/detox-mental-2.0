@@ -1,76 +1,174 @@
 .navigation {
-    position: absolute;
-    bottom: 12.5%;
-    right: 5%;
-    text-align: right;
     position: fixed;
-    z-index: 1;
-}
-
-.navigation__icon {
-    background-color: var(--accent);
-    border-radius: 50%;
-    padding: 12px;
-    cursor: pointer;
-
-}
-
-.navigation__links-container {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
     display: flex;
-    flex-direction: column;
+    width: 100%;
+    border-top: 1px solid var(--background);
     background-color: var(--accent);
-    border-radius: 16px;
-    margin-bottom: 8px;
-    transform: translate(-5%, 0);
+    transform: translateY(110%);
+    transition: transform 220ms ease;
 }
 
-.navigation__link {
-    padding: 12px 40px 12px;
-    text-align: center;
+.navigation--visible {
+    transform: translateY(0);
+}
+
+.navigation__section {
+    flex: 1;
+    min-height: 60px;
+    border: none;
+    background: transparent;
     color: var(--background);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+}
+
+.navigation__section--left {
+    position: relative;
+}
+
+.navigation__section--left::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    bottom: 15%;
+    width: 1px;
+    background: var(--background);
+}
+
+.navigation__section--right {
+    padding: 0 16px;
+    overflow: hidden;
+}
+
+.navigation__section--right-user {
+    justify-content: center;
+    gap: 10px;
 }
 
 .navigation__user-email {
-    padding: 8px 20px 4px;
-    max-width: 220px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--background);
-    opacity: 0.92;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0;
+    text-align: left;
     white-space: nowrap;
 }
 
-.navigation hr {
-    width: 60%;
-    margin: 0 auto;
-    border: 0.5px solid var(--background);
+.navigation__account-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.navigation__icon {
+    width: 30px;
+    height: 30px;
+}
+
+.navigation__menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: var(--accent);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    animation: navigation-menu-slide-in 220ms ease-out;
+}
+
+.navigation__menu-overlay--closing {
+    animation: navigation-menu-slide-out 220ms ease-in forwards;
+}
+
+.navigation__menu-header {
+    position: absolute;
+    top: 24px;
+    right: 20px;
+}
+
+.navigation__menu-close {
+    border: 1px solid var(--background);
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: transparent;
+    color: var(--background);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.navigation__menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.navigation__menu-link {
+    border: 1px solid var(--background);
+    border-radius: 12px;
+    min-height: 52px;
+    background: transparent;
+    color: var(--background);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+
+.navigation__menu-link--active {
+    background: var(--background);
+    color: var(--accent);
+}
+
+@keyframes navigation-menu-slide-in {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes navigation-menu-slide-out {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
 }
 
 @media (min-width: 1000px) {
     .navigation {
-        top: 5%;
-        right: unset;
-        left: 20%;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        top: 0;
+        bottom: auto;
+        max-width: 700px;
+        margin: 0 auto;
+        border-top: none;
+        border-bottom: 1px solid var(--background);
+        border-left: 1px solid var(--background);
+        border-right: 1px solid var(--background);
+        transform: translateY(-110%);
     }
 
-    .navigation__icon {
-        order: -1;
-        width: 48px;
-        flex-shrink: 0;
+    .navigation--visible {
+        transform: translateY(0);
     }
 
-    .navigation__links-container {
-        margin-bottom: 0;
-        margin-top: 8px;
-        order: 0;
+    .navigation__menu-overlay {
+        animation: none;
+    }
+
+    .navigation__menu-overlay--closing {
+        animation: none;
     }
 }
