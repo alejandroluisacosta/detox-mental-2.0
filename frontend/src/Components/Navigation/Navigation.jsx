@@ -31,6 +31,11 @@ const Navigation = () => {
         closeMenu();
     };
 
+    const goAccount = () => {
+        navigate('/account');
+        closeMenu();
+    };
+
     const goArticle = () => {
         navigate('/');
         closeMenu();
@@ -106,7 +111,7 @@ const Navigation = () => {
                 <button
                     type='button'
                     className={`navigation__section navigation__section--right${user ? ' navigation__section--right-user' : ''}`}
-                    onClick={!user && status === 'ready' ? goLogin : undefined}
+                    onClick={user ? goAccount : (!user && status === 'ready' ? goLogin : undefined)}
                 >
                     {user ? (
                         <>

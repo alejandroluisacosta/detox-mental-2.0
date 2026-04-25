@@ -11,6 +11,7 @@ import OnboardingGate from './Pages/Onboarding/OnboardingGate.jsx';
 import Login from './Pages/Auth/Login.jsx';
 import AuthError from './Pages/Auth/AuthError.jsx';
 import AuthSessionToast from './Components/AuthSessionToast/AuthSessionToast.jsx';
+import Account from './Pages/Account/Account.jsx';
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                         <Route element={<OnboardingGate />}>
                             <Route path='/' element={<ArticleWrapper />} />
                             <Route path='course' element={<CourseWrapper />} />
+                            <Route path='account' element={<Account />} />
                             <Route path='session/:sessionId' element={<Session />} />
                         </Route>
                     </Routes>

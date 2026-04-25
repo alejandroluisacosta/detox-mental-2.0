@@ -88,6 +88,6 @@ export function logout(_req, res) {
 
 /** Session bootstrap for the SPA. Requires a valid JWT cookie (see requireAuth). */
 export function me(req, res) {
-  const { id, email, role } = req.user;
-  return res.status(200).json({ id, email, role });
+  const { id, email, role, created_at } = req.user;
+  return res.status(200).json({ id, email, role, created_at });
 }
