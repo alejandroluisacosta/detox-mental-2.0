@@ -81,8 +81,8 @@
 }
 
 .account-page__footer-button {
+  position: relative;
   border: none;
-  border-right: 1px solid var(--background);
   min-height: 58px;
   background: transparent;
   color: var(--background);
@@ -91,8 +91,14 @@
   letter-spacing: 0.04em;
 }
 
-.account-page__footer-button:last-child {
-  border-right: none;
+.account-page__footer-button:first-child::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  background: var(--background);
 }
 
 @media (min-width: 1000px) {
