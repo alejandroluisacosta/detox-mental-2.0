@@ -88,3 +88,19 @@ Adding authentication made the previous interaction model less intuitive: puttin
 - **Keep circle nav and add login inside it:** Authentication entry felt secondary and hard to discover.  
 - **Keep circle nav and add separate login icon/button:** Increased UI clutter and weakened hierarchy, particularly on small screens.  
 - **Place login elsewhere ad hoc (header/footer only):** Created inconsistent patterns across pages and split related actions.
+
+### 2026-05-01 — Backend API domain moved from `*.vercel.app` to `api.detoxmental.es`
+
+**Decision:**  
+Serve the backend API from a first-party custom subdomain (`api.detoxmental.es`) instead of the default Vercel domain (`detox-mental-backend.vercel.app`), and point frontend API calls/magic-link URLs to that domain.
+
+**Why this option was chosen:**  
+In production we hit authentication instability: `/auth/me` returned unauthorized states because the auth cookie was not being sent consistently from the frontend origin to the backend origin. Although part of the observed errors appeared as CORS issues, the core risk was cross-site cookie behavior between `www.detoxmental.es` and `*.vercel.app`. We considered relaxing cookie policy (`SameSite=None; Secure`) to keep the old domain, but that path is brittle long-term because third-party cookie handling continues to tighten across browsers. Moving the API to `api.detoxmental.es` makes frontend and backend first-party under the same registrable domain (`detoxmental.es`), improving cookie reliability and reducing auth/session regressions.
+
+**Why obvious alternatives were rejected:**  
+- **Keep `*.vercel.app` and switch to `SameSite=None`:** Could work short-term, but depends on third-party cookie behavior and is vulnerable to browser privacy changes.  
+
+**Operational implications (accepted):**
+- Need DNS + Vercel domain management for `api.detoxmental.es`
+- Need stricter env coordination (`FRONTEND_ORIGIN`, `API_PUBLIC_URL`, frontend `VITE_API_URL`)
+- Must redeploy both projects when domain/env wiring changes
