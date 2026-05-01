@@ -49,10 +49,6 @@ const Navigation = () => {
     };
 
     const closeMenu = () => {
-        if (window.matchMedia('(min-width: 1000px)').matches) {
-            setMenuState('closed');
-            return;
-        }
         setMenuState('closing');
     };
 

@@ -8,6 +8,9 @@
     width: 100%;
     border-top: 1px solid var(--background);
     background-color: var(--accent);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    overflow: hidden;
     transform: translateY(110%);
     transition: transform 220ms ease;
 }
@@ -149,19 +152,8 @@
 
 @media (min-width: 1000px) {
     .navigation {
-        top: 0;
-        bottom: auto;
         max-width: 700px;
         margin: 0 auto;
-        border-top: none;
-        border-bottom: 1px solid var(--background);
-        border-left: 1px solid var(--background);
-        border-right: 1px solid var(--background);
-        transform: translateY(-110%);
-    }
-
-    .navigation--visible {
-        transform: translateY(0);
     }
 
     .navigation__menu-overlay {
