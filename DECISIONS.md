@@ -75,3 +75,16 @@ Only **one** transactional email exists today, and it is **unlikely to change of
 
 **Why obvious alternatives were deferred:**  
 Separate `.html` files improve readability but still require **inlined CSS in the final payload** unless we add tooling. Revisit if the number of templates grows or marketing owns ongoing email design.
+
+### 2026-04-25 — Navigation changed from floating circle to scroll-aware options bar
+
+**Decision:**  
+Replace the previous **floating circular navigation button** with a unified **options bar** that combines navigation and authentication entry points. The bar appears on scroll-up (bottom on mobile, top on desktop), with menu access on the left and auth state (`Login` / user email) on the right.
+
+**Why this option was chosen:**  
+Adding authentication made the previous interaction model less intuitive: putting `Login` inside the old floating menu felt hidden and awkward, while trying a separate login circle/icon created visual clutter—especially on mobile, where no placement felt clean. After UX/UI review, we consolidated both concerns into a single component to improve discoverability, reduce competing floating controls, and keep the primary actions in one predictable place.
+
+**Why obvious alternatives were rejected:**  
+- **Keep circle nav and add login inside it:** Authentication entry felt secondary and hard to discover.  
+- **Keep circle nav and add separate login icon/button:** Increased UI clutter and weakened hierarchy, particularly on small screens.  
+- **Place login elsewhere ad hoc (header/footer only):** Created inconsistent patterns across pages and split related actions.

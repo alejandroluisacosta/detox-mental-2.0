@@ -13,13 +13,11 @@ const Navigation = () => {
         () => location.pathname.startsWith('/course') || location.pathname.startsWith('/session'),
         [location.pathname],
     );
-    const emailLabel = useMemo(() => {
-        if (!user?.email) return '';
-        const visibleChars = 10;
-        return user.email.length > visibleChars
-            ? `${user.email.slice(0, visibleChars)}...`
-            : user.email;
-    }, [user]);
+    const isArticleRoute = useMemo(() => location.pathname === '/', [location.pathname]);
+    const isInstructionsRoute = useMemo(
+        () => location.pathname.startsWith('/instructions'),
+        [location.pathname],
+    );
 
     const goLogin = () => {
         navigate('/login');
@@ -28,6 +26,16 @@ const Navigation = () => {
 
     const goCourse = () => {
         navigate('/course');
+        closeMenu();
+    };
+
+    const goAccount = () => {
+        navigate('/account');
+        closeMenu();
+    };
+
+    const goInstructions = () => {
+        navigate('/instructions');
         closeMenu();
     };
 
@@ -41,10 +49,6 @@ const Navigation = () => {
     };
 
     const closeMenu = () => {
-        if (window.matchMedia('(min-width: 1000px)').matches) {
-            setMenuState('closed');
-            return;
-        }
         setMenuState('closing');
     };
 
@@ -90,8 +94,9 @@ const Navigation = () => {
                         </button>
                     </div>
                     <div className='navigation__menu-links'>
-                        <button type='button' className={`navigation__menu-link${!isCourseRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>ARTÍCULO</button>
+                        <button type='button' className={`navigation__menu-link${isArticleRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>ARTÍCULO</button>
                         <button type='button' className={`navigation__menu-link${isCourseRoute ? ' navigation__menu-link--active' : ''}`} onClick={goCourse}>CURSO</button>
+                        <button type='button' className={`navigation__menu-link${isInstructionsRoute ? ' navigation__menu-link--active' : ''}`} onClick={goInstructions}>INSTRUCCIONES</button>
                     </div>
                 </div>
             )}
@@ -106,12 +111,12 @@ const Navigation = () => {
                 <button
                     type='button'
                     className={`navigation__section navigation__section--right${user ? ' navigation__section--right-user' : ''}`}
-                    onClick={!user && status === 'ready' ? goLogin : undefined}
+                    onClick={user ? goAccount : (!user && status === 'ready' ? goLogin : undefined)}
                 >
                     {user ? (
                         <>
-                            <span className='navigation__user-email' title={user.email}>
-                                {emailLabel}
+                            <span className='navigation__user-email'>
+                                PERFIL
                             </span>
                             <img
                                 className='navigation__account-icon'
