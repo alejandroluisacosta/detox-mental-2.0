@@ -20,7 +20,7 @@ This is where Detox Mental starts moving from content to practice.
 
 ### v2.0 — Conversational Detox
 
-State: 🧠 Planned
+State: ✅ Released
 
 The article becomes interactive.
 An AI-powered chat replaces the static introduction, guiding users dynamically through their own mental Detox journey.
@@ -28,10 +28,10 @@ This is the shift from reading Detox Mental to thinking with Detox Mental.
 
 ### v2.5 — Identity Layer
 
-State: 🔒 Planned
+State: ✅ Released
 
 User accounts, progress tracking, and personalization.
-The system begins to remember — adapting the experience to each user’s rhythm and path.
+The system begins to remember — adapting the experience to each user’s rhythm.
 
 ### v3.0 — Monetization Layer
 
