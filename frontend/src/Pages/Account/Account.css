@@ -2,6 +2,7 @@
   min-height: 100vh;
   background: var(--accent);
   color: var(--background);
+  font-size: 18px;
 }
 
 .account-page__content {
@@ -27,14 +28,12 @@
 
 .account-page__email {
   margin: 0 0 8px;
-  font-size: 18px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 
 .account-page__member-since {
   margin: 0;
-  font-size: 14px;
   opacity: 0.9;
 }
 
@@ -57,7 +56,6 @@
   padding: 8px 10px;
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.62);
-  font-size: 14px;
   font-weight: 600;
 }
 
@@ -86,7 +84,6 @@
   min-height: 58px;
   background: transparent;
   color: var(--background);
-  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }

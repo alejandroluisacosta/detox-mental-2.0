@@ -1,0 +1,84 @@
+.instructions-page {
+  min-height: 100vh;
+  background: var(--background);
+  font-size: 18px;
+}
+
+.instructions-page__content {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 30px 20px 120px;
+  box-sizing: border-box;
+}
+
+.instructions-page__title {
+  margin: 0 0 14px;
+  font-size: 32px;
+  line-height: 1.12;
+  color: var(--accent);
+}
+
+.instructions-page__lead {
+  margin: 0 0 20px;
+}
+
+.instructions-page__section {
+  border: 1px solid var(--platinum);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  background: var(--background);
+}
+
+.instructions-page__section h2,
+.instructions-page__section h3 {
+  margin: 0 0 12px;
+  color: var(--accent);
+}
+
+.instructions-page__section p {
+  margin: 0 0 10px;
+  line-height: 1.45;
+}
+
+.instructions-page__section p:last-child {
+  margin-bottom: 0;
+}
+
+.instructions-page__list {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.instructions-page__list li {
+  margin-bottom: 12px;
+}
+
+.instructions-page__list li p {
+  margin: 6px 0 0;
+}
+
+.instructions-page__contact a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.instructions-page__closing {
+  margin: 18px 2px 0;
+}
+
+.instructions-page__closing p {
+  margin: 0 0 10px;
+  line-height: 1.45;
+}
+
+.instructions-page__closing p:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 1000px) {
+  .instructions-page__content {
+    padding-top: 78px;
+  }
+}
