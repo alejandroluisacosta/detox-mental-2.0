@@ -42,7 +42,7 @@ const Course = () => {
             }
             <Navigation />
             <h1 className='sessions-title'>Detox Mental</h1>
-            <p className='sessions-subtitle'>30 días para limpiar tu mente</p>
+            <p className='sessions-subtitle'>15 días para limpiar tu mente</p>
             <div className="sessions-container">
                 {sessions.map((session, index) => (
                     <SessionCard session={session} key={index} handleGoToSession={handleGoToSession}/>

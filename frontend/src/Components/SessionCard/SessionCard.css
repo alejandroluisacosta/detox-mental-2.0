@@ -69,22 +69,22 @@
 }
 
 .session-card__header, .session-card__title {
-    font-weight: 400;
-    font-size: 18px;
     margin-top: 0;
 }
 
 .session-card__header {
+    font-weight: 400;
     margin-bottom: 4px;
+    font-size: 18px;
 }
 
 .session-card__title {
     font-weight: 600;
     margin-bottom: 8px;
+    font-size: 22px;
 }
 
 .session-card__description {
-    font-size: 14px;
     margin-bottom: 16px;
 }
 

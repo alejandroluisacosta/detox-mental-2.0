@@ -63,7 +63,7 @@
 
 .sessions-page {
     text-align: center;
-    padding: 40px 15% 35px;
+    padding: 40px 10% 35px;
 }
 
 .sessions-title {
@@ -72,7 +72,6 @@
 }
 
 .sessions-subtitle {
-    font-size: 14px;
     margin-top: 0;
     margin-bottom: 50px;
 }
