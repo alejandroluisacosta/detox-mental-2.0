@@ -19,7 +19,7 @@
     "pg": "^8.20.0",
     "resend": "^6.10.0",
     "stripe": "^22.1.0",
-    "vercel": "^53.0.1"
+    "vercel": "^53.1.0"
   },
   "devDependencies": {
     "dotenv": "^17.3.1",

@@ -1,4 +1,5 @@
 import {
+  useCallback,
   createContext,
   useContext,
   useEffect,
@@ -16,13 +17,8 @@ const SessionsProvider = ({ children }) => {
   const { user, status } = useAuth();
   const [sessions, setSessions] = useState(sessionsData);
   const [sessionsLoading, setSessionsLoading] = useState(false);
-
-  useLayoutEffect(() => {
-    if (status === "loading" || !user) return;
-    setSessionsLoading(true);
-  }, [user, status]);
-
-  useEffect(() => {
+  
+  const reloadSessions = useCallback(async () => {
     if (status === "loading") return;
 
     if (!user) {
@@ -31,33 +27,32 @@ const SessionsProvider = ({ children }) => {
       return;
     }
 
-    let cancelled = false;
-    async function loadSessions() {
-      try {
-        const res = await apiFetch("/auth/me/unblocked-sessions");
-        if (!res.ok) throw new Error("unblocked fetch failed");
-        const data = await res.json();
-        const ids = Array.isArray(data.sessionIds) ? data.sessionIds : [];
-        if (cancelled) return;
-        setSessions(mergeUnlockedSessions(ids));
-      } catch (e) {
-        console.error("[sessions]", e);
-        if (!cancelled) setSessions(sessionsData);
-      } finally {
-        if (!cancelled) setSessionsLoading(false);
-      }
+    try {
+      const res = await apiFetch("/auth/me/unblocked-sessions");
+      if (!res.ok) throw new Error("unblocked fetch failed");
+      const data = await res.json();
+      const ids = Array.isArray(data.sessionIds) ? data.sessionIds : [];
+      setSessions(mergeUnlockedSessions(ids));
+    } catch (e) {
+      console.error("[sessions]", e);
+      setSessions(sessionsData);
+    } finally {
+      setSessionsLoading(false);
     }
-
-    loadSessions();
-
-    return () => {
-      cancelled = true;
-    };
   }, [user, status]);
+
+  useLayoutEffect(() => {
+    if (status === "loading" || !user) return;
+    setSessionsLoading(true);
+  }, [user, status]);
+
+  useEffect(() => {
+    reloadSessions();
+  }, [reloadSessions]);
 
   return (
     <SessionsContext.Provider
-      value={{ sessions, setSessions, sessionsLoading }}
+      value={{ sessions, setSessions, sessionsLoading, reloadSessions }}
     >
       {children}
     </SessionsContext.Provider>

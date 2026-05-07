@@ -13,6 +13,8 @@ import AuthError from './Pages/Auth/AuthError.jsx';
 import AuthSessionToast from './Components/AuthSessionToast/AuthSessionToast.jsx';
 import Account from './Pages/Account/Account.jsx';
 import Instructions from './Pages/Instructions/Instructions.jsx';
+import PaymentSuccess from './Pages/Payment/PaymentSuccess.jsx';
+import PaymentCancel from './Pages/Payment/PaymentCancel.jsx';
 
 function App() {
     return (
@@ -25,6 +27,8 @@ function App() {
                         <Route path='/onboarding' element={<OnboardingWrapper />} />
                         <Route path='/login' element={<Login />} />
                         <Route path='/auth/error' element={<AuthError />} />
+                        <Route path='/payment/success' element={<PaymentSuccess />} />
+                        <Route path='/payment/cancel' element={<PaymentCancel />} />
 
                         {/* Onboarding gate (exclude /onboarding to avoid redirect loop) */}
                         <Route element={<OnboardingGate />}>
