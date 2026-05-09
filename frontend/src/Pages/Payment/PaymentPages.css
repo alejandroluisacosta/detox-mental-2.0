@@ -51,18 +51,16 @@
   justify-content: center;
   align-items: center;
   text-decoration: none;
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 16px;
 }
 
-.payment-page__button--secondary {
-  background: transparent;
-  color: var(--accent);
-  border: 2px solid var(--accent);
-}
-
-.payment-page__button--ghost {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--platinum);
+.payment-page__button--course {
+  background: var(--accent);
+  color: var(--background);
 }
 
 .payment-page__hint {
