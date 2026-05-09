@@ -1,15 +1,18 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './BlockedSessionModal.css';
 import EnterCodeModal from '../EnterCodeModal/EnterCodeModal';
-import ComingSoonModal from '../ComingSoonModal/ComingSoonModal';
 import CloseIcon from '../CloseIcon/CloseIcon';
 import { codes } from '../../data';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
+import { useAuth } from '../../Context/AuthContext.jsx';
 
 const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked, selectedSession, setSessions }) => {
+    const navigate = useNavigate();
+    const { user, status } = useAuth();
     const [openEnterCodeModal, setOpenEnterCodeModal] = useState(false);
-    const [openComingSoonModal,  setOpenComingSoonModal] = useState(false);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
 
     const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
@@ -40,22 +43,42 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
         return true;
     };
 
+    const handlePurchase = async () => {
+        if (status === 'loading' || checkoutLoading) {
+            return;
+        }
+
+        if (!user) {
+            emitToast('Inicia sesión para comprar y desbloquear el curso completo.');
+            setOpenBlockedSessionModal(false);
+            navigate('/login');
+            return;
+        }
+
+        setCheckoutLoading(true);
+        try {
+            const res = await apiFetch('/stripe/create-checkout-session', {
+                method: 'POST',
+                body: {},
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data?.url) {
+                throw new Error('checkout session failed');
+            }
+            window.location.assign(data.url);
+        } catch (err) {
+            console.error('[stripe/checkout]', err);
+            emitToast('No se pudo iniciar el pago. Inténtalo de nuevo.');
+            setCheckoutLoading(false);
+        }
+    };
+
     return (    
         <>
             {openEnterCodeModal && 
             <div className='modal-overlay modal-overlay--layer-2'>
                 <EnterCodeModal selectedSessionId={selectedSession.id} handleUnblockSession={handleUnblockSession} setOpenEnterCodeModal={setOpenEnterCodeModal}/>
             </div>}
-            {openComingSoonModal && (
-                <div
-                    className="blocked-session-modal__coming-soon-backdrop"
-                    onClick={() => setOpenComingSoonModal(false)}
-                >
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <ComingSoonModal setOpenComingSoonModal={setOpenComingSoonModal}/>
-                    </div>
-                </div>
-            )}
             <div
                 className='modal-overlay'
                 onClick={(e) => { if (e.target === e.currentTarget) setOpenBlockedSessionModal(false) }}
@@ -64,7 +87,13 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
                     <CloseIcon handleCloseModal={handleCloseBlockedSessionModal} />
                     <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
                     <p className="blocked-session-modal__text"><strong>Compra el curso completo</strong> (15 sesiones + 15 ejercicios) por 15€</p>
-                    <button className="blocked-session-modal__button" onClick={() => setOpenComingSoonModal(true)}>COMPRAR</button>
+                    <button
+                        className="blocked-session-modal__button"
+                        onClick={handlePurchase}
+                        disabled={status === 'loading' || checkoutLoading}
+                    >
+                        {checkoutLoading ? 'Cargando pago...' : 'COMPRAR'}
+                    </button>
                     <hr className="blocked-session-modal__line"/>
                     <p className="blocked-session-modal__text">Alternativa gratis:</p>
                     <p className="blocked-session-modal__text">Escríbenos a <strong>detoxmental4@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>

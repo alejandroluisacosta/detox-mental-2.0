@@ -1,0 +1,140 @@
+.payment-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 48px;
+}
+
+.payment-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--header-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 28px 24px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-page__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.payment-page__subtitle {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.payment-page__status {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+  opacity: 0.85;
+}
+
+.payment-page__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-page__button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.payment-page__button--course {
+  background: var(--accent);
+  color: var(--background);
+}
+
+.payment-page__hint {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.payment-page__hint--error {
+  color: #b42318;
+  opacity: 1;
+}
+
+.payment-success__celebration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.payment-success__spark {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: paymentBurst 1.6s ease-out infinite;
+}
+
+.payment-success__spark--1 {
+  top: 22%;
+  left: 18%;
+  background: #ffb703;
+  animation-delay: 0.05s;
+}
+
+.payment-success__spark--2 {
+  top: 20%;
+  right: 22%;
+  background: #f28482;
+  animation-delay: 0.25s;
+}
+
+.payment-success__spark--3 {
+  top: 34%;
+  left: 50%;
+  background: #84a59d;
+  animation-delay: 0.45s;
+}
+
+.payment-success__spark--4 {
+  top: 12%;
+  left: 62%;
+  background: #577590;
+  animation-delay: 0.6s;
+}
+
+.payment-success__spark--5 {
+  top: 14%;
+  left: 35%;
+  background: #ef476f;
+  animation-delay: 0.8s;
+}
+
+@keyframes paymentBurst {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -40px) scale(1.4);
+    opacity: 0;
+  }
+}

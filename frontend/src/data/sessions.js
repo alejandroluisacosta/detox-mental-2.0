@@ -203,7 +203,7 @@ const sessionsData = [
     isBlocked: true,
     unblockQuestion: "Cuéntanos tu experiencia con Detox Mental. ¿Has notado algún cambio positivo?",
     exercise: {
-      question: '¿Qué filósofo dijo “La preparación es la clave del éxito”?',
+      question: '¿Qué filósofo dijo “Somos lo que hacemos repetidamente. La excelencia, entonces, no es un acto, sino un hábito”?',
       answer: 'ARISTÓTELES',
       text: 'Piensa en un fallo reciente y anota cómo lo abordarías distinto aplicando lo aprendido.',
       isBlocked: true
