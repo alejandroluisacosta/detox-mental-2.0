@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext.jsx";
 import { useSessions } from "../../Context/SessionsContext.jsx";
@@ -8,6 +8,7 @@ import "./PaymentPages.css";
 export default function PaymentSuccess() {
   const { refreshUser } = useAuth();
   const { reloadSessions } = useSessions();
+  const hasAutoSyncedRef = useRef(false);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState(null);
 
@@ -25,6 +26,8 @@ export default function PaymentSuccess() {
   }, [refreshUser, reloadSessions]);
 
   useEffect(() => {
+    if (hasAutoSyncedRef.current) return;
+    hasAutoSyncedRef.current = true;
     syncAccess();
   }, [syncAccess]);
 
