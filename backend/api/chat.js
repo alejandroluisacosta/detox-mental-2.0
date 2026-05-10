@@ -55,7 +55,11 @@ export default async function handler(req, res) {
       data: result.data,
       ...(result.ctaPrompt != null && { ctaPrompt: result.ctaPrompt }),
       ...(result.replyFull != null && { replyFull: result.replyFull }),
-      ...(result.chips != null && { chips: result.chips }),
+      ...(result.faqChips != null && { faqChips: result.faqChips }),
+      ...(result.challengeChip != null && { challengeChip: result.challengeChip }),
+      ...(result.challengePromptLabel != null && {
+        challengePromptLabel: result.challengePromptLabel,
+      }),
     });
   } catch (err) {
     console.error("CHAT ERROR:", err);

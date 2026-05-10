@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import "./Onboarding.css";
@@ -17,7 +17,9 @@ export default function Onboarding() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionState, setSessionState] = useState(null);
-  const [chips, setChips] = useState([]);
+  const [faqChips, setFaqChips] = useState([]);
+  const [challengeChip, setChallengeChip] = useState(null);
+  const [challengePromptLabel, setChallengePromptLabel] = useState(null);
   const [hasReachedExitButtons, setHasReachedExitButtons] = useState(false);
   const [ctaPrompt, setCtaPrompt] = useState(null);
   const [lastReplyFull, setLastReplyFull] = useState(null);
@@ -27,6 +29,23 @@ export default function Onboarding() {
   const navigate = useNavigate();
 
   const isFaqHub = sessionState?.state === "FAQ_HUB";
+
+  const applyChatPayload = useCallback((data) => {
+    setSessionState({ state: data.state, data: data.data });
+    if (data.state === "FAQ_HUB") {
+      setFaqChips(Array.isArray(data.faqChips) ? data.faqChips : []);
+      setChallengeChip(
+        data.challengeChip?.id && data.challengeChip?.label ? data.challengeChip : null
+      );
+      setChallengePromptLabel(
+        typeof data.challengePromptLabel === "string" ? data.challengePromptLabel : null
+      );
+    } else {
+      setFaqChips([]);
+      setChallengeChip(null);
+      setChallengePromptLabel(null);
+    }
+  }, []);
 
   async function sendChip(chip) {
     if (loading || !chip?.id) return;
@@ -47,9 +66,8 @@ export default function Onboarding() {
       }
       const data = await res.json();
 
-      setSessionState({ state: data.state, data: data.data });
+      applyChatPayload(data);
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-      setChips(Array.isArray(data.chips) ? data.chips : []);
 
       if (data.ctaPrompt != null) {
         setCtaPrompt(data.ctaPrompt);
@@ -99,9 +117,8 @@ export default function Onboarding() {
       }
       const data = await res.json();
 
-      setSessionState({ state: data.state, data: data.data });
+      applyChatPayload(data);
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-      setChips(Array.isArray(data.chips) ? data.chips : []);
 
       if (data.ctaPrompt != null) {
         setCtaPrompt(data.ctaPrompt);
@@ -139,9 +156,8 @@ export default function Onboarding() {
         const data = await res.json();
 
         if (!cancelled) {
-          setSessionState({ state: data.state, data: data.data });
+          applyChatPayload(data);
           setMessages([{ role: "assistant", content: data.reply }]);
-          setChips(Array.isArray(data.chips) ? data.chips : []);
           if (data.ctaPrompt != null) {
             setCtaPrompt(data.ctaPrompt);
             setLastReplyFull(data.replyFull ?? null);
@@ -159,7 +175,7 @@ export default function Onboarding() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [applyChatPayload]);
 
   useEffect(() => {
     if (loading && messages.length > 0) {
@@ -208,20 +224,37 @@ export default function Onboarding() {
     };
   }, [sessionState?.state]);
 
-  const chipBar =
-    isFaqHub && chips.length > 0 ? (
-      <div className="onboarding__chips" aria-label="Opciones">
-        {chips.map((chip) => (
+  const faqHubActions =
+    isFaqHub && challengeChip ? (
+      <div className="onboarding__faq-hub-actions">
+        {faqChips.length > 0 ? (
+          <div className="onboarding__chips onboarding__chips--faq" aria-label="Preguntas frecuentes">
+            {faqChips.map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                className="onboarding__chip"
+                disabled={loading}
+                onClick={() => sendChip(chip)}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {challengePromptLabel ? (
+          <p className="onboarding__challenge-prompt">{challengePromptLabel}</p>
+        ) : null}
+        <div className="onboarding__challenge-chip-wrap" aria-label="Ir al desafío">
           <button
-            key={chip.id}
             type="button"
-            className="onboarding__chip"
+            className="onboarding__chip onboarding__chip--challenge"
             disabled={loading}
-            onClick={() => sendChip(chip)}
+            onClick={() => sendChip(challengeChip)}
           >
-            {chip.label}
+            {challengeChip.label}
           </button>
-        ))}
+        </div>
       </div>
     ) : null;
 
@@ -263,7 +296,7 @@ export default function Onboarding() {
         <div ref={messagesEndRef} />
       </div>
 
-      {chipBar}
+      {faqHubActions}
 
       {sessionState?.state === "EXIT" ? (
         <div

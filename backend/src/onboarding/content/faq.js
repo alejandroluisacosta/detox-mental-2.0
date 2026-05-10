@@ -1,9 +1,11 @@
 /** Last chip: starts the existing challenge flow (time selection → …). */
 export const CHALLENGE_CHIP_ID = "challenge";
 
+export const CHALLENGE_CHIP_LABEL = "Ir al desafío";
+
 export const FOLLOW_UP_QUESTION = "¿Qué te gustaría saber ahora?";
 
-export const FOOTER_BEFORE_CHALLENGE =
+export const CHALLENGE_PROMPT_LABEL =
   "Dime cuando estés preparado/a y haremos un mini-desafío para ver qué tan claros son tus pensamientos ahora mismo. Luego te diré por dónde te recomendamos empezar.";
 
 /** Short intro on first open (placeholder tone; edit anytime). */

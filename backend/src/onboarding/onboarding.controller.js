@@ -26,7 +26,7 @@ const handlers = {
  * Serverless-compatible chat handler.
  *
  * Input: { message, sessionState: { state, data }, chipId? }
- * Output: { reply, state, data, ctaPrompt?, replyFull?, chips? }
+ * Output: { reply, state, data, ctaPrompt?, replyFull?, faqChips?, challengeChip?, challengePromptLabel? }
  *
  * sessionState is passed in/out explicitly (no in-memory storage).
  */
@@ -65,7 +65,11 @@ export const chatController = async ({ message, sessionState, chipId }) => {
     data: session.data,
     ...(lastResult.ctaPrompt != null && { ctaPrompt: lastResult.ctaPrompt }),
     ...(lastResult.replyFull != null && { replyFull: lastResult.replyFull }),
-    ...(lastResult.chips != null && { chips: lastResult.chips }),
+    ...(lastResult.faqChips != null && { faqChips: lastResult.faqChips }),
+    ...(lastResult.challengeChip != null && { challengeChip: lastResult.challengeChip }),
+    ...(lastResult.challengePromptLabel != null && {
+      challengePromptLabel: lastResult.challengePromptLabel,
+    }),
   };
 };
 

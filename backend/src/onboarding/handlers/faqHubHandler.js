@@ -1,22 +1,29 @@
 import { STATES } from "../conversationFlow.js";
 import {
   CHALLENGE_CHIP_ID,
+  CHALLENGE_CHIP_LABEL,
+  CHALLENGE_PROMPT_LABEL,
   FAQ_ENTRIES,
   FAQ_INTRO,
-  FOOTER_BEFORE_CHALLENGE,
   FOLLOW_UP_QUESTION,
   getFaqById,
 } from "../content/faq.js";
 import { timeSelectionHandler } from "./timeSelectionHandler.js";
 
-function buildChips(session) {
+function buildFaqChips(session) {
   const answered = new Set(session.data.answeredFaqIds ?? []);
-  const chips = FAQ_ENTRIES.filter((e) => !answered.has(e.id)).map((e) => ({
+  return FAQ_ENTRIES.filter((e) => !answered.has(e.id)).map((e) => ({
     id: e.id,
     label: e.label,
   }));
-  chips.push({ id: CHALLENGE_CHIP_ID, label: "Ir al desafío" });
-  return chips;
+}
+
+function faqHubUi(session) {
+  return {
+    faqChips: buildFaqChips(session),
+    challengeChip: { id: CHALLENGE_CHIP_ID, label: CHALLENGE_CHIP_LABEL },
+    challengePromptLabel: CHALLENGE_PROMPT_LABEL,
+  };
 }
 
 export async function faqHubHandler({ session, message, chipId }) {
@@ -31,11 +38,11 @@ export async function faqHubHandler({ session, message, chipId }) {
   const trimmedMsg = (message ?? "").trim();
 
   if (!hasChip && !trimmedMsg) {
-    const reply = `${FAQ_INTRO}\n\n${FOOTER_BEFORE_CHALLENGE}`;
+    const reply = `${FAQ_INTRO}\n\n${FOLLOW_UP_QUESTION}`;
     return {
       reply,
       state: session.state,
-      chips: buildChips(session),
+      ...faqHubUi(session),
     };
   }
 
@@ -45,18 +52,18 @@ export async function faqHubHandler({ session, message, chipId }) {
       return {
         reply: "No reconozco esa opción. Elige una de las tarjetas de abajo.",
         state: session.state,
-        chips: buildChips(session),
+        ...faqHubUi(session),
       };
     }
     const answered = session.data.answeredFaqIds ?? [];
     if (!answered.includes(chipId)) {
       session.data.answeredFaqIds = [...answered, chipId];
     }
-    const reply = `${entry.markdownBody}\n\n${FOLLOW_UP_QUESTION}\n\n${FOOTER_BEFORE_CHALLENGE}`;
+    const reply = `${entry.markdownBody}\n\n${FOLLOW_UP_QUESTION}`;
     return {
       reply,
       state: session.state,
-      chips: buildChips(session),
+      ...faqHubUi(session),
     };
   }
 
@@ -64,14 +71,14 @@ export async function faqHubHandler({ session, message, chipId }) {
     return {
       reply: "Por favor, elige una de las opciones disponibles abajo.",
       state: session.state,
-      chips: buildChips(session),
+      ...faqHubUi(session),
     };
   }
 
-  const reply = `${FAQ_INTRO}\n\n${FOOTER_BEFORE_CHALLENGE}`;
+  const reply = `${FAQ_INTRO}\n\n${FOLLOW_UP_QUESTION}`;
   return {
     reply,
     state: session.state,
-    chips: buildChips(session),
+    ...faqHubUi(session),
   };
 }
