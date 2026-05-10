@@ -7,9 +7,15 @@ export const FOOTER_BEFORE_CHALLENGE =
   "Dime cuando estés preparado/a y haremos un mini-desafío para ver qué tan claros son tus pensamientos ahora mismo. Luego te diré por dónde te recomendamos empezar.";
 
 /** Short intro on first open (placeholder tone; edit anytime). */
-export const FAQ_INTRO = `**Detox Mental** es una aplicación para trabajar con pensamientos que te angustian o te bloquean —sin sustituir terapia ni consejo médico.
+export const FAQ_INTRO = `Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
 
-Aquí tienes respuestas rápidas a lo que suele preguntarse al empezar. Cuando quieras, podemos hacer un mini-desafío para orientarte.`;
+Yo soy Tales, tu guía al inicio de este proceso.
+
+Te explico dónde estás:
+
+**Detox Mental** es una aplicación para ayudarte a relacionarte mejor con pensamientos que te generan estrés, sin sustituir terapia ni consejo médico.
+
+Aquí tienes respuestas rápidas a lo que suelen preguntarse quienes nos visitan por primera vez.`
 
 /**
  * Ordered FAQ chips (excluding the challenge chip).

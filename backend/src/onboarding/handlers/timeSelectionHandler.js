@@ -6,10 +6,9 @@ export async function timeSelectionHandler({ session, message }) {
   if (!message) {
     return {
       reply: `
-  Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
-
-  Yo soy Tales, tu guía al inicio de este proceso.
-  Para empezar, ¿cuánto tiempo puedes dedicar ahora mismo?
+  Bien, directo a la acción.
+  
+  Antes de hacer el ejercicio, te voy a resumir la filosofía de Detox Mental. ¿Quieres la versión de 2 o 5 minutos?
 
   Responde con una sola opción:
   
