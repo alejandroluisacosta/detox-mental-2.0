@@ -1,8 +1,8 @@
-import { buildRecommendationReply } from "../../parsers/buildRecommendationReply.js";
+import { buildRecommendationReply } from "../parsers/buildRecommendationReply.js";
 import { STATES } from "../conversationFlow.js";
 
 export async function recommendationHandler({ session }) {
-  const clarity = session.data.pqaClarity ?? 'low';
+  const clarity = session.data.pqaClarity ?? "low";
 
   const reply = buildRecommendationReply(clarity);
 
@@ -10,6 +10,6 @@ export async function recommendationHandler({ session }) {
 
   return {
     reply,
-    state: session.state
+    state: session.state,
   };
 }

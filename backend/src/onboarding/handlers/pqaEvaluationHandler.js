@@ -1,4 +1,4 @@
-import { buildPqaEvaluationPrompt } from "../../prompts/buildPqaEvaluationPrompt.js";
+import { buildPqaEvaluationPrompt } from "../prompts/buildPqaEvaluationPrompt.js";
 import { STATES } from "../conversationFlow.js";
 
 export async function pqaEvaluationHandler({ client, session }) {
@@ -10,19 +10,17 @@ export async function pqaEvaluationHandler({ client, session }) {
     model: "meta-llama/Llama-3.1-8B-Instruct:novita",
     messages: prompt,
     temperature: 0,
-    max_tokens: 50
+    max_tokens: 50,
   });
 
   const raw = modelResponse.choices[0].message.content;
 
-  // const raw = {"clarity": "high"};
-  
   let clarity;
   try {
     const parsed = JSON.parse(raw);
     clarity = parsed.clarity;
   } catch {
-    clarity = 'low';
+    clarity = "low";
   }
 
   session.data.pqaClarity = clarity;
@@ -31,6 +29,6 @@ export async function pqaEvaluationHandler({ client, session }) {
 
   return {
     reply: null,
-    state: session.state
+    state: session.state,
   };
 }

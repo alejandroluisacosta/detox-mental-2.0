@@ -1,11 +1,11 @@
 import { STATES } from "../conversationFlow.js";
-import { parseTimeSelection } from "../../parsers/parseTimeSelection.js"
+import { parseTimeSelection } from "../parsers/parseTimeSelection.js";
 
 export async function timeSelectionHandler({ session, message }) {
   // No user input yet → open the conversation
   if (!message) {
-      return {
-        reply: `
+    return {
+      reply: `
   Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
 
   Yo soy Tales, tu guía al inicio de este proceso.
@@ -16,15 +16,15 @@ export async function timeSelectionHandler({ session, message }) {
   - 2 minutos
   - 5 minutos
   `,
-        state: session.state,
-      };
+      state: session.state,
+    };
   }
 
   // User replied → parse
   const minutes = parseTimeSelection(message);
 
   if (!minutes) {
-    const attempts = (session.data.timeSelectionAttempts ?? 0);
+    const attempts = session.data.timeSelectionAttempts ?? 0;
     session.data.timeSelectionAttempts = attempts + 1;
 
     const invalidReplies = [
@@ -39,13 +39,11 @@ export async function timeSelectionHandler({ session, message }) {
       "Por Zeus. ¿Prefieres dos o cinco minutos? Ya habrías terminado.",
       "Ya sabes lo que ofrezco. A partir de aquí te ignoro hasta que aclares si prefieres 2 o 5 minutos.",
     ];
-    const reply = attempts >= invalidReplies.length
-      ? "Ignorándote."
-      : invalidReplies[attempts];
+    const reply = attempts >= invalidReplies.length ? "Ignorándote." : invalidReplies[attempts];
 
     return {
       reply,
-      state: session.state
+      state: session.state,
     };
   }
 
@@ -58,6 +56,6 @@ export async function timeSelectionHandler({ session, message }) {
   delete session.data.timeSelectionAttempts;
   return {
     reply: null,
-    state: session.state
+    state: session.state,
   };
 }

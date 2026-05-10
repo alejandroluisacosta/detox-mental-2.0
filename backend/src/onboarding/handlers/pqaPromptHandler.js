@@ -1,11 +1,11 @@
-import { isSingleSentence } from "../../parsers/isSingleSentence.js";
+import { isSingleSentence } from "../parsers/isSingleSentence.js";
 import { STATES } from "../conversationFlow.js";
 
 export async function pqaPromptHandler({ session, message }) {
   if (!isSingleSentence(message)) {
     return {
       reply: `Recuerda: una sola frase. Inténtalo de nuevo.`,
-      state: session.state
+      state: session.state,
     };
   }
 
@@ -15,6 +15,6 @@ export async function pqaPromptHandler({ session, message }) {
 
   return {
     reply: null,
-    state: session.state
+    state: session.state,
   };
 }

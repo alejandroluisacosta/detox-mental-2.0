@@ -10,7 +10,7 @@
  */
 
 import dotenv from "dotenv";
-import { chatController } from "../src/controllers/chatController.js";
+import { chatController } from "../src/onboarding/onboarding.controller.js";
 
 dotenv.config();
 
@@ -28,7 +28,6 @@ function setCorsHeaders(res) {
 export default async function handler(req, res) {
   setCorsHeaders(res);
 
-  // Handle preflight (browser sends this automatically before POST)
   if (req.method === "OPTIONS") {
     return res.status(204).end();
   }
@@ -38,13 +37,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, sessionState } = req.body;
+    const { message, sessionState, chipId } = req.body;
 
     if (message != null && typeof message !== "string") {
       return res.status(400).json({ error: "Message must be a string" });
     }
 
-    const result = await chatController({ message, sessionState });
+    if (chipId != null && typeof chipId !== "string") {
+      return res.status(400).json({ error: "chipId must be a string when provided" });
+    }
+
+    const result = await chatController({ message, sessionState, chipId });
 
     return res.status(200).json({
       reply: result.reply,
@@ -52,6 +55,7 @@ export default async function handler(req, res) {
       data: result.data,
       ...(result.ctaPrompt != null && { ctaPrompt: result.ctaPrompt }),
       ...(result.replyFull != null && { replyFull: result.replyFull }),
+      ...(result.chips != null && { chips: result.chips }),
     });
   } catch (err) {
     console.error("CHAT ERROR:", err);

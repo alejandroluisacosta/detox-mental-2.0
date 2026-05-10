@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import chatRoutes from "./routes/chat.js";
+import onboardingRoutes from "./onboarding/onboarding.routes.js";
 import authRoutes from "./auth/auth.routes.js";
 import stripeRoutes from "./stripe/stripe.routes.js";
 
@@ -24,6 +24,6 @@ app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
 
-app.use("/chat", chatRoutes);
+app.use("/chat", onboardingRoutes);
 app.use("/auth", authRoutes);
 app.use("/stripe", stripeRoutes);
