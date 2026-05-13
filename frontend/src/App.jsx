@@ -15,11 +15,13 @@ import Account from './Pages/Account/Account.jsx';
 import Instructions from './Pages/Instructions/Instructions.jsx';
 import PaymentSuccess from './Pages/Payment/PaymentSuccess.jsx';
 import PaymentCancel from './Pages/Payment/PaymentCancel.jsx';
+import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 
 function App() {
     return (
         <React.StrictMode>
             <BrowserRouter>
+                <ScrollToTop />
                 <AuthProvider>
                     <AuthSessionToast />
                 <SessionsProvider>
