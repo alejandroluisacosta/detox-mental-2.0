@@ -1,5 +1,5 @@
 import { STATES } from "../conversationFlow.js";
-import { normalizeLlmOutput } from "../../parsers/normalizeLlmOutput.js";
+import { normalizeLlmOutput } from "../parsers/normalizeLlmOutput.js";
 
 const PQA_CHALLENGE_MODEL = "meta-llama/Llama-3.1-8B-Instruct:novita";
 
@@ -13,8 +13,8 @@ Your task: generate a single follow-up question that you will ask the user to he
 
 Examples of correct form: "¿Qué te hace sentir así?" or "¿Qué te lleva a pensar eso?" — the question is for the user to answer, so it must address them (te/tú), not you (me/yo).
 
-Respond only with the question, in the same language as the thought.`
-    }
+Respond only with the question, in the same language as the thought.`,
+    },
   ];
 }
 
@@ -24,7 +24,7 @@ export async function pqaChallengeHandler({ client, session }) {
     session.state = STATES.PQA_PROMPT;
     return {
       reply: "Por favor, describe tu pensamiento en una sola frase.",
-      state: session.state
+      state: session.state,
     };
   }
 
@@ -33,7 +33,7 @@ export async function pqaChallengeHandler({ client, session }) {
     model: PQA_CHALLENGE_MODEL,
     messages,
     max_tokens: 150,
-    temperature: 0.6
+    temperature: 0.6,
   });
 
   const raw = modelResponse.choices[0].message?.content ?? "";
@@ -44,6 +44,6 @@ export async function pqaChallengeHandler({ client, session }) {
 
   return {
     reply: pqaChallenge,
-    state: session.state
+    state: session.state,
   };
 }

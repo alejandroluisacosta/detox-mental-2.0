@@ -4,8 +4,8 @@ import {
   COMPRESSED_GUIDE_INTRO,
   CTA_TITLE,
   CTA_PARAGRAPH,
-  getCompressedGuideFullReply
-} from "../../content/compressedGuide.js";
+  getCompressedGuideFullReply,
+} from "../content/compressedGuide.js";
 
 export async function compressedGuideHandler({ session }) {
   const timeBudget = session.data.timeBudget;
@@ -21,6 +21,6 @@ export async function compressedGuideHandler({ session }) {
   return {
     reply: prefix + introOnly,
     replyFull: prefix + replyFull,
-    ctaPrompt: { title: CTA_TITLE, paragraph: CTA_PARAGRAPH }
+    ctaPrompt: { title: CTA_TITLE, paragraph: CTA_PARAGRAPH },
   };
 }
