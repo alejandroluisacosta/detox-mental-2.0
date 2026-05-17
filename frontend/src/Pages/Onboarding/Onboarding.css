@@ -432,3 +432,86 @@
 .onboarding__exit-button:active {
     transform: translateY(0);
 }
+
+.onboarding__faq-hub-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 8px 16px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.onboarding__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+}
+
+.onboarding__chips--faq {
+    padding-top: 4px;
+}
+
+.onboarding__challenge-prompt {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+    align-self: stretch;
+    max-width: 36rem;
+}
+
+.onboarding__challenge-prompt p {
+    margin: 0;
+    text-align: left;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #444;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    overflow-wrap: break-word;
+}
+
+.onboarding__challenge-chip-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.onboarding__chip {
+    font-size: 0.9rem;
+    line-height: 1.35;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1.25px solid transparent;
+    background: linear-gradient(#fafafa, #fafafa) padding-box,
+                linear-gradient(135deg, #d4a574 0%, #ffb5a7 25%, #a8e6cf 50%, #ffd89b 75%, #c49564 100%) border-box;
+    background-clip: padding-box, border-box;
+    color: #333;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.onboarding__chip:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.onboarding__chip:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.onboarding__chip:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.onboarding__chip--challenge {
+    font-weight: 600;
+    background: linear-gradient(#fff8f0, #fff8f0) padding-box,
+                linear-gradient(135deg, #c49564 0%, #d4a574 35%, #a8e6cf 70%, #845d43 100%) border-box;
+}
