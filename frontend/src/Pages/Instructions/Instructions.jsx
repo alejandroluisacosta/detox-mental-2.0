@@ -44,8 +44,11 @@ export default function Instructions() {
 
         <section className='instructions-page__section'>
           <h3>¿Cómo se desbloquean las sesiones?</h3>
+          <h4>Alternativa de pago</h4>
+          <p>Compra el curso completo y desbloquea todas las sesiones.</p>
+          <h4>Alternativa gratis</h4>
           <p>
-            Las sesiones se desbloquean con un <strong>código</strong>. Hay dos formas de conseguirlos:
+            Las sesiones se pueden desbloquear con un <strong>código</strong>. Hay dos formas de conseguirlos:
           </p>
           <ol className='instructions-page__list'>
             <li>

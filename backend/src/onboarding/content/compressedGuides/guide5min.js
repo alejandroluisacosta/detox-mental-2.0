@@ -43,7 +43,7 @@ Así funciona. Sin drama.
 Ahora, el objetivo del programa completo no es que "no pienses".  
 Eso es **irreal.**
 
-El objetivo es que en **30 días** hayas construido **dos hábitos sólidos:**
+El objetivo es que en **15 días** hayas construido **dos hábitos sólidos:**
 
 **Escritura**, para sacar los pensamientos de tu cabeza y poder analizarlos con distancia.  
 **Meditación**, para entrenar tu atención y dejar de reaccionar automáticamente.

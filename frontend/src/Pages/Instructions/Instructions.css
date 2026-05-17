@@ -31,9 +31,20 @@
 }
 
 .instructions-page__section h2,
-.instructions-page__section h3 {
+.instructions-page__section h3,
+.instructions-page__section h4 {
   margin: 0 0 12px;
   color: var(--accent);
+}
+
+.instructions-page__section h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.instructions-page__section h4:first-of-type {
+  margin-top: 0;
 }
 
 .instructions-page__section p {

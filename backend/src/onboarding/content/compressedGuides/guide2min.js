@@ -21,7 +21,7 @@ Aprenderás a regular tu atención con una herramienta concreta: *la quietud*. L
 Los pensamientos mueren igual que cualquier otra cosa que no se alimenta: por falta de atención. *Esto no es teoría. Es práctica.*
 
 Ahora, el objetivo del proceso completo es muy concreto.  
-En **30 días** queremos que desarrolles dos hábitos:
+En **15 días** queremos que desarrolles dos hábitos:
 
 **Escribir**, para entender lo que pasa por tu cabeza.  
 **Meditar**, para entrenar tu atención.
