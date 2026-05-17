@@ -5,8 +5,9 @@ export const CHALLENGE_CHIP_LABEL = "Ir al desafío";
 
 export const FOLLOW_UP_QUESTION = `¿Qué te gustaría saber ahora?`;
 
-export const CHALLENGE_PROMPT_LABEL =
-  "Dime cuando estés preparado/a y haremos un mini-desafío para ver qué tan claros son tus pensamientos ahora mismo. Luego te diré por dónde te recomendamos empezar.";
+export const CHALLENGE_PROMPT_LABEL = `Dime cuando estés preparado/a y haremos un mini-desafío para ver qué tan claros son tus pensamientos ahora mismo.
+
+Luego te diré por dónde te recomendamos empezar.`;
 
 /** Short intro on first open (placeholder tone; edit anytime). */
 export const FAQ_INTRO = `Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
@@ -93,33 +94,27 @@ El **primero** tuvo **30.000**.
 
 El primer artículo tuvo **5 veces más** lecturas que el segundo. Una victoria arrasadora e inesperada.
 
-De allí en adelante, todos rondaron entre las 3000 y 5000 lecturas. Resultados más “normales” dentro de lo que se esperaba.
-
-El título original del artículo ganador era **"Cómo liberarte de los pensamientos que te atormentan en 5 pasos"**, y su inesperado y aplastante éxito demostró la necesidad de que hay en la actualidad de liberarse del estrés generado por la mente.
+El título original del artículo ganador era **"Cómo liberarte de los pensamientos que te atormentan en 5 pasos"**, y su éxito demostró la **necesidad** que hay en la actualidad de liberarnos del estrés generado por la mente.
 
 A partir de esta necesidad, nació el curso: **Detox Mental en 15 días**.
 
-Un curso hecho para ayudar a todas las personas que escribieron preguntando cómo podían profundizar en el tema y que ha seguido evolucionando para aquellos que quieren **entender mejor su propia mente** y trabajar en el estrés que se acumula en ella.
+Un curso hecho para aquellos que quieren **entender mejor su propia mente** y trabajar en el estrés que se acumula en ella.
 
- **Muchas cosas han cambiado** desde 2021.
+ **Muchas cosas han cambiado** desde el lanzamiento inicial en 2021.
 
 El artículo cambió su nombre original para pasar a ser **"Cómo limpiar tu mente en 5 pasos — La estrategia para reducir tu estrés de forma sencilla y segura"**.
 
-(Decidimos alejarnos del término "pensamientos que atormentan" por el tono clínico que implica).
+(Decidimos alejarnos del término "pensamientos que atormentan" para adoptar un tono menos dramático).
 
 El curso se planificó originalmente para **30 días**, pero pasamos a comprimirlo a **15 días**.
 
 (Resulta ser que, en este caso, ser **intensivos** da mejores resultados).
 
-Y sigue habiendo cambios a medido que recibimos **feedback** de nuestros usuarios, a quienes apreciamos enormemente
-
-Cada persona que completa las sesiones y nos cuenta su experiencia suma a este proyecto. Cada nueva mejora está diseñada para que esa experiencia sea más **útil y transformadora** para la próxima persona que decida aventurarse. 
+Y sigue habiendo cambios a medido que recibimos **feedback** de nuestros usuarios. Cada persona que completa las sesiones y nos cuenta su experiencia suma a este proyecto. Cada nueva mejora está diseñada para que esa experiencia sea más **útil y transformadora** para la próxima persona que decida aventurarse. 
 
 Dicho esto, te invitamos a probar el curso.
 
-Aunque no prometemos milagros, sí te ofrecemos algo **positivo**, **bien intencionado**, y pensado como una **herramienta** para que puedas ayudarte a ti mismo/a.
-
-Porque al final, cualquier beneficio que puedas obtener vendrá de **tu voluntad** de mejorar tu situación. De tus ganas de aprender algo nuevo y utilizarlo a tu favor. 
+Si estás aquí, es muy probable que estés interesado en mejorar tu relación con tu mente, y esta aplicación está diseñada para ayudarte a lograr justo eso de forma sencilla y segura.
 
 Esa es nuestra historia. Esperamos que te guste la aplicación y que te sea útil.
 
