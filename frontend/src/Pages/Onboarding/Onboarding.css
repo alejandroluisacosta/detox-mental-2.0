@@ -457,12 +457,23 @@
 }
 
 .onboarding__challenge-prompt {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     margin: 0;
-    text-align: center;
+    align-self: stretch;
+    max-width: 36rem;
+}
+
+.onboarding__challenge-prompt p {
+    margin: 0;
+    text-align: left;
     font-size: 0.95rem;
     line-height: 1.55;
     color: #444;
-    max-width: 36rem;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    overflow-wrap: break-word;
 }
 
 .onboarding__challenge-chip-wrap {
