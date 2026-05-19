@@ -35,7 +35,7 @@ export default function ArticleWrapper() {
         </p>
         <img
           src="/icons/article.webp"
-          alt="Ícono de artículo decorativo"
+          alt="Ícono de teoría decorativo"
           className="article-intro__icon"
         />
       </div>

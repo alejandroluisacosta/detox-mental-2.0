@@ -318,10 +318,10 @@ export default function Onboarding() {
             >
               <img
                 src="/icons/article.webp"
-                alt="Artículo"
+                alt="Teoría"
                 className="onboarding__exit-button__icon onboarding__exit-button__icon--article"
               />
-              <span className="onboarding__exit-button__label">ARTÍCULO</span>
+              <span className="onboarding__exit-button__label">TEORÍA</span>
             </div>
             <div
               className="onboarding__exit-button"

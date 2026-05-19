@@ -60,7 +60,7 @@ export default function Login() {
               Ir al curso
             </Link>
             <Link className="auth-page__footer-link" to="/">
-              Ir al artículo
+              Ir a la teoría
             </Link>
           </>
         ) : (

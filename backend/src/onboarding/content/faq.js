@@ -28,19 +28,19 @@ export const FAQ_ENTRIES = [
   {
     id: "how_to_use",
     label: "¿Cómo se utiliza la aplicación?",
-    markdownBody: `Esta aplicación consta de **dos partes**: un **artículo** y un **curso de 15 días**.
+    markdownBody: `Esta aplicación consta de **dos partes**: una **teoría** y un **curso de 15 días**.
 
-### El artículo
+### La teoría
 
-La idea es que **leas el artículo primero** para ganar contexto. Este presenta una estrategia en **cinco (5) pasos** para trabajar en tus pensamientos de forma sencilla y segura.
+La idea es que **leas la teoría primero** para ganar contexto. Esta presenta una estrategia en **cinco (5) pasos** para trabajar en tus pensamientos de forma sencilla y segura.
 
-El artículo es largo y completo. Puedes leerlo en un día o repartirlo en varios.
+La teoría es larga y completa. Puedes leerla en un día o repartirla en varios.
 
 **No es obligatorio** antes del curso, pero es lo ideal.
 
 ### El curso
 
-El **curso** amplía el artículo: son **15 sesiones de audio** con **15 ejercicios** (uno por sesión).
+El **curso** amplía la teoría: son **15 sesiones de audio** con **15 ejercicios** (uno por sesión).
 
 Lo recomendado es una sesión al día, pero puedes ir a tu ritmo.
 
@@ -56,7 +56,7 @@ Si luego de terminar quieres seguir profundizando en los beneficios de trabajar 
     markdownBody:
       `Lo ideal es terminar todo en **16 días**:
 
-- **1 día** para leer el artículo.
+- **1 día** para leer la teoría.
 - **15 días** para completar el curso.
       
 Lo normal es dedicar unos **30 minutos** al día aproximadamente, pero cada quien lo hace a su ritmo.

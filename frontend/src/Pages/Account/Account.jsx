@@ -64,7 +64,7 @@ export default function Account() {
 
       <footer className='account-page__footer-nav'>
         <button type='button' className='account-page__footer-button' onClick={() => navigate('/')}>
-          ARTÍCULO
+          TEORÍA
         </button>
         <button type='button' className='account-page__footer-button' onClick={() => navigate('/course')}>
           CURSO

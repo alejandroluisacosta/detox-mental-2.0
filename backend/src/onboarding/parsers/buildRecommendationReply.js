@@ -4,7 +4,7 @@
  * @returns { string }
  */
 
-const CLOSING_PARAGRAPH = `Sea cual sea la recomendación, la decisión es tuya. Siempre te recomendarremos que leas el artículo primero para ganar contexto, pero si quieres ir directo al curso, adelante.
+const CLOSING_PARAGRAPH = `Sea cual sea la recomendación, la decisión es tuya. Siempre te recomendarremos que leas la teoría primero para ganar contexto, pero si quieres ir directo al curso, adelante.
 
 Suerte en tu camino.`;
 
@@ -22,7 +22,7 @@ ${CLOSING_PARAGRAPH}
       return `
 Tu respuesta tiene una claridad intermedia.
 
-Te recomendamos revisar nuestro artículo introductorio para afinar la forma de observar y formular tus pensamientos, y luego explorar el programa de práctica estructurada.
+Te recomendamos revisar nuestra teoría introductoria para afinar la forma de observar y formular tus pensamientos, y luego explorar el programa de práctica estructurada.
 
 ${CLOSING_PARAGRAPH}
 `;
@@ -31,7 +31,7 @@ ${CLOSING_PARAGRAPH}
       return `
 Tu respuesta no demuestra demasiada claridad con respecto a tu potencial problema de pensamientos... Todavía.
 
-Antes de entrar en práctica intensiva, te recomendamos empezar por nuestro artículo introductorio, donde afinamos la forma de observar y formular tus pensamientos con mayor precisión.
+Antes de entrar en práctica intensiva, te recomendamos empezar por nuestra teoría introductoria, donde afinamos la forma de observar y formular tus pensamientos con mayor precisión.
 
 ${CLOSING_PARAGRAPH}
 `;
