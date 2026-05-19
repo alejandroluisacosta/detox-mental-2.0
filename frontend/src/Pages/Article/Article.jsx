@@ -48,7 +48,7 @@ const Article = () => {
           <p className='intro-section__written-by'><em>Historia por: Marco Ferrani - Detox Mental</em></p>
           <p>A principios de 2020 se libraba en mi interior una lucha que tenía meses de antigüedad. Mi cerebro, el campo de batalla, había sido infectado por un tóxico pensamiento, una idea que en poco tiempo se convirtió en una trampa que no mata pero tampoco afloja:</p>
           <blockquote>“¿Cómo se sentirá tener una muerte dolorosa?”</blockquote>
-          <p className='article__note'><em>Nota: este artículo contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomendamos abstenerte de leerlo.</em></p>
+          <p className='article__note'><em>Nota: este texto contiene hechos, afirmaciones y opiniones que podrían impactar a ciertos lectores. Si te consideras una persona sensible, te recomendamos abstenerte de leerlo.</em></p>
           <hr className='article__intro-line'></hr>
           <p>Luego de superar un incidente particularmente desagradable, decidí utilizar mi historia para compartir la estrategia de cinco pasos que me sacó de apuros cuando las cosas empezaron a ponerse feas.</p>
           <p>Tras conocer estos cinco pasos encontrarás recomendaciones creativas que te ayudarán a iniciarte en el proceso de limpieza mental. Quizás alguna sorpresa adicional.</p>
@@ -99,7 +99,7 @@ const Article = () => {
           <p>Y no eran solo pensamientos relacionados con accidentes de tránsito. También pensaba en incendios, la pérdida de un brazo o pierna, aplastamientos, muerte de familiares por mi culpa… Tú nómbralo y seguramente ya pensé en ello.</p>
           <p>Fue una época loca y sé que esto parece una historia de terror, pero quizás te reconforte saber que estos pensamientos no me afectaron en lo más mínimo.</p>
           <p>Lo viví muy tranquilo y fue todo gracias a algo que aprendí hace años en un libro: <a className='article__in-text-link' href='https://www.amazon.es/Una-nueva-tierra-despertar-proposito/dp/9580490619/ref=sr_1_2?crid=3NEOOHKGF6RNV&dib=eyJ2IjoiMSJ9.ynkAFITH8LB5vLo140SslzC4YQiVIEikvxvpzpUNrFUV-N24HnIg3NR21P6agm-bSGy-gmX6lFBppYcAxThqA7uwDwbUOmaBkKLfru16ru1qeFv4ZBz89BjhqtouOaYd1eL2Wx-sDo622cx_2v7Aazx-xcwhiW0UBDgCIVNal1BFqEuYi8nqLQaPctS966r8cCJGi_ppnB7hSb7mHyDqBZROQknUwn_iDuRT6uAQKIjjs4as48_zTf1DqISSWR0FpoKYJcD2QAyc6n4cc12CXOGWlkFHfvJ2gfmfiO_Hy98.4hO1wQdJZJZuSpAwJqMtJBxGphec__dwlxp2wVtH_Lg&dib_tag=se&keywords=una+nueva+tierra+eckhart+tolle&qid=1757848790&sprefix=una+nueva%2Caps%2C60&sr=8-2#' target='_blank'><em>Una Nueva Tierra</em></a> de Eckhart Tolle.</p>
-          <p className='article__note'>Nota de edición [1 año y 2 meses después]: releyendo esto, me doy cuenta de que es injusto decir que solo leer este libro me permitió sobrellevar la situación. Leer <em>Una Nueva Tierra</em> fue el paso más importante de todo este proceso porque fue lo que me abrió las puertas del mundo de la mente, lo que despertó mi curiosidad por ella, pero luego de eso me convertí en un fanático de la psicología, la consciencia y la espiritualidad, y en los últimos años he invertido cientos de horas leyendo y escuchando acerca de estos temas. Lo más importante de todo lo aprendido está resumido en el artículo que estás por leer.</p>
+          <p className='article__note'>Nota de edición [1 año y 2 meses después]: releyendo esto, me doy cuenta de que es injusto decir que solo leer este libro me permitió sobrellevar la situación. Leer <em>Una Nueva Tierra</em> fue el paso más importante de todo este proceso porque fue lo que me abrió las puertas del mundo de la mente, lo que despertó mi curiosidad por ella, pero luego de eso me convertí en un fanático de la psicología, la consciencia y la espiritualidad, y en los últimos años he invertido cientos de horas leyendo y escuchando acerca de estos temas. Lo más importante de todo lo aprendido está resumido en el texto que estás por leer.</p>
           <p>Pasemos a la estrategia para explicarte lo que hice.</p>
         </section>
         {/* Step 1 */}
@@ -156,7 +156,7 @@ const Article = () => {
         <section className="step-section">
           <h3><span className="step-number">3</span> Comprende: ¿Cómo se mata un pensamiento?</h3>
           <p>¿Por qué existen los pensamientos tormentosos? <strong>¿Qué utilidad tienen?</strong> Conocer la respuesta a la pregunta marcada en negritas podría ser todo lo que necesitas para resolver todos y cada uno de tus problemas personales, no solo los relacionados con los PQAs.</p>
-          <p>Las teorías basadas en la evolución suelen dar respuestas convincentes a este tipo de preguntas importantes, y en el caso de los pensamientos tormentosos, dichas teorías son tan útiles que se ganaron una sección en este artículo. Si crees en la evolución (o si no crees en ella pero tienes mente abierta), lo que leerás a continuación será clave si de verdad quieres retomar el control de tu mente.</p>
+          <p>Las teorías basadas en la evolución suelen dar respuestas convincentes a este tipo de preguntas importantes, y en el caso de los pensamientos tormentosos, dichas teorías son tan útiles que se ganaron una sección en este texto. Si crees en la evolución (o si no crees en ella pero tienes mente abierta), lo que leerás a continuación será clave si de verdad quieres retomar el control de tu mente.</p>
           <h4>¿Cuál es la utilidad de los PQAs?</h4>
           <p>Desde el punto de vista evolutivo, los PQAs representan innumerables ventajas para nuestra especie.</p>
           <p>Los humanos estamos en la cima de la cadena alimenticia no gracias a nuestra fuerza física, sino a nuestra inteligencia y capacidad de preocuparnos por cosas que aún no han sucedido. Ser los animales más neuróticos del planeta trajo como resultado una especie que puede planificar su alimentación teniendo en cuenta épocas de sequía y lluvia, que puede evitar ser cazada por otros animales más poderosos y que también puede abandonar un sitio particular si las reservas de agua parecen agotarse. Un perro, un elefante o una señora hipopótamo pueden desarrollar cierta planificación, pero nunca en el nivel de complejidad que el cerebro humano es capaz de manejar.</p>
@@ -166,7 +166,7 @@ const Article = () => {
           <p>En resumen: la gran mayoría de las personas que vivimos en la actualidad no tenemos ningún control sobre la máquina de sobrevivencia que tenemos dentro de nuestro cráneo, así que <strong>la única forma de enfrentar este problema de pensamientos compulsivos es comprendiéndolo:</strong> si los PQAs están para ayudarnos a sobrevivir y a mejorar nuestra situación, debemos utilizarlos a nuestro favor en lugar de intentar ignorarlos y esperar a que se vayan por sí solos, lo que rara vez ocurrirá.</p>
           <p>Para conseguirlo, deberás hacer dos cosas:</p>
           <ol>
-            <li>Aprender a diferenciar los PQAs valiosos de los que solo están motivados por el ego. (Por ejemplo: vivir atormentado porque no tienes suficientes seguidores / likes en redes sociales. Esto es un PQA sin valor real a menos que tu objetivo de vida sea mantener las apariencias, y si ese es tu caso, este artículo no te ayudará demasiado).</li>
+            <li>Aprender a diferenciar los PQAs valiosos de los que solo están motivados por el ego. (Por ejemplo: vivir atormentado porque no tienes suficientes seguidores / likes en redes sociales. Esto es un PQA sin valor real a menos que tu objetivo de vida sea mantener las apariencias, y si ese es tu caso, este texto no te ayudará demasiado).</li>
             <li>Determinar qué información te quieren dar los PQAs valiosos, los que están motivados por situaciones que amenazan tu seguridad, felicidad y desarrollo personal.</li>
           </ol>
           <p>El primer paso, aprender a diferenciar los PQAs valiosos de los motivados por el ego, será cubierto en Detox Mental en el furuto.</p>
@@ -230,7 +230,7 @@ const Article = () => {
           <p>El tema de la quietud merece un artículo por sí solo, pero mientras tanto, quédate con la idea de que meditar no te hará ningún daño.</p>
           <p>En todo caso, si se te hace insoportable, esto es una señal de que tu problema de atención es más grave de lo que piensas (esto también es normal), lo que significa que <strong>en lugar de evitarla deberías entrarle con todo.</strong></p>
           <p className='article__note'>Nota: si eres una de esas personas que ha tenido experiencias negativas con la meditación, no dudes en acudir a un experto. Yo sé que hay casos de casos. Eso sí, asegúrate de que la has probado correctamente antes de sacar conclusiones. Si después de un par de sesiones incómodas te declaras «alérgico» o «alérgica» a la quietud, no eres alérgico realmente, solo hábil <a className='article__in-text-link' href='https://www.reddit.com/r/QuotesPorn/comments/18z8z7s/the_first_principle_is_that_you_must_not_fool/?tl=es-es' target='_blank'>engañandote a ti mismo.</a></p>
-          <p><strong>Comentario de edición [1 año y 2 meses después]:</strong> En todo el tiempo que ha transcurrido después de escribir este artículo, he aprendido mucho más acerca de la meditación (además de haber tenido un año más de práctica), y a pesar de que lo dicho anteriormente sigue pareciéndome correcto, debo hacer un par de aclaratorias:</p>
+          <p><strong>Comentario de edición [1 año y 2 meses después]:</strong> En todo el tiempo que ha transcurrido después de escribir este texto, he aprendido mucho más acerca de la meditación (además de haber tenido un año más de práctica), y a pesar de que lo dicho anteriormente sigue pareciéndome correcto, debo hacer un par de aclaratorias:</p>
           <ol>
             <li>La meditación es una práctica de exploración personal, y a pesar de que tiene enormes beneficios terapéuticos, no es terapia. No puedes (o al menos no deberías) pretender que todos tus problemas de pensamientos se solucionen con la meditación, y si tienes problemas profundos que ni siquiera puedes comprender, <strong>lo más recomendable es que vayas a terapia.</strong> Esto se debe a que:</li>
             <li>Observar tus pensamientos es un primer (y necesario) paso, mas no el único que debes tomar. Tu verdadera intención debe ser: primero, aprender a escucharlos, y luego, aprender a descifrarlos: comprender lo que dicen para poder tomar acción.</li>
@@ -264,9 +264,9 @@ const Article = () => {
         {/* Recommendations and Conclusion */}
         <section className="recommendations-section">
           <h2>Recomendaciones creativas para liberarte de los pensamientos que te atormentan</h2>
-          <p>Como es costumbre para nosotros en Detox Mental, dedicaremos la parte final de este artículo a atacar el problema utilizando nuestra herramienta más poderosa: la creatividad.</p>
-          <p>Con todo lo aprendido en este artículo tienes suficientes armas como para solventar tu situación, pero a menos que vuelvas a leerlo constantemente, quedará en el olvido—irónicamente por falta de atención.</p>
-          <p>¿Encontraste este artículo en Google o te apareció en una publicidad en Instagram? ¿Te lo recomendó un amigo? Bien, ya diste el primer paso al leerlo.</p>
+          <p>Como es costumbre para nosotros en Detox Mental, dedicaremos la parte final de este texto a atacar el problema utilizando nuestra herramienta más poderosa: la creatividad.</p>
+          <p>Con todo lo aprendido en este texto tienes suficientes armas como para solventar tu situación, pero a menos que vuelvas a leerlo constantemente, quedará en el olvido—irónicamente por falta de atención.</p>
+          <p>¿Encontraste este texto en Google o te apareció en una publicidad en Instagram? ¿Te lo recomendó un amigo? Bien, ya diste el primer paso al leerlo.</p>
           <p>La cuestión con los PQAs y con los pensamientos en general es que controlarlos es un trabajo de todos los días, por lo que <strong>la mejor manera de mantenerte en el proceso es continuar consumiendo información relacionada que promueva el mismo tipo de ideas que estás teniendo mientras lees estas líneas.</strong> Como dijo un sabio:</p>
           <blockquote> El contenido que consumes te construye. ¿Qué estás construyendo?</blockquote>
           <p>A continuación te damos tres recomendaciones de libros básicos que puedes leer (o audiolibros que puedes escuchar) para comenzar con tu limpieza mental.</p>
@@ -310,7 +310,7 @@ const Article = () => {
           <p>En mi opinión, todos debemos aprender cómo funciona nuestra propia mente y desarrollar prácticas y herramientas para controlarla cuando sea necesario.</p>
           <p>Empieza por no juzgar lo que pasa por tu cabeza y empezarás a ver resultados positivos: menos estrés, menos ansiedad, más felicidad, más tranquilidad, más libertad.</p>
           <p>Entiende tus pensamientos y no les des más importancia de la que tienen. Tu salud mental se verá beneficiada a partir del día en que empieces a hacerlo.</p>
-          <p>Haz uso de estos conocimientos y las recomendaciones expuestas en este artículo, y en menos tiempo del que imaginas, volverás a vivir libre de los pensamientos que te atormentan.</p>
+          <p>Haz uso de estos conocimientos y las recomendaciones expuestas en este texto, y en menos tiempo del que imaginas, volverás a vivir libre de los pensamientos que te atormentan.</p>
           <hr className='article__final-line'/>
           <div className='article__final-points-container'>
             <span className='article__final-point article__final-point--1'>•</span>
@@ -329,12 +329,12 @@ const Article = () => {
             </ol>
             <p>La pregunta es:</p>
             <p><strong>¿Suficiente compromiso como para tomar acción real?</strong></p>
-            <p>Seamos honestos: ni el mejor de los artículos podrá liberarte por completo de tus PQAs.</p>
-            <p>¿Cuánto tardaste en leer este artículo? ¿20 minutos? ¿Media hora? ¿Una hora si fuiste despacio y tomaste apuntes?</p>
+            <p>Seamos honestos: ni el mejor de los textos podrá liberarte por completo de tus PQAs.</p>
+            <p>¿Cuánto tardaste en leer este texto? ¿20 minutos? ¿Media hora? ¿Una hora si fuiste despacio y tomaste apuntes?</p>
             <p>¿Y qué edad tienes? ¿18? ¿28? ¿Más de 30? ¿Más de 40?</p>
             <p>Cualquiera que sean tus respuestas, algo es seguro: tus PQAs tienen más de 10 años gestándose en tu mente. Por múltiples horas cada día.</p>
-            <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el artículo es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
-            <p>En Detox Mental creemos en cambios reales. Por eso creamos un audiocurso completo que expande los 5 pasos de la estrategia discutida en el artículo.</p>
+            <p>Tras cientos o miles de horas formándose, esos PQAs no se irán en una sola sentada. Leer el texto es un buen primer paso, pero si quieres un impacto real, debes tomar medidas en un plazo de tiempo más largo.</p>
+            <p>En Detox Mental creemos en cambios reales. Por eso creamos un audiocurso completo que expande los 5 pasos de la estrategia discutida en el texto.</p>
             <p>El curso consiste en 15 sesiones de audio acompañadas de 15 actividades de escritura diseñadas para entender y procesar los pensamientos que te atormentan.</p>
             <p>Pero de nuevo, la pregunta es...</p>
             <p>¿Tu compromiso es suficiente como para tomar acción real?</p>

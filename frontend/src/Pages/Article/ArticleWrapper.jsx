@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Article from "./Article";
 import "./Article.css";
+import "../Course/Course.css";
 
 export default function ArticleWrapper() {
   const [showIntro, setShowIntro] = useState(
@@ -9,7 +10,7 @@ export default function ArticleWrapper() {
   const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowIntro(false), 7000);
+    const t = setTimeout(() => setShowIntro(false), 4500);
     localStorage.setItem("articleRevealed", "");
     return () => clearTimeout(t);
   }, []);
@@ -22,21 +23,14 @@ export default function ArticleWrapper() {
   }, [showIntro]);
 
   return showIntro ? (
-    <div className="article-intro">
+    <div className="intro-screen">
       <div>
-        <p className="article-intro__portion article-intro__portion--1">
-          Cómo liberarte
-        </p>
-        <p className="article-intro__portion article-intro__portion--2">
-          de los pensamientos que te atormentan
-        </p>
-        <p className="article-intro__portion article-intro__portion--3">
-          en 5 pasos
-        </p>
+        <h1 className="intro-screen__intro-image">Detox Mental</h1>
+        <p className="intro-screen__subtitle">la teoría</p>
         <img
           src="/icons/article.webp"
-          alt="Ícono de artículo decorativo"
-          className="article-intro__icon"
+          alt="Ícono de teoría decorativo"
+          className="intro-screen__course-icon"
         />
       </div>
     </div>

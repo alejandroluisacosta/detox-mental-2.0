@@ -8,11 +8,11 @@ export default function Instructions() {
       <main className='instructions-page__content'>
         <h1 className='instructions-page__title'>Detox Mental: limpia tu mente en 15 días.</h1>
         <p className='instructions-page__lead'>
-          Esta aplicación consta de dos (2) partes: un <strong>artículo</strong> y un <strong>curso</strong> de 15 días.
+          Esta aplicación consta de dos (2) partes: una <strong>teoría</strong> y un <strong>curso</strong> de 15 días.
         </p>
 
         <section className='instructions-page__section'>
-          <h2>1. Artículo</h2>
+          <h2>1. Teoría</h2>
           <p>
             Es la pieza principal de información a partir de la cual se creó el curso.
           </p>
@@ -20,7 +20,7 @@ export default function Instructions() {
             Contiene una estrategia de <strong>cinco (5) pasos</strong> para trabajar en tus pensamientos de forma segura y sencilla.
           </p>
           <p>
-            Es un artículo largo y completo. Puedes leerlo en un día o repartirlo en varios.
+            Es un texto largo y completo. Puedes leerlo en un día o repartirlo en varios.
           </p>
           <p>
             La estrategia se basa principalmente <strong>escribir lo que estás pensando</strong> por los beneficios que esto conlleva,
@@ -31,7 +31,7 @@ export default function Instructions() {
 
         <section className='instructions-page__section'>
           <h2>2. Curso</h2>
-          <p>El curso expande los contenidos del artículo.</p>
+          <p>El curso expande los contenidos de la teoría.</p>
           <p>Consta de <strong>15 sesiones de audio</strong> acompañadas de <strong>15 ejercicios</strong>.</p>
           <p>
             Cada sesión viene con su ejercicio. La idea es hacerlo al terminar de escuchar la sesión.

@@ -18,71 +18,63 @@
   animation: fadeInOutOnboardingInitial 3s ease forwards;
 }
 
-.intro-screen--onboarding-intent {
-  position: relative;
+.intro-screen--welcome {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 100vh;
-  padding: 2rem;
+  padding: 38vh 2rem 2rem;
   box-sizing: border-box;
   background: var(--background);
   color: var(--text);
-  animation: fadeInOutOnboardingIntent 14s ease forwards;
-  cursor: pointer;
+  animation: fadeOutWelcome 5s ease forwards;
 }
 
-.intro-screen--onboarding-intent .intro-screen__tap-hint {
-  margin-top: 1.5rem;
-}
-
-.intro-screen--onboarding-intent .intro-screen__tap-hint-icon {
-  position: absolute;
-  bottom: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-color: var(--accent);
-  mask: url("/icons/click.svg") center / contain no-repeat;
-  -webkit-mask: url("/icons/click.svg") center / contain no-repeat;
-  animation: fadeInTapHint 1.5s ease forwards;
-}
-
-@keyframes fadeInTapHint {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.intro-screen__text {
+.intro-screen__welcome {
+  position: relative;
+  width: 100%;
   max-width: 560px;
+  text-align: center;
+}
+
+.intro-screen__welcome-line1,
+.intro-screen__welcome-line2 {
+  margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  text-align: center;
-  margin-bottom: 20px;
 }
 
-.intro-screen__text p {
-  margin: 0 0 1.25rem;
+.intro-screen__welcome-line1 {
+  opacity: 0;
+  animation: fadeInIntroItem 1.2s ease forwards;
 }
 
-.intro-screen__text p:last-child {
-  margin-bottom: 0;
+.intro-screen__welcome-line2 {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 0;
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
 }
 
-@keyframes fadeInOutOnboardingIntent {
-  0% {
+.intro-screen__welcome-line2--visible {
+  visibility: visible;
+  animation: fadeInIntroItem 1.2s ease forwards;
+}
+
+/* Matches the fade-in phase of fadeInOutOnboardingInitial (0% → 40% over 3s). */
+@keyframes fadeInIntroItem {
+  from {
     opacity: 0;
   }
-  5% {
+  to {
     opacity: 1;
   }
+}
+
+@keyframes fadeOutWelcome {
+  0%,
   90% {
     opacity: 1;
   }
@@ -181,7 +173,7 @@
     padding: 40px 0 2rem;
   }
 
-  .intro-screen__text {
+  .intro-screen__welcome {
     max-width: 700px;
   }
 }

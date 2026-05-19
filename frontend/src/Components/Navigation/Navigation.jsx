@@ -94,7 +94,7 @@ const Navigation = () => {
                         </button>
                     </div>
                     <div className='navigation__menu-links'>
-                        <button type='button' className={`navigation__menu-link${isArticleRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>ARTÍCULO</button>
+                        <button type='button' className={`navigation__menu-link${isArticleRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>TEORÍA</button>
                         <button type='button' className={`navigation__menu-link${isCourseRoute ? ' navigation__menu-link--active' : ''}`} onClick={goCourse}>CURSO</button>
                         <button type='button' className={`navigation__menu-link${isInstructionsRoute ? ' navigation__menu-link--active' : ''}`} onClick={goInstructions}>INSTRUCCIONES</button>
                     </div>

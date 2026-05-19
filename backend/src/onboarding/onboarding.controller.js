@@ -17,7 +17,7 @@ const handlers = {
   [STATES.PQA_EVALUATION]: pqaEvaluationHandler,
   [STATES.RECOMMENDATION]: recommendationHandler,
   [STATES.EXIT]: async ({ session }) => ({
-    reply: "Ya tienes orientación para seguir. Usa los botones de arriba para ir al artículo o al curso.",
+    reply: "Ya tienes orientación para seguir. Usa los botones de arriba para ir a la teoría o al curso.",
     state: session.state,
   }),
 };
