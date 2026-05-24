@@ -30,15 +30,17 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
         );
         setOpenBlockedSessionModal(false);
         setIsSessionUnblocked(true);
-        try {
-            const res = await apiFetch('/auth/me/unblocked-sessions', {
-                method: 'POST',
-                body: { sessionId: id },
-            });
-            if (!res.ok) throw new Error('save failed');
-        } catch (err) {
-            console.error('[unblock-session]', err);
-            emitToast('No se pudo guardar el desbloqueo. Inténtalo de nuevo.');
+        if (user) {
+            try {
+                const res = await apiFetch('/auth/me/unblocked-sessions', {
+                    method: 'POST',
+                    body: { sessionId: id },
+                });
+                if (!res.ok) throw new Error('save failed');
+            } catch (err) {
+                console.error('[unblock-session]', err);
+                emitToast('No se pudo guardar el desbloqueo. Inténtalo de nuevo.');
+            }
         }
         return true;
     };
