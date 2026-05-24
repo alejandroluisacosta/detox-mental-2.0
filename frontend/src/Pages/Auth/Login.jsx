@@ -56,11 +56,11 @@ export default function Login() {
               Si existe un usuario con ese email, se ha enviado un enlace de
               login. Revisa tu bandeja de entrada.
             </p>
-            <Link className="auth-page__footer-link" to="/course">
-              Ir al curso
-            </Link>
             <Link className="auth-page__footer-link" to="/">
               Ir a la teoría
+            </Link>
+            <Link className="auth-page__footer-link" to="/course">
+              Ir al curso
             </Link>
           </>
         ) : (
@@ -91,7 +91,10 @@ export default function Login() {
               {loading ? "Enviando…" : "Enviar enlace"}
             </button>
             <Link className="auth-page__footer-link" to="/">
-              Volver al inicio
+              Ir a la teoría
+            </Link>
+            <Link className="auth-page__footer-link" to="/course">
+              Ir al curso
             </Link>
           </form>
         )}
