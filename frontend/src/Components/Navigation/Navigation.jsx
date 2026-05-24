@@ -5,7 +5,7 @@ import { useAuth } from '../../Context/AuthContext.jsx';
 
 const Navigation = () => {
     const [menuState, setMenuState] = useState('closed');
-    const [isBarVisible, setIsBarVisible] = useState(false);
+    const [isBarVisible, setIsBarVisible] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
     const { user, status } = useAuth();
