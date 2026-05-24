@@ -25,12 +25,30 @@
     margin-bottom: 15px;
     width: 100%;
     border-radius: 16px;
-    border: 0;
-    background-color: #E9E9E9;
-    padding: 10px 0;
-    text-align: center;
+    border: 1.5px solid var(--accent);
+    padding: 12px 14px;
+    text-align: left;
     font-family: 'Montserrat', sans-serif;
     font-size: 18px;
+    color: var(--text);
+    cursor: text;
+}
+
+.enter-code-modal__input::placeholder {
+    color: var(--platinum);
+}
+
+.enter-code-modal__input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.modal-incorrect-code .enter-code-modal__input {
+    border-color: rgb(202, 53, 53);
+}
+
+.modal-incorrect-code .enter-code-modal__input:focus {
+    outline-color: rgb(202, 53, 53);
 }
 
 .enter-code-modal__button {

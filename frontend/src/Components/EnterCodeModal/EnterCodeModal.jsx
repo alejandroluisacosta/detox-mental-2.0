@@ -30,8 +30,28 @@ const EnterCodeModal = ({ selectedSessionId, handleUnblockSession, setOpenEnterC
         <form className={formClass} onSubmit={handleSubmit} key={errorCount} >
             <CloseIcon handleCloseModal={handleCloseModal} />
             <label htmlFor="unblock-code-input" className="enter-code-modal__title">CÓDIGO</label>
-            {errorCount > 0 && <p className='enter-code-modal__error-message' role='alert' aria-live='assertive'>Código incorrecto</p>}
-            <input type="text" id="unblock-code-input" className="enter-code-modal__input" value={userInput} onChange={handleInputChange}/>
+            {errorCount > 0 && (
+                <p
+                    id="unblock-code-error"
+                    className="enter-code-modal__error-message"
+                    role="alert"
+                    aria-live="assertive"
+                >
+                    Código incorrecto
+                </p>
+            )}
+            <input
+                type="text"
+                id="unblock-code-input"
+                className="enter-code-modal__input"
+                value={userInput}
+                onChange={handleInputChange}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="Introduce el código"
+                aria-invalid={errorCount > 0}
+                aria-describedby={errorCount > 0 ? 'unblock-code-error' : undefined}
+            />
             <button className="enter-code-modal__button" type="submit">DESBLOQUEAR</button>
             <p className="enter-code-modal__close-text" onClick={handleCloseModal}>Cerrar</p>
         </form>
