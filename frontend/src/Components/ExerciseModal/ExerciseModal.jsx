@@ -33,14 +33,36 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheck
 
     return (
         <div className='modal-overlay'>
-            <form className={formClass} key={errorCount}>
+            <form className={formClass} key={errorCount} onSubmit={handleUnblockSession}>
                 <CloseIcon handleCloseModal={handleCloseModal}/>
                 <h2 className="exercise-modal__title">{`Ejercicio #${exerciseId}`}</h2>
                 {isExerciseBlocked ? 
-                <div className='exercise-modal__unblock-container'>
-                    <p className='exercise-modal__question'>{exercise.question}</p>
-                    <input className='exercise-modal__input' placeholder='Tu respuesta'onChange={handleInputChange} value={userInput} maxLength="18"/>
-                    <button className="exercise-modal__button" type="submit" onClick={handleUnblockSession}>DESBLOQUEAR</button>
+                <div className="exercise-modal__unblock-container">
+                    <p className="exercise-modal__question">{exercise.question}</p>
+                    {errorCount > 0 && (
+                        <p
+                            id="exercise-answer-error"
+                            className="exercise-modal__error-message"
+                            role="alert"
+                            aria-live="assertive"
+                        >
+                            Respuesta incorrecta
+                        </p>
+                    )}
+                    <input
+                        type="text"
+                        id="exercise-answer-input"
+                        className="exercise-modal__input"
+                        placeholder="Tu respuesta"
+                        value={userInput}
+                        onChange={handleInputChange}
+                        maxLength={18}
+                        autoComplete="off"
+                        spellCheck={false}
+                        aria-invalid={errorCount > 0}
+                        aria-describedby={errorCount > 0 ? 'exercise-answer-error' : undefined}
+                    />
+                    <button className="exercise-modal__button" type="submit">DESBLOQUEAR</button>
                 </div>
                 :
                 <p className='exercise-modal__exercise-text'>{exercise.text}</p>

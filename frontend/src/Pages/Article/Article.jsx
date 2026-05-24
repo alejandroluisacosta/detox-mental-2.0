@@ -1,8 +1,8 @@
 import './Article.css';
 import { useState } from 'react';
-import ArticleHeader from '../../Components/ArticleHeader/ArticleHeader';
 import { useNavigate } from 'react-router-dom';
-import Navigation from '../../Components/Navigation/Navigation'
+import Navigation from '../../Components/Navigation/Navigation';
+import { THEORY_SUBTITLE, THEORY_TITLE } from '../../data/theoryMeta';
 
 const Article = () => {
     const [isWantMoreRevealed, setIsWantMoreRevealed] = useState(() => localStorage.getItem("wantMore") !== null);
@@ -39,11 +39,11 @@ const Article = () => {
 
     return (
     <div className="article">
-      <ArticleHeader />
       <main className="article-content">
         <Navigation />
         {/* Introduction */}
-        <h1 className='article-content__article-title'>Cómo liberarte de los pensamientos que te atormentan en 5 pasos</h1>
+        <h1 className="article-content__article-title">{THEORY_TITLE}</h1>
+        <p className="article-content__article-subtitle">{THEORY_SUBTITLE}</p>
         <section className="intro-section">
           <p className='intro-section__written-by'><em>Historia por: Marco Ferrani - Detox Mental</em></p>
           <p>A principios de 2020 se libraba en mi interior una lucha que tenía meses de antigüedad. Mi cerebro, el campo de batalla, había sido infectado por un tóxico pensamiento, una idea que en poco tiempo se convirtió en una trampa que no mata pero tampoco afloja:</p>

@@ -8,8 +8,8 @@
     width: 100%;
     border-top: 1px solid var(--background);
     background-color: var(--accent);
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
     overflow: hidden;
     transform: translateY(110%);
     transition: transform 220ms ease;
@@ -21,11 +21,11 @@
 
 .navigation__section {
     flex: 1;
-    min-height: 60px;
+    min-height: 51px;
     border: none;
     background: transparent;
     color: var(--background);
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -48,13 +48,13 @@
 }
 
 .navigation__section--right {
-    padding: 0 16px;
+    padding: 0 14px;
     overflow: hidden;
 }
 
 .navigation__section--right-user {
     justify-content: center;
-    gap: 10px;
+    gap: 9px;
 }
 
 .navigation__user-email {
@@ -64,14 +64,14 @@
 }
 
 .navigation__account-icon {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
 }
 
 .navigation__icon {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
 }
 
 .navigation__menu-overlay {

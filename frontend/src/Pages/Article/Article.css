@@ -14,14 +14,6 @@
   flex-direction: column;
 }
 
-.sticky-header h1 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary);
-  letter-spacing: -1px;
-}
-
 .article-content {
   width: 100%;
   margin: 0 auto;
@@ -32,10 +24,18 @@
 }
 
 .article-content__article-title {
-  font-size: 20px;
   text-align: center;
-  padding: 1.5rem 0 1rem;
-  min-height: 126px;
+  padding: 1.5rem 0 0.5rem;
+  margin-bottom: 0;
+}
+
+.article-content__article-subtitle {
+  font-weight: 300;
+  text-align: center;
+  margin: 0 0 1rem;
+  padding: 0 0.5rem;
+  line-height: 1.4;
+  color: var(--accent);
 }
 
 .article h1, h2, h3, h4 {

@@ -27,51 +27,36 @@ Aquí tienes respuestas rápidas a lo que suelen preguntarse quienes nos visitan
 export const FAQ_ENTRIES = [
   {
     id: "how_to_use",
-    label: "¿Cómo se utiliza la aplicación?",
-    markdownBody: `Esta aplicación consta de **dos partes**: una **teoría** y un **curso de 15 días**.
+    label: "¿Cómo se utiliza esta aplicación?",
+    markdownBody: `Detox Mental consta de dos partes: una **teoría** y un **curso** práctico.
 
 ### La teoría
 
-La idea es que **leas la teoría primero** para ganar contexto. Esta presenta una estrategia en **cinco (5) pasos** para trabajar en tus pensamientos de forma sencilla y segura.
+La teoría está pensada para darte **contexto** y ayudarte a entender mejor el enfoque de la aplicación antes de empezar.
 
-La teoría es larga y completa. Puedes leerla en un día o repartirla en varios.
-
-**No es obligatorio** antes del curso, pero es lo ideal.
+Aquí te contamos **cómo nació** Detox Mental, nuestra **filosofía** y las **herramientas** que utilizamos para trabajar en el estrés que genera la mente.
 
 ### El curso
 
-El **curso** amplía la teoría: son **15 sesiones de audio** con **15 ejercicios** (uno por sesión).
+El **curso** amplía la teoría. Consiste en **15 sesiones de audio** con **15 ejercicios prácticos de escritura**.
 
-Lo recomendado es una sesión al día, pero puedes ir a tu ritmo.
+La idea es avanzar poco a poco, aplicando lo aprendido directamente a pensamientos y situaciones reales de tu vida cotidiana.
 
-Las **tres primeras sesiones** están desbloqueadas; las demás se desbloquean con un código (puedes leer las **instrucciones** de la app para más información sobre cómo desbloquearlas).
+Las primeras sesiones están **desbloqueadas** desde el inicio. El resto se van **desbloqueando** a medida que avanzas.
 
-Completa los contenidos de la aplicación para mejorar tu relación con ciertos pensamientos y reducir el estrés que te generan.
+Puedes hacerlo a tu ritmo, aunque lo habitual es realizar una sesión por día.
 
-Si luego de terminar quieres seguir profundizando en los beneficios de trabajar en tu mente, es recomendable acudir a un profesional de salud mental.`
+Completa los contenidos de la aplicación para mejorar tu relación con ciertos pensamientos y reducir el estrés que te generan.`
   },
   {
-    id: "time_investment",
-    label: "¿Cuánto tiempo tengo que invertir?",
+    id: "time_to_complete",
+    label: "¿Cuánto tiempo lleva completar la aplicación?",
     markdownBody:
-      `Lo ideal es terminar todo en **16 días**:
+      `No hay un tiempo fijo ni una forma correcta de completarla.
 
-- **1 día** para leer la teoría.
-- **15 días** para completar el curso.
-      
-Lo normal es dedicar unos **30 minutos** al día aproximadamente, pero cada quien lo hace a su ritmo.
-      
-Siéntete libre de dedicar el tiempo que quieras y puedas, especialmente al principio.
-      
-Nos puedes contactar a **detoxmental4@gmail.com** y te damos recomendaciones de ritmo según tus necesidades.`
-  },
-  {
-    id: "course_duration",
-    label: "¿Cuánto dura el curso?",
-    markdownBody:
-      `Está diseñado para hacerse en **15 días** dedicando **± 30 minutos** al día.
-      
-Puedes hacerlo al ritmo que prefieras: 15 días es el ideal, pero lo importante es que se ajuste a tu rutina diaria.`
+Algunas personas prefieren seguir una estructura diaria, mientras que otras avanzan de forma más flexible según su tiempo y energía.
+
+Lo importante no es la velocidad, sino que puedas aplicar lo que vas aprendiendo en tu vida cotidiana de manera útil para ti.`
   },
   {
     id: "app_story",
@@ -80,7 +65,7 @@ Puedes hacerlo al ritmo que prefieras: 15 días es el ideal, pero lo importante 
 
 El creador de esta aplicación es un ex-escritor de desarrollo personal.
 
-En 2021, hizo un experimento para ver cuáles eran sus artículos más leídos: los publicó todos en **Facebook** e **Instagram** y les hizo publicidad por una semana.
+En 2021, hizo un experimento para ver cuáles eran sus artículos más leídos: los publicó todos en **Facebook** e **Instagram** y les hizo **publicidad** por una semana.
 
 Entre ellos había títulos como *"Cómo liberarte de los miedos que te impiden sacar tu mejor versión”*, *”Cómo hacer las cosas que no te gustan pero que son buenas para tu salud y tu futuro”*, o *”Cómo adquirir un nuevo hábito en tres pasos”*.
 
@@ -94,11 +79,11 @@ El **primero** tuvo **30.000**.
 
 El primer artículo tuvo **5 veces más** lecturas que el segundo. Una victoria arrasadora e inesperada.
 
-El título original del artículo ganador era **"Cómo liberarte de los pensamientos que te atormentan en 5 pasos"**, y su éxito demostró la **necesidad** que hay en la actualidad de liberarnos del estrés generado por la mente.
+El título original del artículo ganador era **"Cómo liberarte de los pensamientos que te atormentan en 5 pasos"**, y su éxito demostró la **necesidad** que existe de liberarnos del estrés generado por la mente.
 
-A partir de esta necesidad, nació el curso: **Detox Mental en 15 días**.
+A partir de esta necesidad, nació la idea del curso: **Detox Mental en 15 días**.
 
-Un curso hecho para aquellos que quieren **entender mejor su propia mente** y trabajar en el estrés que se acumula en ella.
+Un curso hecho para personas que quieren **entender mejor su propia mente** y trabajar en el estrés que se acumula en ella.
 
  **Muchas cosas han cambiado** desde el lanzamiento inicial en 2021.
 
@@ -106,43 +91,64 @@ El artículo cambió su nombre original para pasar a ser **"Cómo limpiar tu men
 
 (Decidimos alejarnos del término "pensamientos que atormentan" para adoptar un tono menos dramático).
 
-El curso se planificó originalmente para **30 días**, pero pasamos a comprimirlo a **15 días**.
+El curso se planificó originalmente para **30 días**, pero se comprimió a **15 días**.
 
-(Resulta ser que, en este caso, ser **intensivos** da mejores resultados).
+(Resulta ser que, en este caso, ser más **intensivos** da mejores resultados).
 
-Y sigue habiendo cambios a medido que recibimos **feedback** de nuestros usuarios. Cada persona que completa las sesiones y nos cuenta su experiencia suma a este proyecto. Cada nueva mejora está diseñada para que esa experiencia sea más **útil y transformadora** para la próxima persona que decida aventurarse. 
+Y sigue habiendo cambios a medido que recibimos **feedback** de quienes lo completan. Cada experiencia ayuda a seguir **refinando el contenido** para la siguiente persona que lo utilice.
 
 Dicho esto, te invitamos a probar el curso.
 
-Si estás aquí, es muy probable que estés interesado en mejorar tu relación con tu mente, y esta aplicación está diseñada para ayudarte a lograr justo eso de forma sencilla y segura.
+Si estás aquí, es probable que te interese mejorar tu relación con tu mente, y esta aplicación está diseñada para ayudarte a lograr justo eso de forma **sencilla y segura**.
 
-Esa es nuestra historia. Esperamos que te guste la aplicación y que te sea útil.
-
-Si quieres escribirnos para saber cualquier detalle del proyecto o para sugerir cambios, nos puedes contactar a **detoxmental4@gmail.com**.
-`
+Esa es nuestra historia. Si quieres escribirnos para saber cualquier detalle del proyecto o sugerir cambios, puedes contactarnos en **detoxmental4@gmail.com**.`
   },
   {
     id: "creator",
-    label: "¿Quién creó esta aplicación?",
-    markdownBody: "[Placeholder] Aquí irá información sobre la persona o el equipo detrás de la aplicación."
+    label: "¿Quién hizo Detox Mental?",
+    markdownBody: `Alejandro Luis Acosta.
+
+LinkedIn: [alejandroluisacosta](https://www.linkedin.com/in/alejandroluisacosta/)`
   },
   {
-    id: "medical_backing",
-    label: "¿Esto está respaldado por profesionales de la medicina?",
+    id: "professional_help",
+    label: "¿Esto reemplaza la ayuda profesional?",
     markdownBody:
-      "[Placeholder] Aquí irá una aclaración honesta sobre evidencia, límites del contenido y cuándo conviene acudir a un profesional de salud mental."
+      `No.
+
+Detox Mental **no sustituye** la asistencia médica ni psicológica. La aplicación fue diseñada para personas que se sienten **mentalmente saturadas** por los estímulos y la acumulación de pensamientos del día a día, pero que en general siguen **funcionando con normalidad**.
+
+La principal herramienta que recomendamos es **la escritura**. Existe evidencia científica de que escribir sobre pensamientos y emociones puede ayudar a **reducir estrés mental** y ordenar mejor lo que pasa por nuestra cabeza.
+
+Si alguna vez intentaste mejorar algún aspecto de tu vida leyendo un **libro**, escuchando un **podcast**, viendo **videos** o incorporando **mejores hábitos**, es probable que esta aplicación tenga sentido para ti.
+
+En cambio, si estás atravesando una **crisis psicológica** severa, pensamientos suicidas o una situación que afecta seriamente tu funcionamiento diario, nuestra recomendación es buscar **ayuda profesional** antes de utilizar una herramienta como esta.
+
+Detox Mental está pensado para personas que ya están relativamente bien, pero sienten que **vivir con menos ruido mental** es posible.`
   },
   {
     id: "is_it_free",
     label: "¿Hay que pagar algo?",
     markdownBody:
-      "[Placeholder] Aquí irá una aclaración honesta sobre evidencia, límites del contenido y cuándo conviene acudir a un profesional de salud mental."
+      `Detox Mental tiene una versión gratuita y una versión de pago.
+
+Puedes empezar gratis y acceder a parte del contenido del curso para ver si encaja contigo.
+
+Si quieres acceder al contenido completo, puedes desbloquearlo con una sola compra.`
   },
   {
     id: "course_contraindications",
     label: "Contraindicaciones",
     markdownBody:
-      "[Placeholder] Aquí irá una aclaración honesta sobre evidencia, límites del contenido y cuándo conviene acudir a un profesional de salud mental."
+      `Abstente de utilizar esta aplicación si estás atravesando una situación de salud mental **grave o inestable**.
+
+En particular, **no es recomendable** si experimentas de forma frecuente pensamientos suicidas, episodios de ansiedad o pánico intensos, paranoia, compulsiones que afectan tu vida diaria, episodios de desconexión de la realidad, o cualquier otra condición que interfiera de manera significativa con tu funcionamiento cotidiano.
+
+Tampoco es una herramienta adecuada si estás actualmente en tratamiento psicológico o psiquiátrico intensivo, salvo que tu profesional de referencia considere explícitamente que puede ser útil como complemento.
+
+Detox Mental **no está diseñado** para tratar ni sustituir atención clínica de ningún tipo. Es una herramienta de uso personal orientada a la **escritura** y la **organización de pensamientos** en contextos de bienestar general y malestar leve o moderado.
+
+Si tienes dudas sobre si este tipo de herramienta es adecuada para ti, te recomendamos consultar con un **profesional de la salud** antes de utilizarla.`
   },
 ];
 
