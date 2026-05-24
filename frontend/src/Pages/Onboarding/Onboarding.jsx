@@ -12,6 +12,14 @@ const ROLE_LABLES = {
 
 const getRoleLabel = (role) => ROLE_LABLES[role] ?? "Tales";
 
+const onboardingMarkdownComponents = {
+  a: ({ href, children, ...props }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+      {children}
+    </a>
+  ),
+};
+
 export default function Onboarding() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -270,7 +278,7 @@ export default function Onboarding() {
               <strong className="onboarding__message__role">{getRoleLabel(m.role)}:</strong>
               <div className={"onboarding__message__content"}>
                 {m.role === "assistant" ? (
-                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                  <ReactMarkdown components={onboardingMarkdownComponents}>{m.content}</ReactMarkdown>
                 ) : (
                   <span>{m.content}</span>
                 )}
