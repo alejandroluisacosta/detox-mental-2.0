@@ -29,11 +29,7 @@ const RewardOfferModal = ({ setOpenRewardOfferModal }) => {
         </h2>
         <p className='reward-offer-modal__description'>
           En Detox Mental buscamos prospectos para probar la nueva versión de
-          nuestro curso a cambio de una gift card de Amazon de 25€.
-        </p>
-        <p className='reward-offer-modal__description'>
-          Limpia tu mente, libérate del estrés de tus pensamientos, y gana una
-          recompensa a cambio.
+          nuestro curso a cambio de una <strong>gift card de Amazon de 25€</strong>.
         </p>
         <div className='reward-offer-modal__image-wrapper'>
           <img

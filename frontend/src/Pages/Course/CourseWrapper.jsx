@@ -35,7 +35,7 @@ export default function CourseWithIntro() {
     const timer = setTimeout(() => {
       localStorage.setItem(COURSE_REWARD_OFFER_STORAGE_KEY, '');
       setShowRewardOfferModal(true);
-    }, 1000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [showIntro]);
