@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react";
-import Course from "./Course";
-import "./Course.css";
+import { useEffect, useState } from 'react';
+import RewardOfferModal from '../../Components/RewardOfferModal/RewardOfferModal';
+import Course from './Course';
+import './Course.css';
+
+const COURSE_REVEALED_STORAGE_KEY = 'courseRevealed';
+const COURSE_REWARD_OFFER_STORAGE_KEY = 'courseRewardOfferSeen';
 
 export default function CourseWithIntro() {
-  const [showIntro, setShowIntro] = useState(localStorage.getItem('courseRevealed') === null);
+  const [showIntro, setShowIntro] = useState(localStorage.getItem(COURSE_REVEALED_STORAGE_KEY) === null);
   const [fadeIn, setFadeIn] = useState(false);
+  const [showRewardOfferModal, setShowRewardOfferModal] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setShowIntro(false), 4500);
-    localStorage.setItem("courseRevealed", "");
+    localStorage.setItem(COURSE_REVEALED_STORAGE_KEY, '');
     return () => clearTimeout(t);
   }, []);
 
@@ -17,6 +22,22 @@ export default function CourseWithIntro() {
       const id = requestAnimationFrame(() => setFadeIn(true));
       return () => cancelAnimationFrame(id);
     }
+  }, [showIntro]);
+
+  useEffect(() => {
+    if (
+      showIntro ||
+      localStorage.getItem(COURSE_REWARD_OFFER_STORAGE_KEY) !== null
+    ) {
+      return undefined;
+    }
+
+    const timer = setTimeout(() => {
+      localStorage.setItem(COURSE_REWARD_OFFER_STORAGE_KEY, '');
+      setShowRewardOfferModal(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [showIntro]);
 
   return showIntro ? (
@@ -32,8 +53,15 @@ export default function CourseWithIntro() {
       </div>
     </div>
   ) : (
-    <div className={`course-container ${fadeIn ? "fade-in" : ""}`}>
-      <Course />
-    </div>
+    <>
+      <div className={`course-container ${fadeIn ? 'fade-in' : ''}`}>
+        <Course />
+      </div>
+      {showRewardOfferModal && (
+        <RewardOfferModal
+          setOpenRewardOfferModal={setShowRewardOfferModal}
+        />
+      )}
+    </>
   );
 }
