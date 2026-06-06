@@ -18,6 +18,10 @@ const Navigation = () => {
         () => location.pathname.startsWith('/instructions'),
         [location.pathname],
     );
+    const isPromoRoute = useMemo(
+        () => location.pathname.startsWith('/promo'),
+        [location.pathname],
+    );
 
     const goLogin = () => {
         navigate('/login');
@@ -41,6 +45,11 @@ const Navigation = () => {
 
     const goArticle = () => {
         navigate('/');
+        closeMenu();
+    };
+
+    const goPromo = () => {
+        navigate('/promo');
         closeMenu();
     };
 
@@ -97,6 +106,7 @@ const Navigation = () => {
                         <button type='button' className={`navigation__menu-link${isArticleRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>TEORÍA</button>
                         <button type='button' className={`navigation__menu-link${isCourseRoute ? ' navigation__menu-link--active' : ''}`} onClick={goCourse}>CURSO</button>
                         <button type='button' className={`navigation__menu-link${isInstructionsRoute ? ' navigation__menu-link--active' : ''}`} onClick={goInstructions}>INSTRUCCIONES</button>
+                        <button type='button' className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`} onClick={goPromo}>GANA 25€</button>
                     </div>
                 </div>
             )}

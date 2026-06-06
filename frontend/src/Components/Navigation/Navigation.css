@@ -132,6 +132,12 @@
     color: var(--accent);
 }
 
+.navigation__menu-link--promo {
+    background: var(--background);
+    color: var(--accent);
+    font-weight: 700;
+}
+
 @keyframes navigation-menu-slide-in {
     from {
         transform: translateX(-100%);
