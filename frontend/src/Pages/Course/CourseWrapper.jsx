@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import RewardOfferModal from '../../Components/RewardOfferModal/RewardOfferModal';
+import { isPromoEnabled } from '../../data/promoConfig.js';
 import Course from './Course';
 import './Course.css';
 
@@ -26,6 +27,7 @@ export default function CourseWithIntro() {
 
   useEffect(() => {
     if (
+      !isPromoEnabled() ||
       showIntro ||
       localStorage.getItem(COURSE_REWARD_OFFER_STORAGE_KEY) !== null
     ) {
@@ -57,7 +59,7 @@ export default function CourseWithIntro() {
       <div className={`course-container ${fadeIn ? 'fade-in' : ''}`}>
         <Course />
       </div>
-      {showRewardOfferModal && (
+      {isPromoEnabled() && showRewardOfferModal && (
         <RewardOfferModal
           setOpenRewardOfferModal={setShowRewardOfferModal}
         />

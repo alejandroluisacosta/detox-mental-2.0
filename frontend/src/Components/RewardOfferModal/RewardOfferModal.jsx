@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '../CloseIcon/CloseIcon';
+import { PROMO_DEADLINE_LABEL } from '../../data/promoConfig.js';
 import './RewardOfferModal.css';
 
 const RewardOfferModal = ({ setOpenRewardOfferModal }) => {
@@ -39,8 +40,8 @@ const RewardOfferModal = ({ setOpenRewardOfferModal }) => {
           />
         </div>
         <p className='reward-offer-modal__footer-text'>
-          Aplica ahora para saber si eres elegible. Válido hasta el 01 de julio
-          2026
+          Aplica ahora para saber si eres elegible. Válido hasta el{' '}
+          {PROMO_DEADLINE_LABEL}
         </p>
         <button
           type='button'

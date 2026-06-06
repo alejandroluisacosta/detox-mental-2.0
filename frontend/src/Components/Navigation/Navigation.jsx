@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import './Navigation.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { isPromoEnabled } from '../../data/promoConfig.js';
 
 const Navigation = () => {
     const [menuState, setMenuState] = useState('closed');
@@ -106,7 +107,9 @@ const Navigation = () => {
                         <button type='button' className={`navigation__menu-link${isArticleRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>TEORÍA</button>
                         <button type='button' className={`navigation__menu-link${isCourseRoute ? ' navigation__menu-link--active' : ''}`} onClick={goCourse}>CURSO</button>
                         <button type='button' className={`navigation__menu-link${isInstructionsRoute ? ' navigation__menu-link--active' : ''}`} onClick={goInstructions}>INSTRUCCIONES</button>
-                        <button type='button' className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`} onClick={goPromo}>GANA 25€</button>
+                        {isPromoEnabled() && (
+                            <button type='button' className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`} onClick={goPromo}>GANA 25€</button>
+                        )}
                     </div>
                 </div>
             )}

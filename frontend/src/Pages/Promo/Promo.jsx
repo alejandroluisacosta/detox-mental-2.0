@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation';
-import { PROMO_FORM_URL } from '../../data/promoFormUrl.js';
+import { PROMO_FORM_URL, PROMO_DEADLINE_LABEL } from '../../data/promoConfig.js';
 import './Promo.css';
 
 function PromoApplyButton({ className = '' }) {
@@ -156,7 +156,7 @@ export default function Promo() {
             selección, aunque nos reservamos el derecho de aceptarte.
           </p>
           <p>
-            <strong>Válido hasta el 01 de julio 2026.</strong>
+            <strong>Válido hasta el {PROMO_DEADLINE_LABEL}.</strong>
           </p>
         </section>
 
