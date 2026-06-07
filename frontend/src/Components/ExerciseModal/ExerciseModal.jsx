@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import CloseIcon from '../CloseIcon/CloseIcon';
 import './ExerciseModal.css';
 
@@ -65,7 +66,9 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheck
                     <button className="exercise-modal__button" type="submit">DESBLOQUEAR</button>
                 </div>
                 :
-                <p className='exercise-modal__exercise-text'>{exercise.text}</p>
+                <div className='exercise-modal__exercise-text'>
+                    <ReactMarkdown>{exercise.text}</ReactMarkdown>
+                </div>
                 }
                 <span className="exercise-modal__close-text" onClick={handleCloseModal}>Cerrar</span>
             </form>

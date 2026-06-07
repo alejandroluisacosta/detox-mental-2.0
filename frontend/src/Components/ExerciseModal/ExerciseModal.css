@@ -63,8 +63,12 @@
     padding: 8px 0;
 }
 
-.exercise-modal__exercise-text {
-    white-space: pre-line;
+.exercise-modal__exercise-text p {
+    margin: 0 0 1em;
+}
+
+.exercise-modal__exercise-text p:last-child {
+    margin-bottom: 0;
 }
 
 .exercise-modal__close-text {
