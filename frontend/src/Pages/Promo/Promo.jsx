@@ -76,9 +76,7 @@ export default function Promo() {
               este curso te sería útil.
             </li>
             <li>
-              Si encajas, hacemos una entrevista breve (~15 min) para confirmar
-              que eres una buena persona para el experimento y acordar las
-              fechas de inicio.
+              Si encajas, acordamos las fechas de inicio.
             </li>
             <li>
               Completas el curso, envías tu evidencia diaria y, al final, un
