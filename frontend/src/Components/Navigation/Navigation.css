@@ -133,9 +133,10 @@
 }
 
 .navigation__menu-link--promo {
-    background: var(--background);
+    background: #f8E5A5;
     color: var(--accent);
     font-weight: 700;
+    border: 2px solid #F9CB40;
 }
 
 @keyframes navigation-menu-slide-in {
