@@ -132,6 +132,13 @@
     color: var(--accent);
 }
 
+.navigation__menu-link--promo {
+    background: #f8E5A5;
+    color: var(--accent);
+    font-weight: 700;
+    border: 2px solid #F9CB40;
+}
+
 @keyframes navigation-menu-slide-in {
     from {
         transform: translateX(-100%);
