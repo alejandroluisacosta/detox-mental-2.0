@@ -73,7 +73,25 @@
 
 .sessions-subtitle {
     margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.sessions-instructions-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    min-width: 210px;
     margin-bottom: 50px;
+    padding: 12px 22px;
+    box-shadow: 0 6px 18px rgba(132, 93, 67, 0.18);
+}
+
+.sessions-instructions-button__icon {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
 }
 
 .sessions-container {

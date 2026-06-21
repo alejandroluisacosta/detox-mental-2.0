@@ -27,6 +27,10 @@ const Course = () => {
         }
     }
 
+    const handleGoToInstructions = () => {
+        navigate('/instructions');
+    }
+
     return (
         <div className='sessions-page'>
           {openBlockedSessionModal && <BlockedSessionModal setOpenBlockedSessionModal={setOpenBlockedSessionModal} setIsSessionUnblocked={setIsSessionUnblocked} setSessions={setSessions} selectedSession={selectedSession.current}/>}
@@ -43,6 +47,15 @@ const Course = () => {
             <Navigation />
             <h1 className='sessions-title'>Detox Mental</h1>
             <p className='sessions-subtitle'>Limpia tu mente escribiendo</p>
+            <button type='button' className='sessions-instructions-button' onClick={handleGoToInstructions}>
+                <img
+                    className='sessions-instructions-button__icon'
+                    src='/icons/instructions.svg'
+                    alt=''
+                    aria-hidden='true'
+                />
+                INSTRUCCIONES
+            </button>
             <div className="sessions-container">
                 {sessions.map((session, index) => (
                     <SessionCard session={session} key={index} handleGoToSession={handleGoToSession}/>
