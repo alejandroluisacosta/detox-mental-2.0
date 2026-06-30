@@ -1,0 +1,15 @@
+/* Promo-specific tweaks. Chat styling is reused from Onboarding.css. */
+
+.thoughts-test__promo {
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+.thoughts-test__promo-button {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.thoughts-test__journal {
+  margin-top: 4px;
+}

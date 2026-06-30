@@ -8,6 +8,7 @@ import Session from './Components/Session/Session.jsx';
 import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
 import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';
 import OnboardingGate from './Pages/Onboarding/OnboardingGate.jsx';
+import ThoughtsTest from './Pages/ThoughtsTest/ThoughtsTest.jsx';
 import Login from './Pages/Auth/Login.jsx';
 import AuthError from './Pages/Auth/AuthError.jsx';
 import AuthSessionToast from './Components/AuthSessionToast/AuthSessionToast.jsx';
@@ -40,6 +41,7 @@ function App() {
                             <Route path='promo' element={<PromoGate />} />
                             <Route path='instructions' element={<Instructions />} />
                             <Route path='account' element={<Account />} />
+                            <Route path='test/:testId' element={<ThoughtsTest />} />
                             <Route path='session/:sessionId' element={<Session />} />
                         </Route>
                     </Routes>
