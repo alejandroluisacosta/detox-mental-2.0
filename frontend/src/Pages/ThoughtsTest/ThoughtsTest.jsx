@@ -3,6 +3,7 @@ import { useNavigate, useParams, Navigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { thoughtsTests } from "../../data";
 import { saveThoughtsTestAnswer } from "../../utils/thoughtsTestStorage";
+import Navigation from "../../Components/Navigation/Navigation";
 import "../Onboarding/Onboarding.css";
 import "./ThoughtsTest.css";
 
@@ -206,7 +207,8 @@ export default function ThoughtsTest() {
   const showPromo = phase === "promo" || phase === "done";
 
   return (
-    <div className="onboarding">
+    <div className="onboarding thoughts-test">
+      <h1 className="thoughts-test__title">Test: {test.title}</h1>
       <div className="onboarding__message-container">
         {messages.map((m, i) => (
           <ChatMessage key={i} role={m.role} content={m.content} />
@@ -274,6 +276,8 @@ export default function ThoughtsTest() {
           <ChatMessage role="assistant" content={test.journalingPrompt} />
         </div>
       )}
+
+      <Navigation />
     </div>
   );
 }

@@ -4,11 +4,11 @@
 // final free-text question, a course promo, and a closing journaling prompt.
 
 export const thoughtsTests = {
-  "tormenting-thoughts-1": {
-    id: "tormenting-thoughts-1",
-    title: "Pensamientos que atormentan",
+  "stressing-thoughts-1": {
+    id: "stressing-thoughts-1",
+    title: "Pensamientos estresantes #1",
     intro:
-      "Hola, soy Tales. Vamos a hacer un pequeño test sobre esos pensamientos que te atormentan. No hay respuestas correctas ni incorrectas: solo elige lo que más se parezca a tu experiencia.",
+      "Hola de nuevo. Bienvenido/a al primer test sobre pensamientos estresantes. No hay respuestas correctas ni incorrectas: solo elige lo que más se parezca a tu experiencia.",
     questions: [
       {
         id: "frequency",
@@ -58,7 +58,7 @@ export const thoughtsTests = {
         id: "reflection",
         type: "text",
         prompt:
-          "Por último, escríbeme con tus palabras: ¿cuál es el pensamiento que más te atormenta últimamente?",
+          "Por último, escríbeme con tus palabras: ¿cuál es el pensamiento que más estrés te genera últimamente?",
       },
     ],
     coursePromo: {
@@ -68,6 +68,6 @@ export const thoughtsTests = {
       buttonLabel: "Ir al curso",
     },
     journalingPrompt:
-      "Gracias por tu sinceridad. Te dejo una consigna para tu cuaderno: escribe durante 10 minutos sobre ese pensamiento que más te atormenta, como si se lo contaras a alguien de total confianza. No lo juzgues, solo descríbelo. Al terminar, pregúntate: ¿qué parte de esto depende realmente de mí?",
+      "Gracias por tu sinceridad. Te dejo una consigna para tu cuaderno: escribe durante 10 minutos sobre ese pensamiento que más estrés te genera, como si se lo contaras a alguien de total confianza. No lo juzgues, solo descríbelo. Al terminar, pregúntate: ¿qué parte de esto depende realmente de mí?",
   },
 };

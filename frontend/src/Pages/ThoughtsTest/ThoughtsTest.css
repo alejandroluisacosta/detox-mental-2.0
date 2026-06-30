@@ -1,5 +1,18 @@
 /* Promo-specific tweaks. Chat styling is reused from Onboarding.css. */
 
+/* Leaves room for the fixed Navigation bar so content isn't hidden behind it. */
+.thoughts-test {
+  padding-bottom: 80px;
+}
+
+.thoughts-test__title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: var(--accent);
+  text-align: center;
+}
+
 .thoughts-test__promo {
   margin-top: 8px;
   margin-bottom: 20px;
