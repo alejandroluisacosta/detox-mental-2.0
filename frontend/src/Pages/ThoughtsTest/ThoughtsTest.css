@@ -31,6 +31,45 @@
   margin-top: 4px;
 }
 
+.thoughts-test__write-intro {
+  margin-top: 12px;
+}
+
+.thoughts-test__write-disclaimer {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted, #6b7280);
+  text-align: center;
+}
+
+.thoughts-test__write-box {
+  margin-top: 12px;
+}
+
+.thoughts-test__journal-textarea {
+  width: 100%;
+  min-height: 200px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font: inherit;
+  line-height: 1.5;
+  color: inherit;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  resize: none;
+  overflow: hidden;
+}
+
+.thoughts-test__journal-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.thoughts-test__write-box .thoughts-test__promo-button {
+  margin-top: 12px;
+}
+
 .thoughts-test__recommendation .thoughts-test__promo-button {
   margin-top: 8px;
 }

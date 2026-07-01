@@ -26,6 +26,9 @@ const markdownComponents = {
 const INTRO_DELAY_MS = 900;
 const TYPING_DELAY_MS = 700;
 
+const JOURNAL_CLOSING_MESSAGE =
+  "Me alegra que hayas dedicado un tiempo a escribir sobre esto. Espero que te haya ayudado.";
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function ChatMessage({ role, content }) {
@@ -86,6 +89,10 @@ function ThoughtsTestChat() {
   const [phase, setPhase] = useState("intro");
   const [input, setInput] = useState("");
   const [recommendedTestId, setRecommendedTestId] = useState(null);
+  // Journal writing sub-flow: idle -> writing -> finished.
+  const [writeState, setWriteState] = useState("idle");
+  const [journalText, setJournalText] = useState("");
+  const [closingTyping, setClosingTyping] = useState(false);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -127,6 +134,9 @@ function ThoughtsTestChat() {
     setPhase("intro");
     setInput("");
     setRecommendedTestId(null);
+    setWriteState("idle");
+    setJournalText("");
+    setClosingTyping(false);
     keyOptionRef.current = null;
     window.scrollTo(0, 0);
 
@@ -230,6 +240,28 @@ function ThoughtsTestChat() {
     await advanceAfterAnswer(stepIndex);
   }
 
+  function handleJournalChange(e) {
+    setJournalText(e.target.value);
+    const el = e.target;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }
+
+  async function handleFinishWriting() {
+    if (writeState !== "writing") return;
+    saveThoughtsTestAnswer(testId, {
+      questionId: "journal-entry",
+      prompt: test.journalingPrompt,
+      type: "text",
+      value: journalText.trim(),
+    });
+    setWriteState("finished");
+    setClosingTyping(true);
+    await delay(TYPING_DELAY_MS);
+    if (!mountedRef.current) return;
+    setClosingTyping(false);
+  }
+
   const showQuestionTyping = loading && (phase === "intro" || phase === "questions");
   const showChips =
     phase === "questions" && !loading && currentQuestion?.type === "chips";
@@ -308,6 +340,50 @@ function ThoughtsTestChat() {
       {showJournal && (
         <div className="thoughts-test__journal">
           <ChatMessage role="assistant" content={test.journalingPrompt} />
+
+          {writeState === "idle" && (
+            <div className="thoughts-test__write-intro">
+              <button
+                type="button"
+                className="onboarding__button thoughts-test__promo-button"
+                onClick={() => setWriteState("writing")}
+              >
+                ESCRIBIR
+              </button>
+              <p className="thoughts-test__write-disclaimer">
+                Lo que escribas en esta aplicación es privado y no será visto por
+                nadie más.
+              </p>
+            </div>
+          )}
+
+          {writeState === "writing" && (
+            <div className="thoughts-test__write-box">
+              <textarea
+                className="thoughts-test__journal-textarea"
+                value={journalText}
+                onChange={handleJournalChange}
+                placeholder="Escribe aquí..."
+              />
+              <button
+                type="button"
+                className="onboarding__button thoughts-test__promo-button"
+                onClick={handleFinishWriting}
+              >
+                TERMINAR
+              </button>
+            </div>
+          )}
+
+          {closingTyping && (
+            <div className="thoughts-test__journal-typing">
+              <TypingBubble />
+            </div>
+          )}
+
+          {writeState === "finished" && !closingTyping && (
+            <ChatMessage role="assistant" content={JOURNAL_CLOSING_MESSAGE} />
+          )}
         </div>
       )}
 
