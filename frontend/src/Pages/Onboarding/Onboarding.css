@@ -504,6 +504,8 @@
 
 .onboarding__chip--challenge {
     font-weight: 600;
+    max-width: 85%;
+    box-sizing: border-box;
     background: linear-gradient(#fff8f0, #fff8f0) padding-box,
                 linear-gradient(135deg, #c49564 0%, #d4a574 35%, #a8e6cf 70%, #845d43 100%) border-box;
 }
