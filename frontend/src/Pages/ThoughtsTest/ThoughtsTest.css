@@ -26,3 +26,11 @@
 .thoughts-test__journal {
   margin-top: 4px;
 }
+
+.thoughts-test__recommendation {
+  margin-top: 4px;
+}
+
+.thoughts-test__recommendation .thoughts-test__promo-button {
+  margin-top: 8px;
+}

@@ -75,13 +75,17 @@ export default function ThoughtsTest() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-  // Flow phases: intro -> questions -> promo -> done
+  // Flow phases: intro -> questions -> promo -> journal -> done
   const [phase, setPhase] = useState("intro");
   const [input, setInput] = useState("");
+  const [recommendedTestId, setRecommendedTestId] = useState(null);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const mountedRef = useRef(true);
+  // Tracks the answer to the recommendation's key question synchronously,
+  // avoiding stale state when the end-of-flow runs in the same handler.
+  const keyOptionRef = useRef(null);
 
   const appendMessage = useCallback((role, content) => {
     setMessages((prev) => [...prev, { role, content }]);
@@ -105,14 +109,19 @@ export default function ThoughtsTest() {
     };
   }, []);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  // Deliver the intro and the first question once on mount.
+  // Deliver the intro and the first question. Re-runs when the test changes
+  // (e.g. navigating from a recommendation), resetting the conversation first.
   useEffect(() => {
     if (!test || test.questions.length === 0) return;
     let cancelled = false;
+
+    setMessages([]);
+    setStepIndex(0);
+    setPhase("intro");
+    setInput("");
+    setRecommendedTestId(null);
+    keyOptionRef.current = null;
+    window.scrollTo(0, 0);
 
     (async () => {
       if (test.intro) {
@@ -161,19 +170,34 @@ export default function ThoughtsTest() {
       if (!mountedRef.current) return;
       setStepIndex(nextIndex);
     } else {
-      // All questions answered: reveal the course promo, then Tales' journaling prompt.
+      // All questions answered: reveal the course promo, then Tales' journaling
+      // prompt, and finally a recommendation to another test (when defined).
       if (!mountedRef.current) return;
       setPhase("promo");
       setLoading(true);
       await delay(TYPING_DELAY_MS);
       if (!mountedRef.current) return;
       setLoading(false);
+      setPhase("journal");
+
+      const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
+      const recTest = recId ? thoughtsTests[recId] : null;
+      if (recTest) {
+        setLoading(true);
+        await delay(TYPING_DELAY_MS);
+        if (!mountedRef.current) return;
+        setLoading(false);
+        setRecommendedTestId(recId);
+      }
       setPhase("done");
     }
   }
 
   async function handleChipSelect(question, option) {
     if (loading) return;
+    if (question.id === test.recommendation?.keyQuestionId) {
+      keyOptionRef.current = option.id;
+    }
     appendMessage("user", option.label);
     saveThoughtsTestAnswer(testId, {
       questionId: question.id,
@@ -204,7 +228,10 @@ export default function ThoughtsTest() {
     phase === "questions" && !loading && currentQuestion?.type === "chips";
   const showTextForm =
     phase === "questions" && !loading && currentQuestion?.type === "text";
-  const showPromo = phase === "promo" || phase === "done";
+  const showPromo = phase === "promo" || phase === "journal" || phase === "done";
+  const showJournal = phase === "journal" || phase === "done";
+  const recommendedTest = recommendedTestId ? thoughtsTests[recommendedTestId] : null;
+  const showRecommendation = phase === "done" && recommendedTest;
 
   return (
     <div className="onboarding thoughts-test">
@@ -271,9 +298,28 @@ export default function ThoughtsTest() {
         </div>
       )}
 
-      {phase === "done" && (
+      {showJournal && (
         <div className="thoughts-test__journal">
           <ChatMessage role="assistant" content={test.journalingPrompt} />
+        </div>
+      )}
+
+      {phase === "journal" && loading && (
+        <div className="thoughts-test__journal-typing">
+          <TypingBubble />
+        </div>
+      )}
+
+      {showRecommendation && (
+        <div className="thoughts-test__recommendation">
+          <ChatMessage role="assistant" content={test.recommendation.message} />
+          <button
+            type="button"
+            className="onboarding__button thoughts-test__promo-button"
+            onClick={() => navigate(`/test/${recommendedTestId}`)}
+          >
+            {recommendedTest.title}
+          </button>
         </div>
       )}
 
