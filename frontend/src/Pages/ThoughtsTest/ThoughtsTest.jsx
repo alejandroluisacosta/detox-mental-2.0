@@ -67,7 +67,14 @@ function TypingBubble() {
   );
 }
 
+// Remount the chat on testId change so all state resets atomically when
+// navigating between tests (e.g. via a recommendation button).
 export default function ThoughtsTest() {
+  const { testId } = useParams();
+  return <ThoughtsTestChat key={testId} />;
+}
+
+function ThoughtsTestChat() {
   const { testId } = useParams();
   const navigate = useNavigate();
   const test = thoughtsTests[testId];
