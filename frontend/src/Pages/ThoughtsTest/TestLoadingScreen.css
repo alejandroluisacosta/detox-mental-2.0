@@ -31,9 +31,20 @@
   height: 100%;
   border-radius: 999px;
   background: var(--accent);
-  transition: width 2500ms ease;
+  transition: width 5000ms ease;
 }
 
 .test-loading-screen__bar-fill--full {
   width: 100%;
+}
+
+.test-loading-screen__quote {
+  margin: 8px 0 0;
+  max-width: 320px;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text);
+  text-align: center;
+  white-space: pre-line;
 }
