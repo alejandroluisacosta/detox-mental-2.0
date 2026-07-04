@@ -1,0 +1,39 @@
+---
+description: JavaScript/TypeScript coding standards for this project
+globs: **/*.js,**/*.jsx,**/*.ts,**/*.tsx
+alwaysApply: false
+---
+
+# JavaScript Standards
+
+## Function Declarations
+
+Use arrow function syntax for all functions instead of the `function` keyword.
+
+```javascript
+// ❌ BAD
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+// ✅ GOOD
+const calculateTotal = (items) => {
+  return items.reduce((sum, item) => sum + item.price, 0);
+};
+```
+
+This applies to standalone utility functions, React components, event handlers, and callbacks alike.
+
+```javascript
+// ❌ BAD
+function ThoughtsTest() {
+  return <div>...</div>;
+}
+
+// ✅ GOOD
+const ThoughtsTest = () => {
+  return <div>...</div>;
+};
+```
+
+---

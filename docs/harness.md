@@ -14,9 +14,11 @@ The steps must be executed in this exact order:
 
 ---
 
+This is a monorepo with two independent packages (`frontend/` and `backend/`), each with its own `package.json` and tooling. Run every step below in **both** directories.
+
 ## 1. Static analysis
 
-Run:
+Run in `frontend/` and in `backend/`:
 
 ```bash
 npm run lint
@@ -29,7 +31,7 @@ npm run lint
 
 ## 2. Build verification
 
-Run:
+Run in `frontend/` (the backend has no build step):
 ```bash
 npm run build
 ```
@@ -39,7 +41,7 @@ npm run build
 
 ## 3. Test execution
 
-Run:
+Run in `frontend/` and in `backend/`:
 ```bash
 npm run test
 ```
@@ -52,7 +54,7 @@ npm run test
 
 Perform a structured review using:
 
-- docs/code-review-checklist.md
+- .cursor/docs/code-review-checklist.md
 
 Evaluate the implementation for:
 
@@ -89,7 +91,7 @@ Only proceed to commit if all conditions are met:
 - feature is complete and scoped correctly
 
 
-##Commit rule
+## Commit rule
 
 Do not commit partially validated features.
 

@@ -19,7 +19,13 @@ const Session = () => {
     const navigate = useNavigate();
     
     const session = sessions.find(session => session.id === sessionNumber);
-    
+
+    useEffect(() => {
+        setTimeout(() => {
+            setRevealSession(true);
+        }, 10)
+    }, [])
+
     if (Number.isNaN(sessionNumber) || sessionNumber < 1 || sessionNumber > TOTAL_SESSIONS) {
         return <Navigate to='/404' replace /> 
     }
@@ -48,12 +54,6 @@ const Session = () => {
         setIsExerciseUnblocked(false);
     }
 
-    useEffect(() => {
-        setTimeout(() => {
-            setRevealSession(true);
-        }, 10)
-    }, [])
-    
     return (
         <>
             {session.isBlocked ?

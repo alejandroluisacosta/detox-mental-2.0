@@ -1,26 +1,22 @@
 # Feature Workflow
 
+(Note: Planning happens via Cursor Plan Mode before this workflow begins.)
+
 Whenever implementing a feature:
 
-## 1. Understand
+## 1. Before Implementing
 
-Explain the problem.
+Read:
 
-Identify existing code that may already solve part of it.
+- `.cursor/docs/architecture.md`
+- `.cursor/docs/definition-of-done.md`
+- `.cursor/docs/code-review-checklist.md`
 
----
-
-## 2. Plan
-
-Present a short implementation plan.
-
-Mention affected files.
-
-Mention risks.
+Apply the engineering principles (`.cursor/rules/engineering-principles.mdc`).
 
 ---
 
-## 3. Implement
+## 2. Implement
 
 Reuse existing architecture whenever possible.
 
@@ -30,28 +26,15 @@ Avoid unrelated refactoring.
 
 ---
 
-## 4. Validate
+## 3. Validate
 
-Run:
-
-- lint
-- tests
-- build
+Run the validation harness (steps 1-4 of `docs/harness.md`): static analysis, build verification, test execution, and AI code review.
 
 Resolve failures before continuing.
 
 ---
 
-## 5. Review
-
-Evaluate the implementation against:
-
-- definition-of-done.md
-- code-review-checklist.md
-
----
-
-## 6. Report
+## 4. Report
 
 Summarize:
 
