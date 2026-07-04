@@ -103,7 +103,7 @@ function ThoughtsTestChat() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-  // Flow phases: intro -> questions -> promo -> journal -> done
+  // Flow phases: intro -> questions -> journal -> done
   const [phase, setPhase] = useState("intro");
   const [input, setInput] = useState("");
   const [recommendedTestId, setRecommendedTestId] = useState(null);
@@ -205,10 +205,10 @@ function ThoughtsTestChat() {
       if (!mountedRef.current) return;
       setStepIndex(nextIndex);
     } else {
-      // All questions answered: reveal the course promo, then Tales' journaling
-      // prompt, and finally a recommendation to another test (when defined).
+      // All questions answered: reveal Tales' journaling prompt, then close with
+      // either a recommendation to another test (when defined) or, as a fallback,
+      // the course promo. Never both.
       if (!mountedRef.current) return;
-      setPhase("promo");
       setLoading(true);
       await delay(TYPING_DELAY_MS);
       if (!mountedRef.current) return;
@@ -285,10 +285,12 @@ function ThoughtsTestChat() {
     phase === "questions" && !loading && currentQuestion?.type === "chips";
   const showTextForm =
     phase === "questions" && !loading && currentQuestion?.type === "text";
-  const showPromo = phase === "promo" || phase === "journal" || phase === "done";
   const showJournal = phase === "journal" || phase === "done";
   const recommendedTest = recommendedTestId ? thoughtsTests[recommendedTestId] : null;
   const showRecommendation = phase === "done" && recommendedTest;
+  // The course promo is a fallback shown only when the test has no further
+  // recommendation, substituting the recommendation prompt below the journal.
+  const showPromo = phase === "done" && !recommendedTest;
 
   return (
     <div className="onboarding thoughts-test">
@@ -332,26 +334,6 @@ function ThoughtsTestChat() {
               ENVIAR
             </button>
           </form>
-        </div>
-      )}
-
-      {showPromo && (
-        <div className="onboarding__cta-box thoughts-test__promo">
-          <h3 className="onboarding__cta-box__title">{test.coursePromo.title}</h3>
-          <p className="onboarding__cta-box__paragraph">{test.coursePromo.paragraph}</p>
-          <button
-            type="button"
-            className="onboarding__button thoughts-test__promo-button"
-            onClick={() => navigate("/course")}
-          >
-            {test.coursePromo.buttonLabel}
-          </button>
-        </div>
-      )}
-
-      {phase === "promo" && loading && (
-        <div className="thoughts-test__journal-typing">
-          <TypingBubble />
         </div>
       )}
 
@@ -420,6 +402,20 @@ function ThoughtsTestChat() {
             onClick={() => navigate(`/test/${recommendedTestId}`)}
           >
             {recommendedTest.title}
+          </button>
+        </div>
+      )}
+
+      {showPromo && (
+        <div className="onboarding__cta-box thoughts-test__promo">
+          <h3 className="onboarding__cta-box__title">{test.coursePromo.title}</h3>
+          <p className="onboarding__cta-box__paragraph">{test.coursePromo.paragraph}</p>
+          <button
+            type="button"
+            className="onboarding__button thoughts-test__promo-button"
+            onClick={() => navigate("/course")}
+          >
+            {test.coursePromo.buttonLabel}
           </button>
         </div>
       )}
