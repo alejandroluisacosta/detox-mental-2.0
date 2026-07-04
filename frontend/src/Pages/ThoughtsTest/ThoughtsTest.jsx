@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { thoughtsTests } from "../../data";
 import { saveThoughtsTestAnswer } from "../../utils/thoughtsTestStorage";
 import Navigation from "../../Components/Navigation/Navigation";
+import TestLoadingScreen from "./TestLoadingScreen";
 import "../Onboarding/Onboarding.css";
 import "./ThoughtsTest.css";
 
@@ -70,11 +71,28 @@ function TypingBubble() {
   );
 }
 
-// Remount the chat on testId change so all state resets atomically when
-// navigating between tests (e.g. via a recommendation button).
+// Remount the flow on testId change so all state resets atomically when
+// navigating between tests (e.g. via a recommendation button). The key also
+// re-triggers the simulated loading screen on every test.
 export default function ThoughtsTest() {
   const { testId } = useParams();
-  return <ThoughtsTestChat key={testId} />;
+  return <ThoughtsTestFlow key={testId} />;
+}
+
+function ThoughtsTestFlow() {
+  const { testId } = useParams();
+  const [loading, setLoading] = useState(true);
+
+  // Unknown tests are redirected by the chat; skip the loader for them.
+  if (!thoughtsTests[testId]) {
+    return <ThoughtsTestChat />;
+  }
+
+  if (loading) {
+    return <TestLoadingScreen onDone={() => setLoading(false)} />;
+  }
+
+  return <ThoughtsTestChat />;
 }
 
 function ThoughtsTestChat() {

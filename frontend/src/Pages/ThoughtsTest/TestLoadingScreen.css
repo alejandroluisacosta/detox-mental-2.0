@@ -1,0 +1,39 @@
+.test-loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  height: 100vh;
+  padding: 0 24px;
+  background: var(--background);
+}
+
+.test-loading-screen__text {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+}
+
+.test-loading-screen__bar {
+  width: 100%;
+  max-width: 320px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--platinum);
+  overflow: hidden;
+}
+
+.test-loading-screen__bar-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 2500ms ease;
+}
+
+.test-loading-screen__bar-fill--full {
+  width: 100%;
+}
