@@ -27,8 +27,42 @@ const markdownComponents = {
 const INTRO_DELAY_MS = 900;
 const TYPING_DELAY_MS = 700;
 
+// Suggested journaling duration, shown as a countdown above the text area.
+const JOURNAL_DURATION_SECONDS = 5 * 60;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const formatCountdown = (totalSeconds) => {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+};
+
+// Counts down from 05:00 to 00:00. It resets on remount, which happens every
+// time the user re-enters the writing state (the write box is unmounted on
+// CANCELAR and mounted again on ESCRIBIR).
+const JournalTimer = () => {
+  const [secondsLeft, setSecondsLeft] = useState(JOURNAL_DURATION_SECONDS);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(id);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="thoughts-test__journal-timer" role="timer" aria-label="Tiempo de escritura restante">
+      {formatCountdown(secondsLeft)}
+    </div>
+  );
+};
 
 function ChatMessage({ role, content }) {
   const isUser = role === "user";
@@ -354,6 +388,7 @@ function ThoughtsTestChat() {
 
           {writeState === "writing" && (
             <div className="thoughts-test__write-box">
+              <JournalTimer />
               <textarea
                 className="thoughts-test__journal-textarea"
                 value={journalText}

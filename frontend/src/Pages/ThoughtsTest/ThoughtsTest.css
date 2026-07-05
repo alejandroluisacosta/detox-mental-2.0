@@ -64,6 +64,15 @@
   margin-top: 12px;
 }
 
+.thoughts-test__journal-timer {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  text-align: center;
+}
+
 .thoughts-test__journal-textarea {
   width: 100%;
   min-height: 200px;

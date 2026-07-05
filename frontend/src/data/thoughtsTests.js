@@ -66,7 +66,7 @@ export const thoughtsTests = {
     ],
     coursePromo,
     journalingPrompt:
-      "Gracias por tu sinceridad. Te dejo una consigna para tu cuaderno: escribe durante 10 minutos sobre ese pensamiento que más estrés te genera, como si se lo contaras a alguien de total confianza. No lo juzgues, solo descríbelo. Al terminar, pregúntate: ¿qué parte de esto depende realmente de mí?",
+      "Gracias por tu sinceridad. Te propongo escribir sobre lo siguiente: escribe durante 5 minutos sobre ese pensamiento que más estrés te genera, como si se lo contaras a alguien de total confianza. No lo juzgues, solo descríbelo. Al terminar, pregúntate: ¿qué parte de esto depende realmente de mí?",
     recommendation: {
       keyQuestionId: "theme",
       message: "Basado en tus respuestas, te recomiendo el siguiente test:",
@@ -132,7 +132,7 @@ export const thoughtsTests = {
     ],
     coursePromo,
     journalingPrompt:
-      "Una consigna para tu cuaderno: escribe con todo detalle el escenario futuro que más temes. Cuando termines, léelo y pregúntate: ¿qué partes dependen de mí y qué pequeño paso podría dar hoy respecto a ellas?",
+      "Te propongo escribir sobre lo siguiente: escribe con todo detalle el escenario futuro que más temes. Cuando termines, léelo y pregúntate: ¿qué partes dependen de mí y qué pequeño paso podría dar hoy respecto a ellas?",
   },
 
   "past-thoughts-1": {
@@ -188,7 +188,7 @@ export const thoughtsTests = {
     ],
     coursePromo,
     journalingPrompt:
-      "Una consigna para tu cuaderno: escribe esa historia del pasado como si se la contaras a un buen amigo, sin juzgarte. Al terminar, pregúntate: ¿qué aprendí de aquello y qué me gustaría poder soltar?",
+      "Te propongo escribir sobre lo siguiente: escribe esa historia del pasado como si se la contaras a un buen amigo, sin juzgarte. Al terminar, pregúntate: ¿qué aprendí de aquello y qué me gustaría poder soltar?",
   },
 
   "personal-thoughts-1": {
@@ -244,7 +244,7 @@ export const thoughtsTests = {
     ],
     coursePromo,
     journalingPrompt:
-      "Una consigna para tu cuaderno: escribe lo que esa voz interior te repite y, debajo, responde como le responderías a alguien a quien quieres. Al terminar, pregúntate: ¿le hablaría así a un buen amigo?",
+      "Te propongo escribir sobre lo siguiente: escribe lo que esa voz interior te repite y, debajo, responde como le responderías a alguien a quien quieres. Al terminar, pregúntate: ¿le hablaría así a un buen amigo?",
   },
 
   "relationship-thoughts-1": {
@@ -300,6 +300,6 @@ export const thoughtsTests = {
     ],
     coursePromo,
     journalingPrompt:
-      "Una consigna para tu cuaderno: escribe sobre esa relación que te genera estrés, describiendo lo que sientes sin culpar a nadie. Al terminar, pregúntate: ¿qué necesito de verdad en este vínculo y cómo podría expresarlo?",
+      "Te propongo escribir sobre lo siguiente: escribe sobre esa relación que te genera estrés, describiendo lo que sientes sin culpar a nadie. Al terminar, pregúntate: ¿qué necesito de verdad en este vínculo y cómo podría expresarlo?",
   },
 };
