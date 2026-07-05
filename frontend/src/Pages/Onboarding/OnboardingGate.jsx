@@ -7,7 +7,7 @@ export default function OnboardingGate() {
     if (!revealed) {
       return <Navigate to="/onboarding" replace />;
     }
-  } catch (e) {
+  } catch {
     return <Navigate to="/onboarding" replace />;
   }
 

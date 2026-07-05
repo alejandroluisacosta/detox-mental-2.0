@@ -8,7 +8,9 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development NODE_OPTIONS='--import=dotenv/config' nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "lint": "eslint .",
+    "test": "node --test \"src/**/*.test.js\""
   },
   "dependencies": {
     "@huggingface/inference": "^4.13.4",
@@ -22,7 +24,10 @@
     "vercel": "^54.4.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "dotenv": "^17.3.1",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
     "nodemon": "^3.1.0"
   }
 }

@@ -1,0 +1,74 @@
+---
+description: Core engineering principles for this project
+alwaysApply: true
+---
+
+# Engineering Principles
+
+## Simplicity
+
+Choose the simplest solution that satisfies the requirements.
+
+Avoid abstractions until they clearly remove repeated complexity.
+
+---
+
+## Readability
+
+Code is read more often than it is written.
+
+Prefer explicit, understandable code over clever code.
+
+---
+
+## Consistency
+
+Follow existing project conventions before introducing new ones.
+
+Consistency is usually more valuable than theoretical perfection.
+
+---
+
+## Reuse
+
+Reuse existing components and utilities whenever reasonable.
+
+Avoid duplicate logic.
+
+---
+
+## Dependencies
+
+Do not introduce a dependency unless its long-term value clearly outweighs its maintenance cost.
+
+---
+
+## Performance
+
+Optimize only after identifying a real bottleneck.
+
+Do not sacrifice readability for hypothetical gains.
+
+---
+
+## Accessibility
+
+Accessibility is a feature.
+
+Interactive elements should be usable with keyboard navigation whenever practical.
+
+---
+
+## Scope
+
+Implement only the requested feature.
+
+Avoid adding speculative improvements.
+
+---
+
+## Communication
+
+Before making large architectural changes, explain the reasoning.
+
+Prefer plans before implementation.
