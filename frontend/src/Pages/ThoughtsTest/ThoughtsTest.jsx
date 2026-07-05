@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { useNavigate, useParams, Navigate, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { thoughtsTests } from "../../data";
 import { saveThoughtsTestAnswer } from "../../utils/thoughtsTestStorage";
@@ -27,8 +27,6 @@ const markdownComponents = {
 const INTRO_DELAY_MS = 900;
 const TYPING_DELAY_MS = 700;
 
-const JOURNAL_CLOSING_MESSAGE =
-  "Me alegra que hayas dedicado un tiempo a escribir sobre esto. Espero que te haya ayudado.";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -107,10 +105,9 @@ function ThoughtsTestChat() {
   const [phase, setPhase] = useState("intro");
   const [input, setInput] = useState("");
   const [recommendedTestId, setRecommendedTestId] = useState(null);
-  // Journal writing sub-flow: idle -> writing -> finished.
+  // Journal writing sub-flow: idle -> writing (toggable via ESCRIBIR / CANCELAR).
   const [writeState, setWriteState] = useState("idle");
   const [journalText, setJournalText] = useState("");
-  const [closingTyping, setClosingTyping] = useState(false);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -154,7 +151,6 @@ function ThoughtsTestChat() {
     setRecommendedTestId(null);
     setWriteState("idle");
     setJournalText("");
-    setClosingTyping(false);
     keyOptionRef.current = null;
     window.scrollTo(0, 0);
 
@@ -205,27 +201,41 @@ function ThoughtsTestChat() {
       if (!mountedRef.current) return;
       setStepIndex(nextIndex);
     } else {
-      // All questions answered: reveal Tales' journaling prompt, then close with
-      // either a recommendation to another test (when defined) or, as a fallback,
-      // the course promo. Never both.
+      // All questions answered: reveal Tales' journaling prompt and wait for the
+      // user to press CONTINUAR (handleContinue) before closing with either a
+      // recommendation or, as a fallback, the course promo.
       if (!mountedRef.current) return;
       setLoading(true);
       await delay(TYPING_DELAY_MS);
       if (!mountedRef.current) return;
       setLoading(false);
       setPhase("journal");
-
-      const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
-      const recTest = recId ? thoughtsTests[recId] : null;
-      if (recTest) {
-        setLoading(true);
-        await delay(TYPING_DELAY_MS);
-        if (!mountedRef.current) return;
-        setLoading(false);
-        setRecommendedTestId(recId);
-      }
-      setPhase("done");
     }
+  }
+
+  // Advances past the journaling prompt (whether the user wrote or skipped) and
+  // reveals the closing recommendation, or the course promo when none applies.
+  async function handleContinue() {
+    if (loading || phase !== "journal") return;
+    // Save any in-progress journal text before advancing.
+    if (writeState === "writing" && journalText.trim()) {
+      saveThoughtsTestAnswer(testId, {
+        questionId: "journal-entry",
+        prompt: test.journalingPrompt,
+        type: "text",
+        value: journalText.trim(),
+      });
+    }
+    const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
+    const recTest = recId ? thoughtsTests[recId] : null;
+    if (recTest) {
+      setLoading(true);
+      await delay(TYPING_DELAY_MS);
+      if (!mountedRef.current) return;
+      setLoading(false);
+      setRecommendedTestId(recId);
+    }
+    setPhase("done");
   }
 
   async function handleChipSelect(question, option) {
@@ -263,21 +273,6 @@ function ThoughtsTestChat() {
     const el = e.target;
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
-  }
-
-  async function handleFinishWriting() {
-    if (writeState !== "writing") return;
-    saveThoughtsTestAnswer(testId, {
-      questionId: "journal-entry",
-      prompt: test.journalingPrompt,
-      type: "text",
-      value: journalText.trim(),
-    });
-    setWriteState("finished");
-    setClosingTyping(true);
-    await delay(TYPING_DELAY_MS);
-    if (!mountedRef.current) return;
-    setClosingTyping(false);
   }
 
   const showQuestionTyping = loading && (phase === "intro" || phase === "questions");
@@ -368,21 +363,29 @@ function ThoughtsTestChat() {
               <button
                 type="button"
                 className="onboarding__button thoughts-test__promo-button"
-                onClick={handleFinishWriting}
+                onClick={() => {
+                  setWriteState("idle");
+                  setJournalText("");
+                }}
               >
-                TERMINAR
+                CANCELAR
               </button>
             </div>
           )}
 
-          {closingTyping && (
-            <div className="thoughts-test__journal-typing">
-              <TypingBubble />
-            </div>
-          )}
-
-          {writeState === "finished" && !closingTyping && (
-            <ChatMessage role="assistant" content={JOURNAL_CLOSING_MESSAGE} />
+          {phase === "journal" && !loading && (
+            <>
+              <button
+                type="button"
+                className="onboarding__button thoughts-test__promo-button thoughts-test__continue-button"
+                onClick={handleContinue}
+              >
+                CONTINUAR
+              </button>
+              <Link to="/" className="thoughts-test__home-link">
+                Ir al inicio
+              </Link>
+            </>
           )}
         </div>
       )}
@@ -418,6 +421,12 @@ function ThoughtsTestChat() {
             {test.coursePromo.buttonLabel}
           </button>
         </div>
+      )}
+
+      {(showRecommendation || showPromo) && (
+        <Link to="/" className="thoughts-test__home-link">
+          Ir al inicio
+        </Link>
       )}
 
       <Navigation />

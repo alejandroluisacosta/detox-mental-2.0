@@ -23,6 +23,24 @@
   margin-top: 4px;
 }
 
+/* Inverted call-to-action: accent border and text over the page background,
+   the opposite of the filled onboarding buttons. */
+.thoughts-test__continue-button {
+  margin-top: 12px;
+  background: var(--background);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+}
+
+.thoughts-test__home-link {
+  display: block;
+  margin-top: 12px;
+  color: var(--accent);
+  text-decoration: underline;
+  text-align: center;
+  font-size: 16px;
+}
+
 .thoughts-test__journal {
   margin-top: 4px;
 }
