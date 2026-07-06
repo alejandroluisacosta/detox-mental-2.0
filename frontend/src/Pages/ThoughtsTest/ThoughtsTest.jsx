@@ -260,6 +260,11 @@ function ThoughtsTestChat() {
         value: journalText.trim(),
       });
     }
+    // Hide the writing UI immediately after finishing the exercise.
+    if (writeState === "writing") {
+      setWriteState("idle");
+      setJournalText("");
+    }
     const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
     const recTest = recId ? thoughtsTests[recId] : null;
     if (recTest) {
