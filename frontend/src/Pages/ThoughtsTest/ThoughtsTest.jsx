@@ -236,7 +236,7 @@ function ThoughtsTestChat() {
       setStepIndex(nextIndex);
     } else {
       // All questions answered: reveal Tales' journaling prompt and wait for the
-      // user to press CONTINUAR (handleContinue) before closing with either a
+      // user to press TERMINAR (handleContinue) before closing with either a
       // recommendation or, as a fallback, the course promo.
       if (!mountedRef.current) return;
       setLoading(true);
@@ -397,7 +397,14 @@ function ThoughtsTestChat() {
               />
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button"
+                className="onboarding__button thoughts-test__promo-button thoughts-test__journal-finish-button"
+                onClick={handleContinue}
+              >
+                TERMINAR
+              </button>
+              <button
+                type="button"
+                className="onboarding__button thoughts-test__promo-button thoughts-test__journal-cancel-button"
                 onClick={() => {
                   setWriteState("idle");
                   setJournalText("");
@@ -408,14 +415,14 @@ function ThoughtsTestChat() {
             </div>
           )}
 
-          {phase === "journal" && !loading && (
+          {phase === "journal" && !loading && writeState !== "writing" && (
             <>
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button thoughts-test__continue-button"
+                className="onboarding__button thoughts-test__promo-button thoughts-test__journal-finish-button"
                 onClick={handleContinue}
               >
-                CONTINUAR
+                TERMINAR
               </button>
               <Link to="/" className="thoughts-test__home-link">
                 Ir al inicio

@@ -23,9 +23,16 @@
   margin-top: 4px;
 }
 
-/* Inverted call-to-action: accent border and text over the page background,
-   the opposite of the filled onboarding buttons. */
-.thoughts-test__continue-button {
+/* Primary CTA for completing journaling. */
+.thoughts-test__journal-finish-button {
+  margin-top: 12px;
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  color: var(--background);
+}
+
+/* Inverted secondary CTA for dismissing the writing box. */
+.thoughts-test__journal-cancel-button {
   margin-top: 12px;
   background: var(--background);
   border: 2px solid var(--accent);
