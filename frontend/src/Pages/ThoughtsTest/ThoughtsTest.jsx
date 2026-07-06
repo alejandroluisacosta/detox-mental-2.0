@@ -375,7 +375,7 @@ function ThoughtsTestChat() {
         <div className="thoughts-test__journal">
           <ChatMessage role="assistant" content={test.journalingPrompt} />
 
-          {writeState === "idle" && (
+          {phase === "journal" && !loading && writeState === "idle" && (
             <div className="thoughts-test__write-intro">
               <button
                 type="button"
