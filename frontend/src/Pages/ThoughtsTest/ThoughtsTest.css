@@ -23,6 +23,14 @@
   margin-top: 4px;
 }
 
+/* Inverted call-to-action used in the pre-writing journal state. */
+.thoughts-test__continue-button {
+  margin-top: 12px;
+  background: var(--background);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+}
+
 /* Primary CTA for completing journaling. */
 .thoughts-test__journal-finish-button {
   margin-top: 12px;

@@ -236,8 +236,8 @@ function ThoughtsTestChat() {
       setStepIndex(nextIndex);
     } else {
       // All questions answered: reveal Tales' journaling prompt and wait for the
-      // user to press TERMINAR (handleContinue) before closing with either a
-      // recommendation or, as a fallback, the course promo.
+      // user to continue/finish before closing with either a recommendation or,
+      // as a fallback, the course promo.
       if (!mountedRef.current) return;
       setLoading(true);
       await delay(TYPING_DELAY_MS);
@@ -419,10 +419,10 @@ function ThoughtsTestChat() {
             <>
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button thoughts-test__journal-finish-button"
+                className="onboarding__button thoughts-test__promo-button thoughts-test__continue-button"
                 onClick={handleContinue}
               >
-                TERMINAR
+                CONTINUAR
               </button>
               <Link to="/" className="thoughts-test__home-link">
                 Ir al inicio
