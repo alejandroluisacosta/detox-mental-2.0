@@ -235,14 +235,10 @@ function ThoughtsTestChat() {
       if (!mountedRef.current) return;
       setStepIndex(nextIndex);
     } else {
-      // All questions answered: reveal Tales' journaling prompt and wait for the
-      // user to continue/finish before closing with either a recommendation or,
-      // as a fallback, the course promo.
+      // All questions answered: add Tales' journaling prompt to the message
+      // thread, then switch to the journal phase for the writing controls.
+      await talesSay(test.journalingPrompt);
       if (!mountedRef.current) return;
-      setLoading(true);
-      await delay(TYPING_DELAY_MS);
-      if (!mountedRef.current) return;
-      setLoading(false);
       setPhase("journal");
     }
   }
@@ -251,8 +247,10 @@ function ThoughtsTestChat() {
   // reveals the closing recommendation, or the course promo when none applies.
   async function handleContinue() {
     if (loading || phase !== "journal") return;
+    // Capture before any state reset so the acknowledgment check is accurate.
+    const didWrite = writeState === "writing";
     // Save any in-progress journal text before advancing.
-    if (writeState === "writing" && journalText.trim()) {
+    if (didWrite && journalText.trim()) {
       saveThoughtsTestAnswer(testId, {
         questionId: "journal-entry",
         prompt: test.journalingPrompt,
@@ -260,10 +258,12 @@ function ThoughtsTestChat() {
         value: journalText.trim(),
       });
     }
-    // Hide the writing UI immediately after finishing the exercise.
-    if (writeState === "writing") {
+    // Hide the writing UI and acknowledge completion when the user actually wrote.
+    if (didWrite) {
       setWriteState("idle");
       setJournalText("");
+      await talesSay("Me alegra que hayas podido escribir sobre esto. Espero que te haya ayudado.");
+      if (!mountedRef.current) return;
     }
     const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
     const recTest = recId ? thoughtsTests[recId] : null;
@@ -373,7 +373,6 @@ function ThoughtsTestChat() {
 
       {showJournal && (
         <div className="thoughts-test__journal">
-          <ChatMessage role="assistant" content={test.journalingPrompt} />
 
           {phase === "journal" && !loading && writeState === "idle" && (
             <div className="thoughts-test__write-intro">
