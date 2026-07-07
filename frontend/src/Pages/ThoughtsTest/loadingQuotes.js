@@ -11,3 +11,13 @@ export const loadingQuotes = [
 
 export const getRandomLoadingQuote = () =>
   loadingQuotes[Math.floor(Math.random() * loadingQuotes.length)];
+
+export const journalAcknowledgments = [
+  "Me alegra que hayas podido escribir sobre esto. Espero que te haya ayudado.",
+  "Bien, espero que escribir sobre el tema te haya ayudado a liberar un poco de estrés.",
+  "Escribir es mágico. Espero que te haya ayudado.",
+  "Qué bueno que te animaste a escribir. Un paso al frente para tu salud mental.",
+];
+
+export const getRandomJournalAcknowledgment = () =>
+  journalAcknowledgments[Math.floor(Math.random() * journalAcknowledgments.length)];
