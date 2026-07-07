@@ -5,6 +5,7 @@ import { thoughtsTests } from "../../data";
 import { saveThoughtsTestAnswer } from "../../utils/thoughtsTestStorage";
 import Navigation from "../../Components/Navigation/Navigation";
 import TestLoadingScreen from "./TestLoadingScreen";
+import { getRandomJournalAcknowledgment } from "./loadingQuotes";
 import "./ThoughtsTest.css";
 
 const ROLE_LABELS = {
@@ -261,7 +262,7 @@ function ThoughtsTestChat() {
     if (didWrite) {
       setWriteState("idle");
       setJournalText("");
-      await talesSay("Me alegra que hayas podido escribir sobre esto. Espero que te haya ayudado.");
+      await talesSay(getRandomJournalAcknowledgment());
       if (!mountedRef.current) return;
     }
     const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
