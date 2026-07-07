@@ -5,7 +5,6 @@ import { thoughtsTests } from "../../data";
 import { saveThoughtsTestAnswer } from "../../utils/thoughtsTestStorage";
 import Navigation from "../../Components/Navigation/Navigation";
 import TestLoadingScreen from "./TestLoadingScreen";
-import "../Onboarding/Onboarding.css";
 import "./ThoughtsTest.css";
 
 const ROLE_LABELS = {
@@ -67,13 +66,13 @@ const JournalTimer = () => {
 function ChatMessage({ role, content }) {
   const isUser = role === "user";
   return (
-    <div className={"onboarding__message-wrapper" + (isUser ? " user-message-wrapper" : "")}>
+    <div className={"test-chat__message-wrapper" + (isUser ? " test-chat__message-wrapper--user" : "")}>
       {!isUser && (
-        <img src="/images/thales.webp" alt="Tales" className="onboarding__message__avatar" />
+        <img src="/images/thales.webp" alt="Tales" className="test-chat__message__avatar" />
       )}
-      <div className={"onboarding__message" + (isUser ? " user-message" : "")}>
-        <strong className="onboarding__message__role">{getRoleLabel(role)}:</strong>
-        <div className="onboarding__message__content">
+      <div className={"test-chat__message" + (isUser ? " test-chat__message--user" : "")}>
+        <strong className="test-chat__message__role">{getRoleLabel(role)}:</strong>
+        <div className="test-chat__message__content">
           {isUser ? (
             <span>{content}</span>
           ) : (
@@ -87,12 +86,12 @@ function ChatMessage({ role, content }) {
 
 function TypingBubble() {
   return (
-    <div className="onboarding__message-wrapper">
-      <img src="/images/thales.webp" alt="Tales" className="onboarding__message__avatar" />
-      <div className="onboarding__message onboarding__message--loading">
-        <strong className="onboarding__message__role">{getRoleLabel("assistant")}:</strong>
-        <div className="onboarding__message__content">
-          <div className="onboarding__loading-indicator">
+    <div className="test-chat__message-wrapper">
+      <img src="/images/thales.webp" alt="Tales" className="test-chat__message__avatar" />
+      <div className="test-chat__message test-chat__message--loading">
+        <strong className="test-chat__message__role">{getRoleLabel("assistant")}:</strong>
+        <div className="test-chat__message__content">
+          <div className="test-chat__loading-indicator">
             <span></span>
             <span></span>
             <span></span>
@@ -327,9 +326,9 @@ function ThoughtsTestChat() {
   const showPromo = phase === "done" && !recommendedTest;
 
   return (
-    <div className="onboarding thoughts-test">
+    <div className="test-chat thoughts-test">
       <h1 className="thoughts-test__title">Test: {test.title}</h1>
-      <div className="onboarding__message-container">
+      <div className="test-chat__message-container">
         {messages.map((m, i) => (
           <ChatMessage key={i} role={m.role} content={m.content} />
         ))}
@@ -338,12 +337,12 @@ function ThoughtsTestChat() {
       </div>
 
       {showChips && (
-        <div className="onboarding__chips" aria-label="Opciones de respuesta">
+        <div className="test-chat__chips" aria-label="Opciones de respuesta">
           {currentQuestion.options.map((option) => (
             <button
               key={option.id}
               type="button"
-              className="onboarding__chip"
+              className="test-chat__chip"
               disabled={loading}
               onClick={() => handleChipSelect(currentQuestion, option)}
             >
@@ -354,17 +353,17 @@ function ThoughtsTestChat() {
       )}
 
       {showTextForm && (
-        <div className="onboarding__cta-box">
+        <div className="test-chat__cta-box">
           <form onSubmit={handleTextSubmit}>
             <input
               ref={inputRef}
-              className="onboarding__input"
+              className="test-chat__input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Escribe tu respuesta"
               disabled={loading}
             />
-            <button className="onboarding__button" type="submit" disabled={loading}>
+            <button className="test-chat__button" type="submit" disabled={loading}>
               ENVIAR
             </button>
           </form>
@@ -378,7 +377,7 @@ function ThoughtsTestChat() {
             <div className="thoughts-test__write-intro">
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button"
+                className="test-chat__button thoughts-test__promo-button"
                 onClick={() => setWriteState("writing")}
               >
                 ESCRIBIR
@@ -401,14 +400,14 @@ function ThoughtsTestChat() {
               />
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button thoughts-test__journal-finish-button"
+                className="test-chat__button thoughts-test__promo-button thoughts-test__journal-finish-button"
                 onClick={handleContinue}
               >
                 TERMINAR
               </button>
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button thoughts-test__journal-cancel-button"
+                className="test-chat__button thoughts-test__promo-button thoughts-test__journal-cancel-button"
                 onClick={() => {
                   setWriteState("idle");
                   setJournalText("");
@@ -423,7 +422,7 @@ function ThoughtsTestChat() {
             <>
               <button
                 type="button"
-                className="onboarding__button thoughts-test__promo-button thoughts-test__continue-button"
+                className="test-chat__button thoughts-test__promo-button thoughts-test__continue-button"
                 onClick={handleContinue}
               >
                 CONTINUAR
@@ -447,7 +446,7 @@ function ThoughtsTestChat() {
           <ChatMessage role="assistant" content={test.recommendation.message} />
           <button
             type="button"
-            className="onboarding__button thoughts-test__promo-button"
+            className="test-chat__button thoughts-test__promo-button"
             onClick={() => navigate(`/test/${recommendedTestId}`)}
           >
             {recommendedTest.title}
@@ -456,12 +455,12 @@ function ThoughtsTestChat() {
       )}
 
       {showPromo && (
-        <div className="onboarding__cta-box thoughts-test__promo">
-          <h3 className="onboarding__cta-box__title">{test.coursePromo.title}</h3>
-          <p className="onboarding__cta-box__paragraph">{test.coursePromo.paragraph}</p>
+        <div className="test-chat__cta-box thoughts-test__promo">
+          <h3 className="test-chat__cta-box__title">{test.coursePromo.title}</h3>
+          <p className="test-chat__cta-box__paragraph">{test.coursePromo.paragraph}</p>
           <button
             type="button"
-            className="onboarding__button thoughts-test__promo-button"
+            className="test-chat__button thoughts-test__promo-button"
             onClick={() => navigate("/course")}
           >
             {test.coursePromo.buttonLabel}

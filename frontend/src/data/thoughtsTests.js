@@ -81,7 +81,7 @@ export const thoughtsTests = {
 
   "future-thoughts-1": {
     id: "future-thoughts-1",
-    title: "Pensamientos sobre el futuro #1",
+    title: "Pensamientos del futuro #1",
     intro:
       "Vamos a explorar esos pensamientos sobre el futuro que te generan estrés. Responde con sinceridad: solo elige lo que más se parezca a tu experiencia.",
     questions: [
@@ -137,7 +137,7 @@ export const thoughtsTests = {
 
   "past-thoughts-1": {
     id: "past-thoughts-1",
-    title: "Pensamientos sobre el pasado #1",
+    title: "Pensamientos del pasado #1",
     intro:
       "Vamos a mirar esos pensamientos sobre el pasado que vuelven una y otra vez. No hay respuestas correctas: solo elige lo que más se parezca a tu experiencia.",
     questions: [
@@ -249,7 +249,7 @@ export const thoughtsTests = {
 
   "relationship-thoughts-1": {
     id: "relationship-thoughts-1",
-    title: "Pensamientos sobre los demás #1",
+    title: "Pensamientos sobre otros #1",
     intro:
       "Vamos a mirar esos pensamientos sobre tu relación con otras personas que te generan estrés. No hay respuestas correctas: solo elige lo que más se parezca a tu experiencia.",
     questions: [

@@ -1,9 +1,259 @@
-/* Promo-specific tweaks. Chat styling is reused from Onboarding.css. */
+/* ─── Chat layout ────────────────────────────────────────────────────────── */
 
-/* Leaves room for the fixed Navigation bar so content isn't hidden behind it. */
-.thoughts-test {
-  padding-bottom: 80px;
+.test-chat {
+  min-height: 100vh;
+  padding: 40px 1rem 80px;
 }
+
+@media (min-width: 1000px) {
+  .test-chat {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 0 80px;
+  }
+}
+
+.test-chat__message-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.test-chat__message-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.test-chat__message-wrapper--user {
+  align-items: flex-end;
+}
+
+.test-chat__message__avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  object-position: center top;
+}
+
+.test-chat__message {
+  line-height: 25px;
+  word-break: break-word;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background-color: #f8f8f8;
+  max-width: 90%;
+  border: 0.5px solid white;
+}
+
+.test-chat__message p {
+  margin-bottom: 8px;
+}
+
+.test-chat__message li {
+  list-style: unset;
+  list-style-position: inside;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.test-chat__message__role {
+  display: block;
+}
+
+.test-chat__message--user {
+  text-align: left;
+  background-color: #ffeee494;
+}
+
+/* ─── Input & button ─────────────────────────────────────────────────────── */
+
+.test-chat__cta-box {
+  width: 95%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background-color: #fafafa;
+  border: 0.5px solid rgba(255, 255, 255, 0.9);
+  box-sizing: border-box;
+}
+
+.test-chat__cta-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.test-chat__cta-box__title {
+  margin: 0 0 0.5rem;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.test-chat__cta-box__paragraph {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.test-chat__cta-box .test-chat__input {
+  margin-bottom: 10px;
+}
+
+.test-chat__input {
+  width: 100%;
+  border-radius: 16px;
+  padding: 12px;
+  font-size: 18px;
+  border: 1.25px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+    linear-gradient(
+        135deg,
+        #d4a574 0%,
+        #ffb5a7 25%,
+        #a8e6cf 50%,
+        #ffd89b 75%,
+        #c49564 100%
+      )
+      border-box;
+  background-clip: padding-box, border-box;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.test-chat__input:focus {
+  outline: none;
+}
+
+.test-chat__input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.test-chat__button {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  border: 2px solid transparent;
+  background: linear-gradient(#845d43, #845d43) padding-box,
+    linear-gradient(135deg, #d4a574 0%, #ffb5a7 25%, 50%, #ffd89b 75%, #c49564 100%)
+      border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 16px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.test-chat__button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.test-chat__button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.test-chat__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: none;
+}
+
+/* ─── Chips ──────────────────────────────────────────────────────────────── */
+
+.test-chat__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.test-chat__chip {
+  font-size: 0.9rem;
+  line-height: 1.35;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1.25px solid transparent;
+  background: linear-gradient(#fafafa, #fafafa) padding-box,
+    linear-gradient(
+        135deg,
+        #d4a574 0%,
+        #ffb5a7 25%,
+        #a8e6cf 50%,
+        #ffd89b 75%,
+        #c49564 100%
+      )
+      border-box;
+  background-clip: padding-box, border-box;
+  color: #333;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.test-chat__chip:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.test-chat__chip:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.test-chat__chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ─── Typing indicator ───────────────────────────────────────────────────── */
+
+.test-chat__loading-indicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.test-chat__loading-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #666;
+  animation: test-chat-bounce 1.4s infinite ease-in-out both;
+}
+
+.test-chat__loading-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.test-chat__loading-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes test-chat-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ─── Page-level elements ────────────────────────────────────────────────── */
 
 .thoughts-test__title {
   font-size: 24px;
