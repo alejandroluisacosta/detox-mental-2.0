@@ -22,7 +22,7 @@ ${CLOSING_PARAGRAPH}
       return `
 Tu respuesta tiene una claridad intermedia.
 
-Te recomendamos revisar nuestra teoría introductoria para afinar la forma de observar y formular tus pensamientos, y luego hacer el test para entender mejor tus pensamientos estresantes actuales.
+Te recomendamos revisar nuestra teoría introductoria para afinar la forma de observar y formular tus pensamientos, y luego hacer nuestro test para entender mejor tus pensamientos estresantes actuales.
 
 ${CLOSING_PARAGRAPH}
 `;
@@ -31,7 +31,7 @@ ${CLOSING_PARAGRAPH}
       return `
 Tu respuesta no demuestra demasiada claridad con respecto a tu potencial problema de pensamientos... Todavía.
 
-Antes de hacer el test, te recomendamos empezar por nuestra teoría introductoria, donde afinamos la forma de observar y formular tus pensamientos con mayor precisión.
+Antes de hacer nuestro test para entender mejor tus pensamientos estresantes actuales, te recomendamos empezar por nuestra teoría introductoria, donde afinamos la forma de observar y formular tus pensamientos con mayor precisión.
 
 ${CLOSING_PARAGRAPH}
 `;
