@@ -428,8 +428,8 @@ function ThoughtsTestChat() {
               >
                 CONTINUAR
               </button>
-              <Link to="/" className="thoughts-test__home-link">
-                Ir al inicio
+              <Link to="/tests" className="thoughts-test__home-link">
+                Ver más tests
               </Link>
             </>
           )}
@@ -470,8 +470,8 @@ function ThoughtsTestChat() {
       )}
 
       {(showRecommendation || showPromo) && (
-        <Link to="/" className="thoughts-test__home-link">
-          Ir al inicio
+        <Link to="/tests" className="thoughts-test__home-link">
+          Ver más tests
         </Link>
       )}
 

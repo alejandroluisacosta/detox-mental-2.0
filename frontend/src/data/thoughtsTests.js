@@ -15,7 +15,7 @@ const coursePromo = {
 export const thoughtsTests = {
   "stressing-thoughts-1": {
     id: "stressing-thoughts-1",
-    title: "Pensamientos estresantes #1",
+    title: "Pensamientos estresantes",
     intro:
       "Hola de nuevo. Bienvenido/a al primer test sobre pensamientos estresantes. No hay respuestas correctas ni incorrectas: solo elige lo que más se parezca a tu experiencia.",
     questions: [
@@ -79,9 +79,173 @@ export const thoughtsTests = {
     },
   },
 
+  "mind-voice": {
+    id: "mind-voice",
+    title: "La voz de tu mente",
+    intro:
+      "Nuestra mente puede hablarnos de muchas maneras: a veces nos anima, otras nos protege y, en ocasiones, se convierte en nuestra mayor crítica. En las siguientes situaciones, elige la opción que más se parezca a lo que suele ocurrir en tu cabeza. No hay respuestas correctas o incorrectas.",
+    questions: [
+      {
+        id: "mistake",
+        type: "chips",
+        prompt:
+          "Cometes un error delante de otras personas. Antes de que nadie diga nada, ¿qué suele decirte tu mente?",
+        options: [
+          {
+            id: "critic",
+            label: '"¿Cómo has podido hacer esto?"'
+          },
+          {
+            id: "critic",
+            label: '"Qué raro tú cometiendo errores..."'
+          },
+          {
+            id: "catastrophe",
+            label: '"Seguro que ahora pensarán peor de ti"'
+          },
+          {
+            id: "catastrophe",
+            label: '"Qué vergüenza, estoy quedando mal frente a estas personas"'
+          },
+          {
+            id: "learn",
+            label: '"Seguro que al menos puedes aprender de esto"'
+          },
+          {
+            id: "critical_parent",
+            label: "Escucho la voz de mi padre/madre criticándome"
+          },
+          {
+            id: "minimize",
+            label: '"No pasa nada. Todos el mundo comete errores"'
+          }
+        ]
+      },
+      {
+        id: "waiting",
+        type: "chips",
+        prompt:
+          "Envías un mensaje importante y pasan varias horas sin respuesta. ¿Cuál es el primer discurso que suele aparecer en tu mente?",
+        options: [
+          {
+            id: "blame_self",
+            label: '"Seguro que he dicho algo mal"'
+          },
+          {
+            id: "assume_problem",
+            label: '"Algo pasa. Esto no es buena señal"'
+          },
+          {
+            id: "neutral",
+            label: '"Ya responderá cuando pueda"'
+          },
+          {
+            id: "loop",
+            label: "Le doy vueltas a lo que tuve que haber dicho, de los errores que pude haber cometido"
+          }
+        ]
+      },
+      {
+        id: "success",
+        type: "chips",
+        prompt:
+          "Consigues algo que llevabas tiempo intentando. ¿Qué suele decirte tu mente poco después?",
+        options: [
+          {
+            id: "enjoy",
+            label: "No pienso en ello demasiado. Disfruto el momento si puedo y poco más."
+          },
+          {
+            id: "not_enough",
+            label: '"Tampoco es para tanto. Cualquiera podría haberlo conseguido"'
+          },
+          {
+            id: "next_goal",
+            label: '"Bien... ¿y ahora qué sigue?"'
+          },
+          {
+            id: "luck",
+            label: '"Fue suerte..."'
+          }
+        ]
+      },
+      {
+        id: "future",
+        type: "chips",
+        prompt:
+          "Tienes por delante una conversación importante. Mientras se acerca el momento, ¿qué suele hacer tu mente?",
+        options: [
+          {
+            id: "prepare",
+            label: "Repasa con calma lo que quiero decir"
+          },
+          {
+            id: "rehearse",
+            label: "Ensaya la conversación una y otra vez en mi cabeza"
+          },
+          {
+            id: "worst_case",
+            label: "Empieza a imaginar lo que podría salir mal"
+          },
+          {
+            id: "avoid",
+            label: "Intenta no pensar en ello"
+          },
+          {
+            id: "avoid",
+            label: "Me distraigo con mi teléfono"
+          },
+          {
+            id: "past_failures",
+            label: "Recuerda situationes similares del pasado donde las cosas han salido mal"
+          }
+        ]
+      },
+      {
+        id: "identity",
+        type: "chips",
+        prompt:
+          "Si tuvieras que resumir el tono con el que tu mente suele hablarte la mayor parte del tiempo, ¿cuál elegirías?",
+          options: [
+            {
+              id: "judge",
+              label: "Exigente y crítica"
+            },
+            {
+              id: "coach",
+              label: "Me apoyo a mí mismo/a y busco avanzar"
+            },
+          {
+            id: "alarm",
+            label: "Preocupada y siempre pendiente de lo que podría salir mal"
+          },
+          {
+            id: "chaotic",
+            label: "Cambia constantemente de una preocupación a otra"
+          },
+          {
+            id: "aggresive",
+            label: "Agresiva y poco paciente conmigo mismo/a"
+          },
+          {
+            id: "relaxed",
+            label: "Tranquila y comprensiva. No me exijo demasiado"
+          },
+          {
+            id: "demanding",
+            label: "Insatisfecha con todo lo que hago y siempre pidiendo más"
+          }
+        ]
+      }
+    ],
+    coursePromo,
+    journalingPrompt:
+      "Bien. Te propongo lo siguiente: durante los próximos 5 minutos, escribe acerca dealgunas frases que recuerdes haber pensado y responde a las siguientes preguntas: «Si estas palabras vinieran de otra persona, ¿cómo me harían sentir? ¿Le hablaría yo así a alguien a quien quiero?»"
+  },
+
   "future-thoughts-1": {
     id: "future-thoughts-1",
-    title: "Pensamientos del futuro #1",
+    title: "Pensamientos del futuro",
     intro:
       "Vamos a explorar esos pensamientos sobre el futuro que te generan estrés. Responde con sinceridad: solo elige lo que más se parezca a tu experiencia.",
     questions: [
@@ -137,7 +301,7 @@ export const thoughtsTests = {
 
   "past-thoughts-1": {
     id: "past-thoughts-1",
-    title: "Pensamientos del pasado #1",
+    title: "Pensamientos del pasado",
     intro:
       "Vamos a mirar esos pensamientos sobre el pasado que vuelven una y otra vez. No hay respuestas correctas: solo elige lo que más se parezca a tu experiencia.",
     questions: [
@@ -193,7 +357,7 @@ export const thoughtsTests = {
 
   "personal-thoughts-1": {
     id: "personal-thoughts-1",
-    title: "Pensamientos sobre ti #1",
+    title: "Pensamientos sobre ti",
     intro:
       "Vamos a explorar esos pensamientos sobre ti mismo/a que te generan estrés. Responde con sinceridad: solo elige lo que más se parezca a tu experiencia.",
     questions: [
@@ -249,7 +413,7 @@ export const thoughtsTests = {
 
   "relationship-thoughts-1": {
     id: "relationship-thoughts-1",
-    title: "Pensamientos sobre otros #1",
+    title: "Pensamientos sobre otros",
     intro:
       "Vamos a mirar esos pensamientos sobre tu relación con otras personas que te generan estrés. No hay respuestas correctas: solo elige lo que más se parezca a tu experiencia.",
     questions: [
