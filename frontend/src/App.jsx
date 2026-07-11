@@ -17,6 +17,7 @@ import Instructions from './Pages/Instructions/Instructions.jsx';
 import PaymentSuccess from './Pages/Payment/PaymentSuccess.jsx';
 import PaymentCancel from './Pages/Payment/PaymentCancel.jsx';
 import PromoGate from './Pages/Promo/PromoGate.jsx';
+import Tests from './Pages/Tests/Tests.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
                             <Route path='promo' element={<PromoGate />} />
                             <Route path='instructions' element={<Instructions />} />
                             <Route path='account' element={<Account />} />
+                            <Route path='tests' element={<Tests />} />
                             <Route path='test/:testId' element={<ThoughtsTest />} />
                             <Route path='session/:sessionId' element={<Session />} />
                         </Route>
