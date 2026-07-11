@@ -41,3 +41,7 @@ Summarize:
 - what changed
 - remaining limitations
 - possible future improvements
+
+## 5. Provide commit description
+
+End the task by providing a recommended commit message reflecting the changes made.

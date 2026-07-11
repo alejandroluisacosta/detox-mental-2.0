@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Navigation.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
@@ -10,49 +10,19 @@ const Navigation = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, status } = useAuth();
-    const isCourseRoute = useMemo(
-        () => location.pathname.startsWith('/course') || location.pathname.startsWith('/session'),
-        [location.pathname],
-    );
-    const isArticleRoute = useMemo(() => location.pathname === '/', [location.pathname]);
-    const isInstructionsRoute = useMemo(
-        () => location.pathname.startsWith('/instructions'),
-        [location.pathname],
-    );
-    const isPromoRoute = useMemo(
-        () => location.pathname.startsWith('/promo'),
-        [location.pathname],
-    );
-
-    const goLogin = () => {
-        navigate('/login');
-        closeMenu();
-    };
-
-    const goCourse = () => {
-        navigate('/course');
-        closeMenu();
-    };
-
-    const goAccount = () => {
-        navigate('/account');
-        closeMenu();
-    };
-
-    const goInstructions = () => {
-        navigate('/instructions');
-        closeMenu();
-    };
-
-    const goArticle = () => {
-        navigate('/');
-        closeMenu();
-    };
-
-    const goPromo = () => {
-        navigate('/promo');
-        closeMenu();
-    };
+    const isCourseRoute = location.pathname.startsWith('/course') || location.pathname.startsWith('/session');
+    const isTestsRoute = location.pathname.startsWith('/tests') || location.pathname.startsWith('/test');
+    const isPromoRoute = location.pathname.startsWith('/promo');
+    const menuLinks = [
+        { label: 'TEORÍA', path: '/', isActive: location.pathname === '/' },
+        { label: 'CURSO', path: '/course', isActive: isCourseRoute },
+        { label: 'TESTS', path: '/tests', isActive: isTestsRoute },
+        {
+            label: 'INSTRUCCIONES',
+            path: '/instructions',
+            isActive: location.pathname.startsWith('/instructions'),
+        },
+    ];
 
     const openMenu = () => {
         setMenuState('open');
@@ -60,6 +30,11 @@ const Navigation = () => {
 
     const closeMenu = () => {
         setMenuState('closing');
+    };
+
+    const goTo = (path) => {
+        navigate(path);
+        closeMenu();
     };
 
     useEffect(() => {
@@ -104,11 +79,24 @@ const Navigation = () => {
                         </button>
                     </div>
                     <div className='navigation__menu-links'>
-                        <button type='button' className={`navigation__menu-link${isArticleRoute ? ' navigation__menu-link--active' : ''}`} onClick={goArticle}>TEORÍA</button>
-                        <button type='button' className={`navigation__menu-link${isCourseRoute ? ' navigation__menu-link--active' : ''}`} onClick={goCourse}>CURSO</button>
-                        <button type='button' className={`navigation__menu-link${isInstructionsRoute ? ' navigation__menu-link--active' : ''}`} onClick={goInstructions}>INSTRUCCIONES</button>
+                        {menuLinks.map((link) => (
+                            <button
+                                key={link.path}
+                                type='button'
+                                className={`navigation__menu-link${link.isActive ? ' navigation__menu-link--active' : ''}`}
+                                onClick={() => goTo(link.path)}
+                            >
+                                {link.label}
+                            </button>
+                        ))}
                         {isPromoEnabled() && (
-                            <button type='button' className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`} onClick={goPromo}>GANA 25€</button>
+                            <button
+                                type='button'
+                                className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`}
+                                onClick={() => goTo('/promo')}
+                            >
+                                GANA 25€
+                            </button>
                         )}
                     </div>
                 </div>
@@ -124,7 +112,11 @@ const Navigation = () => {
                 <button
                     type='button'
                     className={`navigation__section navigation__section--right${user ? ' navigation__section--right-user' : ''}`}
-                    onClick={user ? goAccount : (!user && status === 'ready' ? goLogin : undefined)}
+                    onClick={
+                        user
+                            ? () => goTo('/account')
+                            : (!user && status === 'ready' ? () => goTo('/login') : undefined)
+                    }
                 >
                     {user ? (
                         <>
