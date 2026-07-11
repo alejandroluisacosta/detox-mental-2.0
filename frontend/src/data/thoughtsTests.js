@@ -92,34 +92,34 @@ export const thoughtsTests = {
           "Cometes un error delante de otras personas. Antes de que nadie diga nada, ¿qué suele decirte tu mente?",
         options: [
           {
-            id: "critic",
-            label: '"¿Cómo has podido hacer esto?"'
+            id: "critic_1",
+            label: '"¿Cómo has podido hacer esto?"',
           },
           {
-            id: "critic",
-            label: '"Qué raro tú cometiendo errores..."'
+            id: "critic_2",
+            label: '"Qué raro tú cometiendo errores..."',
           },
           {
-            id: "catastrophe",
-            label: '"Seguro que ahora pensarán peor de ti"'
+            id: "catastrophe_1",
+            label: '"Seguro que ahora pensarán peor de ti"',
           },
           {
-            id: "catastrophe",
-            label: '"Qué vergüenza, estoy quedando mal frente a estas personas"'
+            id: "catastrophe_2",
+            label: '"Qué vergüenza, estoy quedando mal frente a estas personas"',
           },
           {
             id: "learn",
-            label: '"Seguro que al menos puedes aprender de esto"'
+            label: '"Seguro que al menos puedes aprender de esto"',
           },
           {
             id: "critical_parent",
-            label: "Escucho la voz de mi padre/madre criticándome"
+            label: "Escucho la voz de mi padre/madre criticándome",
           },
           {
             id: "minimize",
-            label: '"No pasa nada. Todos el mundo comete errores"'
-          }
-        ]
+            label: '"No pasa nada. Todo el mundo comete errores"',
+          },
+        ],
       },
       {
         id: "waiting",
@@ -129,21 +129,21 @@ export const thoughtsTests = {
         options: [
           {
             id: "blame_self",
-            label: '"Seguro que he dicho algo mal"'
+            label: '"Seguro que he dicho algo mal"',
           },
           {
             id: "assume_problem",
-            label: '"Algo pasa. Esto no es buena señal"'
+            label: '"Algo pasa. Esto no es buena señal"',
           },
           {
             id: "neutral",
-            label: '"Ya responderá cuando pueda"'
+            label: '"Ya responderá cuando pueda"',
           },
           {
             id: "loop",
-            label: "Le doy vueltas a lo que tuve que haber dicho, de los errores que pude haber cometido"
-          }
-        ]
+            label: "Le doy vueltas a lo que tuve que haber dicho y a los errores que pude haber cometido",
+          },
+        ],
       },
       {
         id: "success",
@@ -153,21 +153,21 @@ export const thoughtsTests = {
         options: [
           {
             id: "enjoy",
-            label: "No pienso en ello demasiado. Disfruto el momento si puedo y poco más."
+            label: "No pienso en ello demasiado. Disfruto el momento si puedo y poco más.",
           },
           {
             id: "not_enough",
-            label: '"Tampoco es para tanto. Cualquiera podría haberlo conseguido"'
+            label: '"Tampoco es para tanto. Cualquiera podría haberlo conseguido"',
           },
           {
             id: "next_goal",
-            label: '"Bien... ¿y ahora qué sigue?"'
+            label: '"Bien... ¿y ahora qué sigue?"',
           },
           {
             id: "luck",
-            label: '"Fue suerte..."'
-          }
-        ]
+            label: '"Fue suerte..."',
+          },
+        ],
       },
       {
         id: "future",
@@ -177,70 +177,70 @@ export const thoughtsTests = {
         options: [
           {
             id: "prepare",
-            label: "Repasa con calma lo que quiero decir"
+            label: "Repasa con calma lo que quiero decir",
           },
           {
             id: "rehearse",
-            label: "Ensaya la conversación una y otra vez en mi cabeza"
+            label: "Ensaya la conversación una y otra vez en mi cabeza",
           },
           {
             id: "worst_case",
-            label: "Empieza a imaginar lo que podría salir mal"
+            label: "Empieza a imaginar lo que podría salir mal",
           },
           {
-            id: "avoid",
-            label: "Intenta no pensar en ello"
+            id: "avoid_1",
+            label: "Intenta no pensar en ello",
           },
           {
-            id: "avoid",
-            label: "Me distraigo con mi teléfono"
+            id: "avoid_2",
+            label: "Me distraigo con mi teléfono",
           },
           {
             id: "past_failures",
-            label: "Recuerda situationes similares del pasado donde las cosas han salido mal"
-          }
-        ]
+            label: "Recuerda situaciones similares del pasado donde las cosas han salido mal",
+          },
+        ],
       },
       {
         id: "identity",
         type: "chips",
         prompt:
           "Si tuvieras que resumir el tono con el que tu mente suele hablarte la mayor parte del tiempo, ¿cuál elegirías?",
-          options: [
-            {
-              id: "judge",
-              label: "Exigente y crítica"
-            },
-            {
-              id: "coach",
-              label: "Me apoyo a mí mismo/a y busco avanzar"
-            },
+        options: [
+          {
+            id: "judge",
+            label: "Exigente y crítica",
+          },
+          {
+            id: "coach",
+            label: "Me apoyo a mí mismo/a y busco avanzar",
+          },
           {
             id: "alarm",
-            label: "Preocupada y siempre pendiente de lo que podría salir mal"
+            label: "Preocupada y siempre pendiente de lo que podría salir mal",
           },
           {
             id: "chaotic",
-            label: "Cambia constantemente de una preocupación a otra"
+            label: "Cambia constantemente de una preocupación a otra",
           },
           {
-            id: "aggresive",
-            label: "Agresiva y poco paciente conmigo mismo/a"
+            id: "aggressive",
+            label: "Agresiva y poco paciente conmigo mismo/a",
           },
           {
             id: "relaxed",
-            label: "Tranquila y comprensiva. No me exijo demasiado"
+            label: "Tranquila y comprensiva. No me exijo demasiado",
           },
           {
             id: "demanding",
-            label: "Insatisfecha con todo lo que hago y siempre pidiendo más"
-          }
-        ]
-      }
+            label: "Insatisfecha con todo lo que hago y siempre pidiendo más",
+          },
+        ],
+      },
     ],
     coursePromo,
     journalingPrompt:
-      "Bien. Te propongo lo siguiente: durante los próximos 5 minutos, escribe acerca dealgunas frases que recuerdes haber pensado y responde a las siguientes preguntas: «Si estas palabras vinieran de otra persona, ¿cómo me harían sentir? ¿Le hablaría yo así a alguien a quien quiero?»"
+      "Bien. Te propongo lo siguiente: durante los próximos 5 minutos, escribe acerca de algunas frases que recuerdes haber pensado y responde a las siguientes preguntas: «Si estas palabras vinieran de otra persona, ¿cómo me harían sentir? ¿Le hablaría yo así a alguien a quien quiero?»",
   },
 
   "future-thoughts-1": {
