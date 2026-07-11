@@ -335,16 +335,16 @@ export default function Onboarding() {
               className="onboarding__exit-button"
               role="button"
               tabIndex={0}
-              onClick={() => navigate("/course")}
+              onClick={() => navigate("/test/stressing-thoughts-1")}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  navigate("/course");
+                  navigate("/test/stressing-thoughts-1");
                 }
               }}
             >
-              <img src="/icons/course.webp" alt="Curso" className="onboarding__exit-button__icon" />
-              <span className="onboarding__exit-button__label">CURSO</span>
+              <img src="/icons/course.webp" alt="Test" className="onboarding__exit-button__icon" />
+              <span className="onboarding__exit-button__label">TEST</span>
             </div>
           </div>
         </div>
