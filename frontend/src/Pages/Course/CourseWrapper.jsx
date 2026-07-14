@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RewardOfferModal from '../../Components/RewardOfferModal/RewardOfferModal';
 import { isPromoEnabled } from '../../data/promoConfig.js';
 import Course from './Course';
@@ -6,8 +7,10 @@ import './Course.css';
 
 const COURSE_REVEALED_STORAGE_KEY = 'courseRevealed';
 const COURSE_REWARD_OFFER_STORAGE_KEY = 'courseRewardOfferSeen';
+const COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY = 'courseFirstSessionRedirected';
 
 export default function CourseWithIntro() {
+  const navigate = useNavigate();
   const [showIntro, setShowIntro] = useState(localStorage.getItem(COURSE_REVEALED_STORAGE_KEY) === null);
   const [fadeIn, setFadeIn] = useState(false);
   const [showRewardOfferModal, setShowRewardOfferModal] = useState(false);
@@ -24,6 +27,18 @@ export default function CourseWithIntro() {
       return () => cancelAnimationFrame(id);
     }
   }, [showIntro]);
+
+  useEffect(() => {
+    if (
+      showIntro ||
+      localStorage.getItem(COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY) !== null
+    ) {
+      return;
+    }
+
+    localStorage.setItem(COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY, '');
+    navigate('/session/1', { replace: true });
+  }, [navigate, showIntro]);
 
   useEffect(() => {
     if (

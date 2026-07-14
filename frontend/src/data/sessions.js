@@ -10,7 +10,7 @@ const sessionsData = [
       question: '¿Quién dijo "Pienso, luego existo"?',
       answer: "DESCARTES",
       text: `**Cuenta tu historia.**\n\nBienvenido/a al primer ejercicio de escritura de Detox Mental. La intención es hacerlo en papel, pero también puedes hacerlo electrónicamente escribiendo en tu teléfono móvil u otro dispositivo.\n\nEl primer ejercicio consiste en simular que le estás contando la **historia** de los pensamientos que te generan estrés a otra persona.\n\nCuéntala como si un amigo/a, familiar, o incluso un profesional de la salud mental estuviera del otro lado escuchándote. Utiliza un nivel de detalle **intermedio,** profundizando solo lo necesario para dar un resumen y sin estancarte en ningún detalle.\n\nNuestra recomendación es que lo hagas de forma cronológica, explicando **cuándo** aproximadamente empezó la situación, si hubo algún **cambio importante** en tu vida que dio inició todo, y si hay **otras personas** involucradas.\n\nVe desde el inicio hasta la actualidad y menciona los eventos más importantes que han ocurrido a lo largo de ese período. Por ejemplo:\n\n“Tengo una situación de pensamientos estresantes que me está preocupando desde hace X meses/años. Todo empezó antes, en [época de tu vida/año específico]. En ese momento, sucedió [suceso importante como cambio de trabajo, de pareja, suceso familiar o personal…]. A partir de este momento, empecé a tener pensamientos de tipo [tipo de pensamientos]”.\n\nPuedes empezar de forma similar a esta y luego detallar eventos relevantes:\n\n“X meses/años después, sucedió [otro suceso]. Esto produjo [cambio]...”\n\nPuedes describir los 1-3 sucesos más importantes en este proceso y qué nuevos pensamientos han traído consigo, cómo te han hecho sentir, qué preocupaciones te han traído, etc.\n\nSi surgen **soluciones** a los problemas que te pasan por la mente, aprovecha para escribirlas también.\n\nDedica entre 15-20 minutos a este ejercicio. Al terminar, puedes leer lo que escribiste.\n\nPregúntate: “¿escribir esto me ayudó a liberar algo de estrés acumulado?”`,
-      isBlocked: true
+      isBlocked: false
     }
   },
   {
@@ -18,8 +18,8 @@ const sessionsData = [
     title: "Cómo funcionan los pensamientos",
     description: "Pista: nadie lo sabe",
     img: "/images/plato.webp",
-    isBlocked: false,
-    unblockQuestion: null,
+    isBlocked: true,
+    unblockQuestion: "¿De qué ciudad era el filósofo Sócrates?",
     exercise: {
       question: "¿Quién fundó el psicoanálisis?",
       answer: "FREUD",
@@ -32,8 +32,8 @@ const sessionsData = [
     title: "El gimnasio de la mente",
     description: "La vía rápida del Detox Mental",
     img: "/images/brain.webp",
-    isBlocked: false,
-    unblockQuestion: null,
+    isBlocked: true,
+    unblockQuestion: "¿Qué filósofo dijo 'Una vida sin examinar no merece ser vivida'?",
     exercise: {
       question: "¿Quién dijo 'Una vida sin examinar no merece ser vivida'?",
       answer: "SOCRATES",
