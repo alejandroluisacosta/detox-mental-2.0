@@ -1,0 +1,29 @@
+import pool from '../db/db.js';
+
+const mapRow = (row) => ({
+  id: row.id,
+  content: row.content,
+  topics: row.topics ?? [],
+  createdAt: row.created_at,
+});
+
+export const createJournalEntry = async (userId, content) => {
+  const { rows } = await pool.query(
+    `INSERT INTO journal_entries (user_id, content)
+     VALUES ($1, $2)
+     RETURNING id, content, topics, created_at`,
+    [userId, content],
+  );
+  return mapRow(rows[0]);
+};
+
+export const listJournalEntriesForUser = async (userId) => {
+  const { rows } = await pool.query(
+    `SELECT id, content, topics, created_at
+     FROM journal_entries
+     WHERE user_id = $1
+     ORDER BY created_at DESC`,
+    [userId],
+  );
+  return rows.map(mapRow);
+};

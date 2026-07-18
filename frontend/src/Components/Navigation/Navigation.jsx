@@ -12,11 +12,13 @@ const Navigation = () => {
     const { user, status } = useAuth();
     const isCourseRoute = location.pathname.startsWith('/course') || location.pathname.startsWith('/session');
     const isTestsRoute = location.pathname.startsWith('/tests') || location.pathname.startsWith('/test');
+    const isJournalRoute = location.pathname.startsWith('/journal');
     const isPromoRoute = location.pathname.startsWith('/promo');
     const menuLinks = [
         { label: 'TEORÍA', path: '/', isActive: location.pathname === '/' },
         { label: 'CURSO', path: '/course', isActive: isCourseRoute },
         { label: 'TESTS', path: '/tests', isActive: isTestsRoute },
+        { label: 'DIARIO', path: '/journal', isActive: isJournalRoute },
         {
             label: 'INSTRUCCIONES',
             path: '/instructions',

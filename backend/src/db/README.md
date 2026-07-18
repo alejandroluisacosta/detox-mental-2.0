@@ -155,6 +155,28 @@ Stores user cognitive entries (automatic thoughts) for CBT exercises.
 
 ---
 
+### 5b. `journal_entries`
+
+Stores free-form journal entries for the user diary (`/journal`). Separate from CBT `thoughts`.
+
+**Columns:**
+- `id` (UUID, PK): Unique entry identifier
+- `user_id` (UUID, FK → users.id): Author
+- `content` (TEXT): Journal text
+- `topics` (TEXT[]): Optional topic tags (default empty; UI later)
+- `created_at` (TIMESTAMP WITH TIME ZONE): When the entry was saved
+
+**Constraints:**
+- `user_id` references `users(id)` with CASCADE delete
+- `content` cannot be empty (trimmed length > 0)
+
+**Indexes:**
+- `idx_journal_entries_user_id`: User-scoped retrieval
+- `idx_journal_entries_created_at`: Chronological ordering (DESC)
+- `idx_journal_entries_topics`: GIN index for future topic filters
+
+---
+
 ### 6. `classifications`
 
 Stores cognitive distortion classifications for thoughts.
@@ -273,6 +295,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after schema migration
 \i backend/src/db/migrations/002_seed_course_sessions.sql
+```
+
+### Journal Entries
+```sql
+-- Run after schema migration
+\i backend/src/db/migrations/003_journal_entries.sql
 ```
 
 ### Verify Migration Success
