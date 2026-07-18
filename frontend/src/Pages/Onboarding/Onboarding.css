@@ -11,7 +11,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100svh;
   background: var(--background);
   color: var(--accent);
   font-size: 2rem;
@@ -22,7 +22,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  height: 100vh;
+  height: 100svh;
   padding: 38vh 2rem 2rem;
   box-sizing: border-box;
   background: var(--background);
@@ -88,7 +88,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100svh;
   background: var(--background);
   color: var(--accent);
   font-size: 2rem;
@@ -162,7 +162,7 @@
 }
 
 .onboarding {
-    min-height: 100vh;
+    min-height: 100svh;
     padding: 40px 1rem 2rem;
 }
 
