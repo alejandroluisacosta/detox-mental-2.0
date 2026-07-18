@@ -89,7 +89,10 @@ const JournalHistory = () => {
       <main className="journal-page__main journal-page__main--history">
         <header className="journal-history__header">
           <h1 className="journal-history__title">Historial</h1>
-          <Link to="/journal" className="journal-history__back-link">
+          <Link
+            to="/journal"
+            className="journal-history__write-button journal-history__write-button--header"
+          >
             Escribir
           </Link>
         </header>
@@ -171,6 +174,15 @@ const JournalHistory = () => {
               );
             })}
           </ul>
+        )}
+
+        {status !== 'loading' && (
+          <Link
+            to="/journal"
+            className="journal-history__write-button journal-history__write-button--footer"
+          >
+            ESCRIBIR
+          </Link>
         )}
       </main>
     </div>
