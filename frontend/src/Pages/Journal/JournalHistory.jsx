@@ -18,6 +18,9 @@ const formatEntryDate = (iso) => {
   }).format(date);
 };
 
+const getWordCount = (content) =>
+  String(content).trim().split(/\s+/).filter(Boolean).length;
+
 const getExcerpt = (content) => {
   const words = String(content).trim().split(/\s+/).filter(Boolean);
   if (words.length <= EXCERPT_WORD_COUNT) return words.join(' ');
@@ -28,10 +31,12 @@ const JournalHistory = () => {
   const { user, status } = useAuth();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [expandedIds, setExpandedIds] = useState(() => new Set());
 
   useEffect(() => {
     if (status !== 'ready' || !user) {
       setEntries([]);
+      setExpandedIds(new Set());
       setLoading(false);
       return undefined;
     }
@@ -49,11 +54,13 @@ const JournalHistory = () => {
         const data = await res.json();
         if (!cancelled) {
           setEntries(Array.isArray(data.entries) ? data.entries : []);
+          setExpandedIds(new Set());
         }
       } catch (err) {
         console.error('[journal GET]', err);
         if (!cancelled) {
           setEntries([]);
+          setExpandedIds(new Set());
           emitToast(err.message || 'No se pudo cargar el diario.');
         }
       } finally {
@@ -66,6 +73,15 @@ const JournalHistory = () => {
       cancelled = true;
     };
   }, [status, user]);
+
+  const toggleExpanded = (entryId) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(entryId)) next.delete(entryId);
+      else next.add(entryId);
+      return next;
+    });
+  };
 
   return (
     <div className="journal-page journal-page--history">
@@ -106,17 +122,54 @@ const JournalHistory = () => {
 
         {status === 'ready' && user && !loading && entries.length > 0 && (
           <ul className="journal-history__feed">
-            {entries.map((entry) => (
-              <li key={entry.id} className="journal-history__card">
-                <time
-                  className="journal-history__date"
-                  dateTime={entry.createdAt}
-                >
-                  {formatEntryDate(entry.createdAt)}
-                </time>
-                <p className="journal-history__excerpt">{getExcerpt(entry.content)}</p>
-              </li>
-            ))}
+            {entries.map((entry) => {
+              const expandable = getWordCount(entry.content) > EXCERPT_WORD_COUNT;
+              const expanded = expandedIds.has(entry.id);
+              const bodyText =
+                expandable && !expanded
+                  ? getExcerpt(entry.content)
+                  : entry.content;
+
+              return (
+                <li key={entry.id} className="journal-history__card">
+                  <time
+                    className="journal-history__date"
+                    dateTime={entry.createdAt}
+                  >
+                    {formatEntryDate(entry.createdAt)}
+                  </time>
+                  {expandable ? (
+                    <p
+                      className="journal-history__excerpt journal-history__excerpt--toggleable"
+                      onClick={() => toggleExpanded(entry.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          toggleExpanded(entry.id);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={expanded}
+                    >
+                      {bodyText}
+                    </p>
+                  ) : (
+                    <p className="journal-history__excerpt">{bodyText}</p>
+                  )}
+                  {expandable && (
+                    <button
+                      type="button"
+                      className="journal-history__toggle"
+                      onClick={() => toggleExpanded(entry.id)}
+                      aria-expanded={expanded}
+                    >
+                      {expanded ? 'Mostrar menos' : 'Mostrar más'}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </main>
