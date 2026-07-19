@@ -20,6 +20,10 @@ const Journal = () => {
     const el = e.target;
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
+    // Keep the growing composer (textarea end + actions) pinned in view.
+    requestAnimationFrame(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    });
   };
 
   const clearComposer = () => {
