@@ -120,14 +120,14 @@ code {
 .modal-overlay,
 .animation-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100svh;
+  inset: 0;
   z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  overflow-y: auto;
   background-color: rgba(0,0,0,0.25);
 }
 

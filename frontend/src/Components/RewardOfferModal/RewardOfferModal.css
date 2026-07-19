@@ -2,7 +2,8 @@
   position: relative;
   width: min(560px, calc(100vw - 32px));
   max-height: 90vh;
-  margin-top: -50px;
+  max-height: 90dvh;
+  margin: auto;
   padding: 28px 20px 24px;
   border-radius: 24px;
   background: var(--background);

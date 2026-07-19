@@ -52,12 +52,13 @@ const Navigation = () => {
         let lastY = window.scrollY;
         const onScroll = () => {
             const currentY = window.scrollY;
-            if (currentY < lastY) {
+            if (currentY < lastY - 200) {
                 setIsBarVisible(true);
+                lastY = currentY;
             } else if (currentY > lastY + 6) {
                 setIsBarVisible(false);
+                lastY = currentY;
             }
-            lastY = currentY;
         };
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
