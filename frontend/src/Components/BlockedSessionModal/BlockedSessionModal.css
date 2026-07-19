@@ -1,5 +1,5 @@
 .blocked-session-modal {
-    position: fixed;
+    position: relative;
     width: 80%;
     margin: auto;
     background-color: white;
