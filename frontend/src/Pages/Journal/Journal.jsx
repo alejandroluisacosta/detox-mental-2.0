@@ -1,37 +1,116 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import CloseIcon from '../../Components/CloseIcon/CloseIcon.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
+import {
+  validateImageFile,
+  prepareImageForUpload,
+  MAX_UPLOAD_BYTES,
+} from './journalImage.js';
 import './Journal.css';
 
 const Journal = () => {
   const navigate = useNavigate();
   const { user, status } = useAuth();
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [text, setText] = useState('');
   const [saving, setSaving] = useState(false);
   const [showGuestModal, setShowGuestModal] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [transcribing, setTranscribing] = useState(false);
 
-  const handleTextChange = (e) => {
-    setText(e.target.value);
-    const el = e.target;
+  const canUseImages = status === 'ready' && !!user;
+  const busy = saving || transcribing;
+
+  const resizeTextarea = () => {
+    const el = textareaRef.current;
+    if (!el) return;
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
   };
 
+  useEffect(() => {
+    resizeTextarea();
+  }, [text]);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+    };
+  }, [imagePreviewUrl]);
+
+  const handleTextChange = (e) => setText(e.target.value);
+
   const clearComposer = () => {
     setText('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+  };
+
+  const clearImage = () => {
+    setImageFile(null);
+    setImagePreviewUrl('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleImageSelected = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      emitToast(validation.message);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    setImagePreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+    setImageFile(file);
+  };
+
+  const transcribeImage = async () => {
+    if (!imageFile || busy) return;
+
+    setTranscribing(true);
+    try {
+      const prepared = await prepareImageForUpload(imageFile);
+      if (prepared.size > MAX_UPLOAD_BYTES) {
+        throw new Error('La imagen es demasiado grande. Prueba con una foto más ligera.');
+      }
+
+      const formData = new FormData();
+      formData.append('image', prepared, 'journal-image.jpg');
+
+      const res = await apiFetch('/auth/me/journal-entries/transcribe', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'No se pudo transcribir la imagen.');
+      }
+
+      const transcribed = typeof data.text === 'string' ? data.text : '';
+      setText((prev) => (prev.trim() ? `${prev.trimEnd()}\n\n${transcribed}` : transcribed));
+      clearImage();
+      emitToast('Texto transcrito. Revísalo antes de guardar.');
+    } catch (err) {
+      console.error('[journal transcribe]', err);
+      emitToast(err.message || 'No se pudo transcribir la imagen.');
+    } finally {
+      setTranscribing(false);
     }
   };
 
   const saveEntry = async () => {
     const content = text.trim();
-    if (!content || saving) return;
+    if (!content || busy) return;
 
     setSaving(true);
     try {
@@ -54,7 +133,7 @@ const Journal = () => {
   };
 
   const handleComplete = () => {
-    if (!text.trim() || saving || status === 'loading') return;
+    if (!text.trim() || busy || status === 'loading') return;
 
     if (!user) {
       setShowGuestModal(true);
@@ -88,13 +167,75 @@ const Journal = () => {
             onChange={handleTextChange}
             placeholder="Escribe aquí..."
             aria-label="Texto del diario"
-            disabled={saving}
+            disabled={busy}
           />
+
+          {canUseImages && (
+            <div className="journal-page__scan">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                capture="environment"
+                className="journal-page__file-input"
+                id="journal-image-input"
+                onChange={handleImageSelected}
+                disabled={busy}
+              />
+              {!imagePreviewUrl ? (
+                <button
+                  type="button"
+                  className="journal-page__scan-button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={busy}
+                >
+                  Escanear escritura a mano
+                </button>
+              ) : (
+                <div className="journal-page__scan-preview">
+                  <img
+                    src={imagePreviewUrl}
+                    alt="Vista previa de la página escrita a mano"
+                    className="journal-page__scan-image"
+                  />
+                  {transcribing ? (
+                    <p
+                      className="journal-page__scan-status"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      Transcribiendo...
+                    </p>
+                  ) : (
+                    <div className="journal-page__scan-actions">
+                      <button
+                        type="button"
+                        className="journal-page__scan-button"
+                        onClick={transcribeImage}
+                        disabled={busy}
+                      >
+                        Transcribir
+                      </button>
+                      <button
+                        type="button"
+                        className="journal-page__scan-button journal-page__scan-button--secondary"
+                        onClick={clearImage}
+                        disabled={busy}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           <button
             type="button"
             className="journal-page__complete-button"
             onClick={handleComplete}
-            disabled={!text.trim() || saving || status === 'loading'}
+            disabled={!text.trim() || busy || status === 'loading'}
           >
             {saving ? 'GUARDANDO...' : 'COMPLETAR'}
           </button>

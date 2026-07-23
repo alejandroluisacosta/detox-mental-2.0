@@ -86,6 +86,74 @@
   font-weight: 600;
 }
 
+.journal-page__scan {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.journal-page__file-input {
+  display: none;
+}
+
+.journal-page__scan-button {
+  width: 100%;
+  padding: 12px 0;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  background: var(--background);
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.journal-page__scan-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.journal-page__scan-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journal-page__scan-button--secondary {
+  border-color: var(--border, #d1d5db);
+  color: var(--text);
+}
+
+.journal-page__scan-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.journal-page__scan-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+}
+
+.journal-page__scan-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.journal-page__scan-actions .journal-page__scan-button {
+  flex: 1;
+}
+
+.journal-page__scan-status {
+  margin: 0;
+  text-align: center;
+  color: var(--muted, #6b7280);
+  font-weight: 600;
+}
+
 .journal-guest-modal {
   position: fixed;
   width: 80%;

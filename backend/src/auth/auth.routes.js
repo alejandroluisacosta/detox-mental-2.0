@@ -8,6 +8,10 @@ import {
   getJournalEntries,
   postJournalEntry,
 } from '../journalEntries/journalEntries.controller.js';
+import {
+  uploadJournalImage,
+  postJournalTranscription,
+} from '../journalTranscription/journalTranscription.controller.js';
 import { requireAuth } from './auth.middleware.js';
 
 const router = express.Router();
@@ -19,6 +23,12 @@ router.get('/me/unblocked-sessions', requireAuth, getSessionUnblocks);
 router.post('/me/unblocked-sessions', requireAuth, postSessionUnblock);
 router.get('/me/journal-entries', requireAuth, getJournalEntries);
 router.post('/me/journal-entries', requireAuth, postJournalEntry);
+router.post(
+  '/me/journal-entries/transcribe',
+  requireAuth,
+  uploadJournalImage,
+  postJournalTranscription,
+);
 router.get('/me', requireAuth, me);
 
 export default router;

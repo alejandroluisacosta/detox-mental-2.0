@@ -53,11 +53,14 @@ Variables are read via `dotenv` when you run `npm run dev` / `npm start` in `bac
 
 Use **test** keys and a **test** price while developing; no real money moves in test mode.
 
-### Chat (Hugging Face)
+### Hugging Face (chat and journal transcription)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `HF_TOKEN` | Yes for `/chat` | Hugging Face API token used by the chat controller. |
+| `HF_TOKEN` | Yes for `/chat` and journal image transcription | Hugging Face API token. Needs "Inference Providers" permission. Used by the chat controller and by journal handwriting transcription. |
+| `HF_JOURNAL_VISION_MODEL` | No | Vision-language model used to transcribe handwritten journal images. Defaults to `Qwen/Qwen2.5-VL-3B-Instruct`. Override to swap models without code changes. |
+
+Journal transcription uploads are processed in memory only: the image is sent to the model and never written to disk or the database. Only the transcribed text is returned to the client for review before saving.
 
 ---
 
