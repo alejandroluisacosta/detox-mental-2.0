@@ -1,5 +1,5 @@
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 3 * 1024 * 1024;
 
 const MAX_DIMENSION = 2000;
 const JPEG_QUALITY = 0.85;

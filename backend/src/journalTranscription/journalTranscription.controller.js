@@ -16,7 +16,7 @@ export const uploadJournalImage = (req, res, next) => {
     if (err) {
       const message =
         err.code === 'LIMIT_FILE_SIZE'
-          ? 'La imagen es demasiado grande (máximo 5 MB).'
+          ? 'La imagen es demasiado grande (máximo 3 MB).'
           : 'No se pudo procesar la imagen.';
       return res.status(400).json({ message });
     }

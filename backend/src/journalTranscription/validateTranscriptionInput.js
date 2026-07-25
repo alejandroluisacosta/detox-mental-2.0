@@ -1,5 +1,5 @@
 export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+export const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
 /**
  * Detects the real image type from the file signature (magic bytes),
@@ -46,7 +46,7 @@ export const validateTranscriptionInput = (file) => {
     return { valid: false, message: 'No se recibió ninguna imagen.' };
   }
   if (file.buffer.length > MAX_IMAGE_BYTES) {
-    return { valid: false, message: 'La imagen es demasiado grande (máximo 5 MB).' };
+    return { valid: false, message: 'La imagen es demasiado grande (máximo 3 MB).' };
   }
   if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     return { valid: false, message: 'Formato de imagen no admitido. Usa JPG, PNG o WebP.' };
