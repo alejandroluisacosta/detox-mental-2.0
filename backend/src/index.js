@@ -19,11 +19,15 @@ app.get("/", (req, res) => {
   res.send({ status: "ok", message: "Detox Mental backend is alive." });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
-});
-
 app.use("/chat", onboardingRoutes);
 app.use("/auth", authRoutes);
 app.use("/stripe", stripeRoutes);
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Backend running on port ${PORT}`);
+  });
+}
+
+export default app;
