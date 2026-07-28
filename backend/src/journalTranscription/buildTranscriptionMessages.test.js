@@ -34,3 +34,11 @@ test('prompt instructs verbatim, bilingual, non-translating transcription', () =
   assert.match(TRANSCRIPTION_PROMPT, /do not translate/i);
   assert.match(TRANSCRIPTION_PROMPT, /\[ilegible\]/);
 });
+
+test('prompt joins soft wraps and uses double line breaks for paragraphs', () => {
+  assert.match(TRANSCRIPTION_PROMPT, /continuous paragraph/i);
+  assert.match(TRANSCRIPTION_PROMPT, /hyphenated across lines/i);
+  assert.match(TRANSCRIPTION_PROMPT, /double line break/i);
+  assert.match(TRANSCRIPTION_PROMPT, /\\n\\n/);
+  assert.doesNotMatch(TRANSCRIPTION_PROMPT, /Preserve the original line breaks/);
+});
