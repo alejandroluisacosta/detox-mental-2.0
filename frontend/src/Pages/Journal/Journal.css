@@ -43,11 +43,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: center;
+  justify-content: left;
   width: 100%;
 }
 
 .journal-page__topic-chip {
+  width: auto;
+  flex: 0 0 auto;
   padding: 8px 14px;
   border: 1.5px solid var(--accent);
   border-radius: 999px;
