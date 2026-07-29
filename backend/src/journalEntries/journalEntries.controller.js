@@ -3,6 +3,46 @@ import {
   listJournalEntriesForUser,
 } from './journalEntries.service.js';
 
+export const ALLOWED_JOURNAL_TOPICS = [
+  'Trabajo',
+  'Interpersonal',
+  'Reflexión',
+  'Sabiduría',
+  'Preocupaciones',
+];
+
+const MAX_TOPICS = 3;
+
+const parseTopics = (raw) => {
+  if (raw === undefined || raw === null) {
+    return { ok: true, topics: [] };
+  }
+
+  if (!Array.isArray(raw)) {
+    return { ok: false, message: 'Los temas deben enviarse como una lista.' };
+  }
+
+  if (raw.length > MAX_TOPICS) {
+    return {
+      ok: false,
+      message: `Puedes seleccionar hasta ${MAX_TOPICS} temas por entrada.`,
+    };
+  }
+
+  const topics = [];
+  for (const item of raw) {
+    if (typeof item !== 'string' || !ALLOWED_JOURNAL_TOPICS.includes(item)) {
+      return { ok: false, message: 'Uno o más temas no son válidos.' };
+    }
+    if (topics.includes(item)) {
+      return { ok: false, message: 'No puedes repetir el mismo tema.' };
+    }
+    topics.push(item);
+  }
+
+  return { ok: true, topics };
+};
+
 export const getJournalEntries = async (req, res) => {
   try {
     const entries = await listJournalEntriesForUser(req.user.id);
@@ -21,8 +61,13 @@ export const postJournalEntry = async (req, res) => {
     return res.status(400).json({ message: 'El texto del diario no puede estar vacío.' });
   }
 
+  const parsedTopics = parseTopics(req.body?.topics);
+  if (!parsedTopics.ok) {
+    return res.status(400).json({ message: parsedTopics.message });
+  }
+
   try {
-    const entry = await createJournalEntry(req.user.id, content);
+    const entry = await createJournalEntry(req.user.id, content, parsedTopics.topics);
     return res.status(201).json({ entry });
   } catch (err) {
     console.error('[journal-entries POST]', err);
