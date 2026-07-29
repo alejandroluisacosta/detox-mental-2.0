@@ -7,12 +7,12 @@ const mapRow = (row) => ({
   createdAt: row.created_at,
 });
 
-export const createJournalEntry = async (userId, content) => {
+export const createJournalEntry = async (userId, content, topics = []) => {
   const { rows } = await pool.query(
-    `INSERT INTO journal_entries (user_id, content)
-     VALUES ($1, $2)
+    `INSERT INTO journal_entries (user_id, content, topics)
+     VALUES ($1, $2, $3)
      RETURNING id, content, topics, created_at`,
-    [userId, content],
+    [userId, content, topics],
   );
   return mapRow(rows[0]);
 };

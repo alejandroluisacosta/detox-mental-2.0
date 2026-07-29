@@ -12,12 +12,23 @@ import {
 } from './journalImage.js';
 import './Journal.css';
 
+const JOURNAL_TOPICS = [
+  'Trabajo',
+  'Interpersonal',
+  'Reflexión',
+  'Sabiduría',
+  'Preocupaciones',
+];
+
+const MAX_SELECTED_TOPICS = 3;
+
 const Journal = () => {
   const navigate = useNavigate();
   const { user, status } = useAuth();
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
   const [text, setText] = useState('');
+  const [selectedTopics, setSelectedTopics] = useState([]);
   const [saving, setSaving] = useState(false);
   const [showGuestModal, setShowGuestModal] = useState(false);
   const [imageFile, setImageFile] = useState(null);
@@ -26,6 +37,7 @@ const Journal = () => {
 
   const canUseImages = status === 'ready' && !!user;
   const busy = saving || transcribing;
+  const topicLimitReached = selectedTopics.length >= MAX_SELECTED_TOPICS;
 
   const resizeTextarea = () => {
     const el = textareaRef.current;
@@ -48,6 +60,17 @@ const Journal = () => {
 
   const clearComposer = () => {
     setText('');
+    setSelectedTopics([]);
+  };
+
+  const toggleTopic = (topic) => {
+    setSelectedTopics((prev) => {
+      if (prev.includes(topic)) {
+        return prev.filter((item) => item !== topic);
+      }
+      if (prev.length >= MAX_SELECTED_TOPICS) return prev;
+      return [...prev, topic];
+    });
   };
 
   const clearImage = () => {
@@ -116,7 +139,7 @@ const Journal = () => {
     try {
       const res = await apiFetch('/auth/me/journal-entries', {
         method: 'POST',
-        body: { content },
+        body: { content, topics: selectedTopics },
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -160,6 +183,29 @@ const Journal = () => {
         <h1 className="journal-page__prompt">¿Qué tienes en mente?</h1>
 
         <div className="journal-page__composer">
+          <div
+            className="journal-page__topics"
+            role="group"
+            aria-label="Temas del diario"
+          >
+            {JOURNAL_TOPICS.map((topic) => {
+              const selected = selectedTopics.includes(topic);
+              const disabled = busy || (!selected && topicLimitReached);
+              return (
+                <button
+                  key={topic}
+                  type="button"
+                  className={`journal-page__topic-chip${selected ? ' journal-page__topic-chip--selected' : ''}`}
+                  onClick={() => toggleTopic(topic)}
+                  disabled={disabled}
+                  aria-pressed={selected}
+                >
+                  {topic}
+                </button>
+              );
+            })}
+          </div>
+
           <textarea
             ref={textareaRef}
             className="journal-page__textarea"

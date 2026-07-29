@@ -141,6 +141,18 @@ const JournalHistory = () => {
                   >
                     {formatEntryDate(entry.createdAt)}
                   </time>
+                  {Array.isArray(entry.topics) && entry.topics.length > 0 && (
+                    <ul
+                      className="journal-history__topics"
+                      aria-label="Temas"
+                    >
+                      {entry.topics.map((topic) => (
+                        <li key={topic} className="journal-history__topic-chip">
+                          {topic}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   {expandable ? (
                     <p
                       className="journal-history__excerpt journal-history__excerpt--toggleable"
