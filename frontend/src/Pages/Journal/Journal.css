@@ -349,12 +349,55 @@
   background: var(--surface, #fff);
 }
 
+.journal-history__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
 .journal-history__date {
   display: block;
-  margin-bottom: 10px;
+  margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
+}
+
+.journal-history__delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin: -6px -6px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.journal-history__delete:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.journal-history__delete:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journal-history__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.journal-history__delete-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .journal-history__topics {

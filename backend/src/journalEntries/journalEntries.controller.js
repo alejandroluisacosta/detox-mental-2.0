@@ -1,6 +1,7 @@
 import {
   createJournalEntry,
   listJournalEntriesForUser,
+  deleteJournalEntryForUser,
 } from './journalEntries.service.js';
 
 export const ALLOWED_JOURNAL_TOPICS = [
@@ -72,5 +73,24 @@ export const postJournalEntry = async (req, res) => {
   } catch (err) {
     console.error('[journal-entries POST]', err);
     return res.status(500).json({ message: 'No se pudo guardar la entrada.' });
+  }
+};
+
+export const deleteJournalEntry = async (req, res) => {
+  const entryId = typeof req.params.id === 'string' ? req.params.id.trim() : '';
+
+  if (!entryId) {
+    return res.status(400).json({ message: 'Identificador de entrada no válido.' });
+  }
+
+  try {
+    const deletedId = await deleteJournalEntryForUser(req.user.id, entryId);
+    if (!deletedId) {
+      return res.status(404).json({ message: 'Entrada no encontrada.' });
+    }
+    return res.status(204).send();
+  } catch (err) {
+    console.error('[journal-entries DELETE]', err);
+    return res.status(500).json({ message: 'No se pudo eliminar la entrada.' });
   }
 };

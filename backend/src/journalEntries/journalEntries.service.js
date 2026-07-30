@@ -27,3 +27,13 @@ export const listJournalEntriesForUser = async (userId) => {
   );
   return rows.map(mapRow);
 };
+
+export const deleteJournalEntryForUser = async (userId, entryId) => {
+  const { rows } = await pool.query(
+    `DELETE FROM journal_entries
+     WHERE id = $1 AND user_id = $2
+     RETURNING id`,
+    [entryId, userId],
+  );
+  return rows[0]?.id ?? null;
+};
