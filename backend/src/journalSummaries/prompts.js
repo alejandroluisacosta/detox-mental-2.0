@@ -4,16 +4,16 @@ const formatEntryBlock = (entry, index) => {
   const topics =
     Array.isArray(entry.topics) && entry.topics.length > 0
       ? entry.topics.join(', ')
-      : 'sin etiquetar';
+      : 'untagged';
   const when = entry.createdAt
     ? new Date(entry.createdAt).toISOString()
-    : 'fecha desconocida';
+    : 'unknown date';
   return [
-    `### Entrada ${index + 1}`,
+    `### Entry ${index + 1}`,
     `id: ${entry.id}`,
-    `fecha: ${when}`,
-    `temas: ${topics}`,
-    'texto:',
+    `date: ${when}`,
+    `topics: ${topics}`,
+    'text:',
     entry.content,
   ].join('\n');
 };
@@ -42,24 +42,24 @@ export const buildSummaryMessages = ({ entries, weekStart, weekEnd }) => {
   const entriesSection = buildEntriesPromptSection(entries);
 
   const system = [
-    'Eres un espejo de pensamiento para Detox Mental, una herramienta de autorreflexión.',
-    'Recibes entradas de diario de una persona en español. Debes devolver SOLO un objeto JSON válido, sin markdown ni prosa alrededor.',
-    'Esquema exacto:',
+    'You are a thinking mirror for Detox Mental, a self-reflection tool.',
+    'You receive a person\'s journal entries (usually in Spanish). Return ONLY a valid JSON object, with no markdown and no prose around it.',
+    'Exact schema:',
     '{"summary":"string","mainTopics":["string"],"bestQuote":"string","socratic":"string"}',
-    'Reglas:',
-    '- summary: 2–4 párrafos cortos que reflejen con neutralidad lo escrito y los temas principales. No inventes hechos. No diagnostiques. No uses jerga clínica.',
-    '- mainTopics: entre 2 y 5 etiquetas cortas (pueden alinearse con Trabajo, Interpersonal, Reflexión, Sabiduría, Preocupaciones u otras precisas).',
-    '- bestQuote: una frase o pasaje BREVE tomado de forma casi literal del texto del usuario. No inventes. Si hay que recortar, usa elipsis…',
-    '- socratic: UNA sola pregunta o desafío al estilo de Sócrates: afilado, exigente, que obligue a examinar una creencia o contradicción. No aconsejes blandamente. No sermonees. No digas "deberías". No diagnostiques.',
-    '- Todo el contenido en español.',
-    '- Si el material es escaso, sé honesto en el summary sin rellenar con generalidades.',
+    'Rules:',
+    '- summary: 2–4 short paragraphs that mirror what they wrote and the main themes. Address the user directly in second person (tú / "you"), as if speaking to them — e.g. "Has estado pensando…", never third person like "the author" / "el autor del diario". Do not invent facts. Do not diagnose. Do not use clinical jargon.',
+    '- mainTopics: 2 to 5 short labels (may align with Trabajo, Interpersonal, Reflexión, Sabiduría, Preocupaciones, or other precise labels).',
+    '- bestQuote: one BRIEF sentence or passage taken nearly verbatim from the user\'s text. Do not invent. If you must shorten it, use an ellipsis…',
+    '- socratic: ONE sharp Socratic question or challenge that forces examination of a belief or contradiction. No soft advice. No sermons. Do not say "you should" / "deberías". Do not diagnose.',
+    '- Write every user-facing string value (summary, mainTopics, bestQuote, socratic) in Spanish.',
+    '- If the material is sparse, be honest in the summary; do not pad with generic filler.',
   ].join('\n');
 
   const user = [
-    `Semana del ${weekStart} al ${weekEnd} (Europe/Madrid).`,
-    `Número de entradas incluidas: ${entries.length}.`,
+    `Week from ${weekStart} to ${weekEnd} (Europe/Madrid).`,
+    `Number of entries included: ${entries.length}.`,
     '',
-    'Entradas del diario:',
+    'Journal entries:',
     entriesSection,
   ].join('\n');
 

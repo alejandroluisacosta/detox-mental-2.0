@@ -72,3 +72,13 @@ Avoid adding speculative improvements.
 Before making large architectural changes, explain the reasoning.
 
 Prefer plans before implementation.
+
+---
+
+## Language
+
+Write code, comments, prompts, docs, and new developer-facing strings in English.
+
+Do not add new Spanish (or other non-English) source text in the codebase.
+
+User-facing product copy may remain in Spanish when that is an intentional product choice; keep those strings in UI/copy layers, not in prompts, comments, or backend logic.
