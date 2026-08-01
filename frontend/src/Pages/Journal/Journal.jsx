@@ -10,6 +10,7 @@ import {
   prepareImageForUpload,
   MAX_UPLOAD_BYTES,
 } from './journalImage.js';
+import JournalSummaryBanner from './JournalSummaryBanner.jsx';
 import './Journal.css';
 
 const JOURNAL_TOPICS = [
@@ -180,6 +181,7 @@ const Journal = () => {
     <div className="journal-page">
       <Navigation />
       <main className="journal-page__main">
+        <JournalSummaryBanner />
         <h1 className="journal-page__prompt">¿Qué tienes en mente?</h1>
 
         <div className="journal-page__composer">
@@ -287,6 +289,9 @@ const Journal = () => {
           </button>
           <Link to="/journal/history" className="journal-page__history-link">
             Ver historial
+          </Link>
+          <Link to="/journal/summary" className="journal-page__history-link">
+            Resumen semanal
           </Link>
         </div>
       </main>

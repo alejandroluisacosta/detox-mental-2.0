@@ -1,6 +1,6 @@
 # Weekly Journal Summary — Feature Design
 
-**Status:** Proposed (planning only — not implemented)  
+**Status:** V1 in progress (implementation on branch; Sunday window bypassed for local testing)  
 **Module:** Journaling (`/journal`)  
 **Product intent:** Turn saved writings into a weekly self-reflection ritual, not just storage.
 
@@ -255,16 +255,19 @@ Build in thin vertical slices; each slice shippable alone.
 - Frontend: states for closed / ready / loading / result / error (Vitest patterns like `Journal.test.jsx`).
 - Manual: generate with a week of mixed-topic entries; verify quote appears in source text.
 
-## 13. Open decisions (need product confirmation)
+## 13. Locked product decisions (V1)
 
-1. **Exact window** — Sunday 12:00–18:00 Europe/Madrid, or another schedule?
-2. **Missed window** — Can users create late (e.g. until Monday), or strictly Sunday only? Can they still *read* last week’s summary anytime?
-3. **Regeneration** — Forbidden in v1 (recommended), or allow one retry on failure only?
-4. **Minimum entries** — Any entry (`count >= 1`) vs require N entries / N characters?
-5. **Access** — All authenticated users (consistent with journal today) vs `paid` only?
-6. **Best quote strictness** — Must match an entry substring exactly, or allow light cleanup (punctuation/ellipsis)?
-7. **Copy language** — Spanish-only prompts/UI for v1?
-8. **Socratic tone** — Warm mentor vs sharper classic Socrates? Any topics the prompt must avoid?
+1. **Window:** Sunday 12:00–18:00, `Europe/Madrid`.
+2. **Missed Sunday:** No late creation. Summaries remain **readable anytime** after they exist.
+3. **Regeneration:** Never once stored. **Retry only when generation fails** (no row written).
+4. **Minimum writing:** At least **2 entries** in the week. No minimum character count.
+5. **Access:** All logged-in users (same as journal today).
+6. **Socratic tone:** Sharper / challenging (tunable later).
+7. **Copy language:** Spanish UI + Spanish prompts for v1.
+
+### Dev bypass
+
+`ENFORCE_SUMMARY_WINDOW` in `backend/src/journalSummaries/summaryWindow.js` is **`false`** while developing so creation can be tested any day. Set it to `true` before shipping the Sunday ritual.
 
 ## 14. Success criteria
 

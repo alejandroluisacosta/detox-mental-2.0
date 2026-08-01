@@ -20,6 +20,7 @@ import PromoGate from './Pages/Promo/PromoGate.jsx';
 import Tests from './Pages/Tests/Tests.jsx';
 import Journal from './Pages/Journal/Journal.jsx';
 import JournalHistory from './Pages/Journal/JournalHistory.jsx';
+import JournalSummary from './Pages/Journal/JournalSummary.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
                             <Route path='tests' element={<Tests />} />
                             <Route path='test/:testId' element={<ThoughtsTest />} />
                             <Route path='journal/history' element={<JournalHistory />} />
+                            <Route path='journal/summary' element={<JournalSummary />} />
                             <Route path='journal' element={<Journal />} />
                             <Route path='session/:sessionId' element={<Session />} />
                         </Route>

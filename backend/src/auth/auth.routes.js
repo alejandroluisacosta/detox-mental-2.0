@@ -13,6 +13,10 @@ import {
   uploadJournalImage,
   postJournalTranscription,
 } from '../journalTranscription/journalTranscription.controller.js';
+import {
+  getCurrentJournalSummary,
+  postCurrentJournalSummary,
+} from '../journalSummaries/journalSummaries.controller.js';
 import { requireAuth } from './auth.middleware.js';
 
 const router = express.Router();
@@ -30,6 +34,16 @@ router.post(
   requireAuth,
   uploadJournalImage,
   postJournalTranscription,
+);
+router.get(
+  '/me/journal-summaries/current',
+  requireAuth,
+  getCurrentJournalSummary,
+);
+router.post(
+  '/me/journal-summaries/current',
+  requireAuth,
+  postCurrentJournalSummary,
 );
 router.get('/me', requireAuth, me);
 

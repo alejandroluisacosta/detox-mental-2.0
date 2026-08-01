@@ -5,6 +5,7 @@ import CloseIcon from '../../Components/CloseIcon/CloseIcon.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
+import JournalSummaryBanner from './JournalSummaryBanner.jsx';
 import './Journal.css';
 
 const EXCERPT_WORD_COUNT = 40;
@@ -138,6 +139,8 @@ const JournalHistory = () => {
           </Link>
         </header>
 
+        <JournalSummaryBanner />
+
         {status === 'loading' && (
           <p className="journal-history__status">Cargando…</p>
         )}
@@ -248,12 +251,20 @@ const JournalHistory = () => {
         )}
 
         {status !== 'loading' && (
-          <Link
-            to="/journal"
-            className="journal-history__write-button journal-history__write-button--footer"
-          >
-            ESCRIBIR
-          </Link>
+          <>
+            <Link
+              to="/journal/summary"
+              className="journal-page__history-link"
+            >
+              Resumen semanal
+            </Link>
+            <Link
+              to="/journal"
+              className="journal-history__write-button journal-history__write-button--footer"
+            >
+              ESCRIBIR
+            </Link>
+          </>
         )}
       </main>
 
