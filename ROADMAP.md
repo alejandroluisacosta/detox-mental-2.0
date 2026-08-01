@@ -40,6 +40,12 @@ State: ✅ Released on May 9th, 2026.
 Stripe integration and membership options.
 The project evolves from a self-contained prototype into a sustainable product.
 
+### Next — Weekly Journal Summary (self-reflection ritual)
+
+State: 🧭 Designed (see `docs/weekly-journal-summary.md`). Not implemented yet.
+
+Turns stored journal entries into a Sunday-only AI reflection: weekly topic summary, a “best quote” from the user’s own writing, and a Socratic prompt. Generated on demand during a limited time window; persisted once per week.
+
 ### Future Product Directions
 
 - Full translation of the app into English, opening Detox Mental to broader English-speaking markets.
