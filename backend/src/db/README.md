@@ -330,6 +330,12 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/003_journal_entries.sql
 ```
 
+### Journal Weekly Summaries
+```sql
+-- Run after journal_entries migration
+\i backend/src/db/migrations/004_journal_weekly_summaries.sql
+```
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created
