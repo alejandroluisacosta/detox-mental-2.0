@@ -177,6 +177,33 @@ Stores free-form journal entries for the user diary (`/journal`). Separate from 
 
 ---
 
+### 5c. `journal_weekly_summaries`
+
+Stores the once-per-week AI reflection generated from `journal_entries` (`/journal/summary`).
+
+**Columns:**
+- `id` (UUID, PK)
+- `user_id` (UUID, FK → users.id)
+- `week_start` / `week_end` (DATE): Monday–Sunday of the ISO week in Europe/Madrid
+- `period_start` / `period_end` (TIMESTAMPTZ): UTC range used to select entries
+- `summary_text` (TEXT): Plain weekly overview
+- `main_topics` (TEXT[]): Model-derived topic labels
+- `best_quote` (TEXT): Highlighted sentence from the user’s writing
+- `best_quote_entry_id` (UUID, FK → journal_entries.id, nullable, ON DELETE SET NULL)
+- `socratic_text` (TEXT): Challenging Socratic question/prompt
+- `entry_count` (INTEGER): How many entries were included
+- `model_id` (TEXT, nullable): HF model that produced the row
+- `created_at` (TIMESTAMPTZ)
+
+**Constraints:**
+- `UNIQUE (user_id, week_start)` — one summary per user per week
+- Non-empty checks on summary / quote / socratic text
+
+**Indexes:**
+- `idx_journal_weekly_summaries_user_created`: User history ordering
+
+---
+
 ### 6. `classifications`
 
 Stores cognitive distortion classifications for thoughts.
@@ -301,6 +328,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after schema migration
 \i backend/src/db/migrations/003_journal_entries.sql
+```
+
+### Journal Weekly Summaries
+```sql
+-- Run after journal_entries migration
+\i backend/src/db/migrations/004_journal_weekly_summaries.sql
 ```
 
 ### Verify Migration Success

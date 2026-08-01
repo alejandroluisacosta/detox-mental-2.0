@@ -104,3 +104,23 @@ In production we hit authentication instability: `/auth/me` returned unauthorize
 - Need DNS + Vercel domain management for `api.detoxmental.es`
 - Need stricter env coordination (`FRONTEND_ORIGIN`, `API_PUBLIC_URL`, frontend `VITE_API_URL`)
 - Must redeploy both projects when domain/env wiring changes
+
+### 2026-08-01 — Weekly journal summary: on-demand generation, not cron
+
+**Decision:**  
+Generate the weekly journal reflection **on user click** during a limited Sunday window, persist **one row per user per ISO week**, and produce **summary + best quote + Socratic prompt in a single LLM call**. Full design: `docs/weekly-journal-summary.md`.
+
+**Why this option was chosen:**  
+- The product goal is a **ritual** (user is present), not a batch report emailed into the void.
+- The repo has **no job runner / Vercel cron** today; on-demand fits the current Express-on-Vercel model.
+- One HF `chatCompletion` keeps us closer to the **20s `maxDuration`** budget than three sequential calls.
+- Persisting the result makes re-opening the page cheap and prevents repeat spend / prompt drift for the same week.
+
+**Why obvious alternatives were rejected:**  
+- **Cron / precompute for every user:** Requires new infra and pays for users who never open the summary.
+- **Three separate model calls (one per section):** Simpler prompts, but higher latency and timeout risk on Vercel.
+- **Client-only window gate (like promo):** Fine for UX copy, insufficient for creation authorization; server must enforce.
+- **Regenerate freely:** Undermines the “once a week” scarcity and increases cost/abuse surface.
+
+**What would trigger revisiting:**  
+Persistent timeouts, desire for push/email reminders, or a multi-week archive/compare product surface.

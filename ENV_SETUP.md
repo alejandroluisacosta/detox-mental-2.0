@@ -57,12 +57,13 @@ Use **test** keys and a **test** price while developing; no real money moves in 
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `HF_TOKEN` | Yes for `/chat` and journal image transcription | Hugging Face API token. Needs "Inference Providers" permission. Used by the chat controller and by journal handwriting transcription. |
+| `HF_TOKEN` | Yes for `/chat`, journal image transcription, and weekly journal summaries | Hugging Face API token. Needs "Inference Providers" permission. Used by the chat controller, journal handwriting transcription, and weekly journal summary generation. |
 | `HF_JOURNAL_VISION_MODEL` | No | Vision-language model used to transcribe handwritten journal images. Defaults to `Qwen/Qwen3-VL-30B-A3B-Instruct:novita`. Override to swap models without code changes. |
+| `HF_JOURNAL_SUMMARY_MODEL` | No | Text model for weekly journal summaries. Defaults to `meta-llama/Llama-3.1-8B-Instruct:novita`. |
 
 Journal transcription uploads are processed in memory only: the image is sent to the model and never written to disk or the database. Only the transcribed text is returned to the client for review before saving.
 
-**Production (backend Vercel project):** Set `HF_TOKEN` (required for chat and journal scan-to-text) and optionally `HF_JOURNAL_VISION_MODEL` on the **backend** project (`detox-mental-backend` / `api.detoxmental.es`), not the frontend project.
+**Production (backend Vercel project):** Set `HF_TOKEN` (required for chat, journal scan-to-text, and weekly summaries) and optionally `HF_JOURNAL_VISION_MODEL` / `HF_JOURNAL_SUMMARY_MODEL` on the **backend** project (`detox-mental-backend` / `api.detoxmental.es`), not the frontend project.
 
 ---
 
