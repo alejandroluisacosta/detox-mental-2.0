@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import ReactDOM from 'react-dom/client';
 import AuthProvider from './Context/AuthContext.jsx';
 import SessionsProvider from './Context/SessionsContext.jsx';
 import ArticleWrapper from './Pages/Article/ArticleWrapper.jsx';
@@ -23,7 +22,7 @@ import JournalHistory from './Pages/Journal/JournalHistory.jsx';
 import JournalSummary from './Pages/Journal/JournalSummary.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 
-function App() {
+const App = () => {
     return (
         <React.StrictMode>
             <BrowserRouter>
@@ -60,5 +59,4 @@ function App() {
     )
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.createRoot(rootElement).render(<App />);
+export default App;
