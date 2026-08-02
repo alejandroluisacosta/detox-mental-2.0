@@ -290,9 +290,6 @@ const Journal = () => {
           <Link to="/journal/history" className="journal-page__history-link">
             Ver historial
           </Link>
-          <Link to="/journal/summary" className="journal-page__history-link">
-            Resumen semanal
-          </Link>
         </div>
       </main>
 

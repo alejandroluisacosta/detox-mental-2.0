@@ -4,11 +4,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { isPromoEnabled } from '../../data/promoConfig.js';
 
+const isVisibleByDefault = (pathname) =>
+    pathname === '/' || pathname.startsWith('/course');
+
 const Navigation = () => {
     const [menuState, setMenuState] = useState('closed');
-    const [isBarVisible, setIsBarVisible] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
+    const [isBarVisible, setIsBarVisible] = useState(() => isVisibleByDefault(location.pathname));
     const { user, status } = useAuth();
     const isCourseRoute = location.pathname.startsWith('/course') || location.pathname.startsWith('/session');
     const isTestsRoute = location.pathname.startsWith('/tests') || location.pathname.startsWith('/test');
@@ -52,13 +55,10 @@ const Navigation = () => {
         let lastY = window.scrollY;
         const onScroll = () => {
             const currentY = window.scrollY;
-            if (currentY < lastY - 200) {
-                setIsBarVisible(true);
-                lastY = currentY;
-            } else if (currentY > lastY + 6) {
+            if (currentY > lastY + 6) {
                 setIsBarVisible(false);
-                lastY = currentY;
             }
+            lastY = currentY;
         };
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
@@ -103,6 +103,21 @@ const Navigation = () => {
                         )}
                     </div>
                 </div>
+            )}
+            {!isBarVisible && (
+                <button
+                    type='button'
+                    className='navigation__reveal'
+                    onClick={() => setIsBarVisible(true)}
+                    aria-label='Mostrar navegación'
+                >
+                    <img
+                        className='navigation__reveal-icon'
+                        src='/icons/chevron-up.svg'
+                        alt=''
+                        aria-hidden='true'
+                    />
+                </button>
             )}
             <div className={`navigation${isBarVisible ? ' navigation--visible' : ''}`}>
                 <button type='button' className='navigation__section navigation__section--left' onClick={openMenu}>

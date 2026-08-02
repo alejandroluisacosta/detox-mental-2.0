@@ -21,6 +21,10 @@
   gap: 24px;
 }
 
+.journal-page--history .journal-page__main {
+  padding-top: 30px;
+}
+
 .journal-page__prompt {
   margin: 0 0 50px;
   padding-top: clamp(32px, 12svh, 80px);
@@ -270,6 +274,24 @@
   gap: 16px;
 }
 
+/* Two actions do not fit next to the title on narrow screens, so they move to
+   their own full-width row below it. */
+.journal-history__header--with-actions {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.journal-history__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.journal-history__header--with-actions .journal-history__header-actions > * {
+  flex: 1 1 0;
+}
+
 .journal-history__title {
   margin: 0;
   font-size: 1.5rem;
@@ -296,6 +318,11 @@
   flex-shrink: 0;
   padding: 8px 16px;
   font-size: 15px;
+}
+
+.journal-history__write-button--secondary {
+  background: var(--background);
+  color: var(--accent);
 }
 
 .journal-history__write-button--footer {
@@ -547,6 +574,17 @@
   gap: 12px;
   margin-top: auto;
   padding-top: 24px;
+}
+
+@media (min-width: 600px) {
+  .journal-history__header--with-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .journal-history__header--with-actions .journal-history__header-actions > * {
+    flex: 0 0 auto;
+  }
 }
 
 @media (min-width: 1000px) {

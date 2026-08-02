@@ -129,14 +129,22 @@ const JournalHistory = () => {
     <div className="journal-page journal-page--history">
       <Navigation />
       <main className="journal-page__main journal-page__main--history">
-        <header className="journal-history__header">
+        <header className="journal-history__header journal-history__header--with-actions">
           <h1 className="journal-history__title">Historial</h1>
-          <Link
-            to="/journal"
-            className="journal-history__write-button journal-history__write-button--header"
-          >
-            Escribir
-          </Link>
+          <div className="journal-history__header-actions">
+            <Link
+              to="/journal"
+              className="journal-history__write-button journal-history__write-button--header"
+            >
+              Escribir
+            </Link>
+            <Link
+              to="/journal/summary"
+              className="journal-history__write-button journal-history__write-button--header journal-history__write-button--secondary"
+            >
+              Resumen
+            </Link>
+          </div>
         </header>
 
         <JournalSummaryBanner />
@@ -251,20 +259,12 @@ const JournalHistory = () => {
         )}
 
         {status !== 'loading' && (
-          <>
-            <Link
-              to="/journal/summary"
-              className="journal-page__history-link"
-            >
-              Resumen semanal
-            </Link>
-            <Link
-              to="/journal"
-              className="journal-history__write-button journal-history__write-button--footer"
-            >
-              ESCRIBIR
-            </Link>
-          </>
+          <Link
+            to="/journal"
+            className="journal-history__write-button journal-history__write-button--footer"
+          >
+            ESCRIBIR
+          </Link>
         )}
       </main>
 
