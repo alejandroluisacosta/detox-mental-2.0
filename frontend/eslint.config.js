@@ -34,6 +34,13 @@ export default [
     },
   },
   {
+    files: ['**/Context/**/*.{js,jsx}'],
+    rules: {
+      // Providers intentionally co-export hooks/context for a single import surface.
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     files: ['**/*.test.{js,jsx}'],
     languageOptions: {
       globals: { ...globals.node, ...globals.jest, vi: 'readonly' },

@@ -1,8 +1,6 @@
 🧭 Roadmap
 
-Detox Mental evolves in phases that mirror its own philosophy — awareness first, then dialogue, then integration.
-
-Each major version marks a conceptual shift, not just a technical one.
+Detox Mental grows through discrete product milestones. Each major version expands what the app can do—from static educational content into interactive practice, identity, monetization, and personal journaling tools.
 
 ### v1.0 — The Core MVP
 
@@ -40,18 +38,24 @@ State: ✅ Released on May 9th, 2026.
 Stripe integration and membership options.
 The project evolves from a self-contained prototype into a sustainable product.
 
-### Next — Weekly Journal Summary (self-reflection ritual)
+### v4.0 — Journaling Module
 
-State: 🚧 V1 implemented on branch (Sunday window bypassed for local testing). See `docs/weekly-journal-summary.md`.
+State: ✅ Released on July 25th, 2026.
+
+Free-form journaling with a dedicated writing interface and entry history.
+Includes handwriting transcription from uploaded images—turning paper notes into editable entries—and makes Detox Mental a place to keep a living record of one’s thinking, not only to consume course content.
+
+### Weekly Journal Summary (self-reflection ritual)
+
+State: ✅ V1 released. See `docs/weekly-journal-summary.md`.
 
 Turns stored journal entries into a Sunday-only AI reflection: weekly topic summary, a “best quote” from the user’s own writing, and a Socratic prompt. Generated on demand during a limited time window; persisted once per week.
 
 ### Future Product Directions
 
 - Full translation of the app into English, opening Detox Mental to broader English-speaking markets.
-- Onboarding optimization focused on retention: clearer value communication, stronger expectation-setting, and extended educational information about the core principles and benefits of the product.
-- Implementation of the Detox Mental Lab: a thought-based, AI-powered exercise database that personalizes recommendations according to each user's recurring thought patterns.
-- A full editorial and product positioning revamp to move from the language of "tormenting thoughts" toward stress relief, emotional regulation, and when appropriate, referral to a mental health professional.
+- Topic classification for journal entries, as a foundation for later insight extraction from recurring themes.
+- AI character chats for reflecting on one’s thoughts—e.g. a Socrates that answers only with Socratic questions, and a Machiavelli that pushes toward clear-eyed, practical self-interest.
 
 ### Vision:
 Detox Mental is not just a mental health tool. It’s an ongoing experiment in self-observation and human–machine dialogue — how technology can mirror our thinking rather than distract from it.

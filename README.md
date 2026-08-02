@@ -1,21 +1,24 @@
 # 🧠 Detox Mental
 
 Detox Mental is a guided self-reflection web app designed to help users confront and reframe destructive thought patterns.
-It combines long-form educational content, an unlockable 15-session course, 15 journaling exercises, and authentication to preserve user progress.
+It combines long-form educational content, an unlockable 15-session course with guided exercises, free-form journaling (including handwriting transcription and entry history), AI-assisted onboarding, and authentication to preserve user progress.
 
 ## 🚀 Overview
 
 This repository is a monorepo with:
 
-- `frontend/` - React + Vite SPA (article, course, onboarding, account, instructions)
-- `backend/` - Express API (auth, session unlock persistence, chat)
+- `frontend/` - React + Vite SPA (article, course, onboarding, journal, account, payments, instructions)
+- `backend/` - Express API (auth, session unlock persistence, chat, Stripe, journal entries and transcription)
 
 Core product experience includes:
 
 - Main article introducing the Detox Mental framework
-- 15-session audio/writing course
+- 15-session audio/writing course with guided exercises
 - Session unlock flow with persisted unlocked sessions per user
+- Free-form journal with entry history and handwriting-to-text from uploaded images
+- AI-powered onboarding chat
 - Passwordless authentication via magic links
+- Stripe Checkout for course membership
 
 ## 🛠️ Tech Stack
 
@@ -24,6 +27,8 @@ Core product experience includes:
 - **Database:** PostgreSQL
 - **Auth:** Magic links + JWT in HTTP-only cookies
 - **Email:** Resend
+- **Payments:** Stripe
+- **AI:** Hugging Face Inference (onboarding chat and journal image transcription)
 - **Deployment:** Vercel (frontend and backend as separate projects)
 
 ## Repository Structure
@@ -36,9 +41,11 @@ Core product experience includes:
 ├─ backend/
 │  ├─ src/
 │  └─ api/
+├─ docs/
 ├─ ROADMAP.md
 ├─ AUTH_ARCHITECTURE.md
-└─ DECISIONS.md
+├─ DECISIONS.md
+└─ ENV_SETUP.md
 ```
 
 ## Local Development
@@ -66,6 +73,8 @@ Set local env files at minimum:
   - `API_PUBLIC_URL=http://localhost:3000`
 - `frontend/.env.local`
   - `VITE_API_URL=http://localhost:3000`
+
+For Stripe, Hugging Face, and the full variable matrix, see [ENV_SETUP.md](./ENV_SETUP.md).
 
 ### 3) Run both apps
 
@@ -96,6 +105,8 @@ Frontend usually runs on `http://localhost:5173`.
 npm run dev
 npm run build
 npm run preview
+npm run lint
+npm run test
 ```
 
 ### Backend
@@ -103,6 +114,8 @@ npm run preview
 ```bash
 npm run dev
 npm run start
+npm run lint
+npm run test
 ```
 
 ## Documentation
@@ -111,6 +124,7 @@ npm run start
 - [AUTH_ARCHITECTURE.md](./AUTH_ARCHITECTURE.md) - auth design and decisions
 - [DECISIONS.md](./DECISIONS.md) - architectural/product decisions log
 - [ENV_SETUP.md](./ENV_SETUP.md) - environment setup notes
+- [docs/harness.md](./docs/harness.md) - feature validation checklist before commit
 
 ## 🤝 Contributing
 
