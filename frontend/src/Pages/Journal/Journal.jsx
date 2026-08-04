@@ -189,6 +189,9 @@ const Journal = () => {
             className="journal-page__topics"
             role="group"
             aria-label="Temas del diario"
+            style={{
+              '--topic-cols': Math.max(1, Math.ceil(JOURNAL_TOPICS.length / 2)),
+            }}
           >
             {JOURNAL_TOPICS.map((topic) => {
               const selected = selectedTopics.includes(topic);

@@ -44,11 +44,30 @@
 }
 
 .journal-page__topics {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(var(--topic-cols, 3), max-content);
   gap: 8px;
-  justify-content: left;
   width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 35%, transparent) transparent;
+}
+
+.journal-page__topics::-webkit-scrollbar {
+  height: 4px;
+}
+
+.journal-page__topics::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 999px;
+}
+
+.journal-page__topics::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .journal-page__topic-chip {
