@@ -48,7 +48,7 @@ export const buildSummaryMessages = ({ entries, weekStart, weekEnd }) => {
     '{"summary":"string","mainTopics":["string"],"bestQuote":"string","socratic":"string"}',
     'Rules:',
     '- summary: 2–4 short paragraphs that mirror what they wrote and the main themes. Address the user directly in second person (tú / "you"), as if speaking to them — e.g. "Has estado pensando…", never third person like "the author" / "el autor del diario". Do not invent facts. Do not diagnose. Do not use clinical jargon.',
-    '- mainTopics: 2 to 5 short labels (may align with Trabajo, Interpersonal, Reflexión, Sabiduría, Preocupaciones, or other precise labels).',
+    '- mainTopics: 2 to 5 short labels (may align with Trabajo, Interpersonal, Reflexión, Sabiduría, Preocupaciones, Meditaciones, Privado, or other precise labels).',
     '- bestQuote: one BRIEF sentence or passage taken nearly verbatim from the user\'s text. Do not invent. If you must shorten it, use an ellipsis…',
     '- socratic: ONE sharp Socratic question or challenge that forces examination of a belief or contradiction. No soft advice. No sermons. Do not say "you should" / "deberías". Do not diagnose.',
     '- Write every user-facing string value (summary, mainTopics, bestQuote, socratic) in Spanish.',

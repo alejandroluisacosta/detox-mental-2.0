@@ -19,6 +19,8 @@ const JOURNAL_TOPICS = [
   'Reflexión',
   'Sabiduría',
   'Preocupaciones',
+  'Meditaciones',
+  'Privado',
 ];
 
 const MAX_SELECTED_TOPICS = 3;
