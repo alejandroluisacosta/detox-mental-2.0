@@ -29,10 +29,12 @@ export const generateWeeklySummaryContent = async ({
   const client = new InferenceClient(process.env.HF_TOKEN);
   const messages = buildSummaryMessages({ entries, weekStart, weekEnd });
 
+  // Long philosophical reflections (~700–1,100 Spanish words) need headroom
+  // beyond the JSON fields for quote / topics / socratic.
   const response = await client.chatCompletion({
     model: modelId,
     messages,
-    max_tokens: 900,
+    max_tokens: 3200,
     temperature: 0.5,
   });
 

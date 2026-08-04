@@ -1,7 +1,7 @@
 {
   "functions": {
     "src/index.js": {
-      "maxDuration": 20
+      "maxDuration": 60
     }
   }
 }
