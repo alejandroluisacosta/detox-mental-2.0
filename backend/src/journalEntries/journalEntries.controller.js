@@ -10,6 +10,8 @@ export const ALLOWED_JOURNAL_TOPICS = [
   'Reflexión',
   'Sabiduría',
   'Preocupaciones',
+  'Meditaciones',
+  'Privado',
 ];
 
 const MAX_TOPICS = 3;
