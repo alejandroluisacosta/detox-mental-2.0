@@ -24,7 +24,7 @@ Variables are read via `dotenv` when you run `npm run dev` / `npm start` in `bac
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `PORT` | No | HTTP port (default `3000`). |
-| `FRONTEND_ORIGIN` | Yes | Origin of the web app (e.g. `http://localhost:5173`). Used for **CORS**, magic-link redirects, and **Stripe Checkout** `success_url` / `cancel_url`. Must match the URL users open in the browser (scheme + host + port). |
+| `FRONTEND_ORIGIN` | Yes | Origin of the web app (locally `http://localhost:3001`). Used for **CORS**, magic-link redirects, and **Stripe Checkout** `success_url` / `cancel_url`. Must match the URL users open in the browser (scheme + host + port). |
 | `NODE_ENV` | For prod behavior | Set `production` on deployed API so cookies use `Secure` and DB SSL matches `db.js`. |
 
 ### Database

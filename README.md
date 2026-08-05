@@ -66,7 +66,7 @@ Set local env files at minimum:
 
 - `backend/.env`
   - `DATABASE_URL`
-  - `FRONTEND_ORIGIN=http://localhost:5173` (or your local frontend URL)
+  - `FRONTEND_ORIGIN=http://localhost:3001` (or your local frontend URL)
   - `JWT_SECRET`
   - `MAGIC_LINK_SECRET`
   - `RESEND_API_KEY`
@@ -88,7 +88,7 @@ cd frontend
 npm run dev
 ```
 
-Frontend usually runs on `http://localhost:5173`.
+Frontend runs on `http://localhost:3001` as configured in `frontend/vite.config.js`.
 
 ## Production Notes
 

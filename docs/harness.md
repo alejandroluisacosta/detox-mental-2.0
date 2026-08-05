@@ -14,7 +14,20 @@ The steps must be executed in this exact order:
 
 ---
 
-This is a monorepo with two independent packages (`frontend/` and `backend/`), each with its own `package.json` and tooling. Run every step below in **both** directories.
+This is a monorepo with two independent packages (`frontend/` and `backend/`),
+each with its own `package.json` and tooling. Run package commands in both
+directories where the step says to do so.
+
+## 0. Acceptance criteria and scope
+
+Before validation, record the observable acceptance criteria defined during
+planning and identify the files intentionally changed.
+
+### Requirement:
+
+- Every acceptance criterion can be verified through a test or manual check
+- The diff contains no unrelated refactoring
+- Any intentionally deferred behavior is documented
 
 ## 1. Static analysis
 
@@ -73,12 +86,34 @@ All Critical issues must be fixed
 
 ## 5. Human review
 
-Manually evaluate:
+### Final diff review
+
+Review the complete Git diff, including staged, unstaged, and untracked files.
+Check for:
+
+- correctness and alignment with the approved plan
+- unrelated changes or accidental generated files
+- debug statements, dead code, and temporary comments
+- secrets, credentials, `.env` files, or sensitive user data
+- schema/configuration changes that need operational instructions
+- adequate tests for the regression risk
+
+### Manual smoke test
+
+Exercise each acceptance criterion in the running application. Include the
+relevant user states, such as authenticated/guest, success/error, and
+empty/populated data. Check the affected viewport sizes and keyboard interaction
+when the UI is responsive or interactive.
+
+Also evaluate:
 
 - Does the feature behave as intended?
 - Does it introduce unnecessary complexity?
 - Does it align with existing architecture?
 - Is the UI/UX consistent with the project?
+- Does nearby existing behavior still work?
+
+Record what was tested and any limitations in the final report.
 
 ## 6. Final decision
 
@@ -88,8 +123,22 @@ Only proceed to commit if all conditions are met:
 - build passes
 - tests pass
 - critical review issues resolved
+- acceptance criteria manually verified
+- final diff reviewed
+- no secrets or unrelated changes included
 - feature is complete and scoped correctly
 
+## Pull request readiness
+
+After the final decision passes, prepare a focused commit and pull request:
+
+- concise title describing the outcome
+- summary of behavior and relevant technical decisions
+- test plan listing automated checks and manual smoke tests
+- migration, environment, rollout, or rollback notes when applicable
+- known limitations or explicitly deferred follow-ups
+
+Opening a commit or pull request still requires explicit human authorization.
 
 ## Commit rule
 
