@@ -53,12 +53,13 @@
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: color-mix(in srgb, var(--accent) 35%, transparent) transparent;
 }
 
 .journal-page__topics::-webkit-scrollbar {
   height: 4px;
+  display: none;
 }
 
 .journal-page__topics::-webkit-scrollbar-thumb {
