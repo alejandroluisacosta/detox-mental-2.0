@@ -5,7 +5,7 @@ import {
   parseSummaryOutput,
 } from './parseSummaryOutput.js';
 
-const DEFAULT_SUMMARY_MODEL = 'meta-llama/Llama-3.1-8B-Instruct:novita';
+const DEFAULT_SUMMARY_MODEL = 'moonshotai/Kimi-K2-Instruct-0905:novita';
 
 export const getSummaryModelId = () =>
   process.env.HF_JOURNAL_SUMMARY_MODEL || DEFAULT_SUMMARY_MODEL;

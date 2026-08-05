@@ -59,7 +59,7 @@ Use **test** keys and a **test** price while developing; no real money moves in 
 |----------|----------|-------------|
 | `HF_TOKEN` | Yes for `/chat`, journal image transcription, and weekly journal summaries | Hugging Face API token. Needs "Inference Providers" permission. Used by the chat controller, journal handwriting transcription, and weekly journal summary generation. |
 | `HF_JOURNAL_VISION_MODEL` | No | Vision-language model used to transcribe handwritten journal images. Defaults to `Qwen/Qwen3-VL-30B-A3B-Instruct:novita`. Override to swap models without code changes. |
-| `HF_JOURNAL_SUMMARY_MODEL` | No | Text model for weekly journal summaries. Defaults to `meta-llama/Llama-3.1-8B-Instruct:novita`. |
+| `HF_JOURNAL_SUMMARY_MODEL` | No | Text model for weekly journal summaries. Defaults to `moonshotai/Kimi-K2-Instruct-0905:novita`. |
 
 Journal transcription uploads are processed in memory only: the image is sent to the model and never written to disk or the database. Only the transcribed text is returned to the client for review before saving.
 
