@@ -472,6 +472,7 @@
   line-height: 1.5;
   color: var(--text);
   white-space: pre-wrap;
+  font-size: 17px;
 }
 
 .journal-history__excerpt--toggleable {
