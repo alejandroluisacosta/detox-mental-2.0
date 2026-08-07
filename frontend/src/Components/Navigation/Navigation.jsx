@@ -4,19 +4,16 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { isPromoEnabled } from '../../data/promoConfig.js';
 
-const isVisibleByDefault = (pathname) =>
-    pathname === '/' || pathname.startsWith('/course');
-
 const Navigation = () => {
     const [menuState, setMenuState] = useState('closed');
     const navigate = useNavigate();
     const location = useLocation();
-    const [isBarVisible, setIsBarVisible] = useState(() => isVisibleByDefault(location.pathname));
     const { user, status } = useAuth();
     const isCourseRoute = location.pathname.startsWith('/course') || location.pathname.startsWith('/session');
     const isTestsRoute = location.pathname.startsWith('/tests') || location.pathname.startsWith('/test');
     const isJournalRoute = location.pathname.startsWith('/journal');
     const isPromoRoute = location.pathname.startsWith('/promo');
+    const isAccountRoute = location.pathname.startsWith('/account') || location.pathname.startsWith('/login');
     const menuLinks = [
         { label: 'TEORÍA', path: '/', isActive: location.pathname === '/' },
         { label: 'CURSO', path: '/course', isActive: isCourseRoute },
@@ -26,6 +23,12 @@ const Navigation = () => {
             label: 'INSTRUCCIONES',
             path: '/instructions',
             isActive: location.pathname.startsWith('/instructions'),
+        },
+        {
+            label: user ? 'CUENTA' : 'LOGIN',
+            path: user ? '/account' : '/login',
+            isActive: isAccountRoute,
+            disabled: !user && status !== 'ready',
         },
     ];
 
@@ -51,19 +54,6 @@ const Navigation = () => {
         return () => document.removeEventListener('keydown', onKeyDown);
     }, [menuState]);
 
-    useEffect(() => {
-        let lastY = window.scrollY;
-        const onScroll = () => {
-            const currentY = window.scrollY;
-            if (currentY > lastY + 6) {
-                setIsBarVisible(false);
-            }
-            lastY = currentY;
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
-
     return (
         <>
             {menuState !== 'closed' && (
@@ -86,6 +76,7 @@ const Navigation = () => {
                             <button
                                 key={link.path}
                                 type='button'
+                                disabled={link.disabled}
                                 className={`navigation__menu-link${link.isActive ? ' navigation__menu-link--active' : ''}`}
                                 onClick={() => goTo(link.path)}
                             >
@@ -104,52 +95,21 @@ const Navigation = () => {
                     </div>
                 </div>
             )}
-            {!isBarVisible && (
+            {menuState === 'closed' && (
                 <button
                     type='button'
                     className='navigation__reveal'
-                    onClick={() => setIsBarVisible(true)}
-                    aria-label='Mostrar navegación'
+                    onClick={openMenu}
+                    aria-label='Abrir menú'
                 >
                     <img
                         className='navigation__reveal-icon'
-                        src='/icons/chevron-up.svg'
+                        src='/images/menu.svg'
                         alt=''
                         aria-hidden='true'
                     />
                 </button>
             )}
-            <div className={`navigation${isBarVisible ? ' navigation--visible' : ''}`}>
-                <button type='button' className='navigation__section navigation__section--left' onClick={openMenu}>
-                    <img
-                        className="navigation__icon"
-                        src='/images/menu.svg'
-                        alt="Menú"
-                    />
-                </button>
-                <button
-                    type='button'
-                    className={`navigation__section navigation__section--right${user ? ' navigation__section--right-user' : ''}`}
-                    onClick={
-                        user
-                            ? () => goTo('/account')
-                            : (!user && status === 'ready' ? () => goTo('/login') : undefined)
-                    }
-                >
-                    {user ? (
-                        <>
-                            <span className='navigation__user-email'>
-                                PERFIL
-                            </span>
-                            <img
-                                className='navigation__account-icon'
-                                src='/icons/account.svg'
-                                alt='Cuenta'
-                            />
-                        </>
-                    ) : 'LOGIN'}
-                </button>
-            </div>
         </>
     );
 }
