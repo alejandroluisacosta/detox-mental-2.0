@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import CloseIcon from '../../Components/CloseIcon/CloseIcon.jsx';
+import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useDemoMode } from '../../Context/DemoModeContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import { DEMO_ENTRIES } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryBanner from './JournalSummaryBanner.jsx';
 import './Journal.css';
@@ -31,13 +34,23 @@ const getExcerpt = (content) => {
 
 const JournalHistory = () => {
   const { user, status } = useAuth();
+  const { demoMode } = useDemoMode();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const [entryPendingDelete, setEntryPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const visibleEntries = demoMode ? DEMO_ENTRIES : entries;
 
   useEffect(() => {
+    if (demoMode) {
+      setEntries([]);
+      setExpandedIds(new Set());
+      setLoading(false);
+      setEntryPendingDelete(null);
+      return undefined;
+    }
+
     if (status !== 'ready' || !user) {
       setEntries([]);
       setExpandedIds(new Set());
@@ -77,7 +90,7 @@ const JournalHistory = () => {
     return () => {
       cancelled = true;
     };
-  }, [status, user]);
+  }, [demoMode, status, user]);
 
   const toggleExpanded = (entryId) => {
     setExpandedIds((prev) => {
@@ -130,7 +143,10 @@ const JournalHistory = () => {
       <Navigation />
       <main className="journal-page__main journal-page__main--history">
         <header className="journal-history__header journal-history__header--with-actions">
-          <h1 className="journal-history__title">Historial</h1>
+          <div className="journal-history__header-top">
+            <h1 className="journal-history__title">Historial</h1>
+            <DemoModeToggle />
+          </div>
           <div className="journal-history__header-actions">
             <Link
               to="/journal"
@@ -147,13 +163,13 @@ const JournalHistory = () => {
           </div>
         </header>
 
-        <JournalSummaryBanner />
+        {!demoMode && <JournalSummaryBanner />}
 
-        {status === 'loading' && (
+        {!demoMode && status === 'loading' && (
           <p className="journal-history__status">Cargando…</p>
         )}
 
-        {status === 'ready' && !user && (
+        {!demoMode && status === 'ready' && !user && (
           <div className="journal-history__empty">
             <p>Inicia sesión para ver las entradas guardadas en tu diario.</p>
             <Link to="/login" className="journal-history__action-link">
@@ -162,11 +178,11 @@ const JournalHistory = () => {
           </div>
         )}
 
-        {status === 'ready' && user && loading && (
+        {!demoMode && status === 'ready' && user && loading && (
           <p className="journal-history__status">Cargando entradas…</p>
         )}
 
-        {status === 'ready' && user && !loading && entries.length === 0 && (
+        {!demoMode && status === 'ready' && user && !loading && visibleEntries.length === 0 && (
           <div className="journal-history__empty">
             <p>Aún no hay entradas en tu diario.</p>
             <Link to="/journal" className="journal-history__action-link">
@@ -175,9 +191,9 @@ const JournalHistory = () => {
           </div>
         )}
 
-        {status === 'ready' && user && !loading && entries.length > 0 && (
+        {(demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0)) && (
           <ul className="journal-history__feed">
-            {entries.map((entry) => {
+            {visibleEntries.map((entry) => {
               const expandable = getWordCount(entry.content) > EXCERPT_WORD_COUNT;
               const expanded = expandedIds.has(entry.id);
               const bodyText =
@@ -196,20 +212,22 @@ const JournalHistory = () => {
                     >
                       {formatEntryDate(entry.createdAt)}
                     </time>
-                    <button
-                      type="button"
-                      className="journal-history__delete"
-                      onClick={() => setEntryPendingDelete(entry)}
-                      disabled={deleteDisabled}
-                      aria-label="Eliminar entrada"
-                    >
-                      <img
-                        src="/icons/trash.svg"
-                        alt=""
-                        className="journal-history__delete-icon"
-                        aria-hidden="true"
-                      />
-                    </button>
+                    {!demoMode && (
+                      <button
+                        type="button"
+                        className="journal-history__delete"
+                        onClick={() => setEntryPendingDelete(entry)}
+                        disabled={deleteDisabled}
+                        aria-label="Eliminar entrada"
+                      >
+                        <img
+                          src="/icons/trash.svg"
+                          alt=""
+                          className="journal-history__delete-icon"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    )}
                   </div>
                   {Array.isArray(entry.topics) && entry.topics.length > 0 && (
                     <ul
@@ -258,7 +276,7 @@ const JournalHistory = () => {
           </ul>
         )}
 
-        {status !== 'loading' && (
+        {(demoMode || status !== 'loading') && (
           <Link
             to="/journal"
             className="journal-history__write-button journal-history__write-button--footer"

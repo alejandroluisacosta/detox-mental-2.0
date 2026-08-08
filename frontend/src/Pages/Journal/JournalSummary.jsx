@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useDemoMode } from '../../Context/DemoModeContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import { DEMO_SUMMARY_PAYLOAD } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryLoadingScreen from './JournalSummaryLoadingScreen.jsx';
 import './Journal.css';
@@ -23,6 +26,7 @@ const formatWeekLabel = (weekStart, weekEnd) => {
 
 const JournalSummary = () => {
   const { user, status } = useAuth();
+  const { demoMode } = useDemoMode();
   const [payload, setPayload] = useState(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -30,6 +34,12 @@ const JournalSummary = () => {
   const [pendingSummary, setPendingSummary] = useState(null);
 
   const loadCurrent = useCallback(async () => {
+    if (demoMode) {
+      setPayload(null);
+      setLoading(false);
+      return;
+    }
+
     if (status !== 'ready' || !user) {
       setPayload(null);
       setLoading(false);
@@ -51,7 +61,7 @@ const JournalSummary = () => {
     } finally {
       setLoading(false);
     }
-  }, [status, user]);
+  }, [demoMode, status, user]);
 
   useEffect(() => {
     loadCurrent();
@@ -114,32 +124,41 @@ const JournalSummary = () => {
     );
   }
 
-  const summary = payload?.summary;
-  const weekLabel = formatWeekLabel(payload?.weekStart, payload?.weekEnd);
+  const effectivePayload = demoMode ? DEMO_SUMMARY_PAYLOAD : payload;
+  const summary = effectivePayload?.summary;
+  const weekLabel = formatWeekLabel(
+    effectivePayload?.weekStart,
+    effectivePayload?.weekEnd,
+  );
 
   return (
     <div className="journal-page journal-page--summary">
       <Navigation />
       <main className="journal-page__main journal-page__main--history">
-        <header className="journal-history__header">
-          <h1 className="journal-history__title">Resumen semanal</h1>
-          <Link
-            to="/journal"
-            className="journal-history__write-button journal-history__write-button--header"
-          >
-            Escribir
-          </Link>
+        <header className="journal-history__header journal-history__header--with-actions">
+          <div className="journal-history__header-top">
+            <h1 className="journal-history__title">Resumen semanal</h1>
+            <DemoModeToggle />
+          </div>
+          <div className="journal-history__header-actions">
+            <Link
+              to="/journal"
+              className="journal-history__write-button journal-history__write-button--header"
+            >
+              Escribir
+            </Link>
+          </div>
         </header>
 
         {weekLabel && (
           <p className="journal-summary__week">{weekLabel}</p>
         )}
 
-        {status === 'loading' && (
+        {!demoMode && status === 'loading' && (
           <p className="journal-history__status">Cargando…</p>
         )}
 
-        {status === 'ready' && !user && (
+        {!demoMode && status === 'ready' && !user && (
           <div className="journal-history__empty">
             <p>Inicia sesión para ver o crear tu resumen semanal.</p>
             <Link to="/login" className="journal-history__action-link">
@@ -148,11 +167,11 @@ const JournalSummary = () => {
           </div>
         )}
 
-        {status === 'ready' && user && loading && (
+        {!demoMode && status === 'ready' && user && loading && (
           <p className="journal-history__status">Cargando resumen…</p>
         )}
 
-        {status === 'ready' && user && !loading && summary && (
+        {(demoMode || (status === 'ready' && user && !loading && summary)) && (
           <div className="journal-summary__result">
             <section className="journal-summary__section">
               <h2 className="journal-summary__heading">Esta semana</h2>
@@ -186,9 +205,9 @@ const JournalSummary = () => {
           </div>
         )}
 
-        {status === 'ready' && user && !loading && !summary && (
+        {!demoMode && status === 'ready' && user && !loading && !summary && (
           <div className="journal-summary__create">
-            {payload?.canCreate ? (
+            {effectivePayload?.canCreate ? (
               <>
                 <p className="journal-summary__lead">
                   Ya puedes crear el resumen de esta semana a partir de tus
@@ -204,18 +223,18 @@ const JournalSummary = () => {
               </>
             ) : (
               <div className="journal-history__empty">
-                {(payload?.entryCount ?? 0) < (payload?.minEntries ?? 2) ? (
+                {(effectivePayload?.entryCount ?? 0) < (effectivePayload?.minEntries ?? 2) ? (
                   <>
                     <p>
-                      Necesitas al menos {payload?.minEntries ?? 2} entradas
+                      Necesitas al menos {effectivePayload?.minEntries ?? 2} entradas
                       esta semana para crear el resumen. Llevas{' '}
-                      {payload?.entryCount ?? 0}.
+                      {effectivePayload?.entryCount ?? 0}.
                     </p>
                     <Link to="/journal" className="journal-history__action-link">
                       Escribir
                     </Link>
                   </>
-                ) : payload?.window?.enforced && !payload?.window?.open ? (
+                ) : effectivePayload?.window?.enforced && !effectivePayload?.window?.open ? (
                   <p>
                     El resumen se puede crear el domingo de 12:00 a 18:00 (hora
                     de Madrid). Mientras tanto, sigue escribiendo.
