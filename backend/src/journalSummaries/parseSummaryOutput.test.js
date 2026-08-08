@@ -7,7 +7,7 @@ import {
 } from './parseSummaryOutput.js';
 
 test('extractJsonObject parses fenced JSON', () => {
-  const raw = '```json\n{"summary":"Hola","mainTopics":["A"],"bestQuote":"x","socratic":"¿Y?"}\n```';
+  const raw = '```json\n{"summary":"Hola","mainTopics":["A"],"bestQuote":"x","socratic":"¿Y?","machiavelli":"Observa tus incentivos."}\n```';
   const obj = extractJsonObject(raw);
   assert.equal(obj.summary, 'Hola');
 });
@@ -19,6 +19,8 @@ test('parseSummaryOutput normalizes fields', () => {
       mainTopics: ['Trabajo', 'Trabajo', '  ', 'Miedo'],
       bestQuote: '"nunca es suficiente"',
       socratic: '¿qué evidencia tienes de que nunca es suficiente?',
+      machiavelli:
+        'Quieres avanzar, pero tu estrategia sigue priorizando sentirte seguro.',
     }),
   );
   assert.equal(result.ok, true);
@@ -26,6 +28,7 @@ test('parseSummaryOutput normalizes fields', () => {
   assert.deepEqual(result.value.mainTopics, ['Trabajo', 'Miedo']);
   assert.equal(result.value.bestQuote, 'Nunca es suficiente');
   assert.match(result.value.socraticText, /^¿Qué evidencia/i);
+  assert.match(result.value.machiavelliText, /^Quieres avanzar/i);
 });
 
 test('parseSummaryOutput rejects missing fields', () => {

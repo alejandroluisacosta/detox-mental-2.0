@@ -191,13 +191,14 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 - `best_quote` (TEXT): Highlighted sentence from the user’s writing
 - `best_quote_entry_id` (UUID, FK → journal_entries.id, nullable, ON DELETE SET NULL)
 - `socratic_text` (TEXT): Challenging Socratic question/prompt
+- `machiavelli_text` (TEXT, nullable): Strategic Machiavellian challenge for new summaries
 - `entry_count` (INTEGER): How many entries were included
 - `model_id` (TEXT, nullable): HF model that produced the row
 - `created_at` (TIMESTAMPTZ)
 
 **Constraints:**
 - `UNIQUE (user_id, week_start)` — one summary per user per week
-- Non-empty checks on summary / quote / socratic text
+- Non-empty checks on summary / quote / socratic text and, when present, Machiavelli text
 
 **Indexes:**
 - `idx_journal_weekly_summaries_user_created`: User history ordering
@@ -334,6 +335,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after journal_entries migration
 \i backend/src/db/migrations/004_journal_weekly_summaries.sql
+```
+
+### Machiavelli Journal Summary Challenge
+```sql
+-- Run after the journal_weekly_summaries migration
+\i backend/src/db/migrations/005_journal_summary_machiavelli.sql
 ```
 
 ### Verify Migration Success

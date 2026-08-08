@@ -45,7 +45,7 @@ const asTopicList = (value) => {
 };
 
 /**
- * Validate and normalize model JSON into the three summary sections.
+ * Validate and normalize model JSON into the summary sections.
  * @returns {{ ok: true, value } | { ok: false, error: string }}
  */
 export const parseSummaryOutput = (raw) => {
@@ -57,9 +57,10 @@ export const parseSummaryOutput = (raw) => {
   const summary = asNonEmptyString(parsed.summary);
   const bestQuote = asNonEmptyString(parsed.bestQuote);
   const socratic = asNonEmptyString(parsed.socratic);
+  const machiavelli = asNonEmptyString(parsed.machiavelli);
   const mainTopics = asTopicList(parsed.mainTopics);
 
-  if (!summary || !bestQuote || !socratic) {
+  if (!summary || !bestQuote || !socratic || !machiavelli) {
     return { ok: false, error: 'missing_fields' };
   }
 
@@ -70,6 +71,7 @@ export const parseSummaryOutput = (raw) => {
       mainTopics,
       bestQuote,
       socraticText: socratic,
+      machiavelliText: machiavelli,
     },
   };
 };

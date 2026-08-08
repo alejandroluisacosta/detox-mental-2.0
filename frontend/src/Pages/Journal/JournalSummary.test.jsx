@@ -87,6 +87,8 @@ describe('JournalSummary page states', () => {
           mainTopics: ['Trabajo'],
           bestQuote: 'Nunca es suficiente',
           socraticText: '¿Qué prueba tienes de eso?',
+          machiavelliText:
+            '¿Qué posición esperas ganar si sigues evitando el conflicto?',
         },
       }),
     });
@@ -97,9 +99,49 @@ describe('JournalSummary page states', () => {
       expect(screen.getByText(/Nunca es suficiente/i)).toBeTruthy();
       expect(screen.getByText(/Qué prueba tienes/i)).toBeTruthy();
       expect(screen.getByRole('heading', { name: /Pregunta de Sócrates/i })).toBeTruthy();
+      expect(
+        screen.getByText(/Qué posición esperas ganar si sigues evitando/i),
+      ).toBeTruthy();
+      expect(
+        screen.getByRole('heading', { name: /Desafío Machiavélico/i }),
+      ).toBeTruthy();
       const avatar = screen.getByAltText('Sócrates');
       expect(avatar.getAttribute('src')).toBe('/images/socrates.webp');
+      const machiavelliAvatar = screen.getByAltText('Machiavelli');
+      expect(machiavelliAvatar.getAttribute('src')).toBe(
+        '/images/machiavelli.webp',
+      );
     });
+  });
+
+  test('hides the Machiavelli section for summaries created before it existed', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        weekStart: '2026-07-27',
+        weekEnd: '2026-08-02',
+        window: { open: true, enforced: false },
+        entryCount: 3,
+        minEntries: 2,
+        canCreate: false,
+        summary: {
+          summaryText: 'Escribiste sobre el trabajo y la duda.',
+          mainTopics: ['Trabajo'],
+          bestQuote: 'Nunca es suficiente',
+          socraticText: '¿Qué prueba tienes de eso?',
+        },
+      }),
+    });
+
+    render(<JournalSummary />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Escribiste sobre el trabajo/i)).toBeTruthy();
+    });
+    expect(
+      screen.queryByRole('heading', { name: /Desafío Machiavélico/i }),
+    ).toBeNull();
   });
 
   test('renders demo summary immediately when demo mode is active', () => {

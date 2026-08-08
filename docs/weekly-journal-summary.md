@@ -12,11 +12,12 @@ Users can write and store journal entries (including transcribed handwriting), b
 
 ## 2. Goal (v1)
 
-Once per week, during a limited time window, a logged-in user can generate an AI-powered weekly reflection with three sections:
+Once per week, during a limited time window, a logged-in user can generate an AI-powered weekly reflection with four sections:
 
 1. **Weekly summary** — plain-language overview of what they wrote and the main topics.
 2. **Best quote** — one sentence (or short passage) from their own writing that deserves to be seen again.
 3. **Socratic prompt** — one question or piece of advice in a Socratic style that invites further thinking (not therapy, not diagnosis).
+4. **Machiavellian challenge** — one practical strategic observation that tests whether the user's behavior supports their stated goal.
 
 ## 3. User experience
 
@@ -28,7 +29,7 @@ Once per week, during a limited time window, a logged-in user can generate an AI
 4. If no summary exists for the current week yet:
    - Page shows a create CTA.
    - User clicks → loading screen (reuse Thoughts Test loading pattern) while the backend generates.
-   - Results render in three sections on the same page.
+   - Results render in four sections on the same page.
 5. If a summary already exists for that week:
    - Page shows the stored result (no re-generation in v1).
 
@@ -54,7 +55,7 @@ Once per week, during a limited time window, a logged-in user can generate an AI
 **In scope**
 - On-demand generation (user click), not a background cron
 - Persist one summary per user per week
-- Three structured outputs from the model
+- Four structured outputs from the model
 - Availability window for *creation*
 - Journal-module page + in-app CTA during the window
 - Auth-required API under existing `/auth/me/...` patterns
@@ -99,8 +100,8 @@ Stack today: React/Vite frontend, Express backend on Vercel (`maxDuration: 20`),
 Backend Vercel `maxDuration` is **20s**. Mitigation for v1:
 
 - Cap total input characters (e.g. newest-first truncate to ~8–12k chars).
-- Prefer **one** model call that returns all three sections as structured JSON (one round-trip).
-- Keep output short (summary paragraphs + one quote + one Socratic item).
+- Prefer **one** model call that returns all four sections as structured JSON (one round-trip).
+- Keep output short (summary paragraphs + one quote + one Socratic item + one Machiavellian challenge).
 - If timeouts appear in practice, revisit: faster/smaller model, raise `maxDuration`, or async generation.
 
 ## 6. Data model
@@ -120,6 +121,7 @@ CREATE TABLE journal_weekly_summaries (
   best_quote TEXT NOT NULL,
   best_quote_entry_id UUID REFERENCES journal_entries(id) ON DELETE SET NULL,
   socratic_text TEXT NOT NULL,
+  machiavelli_text TEXT,
   entry_count INTEGER NOT NULL,
   model_id TEXT,                     -- which HF model produced this
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -190,7 +192,8 @@ Ask the model for JSON only:
   "summary": "...",
   "mainTopics": ["...", "..."],
   "bestQuote": "...",
-  "socratic": "..."
+  "socratic": "...",
+  "machiavelli": "..."
 }
 ```
 
@@ -202,6 +205,7 @@ Prompt responsibilities:
 | Main topics | 2–5 short labels; may align with existing chips (`Trabajo`, `Interpersonal`, …) but can be freer |
 | Best quote | Must be a **verbatim or near-verbatim** excerpt from the provided entries; never invent |
 | Socratic | One open question or gentle challenge; Socratic method; no lectures, no “you should”, no diagnosis |
+| Machiavellian | One practical strategic challenge about whether the user's behavior aligns with their stated goal; no manipulation advice |
 
 Also pass entry ids + timestamps so the backend can optionally attach `best_quote_entry_id` by matching the quote substring; if no match, store quote text and leave FK null.
 
@@ -219,7 +223,7 @@ Also pass entry ids + timestamps so the backend can optionally attach `best_quot
 | Page | `frontend/src/Pages/Journal/JournalSummary.jsx` (+ CSS in `Journal.css` or sibling) |
 | Loading | Adapt `TestLoadingScreen` pattern: progress + reflective quote, but `onDone` waits for **real** `POST` (or `Promise.all` of min display time + request) |
 | CTA / alert | Banner on `/journal` and/or `/journal/history` when `window.open && canCreate`; optionally subtle nav hint |
-| Result layout | Three stacked sections (not a dashboard of cards): Summary → Best quote → Socratic prompt |
+| Result layout | Four stacked sections (not a dashboard of cards): Summary → Best quote → Socratic prompt → Machiavellian challenge |
 | History link | From journal header area: “Resumen” next to “Escribir” / history patterns |
 
 Guest / auth behavior should match `JournalHistory.jsx`.
@@ -263,7 +267,8 @@ Build in thin vertical slices; each slice shippable alone.
 4. **Minimum writing:** At least **2 entries** in the week. No minimum character count.
 5. **Access:** All logged-in users (same as journal today).
 6. **Socratic tone:** Sharper / challenging (tunable later).
-7. **Copy language:** Spanish UI + Spanish prompts for v1.
+7. **Machiavellian tone:** Practical and strategic; challenge the user's incentives without recommending manipulation.
+8. **Copy language:** Spanish UI + Spanish prompts for v1.
 
 ### Dev bypass
 
@@ -274,5 +279,6 @@ Build in thin vertical slices; each slice shippable alone.
 - Users who write during the week have a clear Sunday ritual that returns value from their own words.
 - Summary feels personal (topics + quote from *their* text), not generic wellness filler.
 - Socratic section produces a question the user could actually journal about next.
+- Machiavellian section exposes whether the user's strategy supports their stated goal.
 - Creation cannot be spammed (one per week; window enforced server-side).
 - Experience stays within the 20s serverless budget for typical weekly volume.

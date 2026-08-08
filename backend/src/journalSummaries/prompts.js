@@ -50,7 +50,7 @@ Return ONLY a valid JSON object.
 
 Exact schema:
 
-{"summary":"string","mainTopics":["string"],"bestQuote":"string","socratic":"string"}
+{"summary":"string","mainTopics":["string"],"bestQuote":"string","socratic":"string","machiavelli":"string"}
 
 Rules:
 
@@ -127,8 +127,6 @@ If shortened, use "...".
 
 SOCRATIC
 
-This is the most important field.
-
 Write ONE concise statement or question that exposes the strongest contradiction, hidden assumption or illusion you found.
 
 It should feel difficult to dismiss.
@@ -151,7 +149,41 @@ The user should pause after reading it.
 
 It should create the feeling:
 
-"...Damn."`;
+"...Damn."
+
+MACHIAVELLIAN
+
+Write ONE concise strategic observation or challenge that exposes the strongest mismatch between what the user says they want and what their behavior is actually optimizing for.
+
+Think like Machiavelli: care about consequences, incentives, strategy, and the user’s actual objective—not about preserving their ego, self-image, comfort, or desire to be liked.
+
+Pay particular attention to situations where protecting the user’s self-image is preventing them from achieving something important. Also look for short-term choices that provide immediate relief but may weaken the user’s position in the long term.
+
+Do NOT simply tell the user to be more selfish, ruthless, or pragmatic.
+
+Do NOT recommend manipulation merely because it might be effective.
+
+The point is practical realism: expose whether the user’s strategy is actually coherent with their stated goal.
+
+Good examples of the style (do NOT copy these):
+
+"Si realmente quieres avanzar, ¿por qué estás protegiendo tanto tu imagen de persona competente que evitas precisamente aquello que podría hacerte avanzar?"
+
+"Estás evitando este conflicto para conservar la relación, pero ¿qué precio estás pagando por mantenerla exactamente como está?"
+
+"Dices que quieres cambiar, pero tu estrategia parece diseñada para conseguirlo sin tener que asumir ninguno de los costes que implica cambiar."
+
+"Lo que te está dando tranquilidad ahora puede ser exactamente lo que está debilitando tu posición para conseguir lo que quieres después."
+
+The observation should feel practical rather than philosophical.
+
+It should make the user reconsider what they are actually optimizing for.
+
+The user should pause after reading it.
+
+It should create the feeling:
+
+"...Damn. I’m playing the wrong game."`;
 
 export const buildSummaryMessages = ({ entries, weekStart, weekEnd }) => {
   const entriesSection = buildEntriesPromptSection(entries);
