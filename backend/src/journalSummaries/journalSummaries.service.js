@@ -22,6 +22,7 @@ const mapSummaryRow = (row) => ({
   bestQuote: row.best_quote,
   bestQuoteEntryId: row.best_quote_entry_id,
   socraticText: row.socratic_text,
+  machiavelliText: row.machiavelli_text,
   entryCount: row.entry_count,
   modelId: row.model_id,
   createdAt: toIso(row.created_at),
@@ -65,7 +66,7 @@ export const getWeeklySummaryForUser = async (userId, weekStart) => {
   const { rows } = await pool.query(
     `SELECT id, user_id, week_start, week_end, period_start, period_end,
             summary_text, main_topics, best_quote, best_quote_entry_id,
-            socratic_text, entry_count, model_id, created_at
+            socratic_text, machiavelli_text, entry_count, model_id, created_at
      FROM journal_weekly_summaries
      WHERE user_id = $1 AND week_start = $2`,
     [userId, weekStart],
@@ -84,6 +85,7 @@ export const createWeeklySummary = async ({
   bestQuote,
   bestQuoteEntryId,
   socraticText,
+  machiavelliText,
   entryCount,
   modelId,
 }) => {
@@ -91,11 +93,11 @@ export const createWeeklySummary = async ({
     `INSERT INTO journal_weekly_summaries (
        user_id, week_start, week_end, period_start, period_end,
        summary_text, main_topics, best_quote, best_quote_entry_id,
-       socratic_text, entry_count, model_id
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       socratic_text, machiavelli_text, entry_count, model_id
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
      RETURNING id, user_id, week_start, week_end, period_start, period_end,
                summary_text, main_topics, best_quote, best_quote_entry_id,
-               socratic_text, entry_count, model_id, created_at`,
+               socratic_text, machiavelli_text, entry_count, model_id, created_at`,
     [
       userId,
       weekStart,
@@ -107,6 +109,7 @@ export const createWeeklySummary = async ({
       bestQuote,
       bestQuoteEntryId,
       socraticText,
+      machiavelliText,
       entryCount,
       modelId,
     ],

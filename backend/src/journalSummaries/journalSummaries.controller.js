@@ -117,6 +117,7 @@ export const postCurrentJournalSummary = async (req, res) => {
         bestQuote: generated.bestQuote,
         bestQuoteEntryId: generated.bestQuoteEntryId,
         socraticText: generated.socraticText,
+        machiavelliText: generated.machiavelliText,
         entryCount: entries.length,
         modelId: generated.modelId,
       });

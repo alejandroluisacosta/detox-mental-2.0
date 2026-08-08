@@ -215,6 +215,22 @@ const JournalSummary = () => {
               </h2>
               <p className="journal-summary__socratic">{summary.socraticText}</p>
             </section>
+
+            {summary.machiavelliText && (
+              <section className="journal-summary__section">
+                <h2 className="journal-summary__heading journal-summary__heading--machiavelli">
+                  <img
+                    src="/images/machiavelli.webp"
+                    alt="Machiavelli"
+                    className="journal-summary__avatar"
+                  />
+                  Desafío Machiavélico
+                </h2>
+                <p className="journal-summary__machiavelli">
+                  {summary.machiavelliText}
+                </p>
+              </section>
+            )}
           </div>
         )}
 

@@ -89,5 +89,7 @@ export const DEMO_SUMMARY_PAYLOAD = {
       "Maybe I don't need a better plan. Maybe I need to become better at moving without one.",
     socraticText:
       'Si reconoces que gran parte de tu planificación ya no cambia lo que ocurrirá, ¿qué estás intentando conseguir realmente cuando sigues planificando: mejores decisiones o la sensación de estar protegido de las consecuencias de decidir?',
+    machiavelliText:
+      'Dices que quieres avanzar, pero sigues priorizando una estrategia que evita exponerte a la incertidumbre. ¿Qué posición esperas ganar si protegerte de decidir se ha convertido en el objetivo real?',
   },
 };
