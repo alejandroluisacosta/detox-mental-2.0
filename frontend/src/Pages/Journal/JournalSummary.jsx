@@ -147,6 +147,12 @@ const JournalSummary = () => {
             >
               Escribir
             </Link>
+            <Link
+              to="/journal/history"
+              className="journal-history__write-button journal-history__write-button--header journal-history__write-button--secondary"
+            >
+              Historial
+            </Link>
           </div>
         </header>
 

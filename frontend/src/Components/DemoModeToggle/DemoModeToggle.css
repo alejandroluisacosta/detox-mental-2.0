@@ -1,13 +1,13 @@
 .demo-mode-toggle {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   gap: 8px;
   align-self: flex-end;
   padding: 0;
   border: none;
   background: transparent;
-  color: #d63d2e;
+  color: var(--accent);
   font: inherit;
   cursor: pointer;
 }
