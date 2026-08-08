@@ -598,6 +598,21 @@
   color: var(--accent);
 }
 
+.journal-summary__heading--socratic {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.journal-summary__avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  object-position: center top;
+}
+
 .journal-summary__body,
 .journal-summary__socratic {
   margin: 0;

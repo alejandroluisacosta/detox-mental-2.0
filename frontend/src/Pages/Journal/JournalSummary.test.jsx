@@ -86,6 +86,9 @@ describe('JournalSummary page states', () => {
       expect(screen.getByText(/Escribiste sobre el trabajo/i)).toBeTruthy();
       expect(screen.getByText(/Nunca es suficiente/i)).toBeTruthy();
       expect(screen.getByText(/Qué prueba tienes/i)).toBeTruthy();
+      expect(screen.getByRole('heading', { name: /Pregunta de Sócrates/i })).toBeTruthy();
+      const avatar = screen.getByAltText('Sócrates');
+      expect(avatar.getAttribute('src')).toBe('/images/socrates.webp');
     });
   });
 });
