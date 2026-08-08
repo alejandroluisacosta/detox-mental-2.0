@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import Journal from './Journal.jsx';
 
 const mockUseAuth = vi.fn();
@@ -24,9 +24,29 @@ vi.mock('../../Components/CloseIcon/CloseIcon.jsx', () => ({
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 
+const mockScrollMetrics = (el, { scrollLeft, clientWidth, scrollWidth }) => {
+  Object.defineProperty(el, 'scrollLeft', {
+    configurable: true,
+    get: () => scrollLeft,
+  });
+  Object.defineProperty(el, 'clientWidth', {
+    configurable: true,
+    get: () => clientWidth,
+  });
+  Object.defineProperty(el, 'scrollWidth', {
+    configurable: true,
+    get: () => scrollWidth,
+  });
+};
+
 describe('Journal handwriting capture gating', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
+    global.ResizeObserver = class {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    };
   });
 
   afterEach(() => {
@@ -49,5 +69,52 @@ describe('Journal handwriting capture gating', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
     render(<Journal />);
     expect(screen.queryByRole('button', { name: /Escanear/i })).toBeNull();
+  });
+});
+
+describe('Journal topic edge fade', () => {
+  beforeEach(() => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    global.ResizeObserver = class {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    };
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('toggles fade classes from scroll overflow', () => {
+    render(<Journal />);
+    const topics = screen.getByRole('group', { name: 'Temas del diario' });
+
+    mockScrollMetrics(topics, {
+      scrollLeft: 0,
+      clientWidth: 320,
+      scrollWidth: 480,
+    });
+    fireEvent.scroll(topics);
+    expect(topics.className).toContain('journal-page__topics--fade-right');
+    expect(topics.className).not.toContain('journal-page__topics--fade-left');
+
+    mockScrollMetrics(topics, {
+      scrollLeft: 80,
+      clientWidth: 320,
+      scrollWidth: 480,
+    });
+    fireEvent.scroll(topics);
+    expect(topics.className).toContain('journal-page__topics--fade-left');
+    expect(topics.className).toContain('journal-page__topics--fade-right');
+
+    mockScrollMetrics(topics, {
+      scrollLeft: 160,
+      clientWidth: 320,
+      scrollWidth: 480,
+    });
+    fireEvent.scroll(topics);
+    expect(topics.className).toContain('journal-page__topics--fade-left');
+    expect(topics.className).not.toContain('journal-page__topics--fade-right');
   });
 });

@@ -205,7 +205,14 @@ const JournalSummary = () => {
             </section>
 
             <section className="journal-summary__section">
-              <h2 className="journal-summary__heading">Pregunta de Sócrates</h2>
+              <h2 className="journal-summary__heading journal-summary__heading--socratic">
+                <img
+                  src="/images/socrates.webp"
+                  alt="Sócrates"
+                  className="journal-summary__avatar"
+                />
+                Pregunta de Sócrates
+              </h2>
               <p className="journal-summary__socratic">{summary.socraticText}</p>
             </section>
           </div>
