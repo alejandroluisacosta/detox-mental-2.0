@@ -10,6 +10,7 @@ import {
   prepareImageForUpload,
   MAX_UPLOAD_BYTES,
 } from './journalImage.js';
+import { getTopicsFadeEdges } from './journalTopicsFade.js';
 import JournalSummaryBanner from './JournalSummaryBanner.jsx';
 import './Journal.css';
 
@@ -30,6 +31,7 @@ const Journal = () => {
   const { user, status } = useAuth();
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
+  const topicsRef = useRef(null);
   const [text, setText] = useState('');
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -37,6 +39,7 @@ const Journal = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [transcribing, setTranscribing] = useState(false);
+  const [fadeEdges, setFadeEdges] = useState({ left: false, right: false });
 
   const canUseImages = status === 'ready' && !!user;
   const busy = saving || transcribing;
@@ -49,9 +52,28 @@ const Journal = () => {
     el.style.height = `${el.scrollHeight}px`;
   };
 
+  const updateFadeEdges = () => {
+    const el = topicsRef.current;
+    if (!el) return;
+    const next = getTopicsFadeEdges(el);
+    setFadeEdges((prev) =>
+      prev.left === next.left && prev.right === next.right ? prev : next
+    );
+  };
+
   useEffect(() => {
     resizeTextarea();
   }, [text]);
+
+  useEffect(() => {
+    const el = topicsRef.current;
+    if (!el) return undefined;
+
+    updateFadeEdges();
+    const resizeObserver = new ResizeObserver(updateFadeEdges);
+    resizeObserver.observe(el);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -188,7 +210,11 @@ const Journal = () => {
 
         <div className="journal-page__composer">
           <div
-            className="journal-page__topics"
+            ref={topicsRef}
+            onScroll={updateFadeEdges}
+            className={`journal-page__topics${
+              fadeEdges.left ? ' journal-page__topics--fade-left' : ''
+            }${fadeEdges.right ? ' journal-page__topics--fade-right' : ''}`}
             role="group"
             aria-label="Temas del diario"
             style={{
