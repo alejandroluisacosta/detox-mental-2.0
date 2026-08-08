@@ -289,31 +289,34 @@
 
 .journal-history__header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 16px;
 }
 
-/* Two actions do not fit next to the title on narrow screens, so they move to
-   their own full-width row below it. */
-.journal-history__header--with-actions {
-  flex-direction: column;
-  align-items: stretch;
+.journal-history__header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
 }
 
 .journal-history__header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
-.journal-history__header--with-actions .journal-history__header-actions > * {
+.journal-history__header-actions > * {
   flex: 1 1 0;
 }
 
 .journal-history__title {
   margin: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 1.5rem;
   color: var(--accent);
 }
@@ -599,12 +602,7 @@
 }
 
 @media (min-width: 600px) {
-  .journal-history__header--with-actions {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .journal-history__header--with-actions .journal-history__header-actions > * {
+  .journal-history__header-actions > * {
     flex: 0 0 auto;
   }
 }

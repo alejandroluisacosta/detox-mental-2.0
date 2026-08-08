@@ -4,6 +4,7 @@ import JournalSummary from './JournalSummary.jsx';
 import { apiFetch } from '../../api/client.js';
 
 const mockUseAuth = vi.fn();
+const mockUseDemoMode = vi.fn();
 
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to }) => <a href={to}>{children}</a>,
@@ -11,6 +12,10 @@ vi.mock('react-router-dom', () => ({
 
 vi.mock('../../Context/AuthContext.jsx', () => ({
   useAuth: () => mockUseAuth(),
+}));
+
+vi.mock('../../Context/DemoModeContext.jsx', () => ({
+  useDemoMode: () => mockUseDemoMode(),
 }));
 
 vi.mock('../../Components/Navigation/Navigation.jsx', () => ({
@@ -23,7 +28,12 @@ vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 describe('JournalSummary page states', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
+    mockUseDemoMode.mockReset();
     apiFetch.mockReset();
+    mockUseDemoMode.mockReturnValue({
+      demoMode: false,
+      toggleDemoMode: vi.fn(),
+    });
   });
 
   afterEach(() => {
@@ -87,5 +97,23 @@ describe('JournalSummary page states', () => {
       expect(screen.getByText(/Nunca es suficiente/i)).toBeTruthy();
       expect(screen.getByText(/Qué prueba tienes/i)).toBeTruthy();
     });
+  });
+
+  test('renders demo summary immediately when demo mode is active', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    render(<JournalSummary />);
+
+    expect(
+      screen.getByText(/conviertes la necesidad de control en una virtud/i),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Maybe I don't need a better plan/i),
+    ).toBeTruthy();
+    expect(apiFetch).not.toHaveBeenCalled();
   });
 });
