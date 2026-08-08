@@ -12,7 +12,7 @@
   flex-direction: column;
   width: min(100%, 640px);
   margin: 0 auto;
-  padding: 96px 20px 120px;
+  padding: 96px 20px 60px;
   box-sizing: border-box;
 }
 
@@ -472,7 +472,7 @@
   line-height: 1.5;
   color: var(--text);
   white-space: pre-wrap;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .journal-history__excerpt--toggleable {

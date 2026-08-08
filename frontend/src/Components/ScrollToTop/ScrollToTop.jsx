@@ -1,12 +1,38 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 
-export default function ScrollToTop() {
+const scrollPolicies = [
+    { path: '/journal', scroll: 'bottom' },
+];
+
+const getScroll = (pathname) => {
+    const matchedPolicy = scrollPolicies.find(({ path }) =>
+        matchPath({ path, end: true }, pathname)
+    );
+
+    return matchedPolicy?.scroll ?? 'top';
+};
+
+const ScrollToTop = () => {
     const { pathname, search } = useLocation();
+    const scroll = getScroll(pathname);
 
     useEffect(() => {
+        if (scroll === 'bottom') {
+            const frameId = window.requestAnimationFrame(() => {
+                window.scrollTo(0, document.documentElement.scrollHeight);
+            });
+
+            return () => {
+                window.cancelAnimationFrame(frameId);
+            };
+        }
+
         window.scrollTo(0, 0);
-    }, [pathname, search]);
+        return undefined;
+    }, [pathname, scroll, search]);
 
     return null;
-}
+};
+
+export default ScrollToTop;
