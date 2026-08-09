@@ -74,12 +74,13 @@ export const DEMO_ENTRIES = [
 export const DEMO_SUMMARY_PAYLOAD = {
   weekStart: '2026-07-27',
   weekEnd: '2026-08-02',
-  canCreate: false,
   entryCount: DEMO_ENTRIES.length,
   minEntries: 2,
   window: {
     open: false,
-    enforced: false,
+    enforced: true,
+    opensAt: '2026-08-02T10:00:00.000Z',
+    closesAt: '2026-08-02T16:00:00.000Z',
   },
   summary: {
     mainTopics: ['Reflexión', 'Sabiduría', 'Preocupaciones'],

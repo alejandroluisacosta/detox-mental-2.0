@@ -39,8 +39,7 @@ test('getZonedParts reports Sunday in Madrid for window open instant', () => {
   assert.equal(parts.hour, 12);
 });
 
-test('isSummaryWindowOpen respects ENFORCE_SUMMARY_WINDOW bypass', () => {
-  // A random Wednesday — when enforcement is off (current default), open is true.
+test('isSummaryWindowOpen respects ENFORCE_SUMMARY_WINDOW', () => {
   const wednesday = new Date('2026-07-29T13:00:00.000Z');
   if (!ENFORCE_SUMMARY_WINDOW) {
     assert.equal(isSummaryWindowOpen(wednesday), true);

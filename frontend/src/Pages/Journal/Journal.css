@@ -180,6 +180,15 @@
   cursor: not-allowed;
 }
 
+.journal-page__complete-button--secondary {
+  background: var(--background);
+  color: var(--accent);
+}
+
+.journal-summary__regenerate {
+  margin-top: 32px;
+}
+
 .journal-page__history-link {
   display: block;
   text-align: center;

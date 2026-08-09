@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import { resolveSummaryAvailability } from './summaryAvailability.js';
 
 /**
  * Soft alert when the weekly summary can be created.
@@ -24,7 +25,9 @@ const JournalSummaryBanner = () => {
         const res = await apiFetch('/auth/me/journal-summaries/current');
         if (!res.ok) return;
         const data = await res.json();
-        if (!cancelled) setCanCreate(Boolean(data.canCreate));
+        if (!cancelled) {
+          setCanCreate(resolveSummaryAvailability(data).canCreate);
+        }
       } catch {
         if (!cancelled) setCanCreate(false);
       }
