@@ -7,9 +7,8 @@
 export const SUMMARY_TIMEZONE = 'Europe/Madrid';
 export const MIN_ENTRIES_FOR_SUMMARY = 2;
 
-// TEMP for local/dev testing: keep false so creation is not Sunday-gated.
-// Set to true before shipping the Sunday ritual.
-export const ENFORCE_SUMMARY_WINDOW = false;
+/** When true, creation window is Sunday 12:00–18:00 Europe/Madrid. */
+export const ENFORCE_SUMMARY_WINDOW = true;
 
 const WINDOW_START_HOUR = 12;
 const WINDOW_END_HOUR = 18;

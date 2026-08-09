@@ -8,6 +8,7 @@ import { apiFetch } from '../../api/client.js';
 import { DEMO_SUMMARY_PAYLOAD } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryLoadingScreen from './JournalSummaryLoadingScreen.jsx';
+import { resolveSummaryAvailability } from './summaryAvailability.js';
 import './Journal.css';
 
 const formatWeekLabel = (weekStart, weekEnd) => {
@@ -67,8 +68,8 @@ const JournalSummary = () => {
     loadCurrent();
   }, [loadCurrent]);
 
-  const handleCreate = async () => {
-    if (generating || !payload?.canCreate) return;
+  const handleGenerate = async () => {
+    if (generating) return;
 
     setGenerating(true);
     setGenerateReady(false);
@@ -90,7 +91,6 @@ const JournalSummary = () => {
       setGenerateReady(false);
       setPendingSummary(null);
       emitToast(err.message || 'No se pudo crear el resumen.');
-      // Refresh so canCreate / existing summary stay accurate after a race.
       loadCurrent();
     }
   };
@@ -102,7 +102,6 @@ const JournalSummary = () => {
           ? {
               ...prev,
               summary: pendingSummary,
-              canCreate: false,
             }
           : prev,
       );
@@ -125,7 +124,8 @@ const JournalSummary = () => {
   }
 
   const effectivePayload = demoMode ? DEMO_SUMMARY_PAYLOAD : payload;
-  const summary = effectivePayload?.summary;
+  const availability = resolveSummaryAvailability(effectivePayload);
+  const summary = availability.displayedSummary;
   const weekLabel = formatWeekLabel(
     effectivePayload?.weekStart,
     effectivePayload?.weekEnd,
@@ -231,12 +231,24 @@ const JournalSummary = () => {
                 </p>
               </section>
             )}
+
+            {!demoMode && (
+              <div className="journal-summary__regenerate">
+                <button
+                  type="button"
+                  className="journal-page__complete-button journal-page__complete-button--secondary"
+                  onClick={handleGenerate}
+                >
+                  REGENERAR RESUMEN
+                </button>
+              </div>
+            )}
           </div>
         )}
 
         {!demoMode && status === 'ready' && user && !loading && !summary && (
           <div className="journal-summary__create">
-            {effectivePayload?.canCreate ? (
+            {availability.canCreate ? (
               <>
                 <p className="journal-summary__lead">
                   Ya puedes crear el resumen de esta semana a partir de tus
@@ -245,25 +257,25 @@ const JournalSummary = () => {
                 <button
                   type="button"
                   className="journal-page__complete-button"
-                  onClick={handleCreate}
+                  onClick={handleGenerate}
                 >
                   CREAR RESUMEN
                 </button>
               </>
             ) : (
               <div className="journal-history__empty">
-                {(effectivePayload?.entryCount ?? 0) < (effectivePayload?.minEntries ?? 2) ? (
+                {availability.entryCount < availability.minEntries ? (
                   <>
                     <p>
-                      Necesitas al menos {effectivePayload?.minEntries ?? 2} entradas
+                      Necesitas al menos {availability.minEntries} entradas
                       esta semana para crear el resumen. Llevas{' '}
-                      {effectivePayload?.entryCount ?? 0}.
+                      {availability.entryCount}.
                     </p>
                     <Link to="/journal" className="journal-history__action-link">
                       Escribir
                     </Link>
                   </>
-                ) : effectivePayload?.window?.enforced && !effectivePayload?.window?.open ? (
+                ) : availability.windowEnforced && !availability.windowOpen ? (
                   <p>
                     El resumen se puede crear el domingo de 12:00 a 18:00 (hora
                     de Madrid). Mientras tanto, sigue escribiendo.

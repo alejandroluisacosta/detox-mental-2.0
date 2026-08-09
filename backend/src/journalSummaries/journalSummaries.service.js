@@ -116,3 +116,60 @@ export const createWeeklySummary = async ({
   );
   return mapSummaryRow(rows[0]);
 };
+
+/** Insert or replace the week's summary. Always refreshes created_at. */
+export const upsertWeeklySummary = async ({
+  userId,
+  weekStart,
+  weekEnd,
+  periodStart,
+  periodEnd,
+  summaryText,
+  mainTopics,
+  bestQuote,
+  bestQuoteEntryId,
+  socraticText,
+  machiavelliText,
+  entryCount,
+  modelId,
+}) => {
+  const { rows } = await pool.query(
+    `INSERT INTO journal_weekly_summaries (
+       user_id, week_start, week_end, period_start, period_end,
+       summary_text, main_topics, best_quote, best_quote_entry_id,
+       socratic_text, machiavelli_text, entry_count, model_id
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+     ON CONFLICT (user_id, week_start) DO UPDATE SET
+       week_end = EXCLUDED.week_end,
+       period_start = EXCLUDED.period_start,
+       period_end = EXCLUDED.period_end,
+       summary_text = EXCLUDED.summary_text,
+       main_topics = EXCLUDED.main_topics,
+       best_quote = EXCLUDED.best_quote,
+       best_quote_entry_id = EXCLUDED.best_quote_entry_id,
+       socratic_text = EXCLUDED.socratic_text,
+       machiavelli_text = EXCLUDED.machiavelli_text,
+       entry_count = EXCLUDED.entry_count,
+       model_id = EXCLUDED.model_id,
+       created_at = NOW()
+     RETURNING id, user_id, week_start, week_end, period_start, period_end,
+               summary_text, main_topics, best_quote, best_quote_entry_id,
+               socratic_text, machiavelli_text, entry_count, model_id, created_at`,
+    [
+      userId,
+      weekStart,
+      weekEnd,
+      periodStart,
+      periodEnd,
+      summaryText,
+      mainTopics,
+      bestQuote,
+      bestQuoteEntryId,
+      socraticText,
+      machiavelliText,
+      entryCount,
+      modelId,
+    ],
+  );
+  return mapSummaryRow(rows[0]);
+};

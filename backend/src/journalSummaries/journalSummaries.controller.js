@@ -1,19 +1,15 @@
 import {
   buildWindowPayload,
   getWeekBounds,
-  isSummaryWindowOpen,
   MIN_ENTRIES_FOR_SUMMARY,
 } from './summaryWindow.js';
 import {
-  countJournalEntriesInRange,
-  createWeeklySummary,
-  getWeeklySummaryForUser,
   listJournalEntriesInRange,
+  countJournalEntriesInRange,
+  getWeeklySummaryForUser,
+  upsertWeeklySummary,
 } from './journalSummaries.service.js';
 import { generateWeeklySummaryContent } from './journalSummaries.generation.js';
-
-const uniqueViolation = (err) =>
-  err?.code === '23505' || /duplicate key/i.test(String(err?.message ?? ''));
 
 const buildCurrentPayload = async (userId, now = new Date()) => {
   const bounds = getWeekBounds(now);
@@ -23,18 +19,12 @@ const buildCurrentPayload = async (userId, now = new Date()) => {
     getWeeklySummaryForUser(userId, bounds.weekStart),
   ]);
 
-  const canCreate =
-    window.open &&
-    !summary &&
-    entryCount >= MIN_ENTRIES_FOR_SUMMARY;
-
   return {
     weekStart: bounds.weekStart,
     weekEnd: bounds.weekEnd,
     window,
     entryCount,
     minEntries: MIN_ENTRIES_FOR_SUMMARY,
-    canCreate,
     summary,
   };
 };
@@ -52,24 +42,7 @@ export const getCurrentJournalSummary = async (req, res) => {
 export const postCurrentJournalSummary = async (req, res) => {
   try {
     const now = new Date();
-    if (!isSummaryWindowOpen(now)) {
-      return res.status(403).json({
-        message:
-          'El resumen semanal solo se puede crear el domingo de 12:00 a 18:00 (hora de Madrid).',
-      });
-    }
-
     const bounds = getWeekBounds(now);
-    const existing = await getWeeklySummaryForUser(
-      req.user.id,
-      bounds.weekStart,
-    );
-    if (existing) {
-      return res.status(409).json({
-        message: 'Ya existe un resumen para esta semana.',
-        summary: existing,
-      });
-    }
 
     const entries = await listJournalEntriesInRange(
       req.user.id,
@@ -105,36 +78,22 @@ export const postCurrentJournalSummary = async (req, res) => {
       });
     }
 
-    try {
-      const summary = await createWeeklySummary({
-        userId: req.user.id,
-        weekStart: bounds.weekStart,
-        weekEnd: bounds.weekEnd,
-        periodStart: bounds.periodStart,
-        periodEnd: bounds.periodEnd,
-        summaryText: generated.summaryText,
-        mainTopics: generated.mainTopics,
-        bestQuote: generated.bestQuote,
-        bestQuoteEntryId: generated.bestQuoteEntryId,
-        socraticText: generated.socraticText,
-        machiavelliText: generated.machiavelliText,
-        entryCount: entries.length,
-        modelId: generated.modelId,
-      });
-      return res.status(201).json({ summary });
-    } catch (insertErr) {
-      if (uniqueViolation(insertErr)) {
-        const summary = await getWeeklySummaryForUser(
-          req.user.id,
-          bounds.weekStart,
-        );
-        return res.status(409).json({
-          message: 'Ya existe un resumen para esta semana.',
-          summary,
-        });
-      }
-      throw insertErr;
-    }
+    const summary = await upsertWeeklySummary({
+      userId: req.user.id,
+      weekStart: bounds.weekStart,
+      weekEnd: bounds.weekEnd,
+      periodStart: bounds.periodStart,
+      periodEnd: bounds.periodEnd,
+      summaryText: generated.summaryText,
+      mainTopics: generated.mainTopics,
+      bestQuote: generated.bestQuote,
+      bestQuoteEntryId: generated.bestQuoteEntryId,
+      socraticText: generated.socraticText,
+      machiavelliText: generated.machiavelliText,
+      entryCount: entries.length,
+      modelId: generated.modelId,
+    });
+    return res.status(201).json({ summary });
   } catch (err) {
     console.error('[journal-summaries POST current]', err);
     return res.status(500).json({ message: 'Error al crear el resumen.' });

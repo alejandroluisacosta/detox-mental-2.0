@@ -12,17 +12,13 @@
   flex-direction: column;
   width: min(100%, 640px);
   margin: 0 auto;
-  padding: 96px 20px 60px;
+  padding: 30px 20px 60px;
   box-sizing: border-box;
 }
 
 .journal-page__main--history {
   justify-content: flex-start;
   gap: 24px;
-}
-
-.journal-page--history .journal-page__main {
-  padding-top: 30px;
 }
 
 .journal-page__prompt {
@@ -182,6 +178,15 @@
 .journal-page__complete-button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.journal-page__complete-button--secondary {
+  background: var(--background);
+  color: var(--accent);
+}
+
+.journal-summary__regenerate {
+  margin-top: 32px;
 }
 
 .journal-page__history-link {
