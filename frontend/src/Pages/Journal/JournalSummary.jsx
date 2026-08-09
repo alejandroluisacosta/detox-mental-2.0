@@ -211,7 +211,7 @@ const JournalSummary = () => {
                   alt="Sócrates"
                   className="journal-summary__avatar"
                 />
-                Pregunta de Sócrates
+                Pregunta Socrática
               </h2>
               <p className="journal-summary__socratic">{summary.socraticText}</p>
             </section>
