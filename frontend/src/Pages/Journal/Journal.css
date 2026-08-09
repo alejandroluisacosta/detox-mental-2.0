@@ -12,17 +12,13 @@
   flex-direction: column;
   width: min(100%, 640px);
   margin: 0 auto;
-  padding: 96px 20px 60px;
+  padding: 30px 20px 60px;
   box-sizing: border-box;
 }
 
 .journal-page__main--history {
   justify-content: flex-start;
   gap: 24px;
-}
-
-.journal-page--history .journal-page__main {
-  padding-top: 30px;
 }
 
 .journal-page__prompt {
