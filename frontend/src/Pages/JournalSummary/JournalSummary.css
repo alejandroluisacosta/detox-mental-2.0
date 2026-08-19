@@ -1,6 +1,7 @@
 .journal-summary__main {
   justify-content: flex-start;
   gap: 24px;
+  padding-top: 30px;
 }
 
 .journal-summary__header {
