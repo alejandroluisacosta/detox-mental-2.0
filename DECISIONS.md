@@ -124,3 +124,20 @@ Generate the weekly journal reflection **on user click** during a limited Sunday
 
 **What would trigger revisiting:**  
 Persistent timeouts, desire for push/email reminders, or a multi-week archive/compare product surface.
+
+### 2026-08-19 — Journal frontend split into one folder per page and component
+
+**Decision:**  
+Split the journaling UI so each routed page (`Journal`, `JournalHistory`, `JournalSummary`) and each shared component (`JournalConfirmModal`, `JournalSummaryBanner`, `JournalSummaryLoadingScreen`) owns a folder with colocated JSX, CSS, and tests. Pure helpers moved to `frontend/src/utils/` and static quotes to `frontend/src/data/`. The shared page shell (`.journal-page`, `.journal-page__main`) stays in `index.css`. Layout conventions are enforced by `.cursor/rules/frontend-structure.mdc`.
+
+**Why this option was chosen:**  
+`Pages/Journal/` had accumulated three pages, two components, helpers, and one 663-line stylesheet. That packing is what the rest of `frontend/src/` already avoids (one folder per page/component, sibling CSS). A Cursor rule with `globs: frontend/src/**` is injected when an agent touches frontend files, which a README-only convention would not be.
+
+**Why obvious alternatives were rejected:**  
+- **Keep one `Journal.css` imported by every journal screen:** Hides ownership and is how the folder bloated.  
+- **Put all cross-page rules in `index.css`:** Would turn the global sheet into a dumping ground. Only the 17-line page shell is actually shared.  
+- **Colocate helpers next to their only caller:** Breaks the "folder = component" rule and repeats the original mess for non-JSX files. Existing `utils/` and `data/` already match this split.  
+- **Merge the two loading screens into one shared component:** Would also touch `ThoughtsTest`; this pass copied the CSS with journal-prefixed classes and left ThoughtsTest alone.
+
+**What would trigger revisiting:**  
+A third loading screen with the same markup, or a journal page modifier of `.journal-page` that is clearly needed by every journal route, in which case it can join the shell in `index.css`.
