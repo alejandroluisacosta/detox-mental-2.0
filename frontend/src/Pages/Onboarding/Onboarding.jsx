@@ -316,11 +316,11 @@ export default function Onboarding() {
               className="onboarding__exit-button"
               role="button"
               tabIndex={0}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/theory")}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  navigate("/");
+                  navigate("/theory");
                 }
               }}
             >

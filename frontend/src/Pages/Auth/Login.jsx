@@ -57,10 +57,7 @@ export default function Login() {
               login. Revisa tu bandeja de entrada.
             </p>
             <Link className="auth-page__footer-link" to="/">
-              Ir a la teoría
-            </Link>
-            <Link className="auth-page__footer-link" to="/course">
-              Ir al curso
+              Ir al inicio
             </Link>
           </>
         ) : (
@@ -91,10 +88,7 @@ export default function Login() {
               {loading ? "Enviando…" : "Enviar enlace"}
             </button>
             <Link className="auth-page__footer-link" to="/">
-              Ir a la teoría
-            </Link>
-            <Link className="auth-page__footer-link" to="/course">
-              Ir al curso
+              Ir al inicio
             </Link>
           </form>
         )}

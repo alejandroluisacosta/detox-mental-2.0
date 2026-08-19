@@ -75,6 +75,7 @@
     border: 1px solid var(--background);
     border-radius: 12px;
     min-height: 52px;
+    padding: 12px 16px;
     background: transparent;
     color: var(--background);
     font-size: 20px;
@@ -98,6 +99,27 @@
     color: var(--accent);
     font-weight: 700;
     border: 2px solid #F9CB40;
+}
+
+.navigation__menu-link--home {
+    align-self: center;
+    width: 52px;
+    min-height: 52px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navigation__menu-link--home:focus-visible {
+    outline: 2px solid var(--background);
+    outline-offset: 2px;
+}
+
+.navigation__menu-home-icon {
+    width: 24px;
+    height: 24px;
 }
 
 @keyframes navigation-menu-slide-in {

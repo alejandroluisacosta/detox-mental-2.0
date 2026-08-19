@@ -223,7 +223,7 @@ function ThoughtsTestChat() {
   }, [phase, loading, stepIndex, test]);
 
   if (!test) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/theory" replace />;
   }
 
   const currentQuestion = test.questions[stepIndex];

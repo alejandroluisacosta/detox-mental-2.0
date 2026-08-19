@@ -20,6 +20,7 @@ import Tests from './Pages/Tests/Tests.jsx';
 import Journal from './Pages/Journal/Journal.jsx';
 import JournalHistory from './Pages/JournalHistory/JournalHistory.jsx';
 import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
+import Home from './Pages/Home/Home.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 import { DemoModeProvider } from './Context/DemoModeContext.jsx';
 
@@ -33,25 +34,29 @@ const App = () => {
                     <DemoModeProvider>
                         <SessionsProvider>
                             <Routes>
-                                <Route path='/onboarding' element={<OnboardingWrapper />} />
+                                {/* Shared */}
+                                <Route path='/' element={<Home />} />
                                 <Route path='/login' element={<Login />} />
                                 <Route path='/auth/error' element={<AuthError />} />
+                                <Route path='/account' element={<Account />} />
+
+                                {/* Journaling module — independent of onboarding */}
+                                <Route path='/journal' element={<Journal />} />
+                                <Route path='/journal/history' element={<JournalHistory />} />
+                                <Route path='/journal/summary' element={<JournalSummary />} />
+
+                                {/* Educational module */}
+                                <Route path='/onboarding' element={<OnboardingWrapper />} />
                                 <Route path='/payment/success' element={<PaymentSuccess />} />
                                 <Route path='/payment/cancel' element={<PaymentCancel />} />
-
-                                {/* Onboarding gate (exclude /onboarding to avoid redirect loop) */}
                                 <Route element={<OnboardingGate />}>
-                                    <Route path='/' element={<ArticleWrapper />} />
-                                    <Route path='course' element={<CourseWrapper />} />
-                                    <Route path='promo' element={<PromoGate />} />
-                                    <Route path='instructions' element={<Instructions />} />
-                                    <Route path='account' element={<Account />} />
-                                    <Route path='tests' element={<Tests />} />
-                                    <Route path='test/:testId' element={<ThoughtsTest />} />
-                                    <Route path='journal/history' element={<JournalHistory />} />
-                                    <Route path='journal/summary' element={<JournalSummary />} />
-                                    <Route path='journal' element={<Journal />} />
-                                    <Route path='session/:sessionId' element={<Session />} />
+                                    <Route path='/theory' element={<ArticleWrapper />} />
+                                    <Route path='/course' element={<CourseWrapper />} />
+                                    <Route path='/session/:sessionId' element={<Session />} />
+                                    <Route path='/instructions' element={<Instructions />} />
+                                    <Route path='/tests' element={<Tests />} />
+                                    <Route path='/test/:testId' element={<ThoughtsTest />} />
+                                    <Route path='/promo' element={<PromoGate />} />
                                 </Route>
                             </Routes>
                         </SessionsProvider>

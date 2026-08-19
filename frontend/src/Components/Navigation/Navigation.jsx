@@ -3,27 +3,26 @@ import './Navigation.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { isPromoEnabled } from '../../data/promoConfig.js';
+import {
+    EDUCATIONAL_LINKS,
+    JOURNALING_LINKS,
+    resolveNavModule,
+} from '../../data/navigationModules.js';
 
 const Navigation = () => {
     const [menuState, setMenuState] = useState('closed');
     const navigate = useNavigate();
     const location = useLocation();
     const { user, status } = useAuth();
-    const isCourseRoute = location.pathname.startsWith('/course') || location.pathname.startsWith('/session');
-    const isTestsRoute = location.pathname.startsWith('/tests') || location.pathname.startsWith('/test');
-    const isJournalRoute = location.pathname.startsWith('/journal');
+    const navModule = resolveNavModule(location.pathname);
+    const moduleLinks = navModule === 'journaling' ? JOURNALING_LINKS : EDUCATIONAL_LINKS;
     const isPromoRoute = location.pathname.startsWith('/promo');
     const isAccountRoute = location.pathname.startsWith('/account') || location.pathname.startsWith('/login');
     const menuLinks = [
-        { label: 'TEORÍA', path: '/', isActive: location.pathname === '/' },
-        { label: 'CURSO', path: '/course', isActive: isCourseRoute },
-        { label: 'TESTS', path: '/tests', isActive: isTestsRoute },
-        { label: 'DIARIO', path: '/journal', isActive: isJournalRoute },
-        {
-            label: 'INSTRUCCIONES',
-            path: '/instructions',
-            isActive: location.pathname.startsWith('/instructions'),
-        },
+        ...moduleLinks.map((link) => ({
+            ...link,
+            isActive: link.isActive(location.pathname),
+        })),
         {
             label: user ? 'CUENTA' : 'LOGIN',
             path: user ? '/account' : '/login',
@@ -83,7 +82,7 @@ const Navigation = () => {
                                 {link.label}
                             </button>
                         ))}
-                        {isPromoEnabled() && (
+                        {navModule === 'educational' && isPromoEnabled() && (
                             <button
                                 type='button'
                                 className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`}
@@ -92,6 +91,19 @@ const Navigation = () => {
                                 GANA 25€
                             </button>
                         )}
+                        <button
+                            type='button'
+                            className='navigation__menu-link navigation__menu-link--home'
+                            onClick={() => goTo('/')}
+                            aria-label='Inicio'
+                        >
+                            <img
+                                className='navigation__menu-home-icon'
+                                src='/images/home.svg'
+                                alt=''
+                                aria-hidden='true'
+                            />
+                        </button>
                     </div>
                 </div>
             )}
@@ -112,6 +124,6 @@ const Navigation = () => {
             )}
         </>
     );
-}
+};
 
 export default Navigation;

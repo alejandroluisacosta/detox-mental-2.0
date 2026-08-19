@@ -51,9 +51,15 @@ The Vite development server is configured on port `3001` in
 
 ### Routing and access
 
-Public routes include onboarding, login, authentication errors, and payment
-results. The rest of the application is nested under `OnboardingGate`, which
-checks the `onboardingRevealed` local-storage flag.
+`/` is the module chooser (`Home`). Shared account and auth routes (`/login`,
+`/auth/error`, `/account`) and the journaling module (`/journal`,
+`/journal/history`, `/journal/summary`) are reachable without onboarding.
+
+The educational module (`/theory`, `/course`, `/session/:sessionId`,
+`/instructions`, `/tests`, `/test/:testId`, `/promo`) is nested under
+`OnboardingGate`, which checks the `onboardingRevealed` local-storage flag.
+`/onboarding` and the payment result pages stay outside the gate to avoid
+redirect loops and to complete Stripe return URLs.
 
 `OnboardingGate` is not an authentication gate. Pages that require an account
 must check `useAuth()` or rely on a protected backend endpoint. Authentication
