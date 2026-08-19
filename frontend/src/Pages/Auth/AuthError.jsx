@@ -26,10 +26,7 @@ export default function AuthError() {
           Solicitar un nuevo enlace
         </Link>
         <Link className="auth-page__footer-link" to="/">
-          Ir a la teoría
-        </Link>
-        <Link className="auth-page__footer-link" to="/course">
-          Ir al curso
+          Ir al inicio
         </Link>
       </div>
     </div>

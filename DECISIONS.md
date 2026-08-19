@@ -139,3 +139,15 @@ That decision required server-side window enforcement and rejected free regenera
 
 **Operational implications (accepted):**  
 An authenticated client can call POST outside the window (cost/abuse surface). Acceptable while Regenerar exists for testing.
+
+### 2026-08-19 — Split the SPA into educational and journaling modules
+
+**Decision:**  
+Separate the product into two modules behind a homepage chooser at `/`. The educational module (`/theory`, `/course`, `/session/:sessionId`, `/instructions`, `/tests`, `/test/:testId`, `/promo`) remains behind `OnboardingGate`. The journaling module (`/journal`, `/journal/history`, `/journal/summary`) and shared account/auth pages are reachable without onboarding. Each module has its own navigation; a home control returns to `/`. The former article route at `/` moves to `/theory`.
+
+**Why this option was chosen:**  
+This is a product-oriented change that comes from experimentation with the product in the past months. What originally started as an educational-only tool has evolved into a reflection one based on the results of testing the app with online advertisement. Since the journaling features are independent from the original product idea, they are separated at this point, and in the future, based on the results of further testing, the educational module might disappear altogether.
+
+**Why this revisits 2026-01-28:**  
+That decision treated onboarding as a precondition for accessing the app. The gate now guards the educational module only, so journaling can be used and advertised independently.
+
