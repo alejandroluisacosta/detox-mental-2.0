@@ -124,3 +124,18 @@ Generate the weekly journal reflection **on user click** during a limited Sunday
 
 **What would trigger revisiting:**  
 Persistent timeouts, desire for push/email reminders, or a multi-week archive/compare product surface.
+### 2026-08-09 — Summary create gating moved to the SPA; POST upserts
+
+**Decision:**  
+`GET /auth/me/journal-summaries/current` returns raw `summary` + `window` + `entryCount`. The SPA derives create availability (including hiding summaries with `createdAt < window.opensAt` while the window is open). `POST /current` no longer returns `403`/`409`; it generates from the week’s entries and **upserts** (refreshing `created_at`). A temporary **Regenerar** button on the summary page calls the same POST for testing.
+
+**Why this option was chosen:**  
+- Mid-week test regenerations must not block the next Sunday create CTA.
+- One POST path for create and regenerate keeps the backend a pure generator.
+- Removing the Regenerar button later restores one-create-per-window UX without backend changes.
+
+**Why this revisits 2026-08-01:**  
+That decision required server-side window enforcement and rejected free regenerate. Product/testing needs temporarily override that; the SPA still presents the Sunday ritual. Re-add server `403`/`409` if abuse or cost becomes a problem.
+
+**Operational implications (accepted):**  
+An authenticated client can call POST outside the window (cost/abuse surface). Acceptable while Regenerar exists for testing.

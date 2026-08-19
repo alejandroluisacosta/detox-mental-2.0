@@ -125,6 +125,15 @@
   cursor: not-allowed;
 }
 
+.journal-summary__complete-button--secondary {
+  background: var(--background);
+  color: var(--accent);
+}
+
+.journal-summary__regenerate {
+  margin-top: 32px;
+}
+
 .journal-summary__history-link {
   display: block;
   text-align: center;

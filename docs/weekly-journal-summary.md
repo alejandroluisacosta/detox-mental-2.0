@@ -142,7 +142,9 @@ Mount next to existing journal routes in `backend/src/auth/auth.routes.js`.
 
 ### `GET /auth/me/journal-summaries/current`
 
-Returns window + week metadata + summary if present.
+Returns window + week metadata + summary if present. Creation gating is
+computed on the frontend from this payload (see
+`frontend/src/utils/summaryAvailability.js`).
 
 ```json
 {
@@ -151,25 +153,32 @@ Returns window + week metadata + summary if present.
   "window": {
     "timezone": "Europe/Madrid",
     "open": true,
+    "enforced": true,
     "opensAt": "2026-08-02T10:00:00.000Z",
     "closesAt": "2026-08-02T16:00:00.000Z"
   },
   "entryCount": 5,
-  "canCreate": true,
+  "minEntries": 2,
   "summary": null
 }
 ```
 
-`canCreate` = authenticated + window open + no existing summary + `entryCount > 0`.
+Frontend `canCreate` = window open + no displayed (non-stale) summary +
+`entryCount >= minEntries`. A summary is stale when `createdAt < window.opensAt`
+while the window is open (hidden so a new week’s create CTA can appear).
 
 ### `POST /auth/me/journal-summaries/current`
 
 - Requires auth
-- Server recomputes week + window (never trust client clock alone for authorization)
+- Server recomputes week bounds from the current time
 - Loads entries in `[period_start, period_end)`
-- Calls model, validates JSON, inserts row
-- Returns the created summary
-- Conflicts: `409` if already exists; `403` if outside window; `422` if no entries
+- Calls model, validates JSON, upserts the row for `(user_id, week_start)`
+  (replaces any existing summary; refreshes `created_at`)
+- Returns the created/updated summary
+- Errors: `422` if fewer than `minEntries` entries; `502`/`503` on generation
+  failures
+- Does **not** enforce the Sunday window or reject an existing summary —
+  the SPA decides when to show Create vs Regenerate
 
 ### Optional later
 
@@ -222,7 +231,7 @@ Also pass entry ids + timestamps so the backend can optionally attach `best_quot
 | Route | `/journal/summary` in `App.jsx` beside existing journal routes |
 | Page | `frontend/src/Pages/Journal/JournalSummary.jsx` (+ CSS in `Journal.css` or sibling) |
 | Loading | Adapt `TestLoadingScreen` pattern: progress + reflective quote, but `onDone` waits for **real** `POST` (or `Promise.all` of min display time + request) |
-| CTA / alert | Banner on `/journal` and/or `/journal/history` when `window.open && canCreate`; optionally subtle nav hint |
+| CTA / alert | Banner on `/journal` when frontend `canCreate` (window open, non-stale, enough entries) |
 | Result layout | Four stacked sections (not a dashboard of cards): Summary → Best quote → Socratic prompt → Machiavellian challenge |
 | History link | From journal header area: “Resumen” next to “Escribir” / history patterns |
 
@@ -245,7 +254,7 @@ Closest existing pattern: client date gate in `promoConfig.js` / `PromoGate` —
 
 Build in thin vertical slices; each slice shippable alone.
 
-1. **Window + status API** — `GET current` with `open` / `entryCount` / `canCreate`; no LLM yet.
+1. **Window + status API** — `GET current` with `open` / `entryCount` / `summary`; frontend derives create availability.
 2. **Summary page shell + CTA banner** — wired to GET; empty / closed / ready states.
 3. **Persistence + POST without LLM** — stubbed summary text for local/dev to prove uniqueness + UX.
 4. **Real LLM generation** — prompt, parse, store, loading screen tied to request.
@@ -263,22 +272,26 @@ Build in thin vertical slices; each slice shippable alone.
 
 1. **Window:** Sunday 12:00–18:00, `Europe/Madrid`.
 2. **Missed Sunday:** No late creation. Summaries remain **readable anytime** after they exist.
-3. **Regeneration:** Never once stored. **Retry only when generation fails** (no row written).
+3. **Regeneration:** Temporary testing `REGENERAR RESUMEN` button on the summary
+   page calls the same `POST /current` (upsert). Remove that button to restore
+   one-create-per-window UX. Retry still applies when generation fails (no row).
 4. **Minimum writing:** At least **2 entries** in the week. No minimum character count.
 5. **Access:** All logged-in users (same as journal today).
 6. **Socratic tone:** Sharper / challenging (tunable later).
 7. **Machiavellian tone:** Practical and strategic; challenge the user's incentives without recommending manipulation.
 8. **Copy language:** Spanish UI + Spanish prompts for v1.
 
-### Dev bypass
+### Window enforcement
 
-`ENFORCE_SUMMARY_WINDOW` in `backend/src/journalSummaries/summaryWindow.js` is **`false`** while developing so creation can be tested any day. Set it to `true` before shipping the Sunday ritual.
-
+`ENFORCE_SUMMARY_WINDOW` in `backend/src/journalSummaries/summaryWindow.js` is
+**`true`**. The SPA uses `window.open` / `window.opensAt` for create CTA and
+stale-summary hiding. The POST endpoint does not re-check the clock.
 ## 14. Success criteria
 
 - Users who write during the week have a clear Sunday ritual that returns value from their own words.
 - Summary feels personal (topics + quote from *their* text), not generic wellness filler.
 - Socratic section produces a question the user could actually journal about next.
 - Machiavellian section exposes whether the user's strategy supports their stated goal.
-- Creation cannot be spammed (one per week; window enforced server-side).
+- Creation cannot be spammed from the product UI (one create CTA per Sunday
+  window; temporary regenerate is explicit for testing).
 - Experience stays within the 20s serverless budget for typical weekly volume.

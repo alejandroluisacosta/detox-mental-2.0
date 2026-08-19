@@ -48,17 +48,21 @@ describe('JournalSummary page states', () => {
     ).toBeTruthy();
   });
 
-  test('shows create CTA when canCreate is true', async () => {
+  test('shows create CTA when the window is open and there is no summary', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     apiFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
         weekStart: '2026-07-27',
         weekEnd: '2026-08-02',
-        window: { open: true, enforced: false },
+        window: {
+          open: true,
+          enforced: true,
+          opensAt: '2026-08-02T10:00:00.000Z',
+          closesAt: '2026-08-02T16:00:00.000Z',
+        },
         entryCount: 3,
         minEntries: 2,
-        canCreate: true,
         summary: null,
       }),
     });
@@ -71,17 +75,55 @@ describe('JournalSummary page states', () => {
     });
   });
 
-  test('renders stored summary sections', async () => {
+  test('shows create CTA when the only summary is stale for this window', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     apiFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
         weekStart: '2026-07-27',
         weekEnd: '2026-08-02',
-        window: { open: true, enforced: false },
+        window: {
+          open: true,
+          enforced: true,
+          opensAt: '2026-08-02T10:00:00.000Z',
+          closesAt: '2026-08-02T16:00:00.000Z',
+        },
         entryCount: 3,
         minEntries: 2,
-        canCreate: false,
+        summary: {
+          summaryText: 'Resumen de mitad de semana',
+          createdAt: '2026-07-29T12:00:00.000Z',
+          mainTopics: ['Trabajo'],
+          bestQuote: 'Nunca es suficiente',
+          socraticText: '¿Qué prueba tienes de eso?',
+        },
+      }),
+    });
+
+    render(<JournalSummary />);
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /CREAR RESUMEN/i }),
+      ).toBeTruthy();
+    });
+    expect(screen.queryByText(/Resumen de mitad de semana/i)).toBeNull();
+  });
+
+  test('renders stored summary sections and regenerate button', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        weekStart: '2026-07-27',
+        weekEnd: '2026-08-02',
+        window: {
+          open: false,
+          enforced: true,
+          opensAt: '2026-08-02T10:00:00.000Z',
+          closesAt: '2026-08-02T16:00:00.000Z',
+        },
+        entryCount: 3,
+        minEntries: 2,
         summary: {
           summaryText: 'Escribiste sobre el trabajo y la duda.',
           mainTopics: ['Trabajo'],
@@ -89,6 +131,7 @@ describe('JournalSummary page states', () => {
           socraticText: '¿Qué prueba tienes de eso?',
           machiavelliText:
             '¿Qué posición esperas ganar si sigues evitando el conflicto?',
+          createdAt: '2026-08-02T11:00:00.000Z',
         },
       }),
     });
@@ -111,6 +154,9 @@ describe('JournalSummary page states', () => {
       expect(machiavelliAvatar.getAttribute('src')).toBe(
         '/images/machiavelli.webp',
       );
+      expect(
+        screen.getByRole('button', { name: /REGENERAR RESUMEN/i }),
+      ).toBeTruthy();
     });
   });
 
@@ -121,15 +167,20 @@ describe('JournalSummary page states', () => {
       json: async () => ({
         weekStart: '2026-07-27',
         weekEnd: '2026-08-02',
-        window: { open: true, enforced: false },
+        window: {
+          open: false,
+          enforced: true,
+          opensAt: '2026-08-02T10:00:00.000Z',
+          closesAt: '2026-08-02T16:00:00.000Z',
+        },
         entryCount: 3,
         minEntries: 2,
-        canCreate: false,
         summary: {
           summaryText: 'Escribiste sobre el trabajo y la duda.',
           mainTopics: ['Trabajo'],
           bestQuote: 'Nunca es suficiente',
           socraticText: '¿Qué prueba tienes de eso?',
+          createdAt: '2026-08-02T11:00:00.000Z',
         },
       }),
     });
@@ -160,5 +211,8 @@ describe('JournalSummary page states', () => {
       screen.getByText(/Maybe I don't need a better plan/i),
     ).toBeTruthy();
     expect(apiFetch).not.toHaveBeenCalled();
+    expect(
+      screen.queryByRole('button', { name: /REGENERAR RESUMEN/i }),
+    ).toBeNull();
   });
 });
