@@ -26,7 +26,7 @@ vi.mock('../../Components/CloseIcon/CloseIcon.jsx', () => ({
   default: () => null,
 }));
 
-vi.mock('./JournalSummaryBanner.jsx', () => ({
+vi.mock('../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx', () => ({
   default: () => null,
 }));
 

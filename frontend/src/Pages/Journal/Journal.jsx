@@ -9,9 +9,9 @@ import {
   validateImageFile,
   prepareImageForUpload,
   MAX_UPLOAD_BYTES,
-} from './journalImage.js';
-import { getTopicsFadeEdges } from './journalTopicsFade.js';
-import JournalSummaryBanner from './JournalSummaryBanner.jsx';
+} from '../../utils/journalImage.js';
+import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
+import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import './Journal.css';
 
 const JOURNAL_TOPICS = [

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getRandomSummaryLoadingQuote } from './summaryLoadingQuotes.js';
-import '../ThoughtsTest/TestLoadingScreen.css';
+import { getRandomSummaryLoadingQuote } from '../../data/summaryLoadingQuotes.js';
+import '../../Pages/ThoughtsTest/TestLoadingScreen.css';
 
 // Visual floor so the bar feels intentional even if the API is fast.
 const MIN_DISPLAY_MS = 5000;

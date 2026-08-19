@@ -7,8 +7,8 @@ import { useDemoMode } from '../../Context/DemoModeContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { DEMO_SUMMARY_PAYLOAD } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
-import JournalSummaryLoadingScreen from './JournalSummaryLoadingScreen.jsx';
-import './Journal.css';
+import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
+import '../Journal/Journal.css';
 
 const formatWeekLabel = (weekStart, weekEnd) => {
   if (!weekStart || !weekEnd) return '';
