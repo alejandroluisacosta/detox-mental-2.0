@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import './JournalSummaryBanner.css';
 
 /**
  * Soft alert when the weekly summary can be created.

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
-import CloseIcon from '../../Components/CloseIcon/CloseIcon.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
@@ -12,6 +11,7 @@ import {
 } from '../../utils/journalImage.js';
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
+import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import './Journal.css';
 
 const JOURNAL_TOPICS = [
@@ -325,49 +325,18 @@ const Journal = () => {
       </main>
 
       {showGuestModal && (
-        <div
-          className="modal-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowGuestModal(false);
+        <JournalConfirmModal
+          labelledById="journal-guest-modal-title"
+          title="Esta entrada no se guardará"
+          text="No has iniciado sesión. Si continúas, el texto se perderá al completar. Inicia sesión para guardarlo en tu diario."
+          onClose={() => setShowGuestModal(false)}
+          primary={{ label: 'INICIAR SESIÓN', onClick: handleGuestLogin }}
+          secondary={{
+            label: 'CONTINUAR SIN GUARDAR',
+            onClick: handleGuestDiscard,
           }}
-        >
-          <div
-            className="journal-guest-modal modal-fade-in"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="journal-guest-modal-title"
-          >
-            <CloseIcon handleCloseModal={() => setShowGuestModal(false)} />
-            <h2 id="journal-guest-modal-title" className="journal-guest-modal__title">
-              Esta entrada no se guardará
-            </h2>
-            <p className="journal-guest-modal__text">
-              No has iniciado sesión. Si continúas, el texto se perderá al completar.
-              Inicia sesión para guardarlo en tu diario.
-            </p>
-            <button
-              type="button"
-              className="journal-guest-modal__button"
-              onClick={handleGuestLogin}
-            >
-              INICIAR SESIÓN
-            </button>
-            <button
-              type="button"
-              className="journal-guest-modal__button journal-guest-modal__button--secondary"
-              onClick={handleGuestDiscard}
-            >
-              CONTINUAR SIN GUARDAR
-            </button>
-            <button
-              type="button"
-              className="journal-guest-modal__close-text"
-              onClick={() => setShowGuestModal(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+          closeText="Cerrar"
+        />
       )}
     </div>
   );

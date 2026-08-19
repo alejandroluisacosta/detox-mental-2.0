@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
-import CloseIcon from '../../Components/CloseIcon/CloseIcon.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useDemoMode } from '../../Context/DemoModeContext.jsx';
@@ -9,7 +8,8 @@ import { apiFetch } from '../../api/client.js';
 import { DEMO_ENTRIES } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
-import '../Journal/Journal.css';
+import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
+import './JournalHistory.css';
 
 const EXCERPT_WORD_COUNT = 40;
 
@@ -287,47 +287,22 @@ const JournalHistory = () => {
       </main>
 
       {entryPendingDelete && (
-        <div
-          className="modal-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) closeDeleteModal();
+        <JournalConfirmModal
+          labelledById="journal-delete-modal-title"
+          title="¿Eliminar esta entrada?"
+          text="Esta acción no se puede deshacer. La entrada se borrará de tu diario de forma permanente."
+          onClose={closeDeleteModal}
+          primary={{
+            label: deleting ? 'ELIMINANDO...' : 'ELIMINAR',
+            onClick: confirmDeleteEntry,
+            disabled: deleting,
           }}
-        >
-          <div
-            className="journal-guest-modal modal-fade-in"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="journal-delete-modal-title"
-          >
-            <CloseIcon handleCloseModal={closeDeleteModal} />
-            <h2
-              id="journal-delete-modal-title"
-              className="journal-guest-modal__title"
-            >
-              ¿Eliminar esta entrada?
-            </h2>
-            <p className="journal-guest-modal__text">
-              Esta acción no se puede deshacer. La entrada se borrará de tu
-              diario de forma permanente.
-            </p>
-            <button
-              type="button"
-              className="journal-guest-modal__button"
-              onClick={confirmDeleteEntry}
-              disabled={deleting}
-            >
-              {deleting ? 'ELIMINANDO...' : 'ELIMINAR'}
-            </button>
-            <button
-              type="button"
-              className="journal-guest-modal__button journal-guest-modal__button--secondary"
-              onClick={closeDeleteModal}
-              disabled={deleting}
-            >
-              CANCELAR
-            </button>
-          </div>
-        </div>
+          secondary={{
+            label: 'CANCELAR',
+            onClick: closeDeleteModal,
+            disabled: deleting,
+          }}
+        />
       )}
     </div>
   );

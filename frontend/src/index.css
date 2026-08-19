@@ -158,3 +158,21 @@ body .modal-incorrect-code {
   width: 50%;
   height: 50%;
 }
+
+.journal-page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--text);
+}
+
+.journal-page__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 640px);
+  margin: 0 auto;
+  padding: 96px 20px 60px;
+  box-sizing: border-box;
+}
