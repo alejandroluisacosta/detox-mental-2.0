@@ -18,8 +18,8 @@ import PaymentCancel from './Pages/Payment/PaymentCancel.jsx';
 import PromoGate from './Pages/Promo/PromoGate.jsx';
 import Tests from './Pages/Tests/Tests.jsx';
 import Journal from './Pages/Journal/Journal.jsx';
-import JournalHistory from './Pages/Journal/JournalHistory.jsx';
-import JournalSummary from './Pages/Journal/JournalSummary.jsx';
+import JournalHistory from './Pages/JournalHistory/JournalHistory.jsx';
+import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 import { DemoModeProvider } from './Context/DemoModeContext.jsx';
 

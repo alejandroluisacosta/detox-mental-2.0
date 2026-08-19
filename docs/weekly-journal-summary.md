@@ -144,7 +144,7 @@ Mount next to existing journal routes in `backend/src/auth/auth.routes.js`.
 
 Returns window + week metadata + summary if present. Creation gating is
 computed on the frontend from this payload (see
-`frontend/src/Pages/Journal/summaryAvailability.js`).
+`frontend/src/utils/summaryAvailability.js`).
 
 ```json
 {

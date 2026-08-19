@@ -1,0 +1,50 @@
+.journal-summary-loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  height: 100svh;
+  padding: 0 24px;
+  background: var(--background);
+}
+
+.journal-summary-loading-screen__text {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+}
+
+.journal-summary-loading-screen__bar {
+  width: 100%;
+  max-width: 320px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--platinum);
+  overflow: hidden;
+}
+
+.journal-summary-loading-screen__bar-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 5000ms ease;
+}
+
+.journal-summary-loading-screen__bar-fill--full {
+  width: 100%;
+}
+
+.journal-summary-loading-screen__quote {
+  margin: 8px 0 0;
+  max-width: 320px;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text);
+  text-align: center;
+  white-space: pre-line;
+}

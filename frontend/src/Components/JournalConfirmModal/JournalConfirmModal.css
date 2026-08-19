@@ -1,0 +1,58 @@
+.journal-confirm-modal {
+  position: fixed;
+  width: 80%;
+  margin: auto;
+  background-color: white;
+  border-radius: 16px;
+  padding: 40px 8%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.journal-confirm-modal__title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.journal-confirm-modal__text {
+  text-align: left;
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+
+.journal-confirm-modal__button {
+  width: 100%;
+  padding: 12px 0;
+  margin-bottom: 0.75rem;
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  color: var(--background);
+}
+
+.journal-confirm-modal__button--secondary {
+  background: var(--background);
+  color: var(--accent);
+}
+
+.journal-confirm-modal__close-text {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: underline;
+  color: inherit;
+  cursor: pointer;
+}
+
+@media (min-width: 1000px) {
+  .journal-confirm-modal {
+    max-width: 500px;
+    padding: 40px;
+  }
+}

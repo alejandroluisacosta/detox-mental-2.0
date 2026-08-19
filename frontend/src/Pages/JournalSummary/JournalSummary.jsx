@@ -7,9 +7,9 @@ import { useDemoMode } from '../../Context/DemoModeContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { DEMO_SUMMARY_PAYLOAD } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
-import JournalSummaryLoadingScreen from './JournalSummaryLoadingScreen.jsx';
-import { resolveSummaryAvailability } from './summaryAvailability.js';
-import './Journal.css';
+import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
+import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
+import './JournalSummary.css';
 
 const formatWeekLabel = (weekStart, weekEnd) => {
   if (!weekStart || !weekEnd) return '';
@@ -134,22 +134,22 @@ const JournalSummary = () => {
   return (
     <div className="journal-page journal-page--summary">
       <Navigation />
-      <main className="journal-page__main journal-page__main--history">
-        <header className="journal-history__header journal-history__header--with-actions">
-          <div className="journal-history__header-top">
-            <h1 className="journal-history__title">Resumen semanal</h1>
+      <main className="journal-page__main journal-summary__main">
+        <header className="journal-summary__header journal-summary__header--with-actions">
+          <div className="journal-summary__header-top">
+            <h1 className="journal-summary__title">Resumen semanal</h1>
             <DemoModeToggle />
           </div>
-          <div className="journal-history__header-actions">
+          <div className="journal-summary__header-actions">
             <Link
               to="/journal"
-              className="journal-history__write-button journal-history__write-button--header"
+              className="journal-summary__write-button journal-summary__write-button--header"
             >
               Escribir
             </Link>
             <Link
               to="/journal/history"
-              className="journal-history__write-button journal-history__write-button--header journal-history__write-button--secondary"
+              className="journal-summary__write-button journal-summary__write-button--header journal-summary__write-button--secondary"
             >
               Historial
             </Link>
@@ -161,20 +161,20 @@ const JournalSummary = () => {
         )}
 
         {!demoMode && status === 'loading' && (
-          <p className="journal-history__status">Cargando…</p>
+          <p className="journal-summary__status">Cargando…</p>
         )}
 
         {!demoMode && status === 'ready' && !user && (
-          <div className="journal-history__empty">
+          <div className="journal-summary__empty">
             <p>Inicia sesión para ver o crear tu resumen semanal.</p>
-            <Link to="/login" className="journal-history__action-link">
+            <Link to="/login" className="journal-summary__action-link">
               Iniciar sesión
             </Link>
           </div>
         )}
 
         {!demoMode && status === 'ready' && user && loading && (
-          <p className="journal-history__status">Cargando resumen…</p>
+          <p className="journal-summary__status">Cargando resumen…</p>
         )}
 
         {(demoMode || (status === 'ready' && user && !loading && summary)) && (
@@ -184,11 +184,11 @@ const JournalSummary = () => {
               {Array.isArray(summary.mainTopics) &&
                 summary.mainTopics.length > 0 && (
                   <ul
-                    className="journal-history__topics"
+                    className="journal-summary__topics"
                     aria-label="Temas principales"
                   >
                     {summary.mainTopics.map((topic) => (
-                      <li key={topic} className="journal-history__topic-chip">
+                      <li key={topic} className="journal-summary__topic-chip">
                         {topic}
                       </li>
                     ))}
@@ -236,7 +236,7 @@ const JournalSummary = () => {
               <div className="journal-summary__regenerate">
                 <button
                   type="button"
-                  className="journal-page__complete-button journal-page__complete-button--secondary"
+                  className="journal-summary__complete-button journal-summary__complete-button--secondary"
                   onClick={handleGenerate}
                 >
                   REGENERAR RESUMEN
@@ -256,14 +256,14 @@ const JournalSummary = () => {
                 </p>
                 <button
                   type="button"
-                  className="journal-page__complete-button"
+                  className="journal-summary__complete-button"
                   onClick={handleGenerate}
                 >
                   CREAR RESUMEN
                 </button>
               </>
             ) : (
-              <div className="journal-history__empty">
+              <div className="journal-summary__empty">
                 {availability.entryCount < availability.minEntries ? (
                   <>
                     <p>
@@ -271,7 +271,7 @@ const JournalSummary = () => {
                       esta semana para crear el resumen. Llevas{' '}
                       {availability.entryCount}.
                     </p>
-                    <Link to="/journal" className="journal-history__action-link">
+                    <Link to="/journal" className="journal-summary__action-link">
                       Escribir
                     </Link>
                   </>
@@ -289,7 +289,7 @@ const JournalSummary = () => {
         )}
 
         <div className="journal-summary__nav-links">
-          <Link to="/journal/history" className="journal-page__history-link">
+          <Link to="/journal/history" className="journal-summary__history-link">
             Ver historial
           </Link>
         </div>

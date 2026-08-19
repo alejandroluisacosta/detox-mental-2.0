@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getRandomSummaryLoadingQuote } from './summaryLoadingQuotes.js';
-import '../ThoughtsTest/TestLoadingScreen.css';
+import { getRandomSummaryLoadingQuote } from '../../data/summaryLoadingQuotes.js';
+import './JournalSummaryLoadingScreen.css';
 
 // Visual floor so the bar feels intentional even if the API is fast.
 const MIN_DISPLAY_MS = 5000;
@@ -38,12 +38,12 @@ const JournalSummaryLoadingScreen = ({ ready = false, onDone }) => {
   }, [ready, minElapsed, onDone]);
 
   return (
-    <div className="test-loading-screen">
-      <p className="test-loading-screen__text">
+    <div className="journal-summary-loading-screen">
+      <p className="journal-summary-loading-screen__text">
         Preparando tu resumen... [{percent}%]
       </p>
       <div
-        className="test-loading-screen__bar"
+        className="journal-summary-loading-screen__bar"
         role="progressbar"
         aria-label="Preparando resumen semanal"
         aria-valuenow={percent}
@@ -52,13 +52,13 @@ const JournalSummaryLoadingScreen = ({ ready = false, onDone }) => {
       >
         <div
           className={
-            'test-loading-screen__bar-fill' +
-            (full ? ' test-loading-screen__bar-fill--full' : '')
+            'journal-summary-loading-screen__bar-fill' +
+            (full ? ' journal-summary-loading-screen__bar-fill--full' : '')
           }
           style={{ transitionDuration: `${MIN_DISPLAY_MS}ms` }}
         />
       </div>
-      <p className="test-loading-screen__quote">{quote}</p>
+      <p className="journal-summary-loading-screen__quote">{quote}</p>
     </div>
   );
 };

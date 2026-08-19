@@ -1,0 +1,116 @@
+---
+description: Where frontend files go and how folders are structured
+globs: frontend/src/**
+alwaysApply: false
+---
+
+# Frontend Structure
+
+These rules apply to `frontend/src/`. Follow them when adding or moving files. Do not dump extra files into an existing page or component folder.
+
+## 1. One folder per page, one folder per component
+
+Pages live under `Pages/`. Components live under `Components/`. The folder name is PascalCase and equals the exported component name.
+
+```text
+# BAD
+Pages/Journal/Journal.jsx
+Pages/Journal/JournalHistory.jsx
+
+# GOOD
+Pages/Journal/Journal.jsx
+Pages/JournalHistory/JournalHistory.jsx
+```
+
+## 2. Allowed files in a page or component folder
+
+A folder contains `<Name>.jsx`, `<Name>.css`, and `<Name>.test.jsx` (or `.test.js`) when tests exist. Nothing else.
+
+```text
+# BAD
+Pages/Journal/journalImage.js
+Pages/Journal/summaryLoadingQuotes.js
+
+# GOOD
+Pages/Journal/Journal.jsx
+Pages/Journal/Journal.css
+Pages/Journal/Journal.test.jsx
+```
+
+Page-private assets that are not JS/CSS (for example Lottie JSON) may sit in a subfolder of that page, matching `Pages/Course/unblockAnimation/`.
+
+## 3. Page vs component
+
+A page is routed in `App.jsx`. Anything rendered by two or more pages belongs in `Components/`.
+
+```text
+# BAD — shared UI living next to one of its callers
+Pages/Journal/JournalSummaryBanner.jsx
+
+# GOOD
+Components/JournalSummaryBanner/JournalSummaryBanner.jsx
+```
+
+A component used by only one page still belongs in `Components/` once it is a distinct UI unit with its own styles (modals, banners, loading screens). Do not keep it as a second `.jsx` file inside the page folder.
+
+## 4. Styles stay with their owner
+
+A `.jsx` file imports only its sibling `.css`. Never import a stylesheet from another folder. Only app-wide primitives belong in `index.css`: fonts, CSS variables, overlays, and shared animations.
+
+```javascript
+// BAD
+import '../Journal/Journal.css';
+import '../../Pages/ThoughtsTest/TestLoadingScreen.css';
+
+// GOOD
+import './JournalHistory.css';
+```
+
+## 5. CSS class names match the owning component
+
+Prefix classes with the owning component name so ownership is visible from the class alone. Do not reuse another component's prefix. If two screens share a look, copy the rules into the owner's stylesheet and rename them, or extract a real shared component.
+
+```html
+<!-- BAD — JournalSummary borrowing JournalHistory classes -->
+<header class="journal-history__header">
+
+<!-- GOOD -->
+<header class="journal-summary__header">
+```
+
+Shared layout that is truly global (today: `.journal-page` and `.journal-page__main`) may live in `index.css`. Page-specific modifiers of that shell (`.journal-page__main--history`, `.journal-page--history`) stay in the page stylesheet.
+
+## 6. Non-React modules do not live in page folders
+
+| Kind | Location |
+| --- | --- |
+| Pure helpers | `src/utils/` |
+| Static content and config | `src/data/` |
+| HTTP client | `src/api/` |
+| React context | `src/Context/` |
+
+```text
+# BAD
+Pages/Journal/journalImage.js
+Pages/Journal/summaryLoadingQuotes.js
+
+# GOOD
+utils/journalImage.js
+data/summaryLoadingQuotes.js
+```
+
+## 7. Tests colocate with their subject
+
+Place `<Name>.test.jsx` or `<Name>.test.js` next to the file under test. Do not collect tests in a separate tree.
+
+```text
+# GOOD
+utils/journalImage.js
+utils/journalImage.test.js
+Pages/Journal/Journal.jsx
+Pages/Journal/Journal.test.jsx
+```
+
+## 8. Hard stop
+
+If a change would add a second page-level `.jsx` to an existing page folder, create a new folder instead. Do not "just put it next to the other journal files."
