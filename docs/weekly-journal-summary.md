@@ -210,11 +210,11 @@ Prompt responsibilities:
 
 | Section | Instruction sketch |
 |---|---|
-| Summary | Neutral mirror of themes; use user’s language (Spanish); no clinical labels |
+| Summary | Evidence-based philosophical reflection: recognize healthy insight and earnestness when present; flag supported incongruities; use user’s language (Spanish); no clinical labels |
 | Main topics | 2–5 short labels; may align with existing chips (`Trabajo`, `Interpersonal`, …) but can be freer |
-| Best quote | Must be a **verbatim or near-verbatim** excerpt from the provided entries; never invent |
-| Socratic | One open question or gentle challenge; Socratic method; no lectures, no “you should”, no diagnosis |
-| Machiavellian | One practical strategic challenge about whether the user's behavior aligns with their stated goal; no manipulation advice |
+| Best quote | Must be a **verbatim or near-verbatim** excerpt from the provided entries; prefer the week's central insight, tension, or moment of honesty; never invent |
+| Socratic | One precise question or statement that pushes from what the user already understands; expose a real contradiction if present, otherwise the strongest unanswered implication; no invented tension, no lectures, no “you should”, no diagnosis |
+| Machiavellian | One practical strategic observation about whether behavior matches stated goals; recognize coherent strategy when evidence supports it; no forced mismatch, no manipulation advice |
 
 Also pass entry ids + timestamps so the backend can optionally attach `best_quote_entry_id` by matching the quote substring; if no match, store quote text and leave FK null.
 
