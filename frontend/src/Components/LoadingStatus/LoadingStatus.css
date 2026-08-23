@@ -1,0 +1,31 @@
+.loading-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding-top: 24px;
+}
+
+.loading-status__spinner {
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  border: 3px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: loading-status-spin 0.75s linear infinite;
+}
+
+.loading-status__text {
+  margin: 0;
+  text-align: center;
+  color: var(--muted, #6b7280);
+  line-height: 1.5;
+}
+
+@keyframes loading-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

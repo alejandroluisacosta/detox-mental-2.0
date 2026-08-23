@@ -8,6 +8,7 @@ import { apiFetch } from '../../api/client.js';
 import { DEMO_SUMMARY_PAYLOAD } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
+import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
 import './JournalSummary.css';
 
@@ -161,7 +162,7 @@ const JournalSummary = () => {
         )}
 
         {!demoMode && status === 'loading' && (
-          <p className="journal-summary__status">Cargando…</p>
+          <LoadingStatus>Cargando…</LoadingStatus>
         )}
 
         {!demoMode && status === 'ready' && !user && (
@@ -174,7 +175,7 @@ const JournalSummary = () => {
         )}
 
         {!demoMode && status === 'ready' && user && loading && (
-          <p className="journal-summary__status">Cargando resumen…</p>
+          <LoadingStatus>Cargando resumen…</LoadingStatus>
         )}
 
         {(demoMode || (status === 'ready' && user && !loading && summary)) && (
@@ -288,11 +289,14 @@ const JournalSummary = () => {
           </div>
         )}
 
-        <div className="journal-summary__nav-links">
-          <Link to="/journal/history" className="journal-summary__history-link">
-            Ver historial
+        {(demoMode || status !== 'loading') && (
+          <Link
+            to="/journal"
+            className="journal-summary__write-button journal-summary__write-button--footer"
+          >
+            ESCRIBIR
           </Link>
-        </div>
+        )}
       </main>
     </div>
   );

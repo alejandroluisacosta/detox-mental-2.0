@@ -215,4 +215,26 @@ describe('JournalSummary page states', () => {
       screen.queryByRole('button', { name: /REGENERAR RESUMEN/i }),
     ).toBeNull();
   });
+
+  test('shows a spinner above the auth loading copy', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
+    render(<JournalSummary />);
+    expect(screen.getByText('Cargando…')).toBeTruthy();
+    expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
+  });
+
+  test('shows a spinner above the summary loading copy', () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockReturnValue(new Promise(() => {}));
+    render(<JournalSummary />);
+    expect(screen.getByText('Cargando resumen…')).toBeTruthy();
+    expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
+  });
+
+  test('replaces the history text link with a footer ESCRIBIR button', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    render(<JournalSummary />);
+    expect(screen.getByText('ESCRIBIR')).toBeTruthy();
+    expect(screen.queryByText('Ver historial')).toBeNull();
+  });
 });
