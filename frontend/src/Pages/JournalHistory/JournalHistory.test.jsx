@@ -73,4 +73,19 @@ describe('JournalHistory page states', () => {
     expect(screen.queryByLabelText(/Eliminar entrada/i)).toBeNull();
     expect(apiFetch).not.toHaveBeenCalled();
   });
+
+  test('shows a spinner above the auth loading copy', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
+    render(<JournalHistory />);
+    expect(screen.getByText('Cargando…')).toBeTruthy();
+    expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
+  });
+
+  test('shows a spinner above the entries loading copy', () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockReturnValue(new Promise(() => {}));
+    render(<JournalHistory />);
+    expect(screen.getByText('Cargando entradas…')).toBeTruthy();
+    expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
+  });
 });

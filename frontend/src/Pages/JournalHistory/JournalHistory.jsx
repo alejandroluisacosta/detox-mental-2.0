@@ -9,6 +9,7 @@ import { DEMO_ENTRIES } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
+import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import './JournalHistory.css';
 
 const EXCERPT_WORD_COUNT = 40;
@@ -166,7 +167,7 @@ const JournalHistory = () => {
         {!demoMode && <JournalSummaryBanner />}
 
         {!demoMode && status === 'loading' && (
-          <p className="journal-history__status">Cargando…</p>
+          <LoadingStatus>Cargando…</LoadingStatus>
         )}
 
         {!demoMode && status === 'ready' && !user && (
@@ -179,7 +180,7 @@ const JournalHistory = () => {
         )}
 
         {!demoMode && status === 'ready' && user && loading && (
-          <p className="journal-history__status">Cargando entradas…</p>
+          <LoadingStatus>Cargando entradas…</LoadingStatus>
         )}
 
         {!demoMode && status === 'ready' && user && !loading && visibleEntries.length === 0 && (

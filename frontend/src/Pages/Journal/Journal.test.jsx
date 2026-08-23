@@ -5,7 +5,11 @@ import Journal from './Journal.jsx';
 const mockUseAuth = vi.fn();
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children, to }) => <a href={to}>{children}</a>,
+  Link: ({ children, to, ...props }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
   useNavigate: () => vi.fn(),
 }));
 
@@ -69,6 +73,15 @@ describe('Journal handwriting capture gating', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
     render(<Journal />);
     expect(screen.queryByRole('button', { name: /Escanear/i })).toBeNull();
+  });
+
+  test('renders history as an accent icon link', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    render(<Journal />);
+    const link = screen.getByRole('link', { name: 'Ver historial' });
+    expect(link.getAttribute('href')).toBe('/journal/history');
+    expect(screen.queryByText('Ver historial')).toBeNull();
+    expect(link.querySelector('.journal-page__history-icon')).toBeTruthy();
   });
 });
 

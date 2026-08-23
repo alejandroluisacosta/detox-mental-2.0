@@ -318,8 +318,12 @@ const Journal = () => {
           >
             {saving ? 'GUARDANDO...' : 'COMPLETAR'}
           </button>
-          <Link to="/journal/history" className="journal-page__history-link">
-            Ver historial
+          <Link
+            to="/journal/history"
+            className="journal-page__history-link"
+            aria-label="Ver historial"
+          >
+            <span className="journal-page__history-icon" aria-hidden="true" />
           </Link>
         </div>
       </main>
