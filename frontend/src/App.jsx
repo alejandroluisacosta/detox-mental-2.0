@@ -20,7 +20,7 @@ import Tests from './Pages/Tests/Tests.jsx';
 import Journal from './Pages/Journal/Journal.jsx';
 import JournalHistory from './Pages/JournalHistory/JournalHistory.jsx';
 import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
-import Home from './Pages/Home/Home.jsx';
+import Root from './Pages/Root/Root.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 import { DemoModeProvider } from './Context/DemoModeContext.jsx';
 
@@ -35,7 +35,7 @@ const App = () => {
                         <SessionsProvider>
                             <Routes>
                                 {/* Shared */}
-                                <Route path='/' element={<Home />} />
+                                <Route path='/' element={<Root />} />
                                 <Route path='/login' element={<Login />} />
                                 <Route path='/auth/error' element={<AuthError />} />
                                 <Route path='/account' element={<Account />} />
