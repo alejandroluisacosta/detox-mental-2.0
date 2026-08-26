@@ -1,0 +1,11 @@
+.root-loading {
+  min-height: 100svh;
+  display: grid;
+  padding: 24px;
+  background: var(--background);
+  place-items: center;
+}
+
+.root-loading .loading-status {
+  padding-top: 0;
+}
