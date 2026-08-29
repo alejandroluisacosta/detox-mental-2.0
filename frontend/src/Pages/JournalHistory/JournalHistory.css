@@ -154,6 +154,10 @@
   cursor: pointer;
 }
 
+.journal-history__delete {
+  margin-left: -5px;
+}
+
 .journal-history__topics-edit:hover:not(:disabled),
 .journal-history__delete:hover:not(:disabled) {
   background: color-mix(in srgb, var(--accent) 10%, transparent);

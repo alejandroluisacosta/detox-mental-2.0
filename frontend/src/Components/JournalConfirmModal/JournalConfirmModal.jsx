@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import CloseIcon from '../CloseIcon/CloseIcon.jsx';
 import './JournalConfirmModal.css';
 
@@ -10,6 +11,14 @@ const JournalConfirmModal = ({
   secondary,
   closeText,
 }) => {
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
   return (
     <div
       className="modal-overlay"
