@@ -71,7 +71,7 @@ export async function verify(req, res) {
     const token = signJwt({ user_id: user.id, role: user.role });
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
 
-    return res.redirect(`${FRONTEND_ORIGIN}/course?auth=success`);
+    return res.redirect(`${FRONTEND_ORIGIN}/?auth=success`);
   } catch (err) {
     console.error('[auth/verify]', err);
     return res.redirect(`${FRONTEND_ORIGIN}/auth/error?reason=server_error`);

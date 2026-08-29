@@ -17,6 +17,11 @@ describe('Home', () => {
         cleanup();
     });
 
+    test('shows the brand on the module chooser', () => {
+        render(<Home />);
+        expect(screen.getByRole('heading', { name: 'DETOX MENTAL' })).toBeTruthy();
+    });
+
     test('sends EDUCACIÓN to the theory route', () => {
         render(<Home />);
         fireEvent.click(screen.getByRole('button', { name: 'EDUCACIÓN' }));

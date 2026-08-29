@@ -51,9 +51,10 @@ The Vite development server is configured on port `3001` in
 
 ### Routing and access
 
-`/` is the module chooser (`Home`). Shared account and auth routes (`/login`,
-`/auth/error`, `/account`) and the journaling module (`/journal`,
-`/journal/history`, `/journal/summary`) are reachable without onboarding.
+`/` is the module chooser (`Home`). Successful `GET /auth/verify` redirects
+to `/?auth=success`. Shared account and auth routes (`/login`, `/auth/error`,
+`/account`) and the journaling module (`/journal`, `/journal/history`,
+`/journal/summary`) are reachable without onboarding.
 
 The educational module (`/theory`, `/course`, `/session/:sessionId`,
 `/instructions`, `/tests`, `/test/:testId`, `/promo`) is nested under
@@ -150,8 +151,8 @@ supplied user ID for user-owned resources; protected controllers use
 Authentication uses passwordless magic links:
 
 1. `POST /auth/login` creates and emails a short-lived token.
-2. `GET /auth/verify` validates it, creates or updates the user, and issues a
-   JWT in an HTTP-only cookie.
+2. `GET /auth/verify` validates it, creates or updates the user, issues a
+   JWT in an HTTP-only cookie, and redirects to `/?auth=success`.
 3. `requireAuth` validates the cookie and loads the active user from PostgreSQL.
 4. `GET /auth/me` lets the SPA bootstrap authenticated user state.
 
