@@ -11,6 +11,5 @@ export const translate = (locale, key, values) => {
 
 export const translateTopic = (locale, topicId) => {
   const key = `journal.topics.${topicId}`;
-  const label = translate(locale, key);
-  return label === key ? topicId : label;
+  return getCatalog(locale)[key] ?? getCatalog(DEFAULT_LOCALE)[key] ?? topicId;
 };

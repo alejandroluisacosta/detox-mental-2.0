@@ -2,29 +2,21 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { translate, translateTopic } from '../utils/translate.js';
 import {
   applyDocumentLocale,
-  parseLocale,
   readStoredLocale,
-  setRequestLocale,
   writeStoredLocale,
 } from '../utils/locale.js';
 
 const LocaleContext = createContext(null);
 
-export const LocaleProvider = ({ children, initialLocale }) => {
-  const [locale, setLocaleState] = useState(() =>
-    parseLocale(initialLocale ?? readStoredLocale()),
-  );
+export const LocaleProvider = ({ children }) => {
+  const [locale, setLocaleState] = useState(() => readStoredLocale());
 
   useEffect(() => {
-    setRequestLocale(locale);
     applyDocumentLocale(locale);
   }, [locale]);
 
   const setLocale = useCallback((nextLocale) => {
-    const resolved = writeStoredLocale(nextLocale);
-    setRequestLocale(resolved);
-    applyDocumentLocale(resolved);
-    setLocaleState(resolved);
+    setLocaleState(writeStoredLocale(nextLocale));
   }, []);
 
   const t = useCallback((key, values) => translate(locale, key, values), [locale]);

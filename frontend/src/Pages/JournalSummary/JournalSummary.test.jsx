@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import JournalSummary from './JournalSummary.jsx';
 import { apiFetch } from '../../api/client.js';
 
@@ -26,12 +27,14 @@ vi.mock('../../Components/Navigation/Navigation.jsx', () => ({
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 
-const renderSummary = (locale = 'en') =>
-  render(
-    <LocaleProvider initialLocale={locale}>
+const renderSummary = (locale = 'en') => {
+  writeStoredLocale(locale);
+  return render(
+    <LocaleProvider>
       <JournalSummary />
     </LocaleProvider>,
   );
+};
 
 describe('JournalSummary page states', () => {
   beforeEach(() => {

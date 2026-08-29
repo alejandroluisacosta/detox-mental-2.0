@@ -10,7 +10,7 @@ import {
   prepareImageForUpload,
   MAX_UPLOAD_BYTES,
 } from '../../utils/journalImage.js';
-import { JOURNAL_TOPIC_IDS } from '../../utils/locale.js';
+import { JOURNAL_TOPIC_IDS } from '../../data/journalTopics.js';
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
@@ -21,7 +21,7 @@ const MAX_SELECTED_TOPICS = 3;
 const Journal = () => {
   const navigate = useNavigate();
   const { user, status } = useAuth();
-  const { locale, t, topicLabel } = useLocale();
+  const { t, topicLabel } = useLocale();
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
   const topicsRef = useRef(null);
@@ -101,9 +101,9 @@ const Journal = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validation = validateImageFile(file, locale);
+    const validation = validateImageFile(file);
     if (!validation.valid) {
-      emitToast(validation.message);
+      emitToast(t(validation.messageKey));
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
@@ -120,7 +120,7 @@ const Journal = () => {
 
     setTranscribing(true);
     try {
-      const prepared = await prepareImageForUpload(imageFile, locale);
+      const prepared = await prepareImageForUpload(imageFile);
       if (prepared.size > MAX_UPLOAD_BYTES) {
         throw new Error(t('journal.imageTooLarge'));
       }
@@ -143,7 +143,9 @@ const Journal = () => {
       emitToast(t('journal.transcribeSuccess'));
     } catch (err) {
       console.error('[journal transcribe]', err);
-      emitToast(err.message || t('journal.transcribeFailed'));
+      emitToast(
+        err.messageKey ? t(err.messageKey) : err.message || t('journal.transcribeFailed'),
+      );
     } finally {
       setTranscribing(false);
     }

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import Home from './Home.jsx';
 
 const mockNavigate = vi.fn();
@@ -9,12 +10,14 @@ vi.mock('react-router-dom', () => ({
     useNavigate: () => mockNavigate,
 }));
 
-const renderHome = (locale = 'en') =>
-    render(
-        <LocaleProvider initialLocale={locale}>
+const renderHome = (locale = 'en') => {
+    writeStoredLocale(locale);
+    return render(
+        <LocaleProvider>
             <Home />
         </LocaleProvider>,
     );
+};
 
 describe('Home', () => {
     beforeEach(() => {

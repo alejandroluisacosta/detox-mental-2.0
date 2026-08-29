@@ -2,7 +2,7 @@
  * API base URL for the Detox Mental backend (auth, future REST).
  * Must match CORS FRONTEND_ORIGIN + credentials cookies.
  */
-import { getRequestLocale } from "../utils/locale.js";
+import { readStoredLocale } from "../utils/locale.js";
 
 export const getApiBase = () => {
   return import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -20,7 +20,7 @@ export const apiFetch = (path, options = {}) => {
   let finalBody = body;
   const hdrs = { ...headers };
   if (!hdrs["Accept-Language"] && !hdrs["accept-language"]) {
-    hdrs["Accept-Language"] = getRequestLocale();
+    hdrs["Accept-Language"] = readStoredLocale();
   }
   if (body != null && typeof body !== "string" && !(body instanceof FormData)) {
     finalBody = JSON.stringify(body);

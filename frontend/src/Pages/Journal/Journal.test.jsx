@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import Journal from './Journal.jsx';
 
 const mockUseAuth = vi.fn();
@@ -29,12 +30,14 @@ vi.mock('../../Components/CloseIcon/CloseIcon.jsx', () => ({
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 
-const renderJournal = (locale = 'en') =>
-  render(
-    <LocaleProvider initialLocale={locale}>
+const renderJournal = (locale = 'en') => {
+  writeStoredLocale(locale);
+  return render(
+    <LocaleProvider>
       <Journal />
     </LocaleProvider>,
   );
+};
 
 const mockScrollMetrics = (el, { scrollLeft, clientWidth, scrollWidth }) => {
   Object.defineProperty(el, 'scrollLeft', {

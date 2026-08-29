@@ -56,9 +56,11 @@ const messages = {
   },
 };
 
+export const messageCatalogs = messages;
+
 export const journalMessage = (locale, key, values) => {
   const resolved = parseLocale(locale);
   const template =
-    messages[resolved]?.[key] || messages.en[key] || key;
+    messageCatalogs[resolved]?.[key] || messageCatalogs.en[key] || key;
   return interpolate(template, values);
 };

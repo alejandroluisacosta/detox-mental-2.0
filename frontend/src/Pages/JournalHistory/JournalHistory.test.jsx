@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import JournalHistory from './JournalHistory.jsx';
 import { apiFetch } from '../../api/client.js';
 
@@ -34,12 +35,14 @@ vi.mock('../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx', () => 
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 
-const renderHistory = (locale = 'en') =>
-  render(
-    <LocaleProvider initialLocale={locale}>
+const renderHistory = (locale = 'en') => {
+  writeStoredLocale(locale);
+  return render(
+    <LocaleProvider>
       <JournalHistory />
     </LocaleProvider>,
   );
+};
 
 describe('JournalHistory page states', () => {
   beforeEach(() => {

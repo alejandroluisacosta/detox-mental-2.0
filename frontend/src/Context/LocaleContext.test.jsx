@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LocaleProvider, useLocale } from './LocaleContext.jsx';
+import { writeStoredLocale } from '../utils/locale.js';
 
 const Probe = () => {
   const { locale, setLocale, t } = useLocale();
@@ -42,5 +43,17 @@ describe('LocaleProvider', () => {
     expect(screen.getByText('¿Qué tienes en mente?')).toBeTruthy();
     expect(document.documentElement.lang).toBe('es');
     expect(window.localStorage.getItem('appLocale')).toBe('es');
+  });
+
+  test('hydrates from the stored locale', () => {
+    writeStoredLocale('es');
+    render(
+      <LocaleProvider>
+        <Probe />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByText('¿Qué tienes en mente?')).toBeTruthy();
+    expect(document.documentElement.lang).toBe('es');
   });
 });

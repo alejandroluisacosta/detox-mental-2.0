@@ -5,9 +5,9 @@ const fakeFile = (type) => ({ type, name: 'x', size: 10 });
 
 describe('validateImageFile', () => {
   test('rejects when no file is provided', () => {
-    const result = validateImageFile(null, 'en');
+    const result = validateImageFile(null);
     expect(result.valid).toBe(false);
-    expect(result.message).toBe('Select an image.');
+    expect(result.messageKey).toBe('journal.imageMissing');
   });
 
   test('accepts JPEG, PNG, and WebP', () => {
@@ -16,13 +16,10 @@ describe('validateImageFile', () => {
     expect(validateImageFile(fakeFile('image/webp')).valid).toBe(true);
   });
 
-  test('rejects unsupported types with a localized message', () => {
-    const english = validateImageFile(fakeFile('image/gif'), 'en');
-    expect(english.valid).toBe(false);
-    expect(english.message).toBe('Unsupported format. Use JPG, PNG, or WebP.');
-
-    const spanish = validateImageFile(fakeFile('image/gif'), 'es');
-    expect(spanish.message).toBe('Formato no admitido. Usa JPG, PNG o WebP.');
+  test('rejects unsupported types with a message key', () => {
+    const result = validateImageFile(fakeFile('image/gif'));
+    expect(result.valid).toBe(false);
+    expect(result.messageKey).toBe('journal.imageUnsupported');
   });
 
   test('rejects a non-image type', () => {

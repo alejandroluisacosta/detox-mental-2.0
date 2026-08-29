@@ -7,29 +7,10 @@ export const BCP47_BY_LOCALE = {
   es: 'es-ES',
 };
 
-export const JOURNAL_TOPIC_IDS = [
-  'Trabajo',
-  'Interpersonal',
-  'Reflexión',
-  'Sabiduría',
-  'Preocupaciones',
-  'Meditaciones',
-  'Privado',
-];
-
-let requestLocale = DEFAULT_LOCALE;
-
 export const parseLocale = (value) => {
   if (typeof value !== 'string') return DEFAULT_LOCALE;
   const primary = value.trim().split(',')[0].split('-')[0].toLowerCase();
   return SUPPORTED_LOCALES.includes(primary) ? primary : DEFAULT_LOCALE;
-};
-
-export const getRequestLocale = () => requestLocale;
-
-export const setRequestLocale = (locale) => {
-  requestLocale = parseLocale(locale);
-  return requestLocale;
 };
 
 export const readStoredLocale = () => {
@@ -45,7 +26,7 @@ export const writeStoredLocale = (locale) => {
   try {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, next);
   } catch {
-    // Ignore quota / private-mode failures; in-memory locale still applies.
+    // Ignore quota / private-mode failures; the caller still receives the resolved locale.
   }
   return next;
 };

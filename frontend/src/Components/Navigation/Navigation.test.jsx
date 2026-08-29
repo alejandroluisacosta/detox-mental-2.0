@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import Navigation from './Navigation.jsx';
 
 const mockUseLocation = vi.fn();
@@ -19,12 +20,14 @@ vi.mock('../../data/promoConfig.js', () => ({
     isPromoEnabled: () => false,
 }));
 
-const renderNav = (locale = 'en') =>
-    render(
-        <LocaleProvider initialLocale={locale}>
+const renderNav = (locale = 'en') => {
+    writeStoredLocale(locale);
+    return render(
+        <LocaleProvider>
             <Navigation />
         </LocaleProvider>,
     );
+};
 
 const openMenu = () => {
     fireEvent.click(screen.getByRole('button', { name: /Open menu|Abrir menú/ }));

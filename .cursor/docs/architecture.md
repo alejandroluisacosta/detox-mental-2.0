@@ -92,7 +92,10 @@ it. Follow existing BEM-style CSS names and global design tokens from
 - `SessionsContext` combines static course content with persisted unlock state.
 - Local UI state stays inside its page or component.
 - Use `apiFetch` for backend requests so the configured API base URL and
-  HTTP-only authentication cookie are handled consistently.
+  HTTP-only authentication cookie are handled consistently. `apiFetch` also
+  sends `Accept-Language` from the locale stored in `localStorage`
+  (`appLocale`), so the first request after a reload matches the UI language.
+  `LocaleProvider` owns React locale state and `document.documentElement.lang`.
 - Onboarding chat is the exception: it uses `VITE_CHAT_API_URL` and sends the
   client-held conversation state with each request. Locally this targets
   Express `/chat`; production targets the stateless `/api/chat` handler.
