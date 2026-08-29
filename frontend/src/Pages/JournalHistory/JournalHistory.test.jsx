@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
+import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import JournalHistory from './JournalHistory.jsx';
 import { apiFetch } from '../../api/client.js';
 
@@ -33,6 +34,13 @@ vi.mock('../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx', () => 
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 
+const renderHistory = (locale = 'en') =>
+  render(
+    <LocaleProvider initialLocale={locale}>
+      <JournalHistory />
+    </LocaleProvider>,
+  );
+
 describe('JournalHistory page states', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
@@ -51,10 +59,10 @@ describe('JournalHistory page states', () => {
   test('prompts guests to log in when demo mode is off', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
 
-    render(<JournalHistory />);
+    renderHistory();
 
     expect(
-      screen.getByText(/Inicia sesión para ver las entradas guardadas en tu diario/i),
+      screen.getByText(/Sign in to see the entries saved in your journal/i),
     ).toBeTruthy();
   });
 
@@ -65,27 +73,27 @@ describe('JournalHistory page states', () => {
       toggleDemoMode: vi.fn(),
     });
 
-    render(<JournalHistory />);
+    renderHistory();
 
     expect(
-      screen.getByText(/Cada vez que algo queda ambiguo/i),
+      screen.getByText(/Every time something stays ambiguous/i),
     ).toBeTruthy();
-    expect(screen.queryByLabelText(/Eliminar entrada/i)).toBeNull();
+    expect(screen.queryByLabelText(/Delete entry/i)).toBeNull();
     expect(apiFetch).not.toHaveBeenCalled();
   });
 
   test('shows a spinner above the auth loading copy', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
-    render(<JournalHistory />);
-    expect(screen.getByText('Cargando…')).toBeTruthy();
+    renderHistory();
+    expect(screen.getByText('Loading…')).toBeTruthy();
     expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
   });
 
   test('shows a spinner above the entries loading copy', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     apiFetch.mockReturnValue(new Promise(() => {}));
-    render(<JournalHistory />);
-    expect(screen.getByText('Cargando entradas…')).toBeTruthy();
+    renderHistory();
+    expect(screen.getByText('Loading entries…')).toBeTruthy();
     expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
   });
 });

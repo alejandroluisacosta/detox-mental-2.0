@@ -40,10 +40,12 @@ tree and route table:
 ```text
 BrowserRouter
 ├── ScrollToTop
-└── AuthProvider
-    ├── AuthSessionToast
-    └── SessionsProvider
-        └── Routes
+└── LocaleProvider
+    └── AuthProvider
+        ├── AuthSessionToast
+        └── DemoModeProvider
+            └── SessionsProvider
+                └── Routes
 ```
 
 The Vite development server is configured on port `3001` in
@@ -208,5 +210,7 @@ For new work:
 6. Record significant architectural or product trade-offs in `DECISIONS.md`.
 7. Update relevant documentation when routes, environment variables, schema,
    deployment behavior, or developer commands change.
-8. Keep user-facing product copy in Spanish and implementation names/comments
-   in English, following the dominant repository convention.
+8. Keep implementation names, comments, and prompts in English. User-facing
+   product copy may be Spanish, English, or both: the journaling module and
+   shared chrome are bilingual with English as the default, while educational
+   content remains Spanish until it is translated.

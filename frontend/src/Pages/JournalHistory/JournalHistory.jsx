@@ -4,9 +4,11 @@ import Navigation from '../../Components/Navigation/Navigation.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useDemoMode } from '../../Context/DemoModeContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
-import { DEMO_ENTRIES } from '../../data/demoJournal.js';
+import { getDemoEntries } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
+import { formatLocaleDate } from '../../utils/locale.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
@@ -14,14 +16,13 @@ import './JournalHistory.css';
 
 const EXCERPT_WORD_COUNT = 40;
 
-const formatEntryDate = (iso) => {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return 'Fecha desconocida';
-  return new Intl.DateTimeFormat('es-ES', {
+const formatEntryDate = (iso, locale, unknownLabel) => {
+  const formatted = formatLocaleDate(iso, locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  }).format(date);
+  });
+  return formatted || unknownLabel;
 };
 
 const getWordCount = (content) =>
@@ -36,12 +37,13 @@ const getExcerpt = (content) => {
 const JournalHistory = () => {
   const { user, status } = useAuth();
   const { demoMode } = useDemoMode();
+  const { locale, t, topicLabel } = useLocale();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const [entryPendingDelete, setEntryPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
-  const visibleEntries = demoMode ? DEMO_ENTRIES : entries;
+  const visibleEntries = demoMode ? getDemoEntries(locale) : entries;
 
   useEffect(() => {
     if (demoMode) {
@@ -68,7 +70,7 @@ const JournalHistory = () => {
         const res = await apiFetch('/auth/me/journal-entries');
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.message || 'No se pudo cargar el diario.');
+          throw new Error(data.message || t('history.loadFailed'));
         }
         const data = await res.json();
         if (!cancelled) {
@@ -80,7 +82,7 @@ const JournalHistory = () => {
         if (!cancelled) {
           setEntries([]);
           setExpandedIds(new Set());
-          emitToast(err.message || 'No se pudo cargar el diario.');
+          emitToast(err.message || t('history.loadFailed'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -91,7 +93,7 @@ const JournalHistory = () => {
     return () => {
       cancelled = true;
     };
-  }, [demoMode, status, user]);
+  }, [demoMode, status, t, user]);
 
   const toggleExpanded = (entryId) => {
     setExpandedIds((prev) => {
@@ -118,7 +120,7 @@ const JournalHistory = () => {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'No se pudo eliminar la entrada.');
+        throw new Error(data.message || t('history.deleteFailed'));
       }
 
       setEntries((prev) => prev.filter((entry) => entry.id !== entryId));
@@ -129,11 +131,11 @@ const JournalHistory = () => {
         return next;
       });
       setEntryPendingDelete(null);
-      emitToast('Entrada eliminada.');
+      emitToast(t('history.deleteSuccess'));
     } catch (err) {
       console.error('[journal DELETE]', err);
       setEntryPendingDelete(null);
-      emitToast(err.message || 'No se pudo eliminar la entrada.');
+      emitToast(err.message || t('history.deleteFailed'));
     } finally {
       setDeleting(false);
     }
@@ -145,7 +147,7 @@ const JournalHistory = () => {
       <main className="journal-page__main journal-page__main--history">
         <header className="journal-history__header journal-history__header--with-actions">
           <div className="journal-history__header-top">
-            <h1 className="journal-history__title">Historial</h1>
+            <h1 className="journal-history__title">{t('history.title')}</h1>
             <DemoModeToggle />
           </div>
           <div className="journal-history__header-actions">
@@ -153,13 +155,13 @@ const JournalHistory = () => {
               to="/journal"
               className="journal-history__write-button journal-history__write-button--header"
             >
-              Escribir
+              {t('history.write')}
             </Link>
             <Link
               to="/journal/summary"
               className="journal-history__write-button journal-history__write-button--header journal-history__write-button--secondary"
             >
-              Resumen
+              {t('history.summary')}
             </Link>
           </div>
         </header>
@@ -167,27 +169,27 @@ const JournalHistory = () => {
         {!demoMode && <JournalSummaryBanner />}
 
         {!demoMode && status === 'loading' && (
-          <LoadingStatus>Cargando…</LoadingStatus>
+          <LoadingStatus>{t('history.loading')}</LoadingStatus>
         )}
 
         {!demoMode && status === 'ready' && !user && (
           <div className="journal-history__empty">
-            <p>Inicia sesión para ver las entradas guardadas en tu diario.</p>
+            <p>{t('history.guestEmpty')}</p>
             <Link to="/login" className="journal-history__action-link">
-              Iniciar sesión
+              {t('history.login')}
             </Link>
           </div>
         )}
 
         {!demoMode && status === 'ready' && user && loading && (
-          <LoadingStatus>Cargando entradas…</LoadingStatus>
+          <LoadingStatus>{t('history.loadingEntries')}</LoadingStatus>
         )}
 
         {!demoMode && status === 'ready' && user && !loading && visibleEntries.length === 0 && (
           <div className="journal-history__empty">
-            <p>Aún no hay entradas en tu diario.</p>
+            <p>{t('history.noEntries')}</p>
             <Link to="/journal" className="journal-history__action-link">
-              Escribir la primera
+              {t('history.writeFirst')}
             </Link>
           </div>
         )}
@@ -211,7 +213,7 @@ const JournalHistory = () => {
                       className="journal-history__date"
                       dateTime={entry.createdAt}
                     >
-                      {formatEntryDate(entry.createdAt)}
+                      {formatEntryDate(entry.createdAt, locale, t('history.unknownDate'))}
                     </time>
                     {!demoMode && (
                       <button
@@ -219,7 +221,7 @@ const JournalHistory = () => {
                         className="journal-history__delete"
                         onClick={() => setEntryPendingDelete(entry)}
                         disabled={deleteDisabled}
-                        aria-label="Eliminar entrada"
+                        aria-label={t('history.deleteEntry')}
                       >
                         <img
                           src="/icons/trash.svg"
@@ -233,11 +235,11 @@ const JournalHistory = () => {
                   {Array.isArray(entry.topics) && entry.topics.length > 0 && (
                     <ul
                       className="journal-history__topics"
-                      aria-label="Temas"
+                      aria-label={t('history.topics')}
                     >
                       {entry.topics.map((topic) => (
                         <li key={topic} className="journal-history__topic-chip">
-                          {topic}
+                          {topicLabel(topic)}
                         </li>
                       ))}
                     </ul>
@@ -268,7 +270,7 @@ const JournalHistory = () => {
                       onClick={() => toggleExpanded(entry.id)}
                       aria-expanded={expanded}
                     >
-                      {expanded ? 'Mostrar menos' : 'Mostrar más'}
+                      {expanded ? t('history.showLess') : t('history.showMore')}
                     </button>
                   )}
                 </li>
@@ -282,7 +284,7 @@ const JournalHistory = () => {
             to="/journal"
             className="journal-history__write-button journal-history__write-button--footer"
           >
-            ESCRIBIR
+            {t('history.writeFooter')}
           </Link>
         )}
       </main>
@@ -290,16 +292,16 @@ const JournalHistory = () => {
       {entryPendingDelete && (
         <JournalConfirmModal
           labelledById="journal-delete-modal-title"
-          title="¿Eliminar esta entrada?"
-          text="Esta acción no se puede deshacer. La entrada se borrará de tu diario de forma permanente."
+          title={t('history.deleteTitle')}
+          text={t('history.deleteText')}
           onClose={closeDeleteModal}
           primary={{
-            label: deleting ? 'ELIMINANDO...' : 'ELIMINAR',
+            label: deleting ? t('history.deleting') : t('history.delete'),
             onClick: confirmDeleteEntry,
             disabled: deleting,
           }}
           secondary={{
-            label: 'CANCELAR',
+            label: t('history.cancel'),
             onClick: closeDeleteModal,
             disabled: deleting,
           }}

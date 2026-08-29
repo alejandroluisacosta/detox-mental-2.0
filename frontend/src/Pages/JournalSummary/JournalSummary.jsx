@@ -4,31 +4,38 @@ import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useDemoMode } from '../../Context/DemoModeContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
-import { DEMO_SUMMARY_PAYLOAD } from '../../data/demoJournal.js';
+import { getDemoSummaryPayload } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
+import { formatLocaleDate } from '../../utils/locale.js';
 import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
 import './JournalSummary.css';
 
-const formatWeekLabel = (weekStart, weekEnd) => {
+const formatWeekLabel = (weekStart, weekEnd, locale) => {
   if (!weekStart || !weekEnd) return '';
   const start = new Date(`${weekStart}T12:00:00`);
   const end = new Date(`${weekEnd}T12:00:00`);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return `${weekStart} – ${weekEnd}`;
   }
-  const fmt = new Intl.DateTimeFormat('es-ES', {
+  const startLabel = formatLocaleDate(start, locale, {
     day: 'numeric',
     month: 'long',
   });
-  return `${fmt.format(start)} – ${fmt.format(end)}`;
+  const endLabel = formatLocaleDate(end, locale, {
+    day: 'numeric',
+    month: 'long',
+  });
+  return `${startLabel} – ${endLabel}`;
 };
 
 const JournalSummary = () => {
   const { user, status } = useAuth();
   const { demoMode } = useDemoMode();
+  const { locale, t } = useLocale();
   const [payload, setPayload] = useState(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -53,17 +60,17 @@ const JournalSummary = () => {
       const res = await apiFetch('/auth/me/journal-summaries/current');
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.message || 'No se pudo cargar el resumen.');
+        throw new Error(data.message || t('summary.loadFailed'));
       }
       setPayload(data);
     } catch (err) {
       console.error('[journal-summaries GET]', err);
       setPayload(null);
-      emitToast(err.message || 'No se pudo cargar el resumen.');
+      emitToast(err.message || t('summary.loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, [demoMode, status, user]);
+  }, [demoMode, status, t, user]);
 
   useEffect(() => {
     loadCurrent();
@@ -82,7 +89,7 @@ const JournalSummary = () => {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.message || 'No se pudo crear el resumen.');
+        throw new Error(data.message || t('summary.createFailed'));
       }
       setPendingSummary(data.summary ?? null);
       setGenerateReady(true);
@@ -91,7 +98,7 @@ const JournalSummary = () => {
       setGenerating(false);
       setGenerateReady(false);
       setPendingSummary(null);
-      emitToast(err.message || 'No se pudo crear el resumen.');
+      emitToast(err.message || t('summary.createFailed'));
       loadCurrent();
     }
   };
@@ -124,12 +131,13 @@ const JournalSummary = () => {
     );
   }
 
-  const effectivePayload = demoMode ? DEMO_SUMMARY_PAYLOAD : payload;
+  const effectivePayload = demoMode ? getDemoSummaryPayload(locale) : payload;
   const availability = resolveSummaryAvailability(effectivePayload);
   const summary = availability.displayedSummary;
   const weekLabel = formatWeekLabel(
     effectivePayload?.weekStart,
     effectivePayload?.weekEnd,
+    locale,
   );
 
   return (
@@ -138,7 +146,7 @@ const JournalSummary = () => {
       <main className="journal-page__main journal-summary__main">
         <header className="journal-summary__header journal-summary__header--with-actions">
           <div className="journal-summary__header-top">
-            <h1 className="journal-summary__title">Resumen semanal</h1>
+            <h1 className="journal-summary__title">{t('summary.title')}</h1>
             <DemoModeToggle />
           </div>
           <div className="journal-summary__header-actions">
@@ -146,13 +154,13 @@ const JournalSummary = () => {
               to="/journal"
               className="journal-summary__write-button journal-summary__write-button--header"
             >
-              Escribir
+              {t('summary.write')}
             </Link>
             <Link
               to="/journal/history"
               className="journal-summary__write-button journal-summary__write-button--header journal-summary__write-button--secondary"
             >
-              Historial
+              {t('summary.history')}
             </Link>
           </div>
         </header>
@@ -162,31 +170,31 @@ const JournalSummary = () => {
         )}
 
         {!demoMode && status === 'loading' && (
-          <LoadingStatus>Cargando…</LoadingStatus>
+          <LoadingStatus>{t('summary.loading')}</LoadingStatus>
         )}
 
         {!demoMode && status === 'ready' && !user && (
           <div className="journal-summary__empty">
-            <p>Inicia sesión para ver o crear tu resumen semanal.</p>
+            <p>{t('summary.guestEmpty')}</p>
             <Link to="/login" className="journal-summary__action-link">
-              Iniciar sesión
+              {t('summary.login')}
             </Link>
           </div>
         )}
 
         {!demoMode && status === 'ready' && user && loading && (
-          <LoadingStatus>Cargando resumen…</LoadingStatus>
+          <LoadingStatus>{t('summary.loadingSummary')}</LoadingStatus>
         )}
 
         {(demoMode || (status === 'ready' && user && !loading && summary)) && (
           <div className="journal-summary__result">
             <section className="journal-summary__section">
-              <h2 className="journal-summary__heading">Esta semana</h2>
+              <h2 className="journal-summary__heading">{t('summary.thisWeek')}</h2>
               {Array.isArray(summary.mainTopics) &&
                 summary.mainTopics.length > 0 && (
                   <ul
                     className="journal-summary__topics"
-                    aria-label="Temas principales"
+                    aria-label={t('summary.mainTopics')}
                   >
                     {summary.mainTopics.map((topic) => (
                       <li key={topic} className="journal-summary__topic-chip">
@@ -199,7 +207,7 @@ const JournalSummary = () => {
             </section>
 
             <section className="journal-summary__section">
-              <h2 className="journal-summary__heading">La frase que destacó</h2>
+              <h2 className="journal-summary__heading">{t('summary.bestQuote')}</h2>
               <blockquote className="journal-summary__quote">
                 {summary.bestQuote}
               </blockquote>
@@ -209,10 +217,10 @@ const JournalSummary = () => {
               <h2 className="journal-summary__heading journal-summary__heading--socratic">
                 <img
                   src="/images/socrates.webp"
-                  alt="Sócrates"
+                  alt={t('summary.socratesAlt')}
                   className="journal-summary__avatar"
                 />
-                Pregunta de Sócrates
+                {t('summary.socraticHeading')}
               </h2>
               <p className="journal-summary__socratic">{summary.socraticText}</p>
             </section>
@@ -222,10 +230,10 @@ const JournalSummary = () => {
                 <h2 className="journal-summary__heading journal-summary__heading--machiavelli">
                   <img
                     src="/images/machiavelli.webp"
-                    alt="Machiavelli"
+                    alt={t('summary.machiavelliAlt')}
                     className="journal-summary__avatar"
                   />
-                  Desafío Machiavélico
+                  {t('summary.machiavelliHeading')}
                 </h2>
                 <p className="journal-summary__machiavelli">
                   {summary.machiavelliText}
@@ -240,7 +248,7 @@ const JournalSummary = () => {
                   className="journal-summary__complete-button journal-summary__complete-button--secondary"
                   onClick={handleGenerate}
                 >
-                  REGENERAR RESUMEN
+                  {t('summary.regenerate')}
                 </button>
               </div>
             )}
@@ -252,15 +260,14 @@ const JournalSummary = () => {
             {availability.canCreate ? (
               <>
                 <p className="journal-summary__lead">
-                  Ya puedes crear el resumen de esta semana a partir de tus
-                  escrituras.
+                  {t('summary.createLead')}
                 </p>
                 <button
                   type="button"
                   className="journal-summary__complete-button"
                   onClick={handleGenerate}
                 >
-                  CREAR RESUMEN
+                  {t('summary.create')}
                 </button>
               </>
             ) : (
@@ -268,21 +275,19 @@ const JournalSummary = () => {
                 {availability.entryCount < availability.minEntries ? (
                   <>
                     <p>
-                      Necesitas al menos {availability.minEntries} entradas
-                      esta semana para crear el resumen. Llevas{' '}
-                      {availability.entryCount}.
+                      {t('summary.needEntries', {
+                        minEntries: availability.minEntries,
+                        entryCount: availability.entryCount,
+                      })}
                     </p>
                     <Link to="/journal" className="journal-summary__action-link">
-                      Escribir
+                      {t('summary.write')}
                     </Link>
                   </>
                 ) : availability.windowEnforced && !availability.windowOpen ? (
-                  <p>
-                    El resumen se puede crear el domingo de 12:00 a 18:00 (hora
-                    de Madrid). Mientras tanto, sigue escribiendo.
-                  </p>
+                  <p>{t('summary.windowClosed')}</p>
                 ) : (
-                  <p>El resumen de esta semana no está disponible ahora.</p>
+                  <p>{t('summary.unavailable')}</p>
                 )}
               </div>
             )}
@@ -294,7 +299,7 @@ const JournalSummary = () => {
             to="/journal"
             className="journal-summary__write-button journal-summary__write-button--footer"
           >
-            ESCRIBIR
+            {t('summary.writeFooter')}
           </Link>
         )}
       </main>

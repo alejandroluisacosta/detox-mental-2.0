@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
 import './JournalSummaryBanner.css';
@@ -11,6 +12,7 @@ import './JournalSummaryBanner.css';
  */
 const JournalSummaryBanner = () => {
   const { user, status } = useAuth();
+  const { t } = useLocale();
   const [canCreate, setCanCreate] = useState(false);
 
   useEffect(() => {
@@ -45,10 +47,10 @@ const JournalSummaryBanner = () => {
   return (
     <div className="journal-summary-banner" role="status">
       <p className="journal-summary-banner__text">
-        Tu resumen semanal está disponible para crearse.
+        {t('summary.bannerText')}
       </p>
       <Link to="/journal/summary" className="journal-summary-banner__link">
-        Ir al resumen
+        {t('summary.bannerLink')}
       </Link>
     </div>
   );

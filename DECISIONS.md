@@ -151,3 +151,23 @@ This is a product-oriented change that comes from experimentation with the produ
 **Why this revisits 2026-01-28:**  
 That decision treated onboarding as a precondition for accessing the app. The gate now guards the educational module only, so journaling can be used and advertised independently.
 
+### 2026-08-26 — Journaling module bilingual UI with English default
+
+**Decision:**  
+Add a dependency-free `LocaleProvider` for English/Spanish, defaulting to English, with a flag switch in the navigation menu. Journal UI copy, shared nav/home/account chrome, journal API errors, and weekly summary generation follow the active locale. Generated summaries keep their original language until the user regenerates them. Topic values stay stored as the existing Spanish identifiers.
+
+**Why this option was chosen:**  
+- The journaling module needed a complete bilingual experience without translating the educational module yet.
+- A small catalog + `t()` helper matches the current frontend conventions (`data/`, Context) and avoids a new i18n dependency for two languages.
+- Sending `Accept-Language` on `apiFetch` gives GET/POST/DELETE and image uploads one locale contract.
+- Persisting summary `locale` makes later mismatches visible without silently rewriting stored reflections.
+
+**Why obvious alternatives were rejected:**  
+- **react-i18next or similar:** Too much machinery for two locales and a module-sized catalog.
+- **Infer summary language from journal entries:** Mixed-language weeks and demo English quotes make this unreliable; the user asked for the UI language at request time.
+- **Store two summary versions per week:** Extra schema and generation cost for a case the product currently solves by regenerating.
+
+**Operational implications (accepted):**  
+Apply `backend/src/db/migrations/006_journal_summary_locale.sql` to each environment. Existing summary rows backfill as `es`. Educational screens remain Spanish except shared navigation/home/account labels.
+
+

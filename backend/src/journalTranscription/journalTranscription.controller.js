@@ -1,6 +1,8 @@
 import multer from 'multer';
 import { validateTranscriptionInput, MAX_IMAGE_BYTES } from './validateTranscriptionInput.js';
 import { transcribeJournalImage } from './journalTranscription.service.js';
+import { journalMessage } from '../i18n/journalMessages.js';
+import { localeFromRequest } from '../i18n/locale.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -14,10 +16,11 @@ const upload = multer({
 export const uploadJournalImage = (req, res, next) => {
   upload.single('image')(req, res, (err) => {
     if (err) {
+      const locale = localeFromRequest(req);
       const message =
         err.code === 'LIMIT_FILE_SIZE'
-          ? 'La imagen es demasiado grande (máximo 3 MB).'
-          : 'No se pudo procesar la imagen.';
+          ? journalMessage(locale, 'imageTooLarge')
+          : journalMessage(locale, 'imageProcessFailed');
       return res.status(400).json({ message });
     }
     return next();
@@ -25,7 +28,8 @@ export const uploadJournalImage = (req, res, next) => {
 };
 
 export const postJournalTranscription = async (req, res) => {
-  const validation = validateTranscriptionInput(req.file);
+  const locale = localeFromRequest(req);
+  const validation = validateTranscriptionInput(req.file, locale);
   if (!validation.valid) {
     return res.status(400).json({ message: validation.message });
   }
@@ -37,12 +41,12 @@ export const postJournalTranscription = async (req, res) => {
     });
 
     if (!text) {
-      return res.status(422).json({ message: 'No se pudo leer el texto de la imagen.' });
+      return res.status(422).json({ message: journalMessage(locale, 'imageUnreadable') });
     }
 
     return res.status(200).json({ text });
   } catch (err) {
     console.error('[journal-transcription POST]', err);
-    return res.status(502).json({ message: 'No se pudo transcribir la imagen.' });
+    return res.status(502).json({ message: journalMessage(locale, 'transcribeFailed') });
   }
 };

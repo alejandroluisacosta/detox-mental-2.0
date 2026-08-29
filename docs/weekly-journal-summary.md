@@ -279,7 +279,7 @@ Build in thin vertical slices; each slice shippable alone.
 5. **Access:** All logged-in users (same as journal today).
 6. **Socratic tone:** Sharper / challenging (tunable later).
 7. **Machiavellian tone:** Practical and strategic; challenge the user's incentives without recommending manipulation.
-8. **Copy language:** Spanish UI + Spanish prompts for v1.
+8. **Copy language:** Bilingual UI (English default). Weekly summaries are generated in the active UI language at request time. Stored summaries keep their generated language until the user regenerates them.
 
 ### Window enforcement
 

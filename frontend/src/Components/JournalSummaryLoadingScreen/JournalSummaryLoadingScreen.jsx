@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { getRandomSummaryLoadingQuote } from '../../data/summaryLoadingQuotes.js';
 import './JournalSummaryLoadingScreen.css';
 
@@ -6,10 +7,11 @@ import './JournalSummaryLoadingScreen.css';
 const MIN_DISPLAY_MS = 5000;
 
 const JournalSummaryLoadingScreen = ({ ready = false, onDone }) => {
+  const { locale, t } = useLocale();
   const [full, setFull] = useState(false);
   const [percent, setPercent] = useState(0);
   const [minElapsed, setMinElapsed] = useState(false);
-  const [quote] = useState(getRandomSummaryLoadingQuote);
+  const [quote] = useState(() => getRandomSummaryLoadingQuote(locale));
 
   useEffect(() => {
     const start = performance.now();
@@ -40,12 +42,12 @@ const JournalSummaryLoadingScreen = ({ ready = false, onDone }) => {
   return (
     <div className="journal-summary-loading-screen">
       <p className="journal-summary-loading-screen__text">
-        Preparando tu resumen... [{percent}%]
+        {t('summary.preparing', { percent })}
       </p>
       <div
         className="journal-summary-loading-screen__bar"
         role="progressbar"
-        aria-label="Preparando resumen semanal"
+        aria-label={t('summary.preparingAria')}
         aria-valuenow={percent}
         aria-valuemin={0}
         aria-valuemax={100}

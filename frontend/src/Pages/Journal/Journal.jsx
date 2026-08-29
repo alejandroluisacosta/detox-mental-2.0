@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
 import {
@@ -9,26 +10,18 @@ import {
   prepareImageForUpload,
   MAX_UPLOAD_BYTES,
 } from '../../utils/journalImage.js';
+import { JOURNAL_TOPIC_IDS } from '../../utils/locale.js';
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import './Journal.css';
-
-const JOURNAL_TOPICS = [
-  'Trabajo',
-  'Interpersonal',
-  'Reflexión',
-  'Sabiduría',
-  'Preocupaciones',
-  'Meditaciones',
-  'Privado',
-];
 
 const MAX_SELECTED_TOPICS = 3;
 
 const Journal = () => {
   const navigate = useNavigate();
   const { user, status } = useAuth();
+  const { locale, t, topicLabel } = useLocale();
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
   const topicsRef = useRef(null);
@@ -108,7 +101,7 @@ const Journal = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validation = validateImageFile(file);
+    const validation = validateImageFile(file, locale);
     if (!validation.valid) {
       emitToast(validation.message);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -127,9 +120,9 @@ const Journal = () => {
 
     setTranscribing(true);
     try {
-      const prepared = await prepareImageForUpload(imageFile);
+      const prepared = await prepareImageForUpload(imageFile, locale);
       if (prepared.size > MAX_UPLOAD_BYTES) {
-        throw new Error('La imagen es demasiado grande. Prueba con una foto más ligera.');
+        throw new Error(t('journal.imageTooLarge'));
       }
 
       const formData = new FormData();
@@ -141,16 +134,16 @@ const Journal = () => {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.message || 'No se pudo transcribir la imagen.');
+        throw new Error(data.message || t('journal.transcribeFailed'));
       }
 
       const transcribed = typeof data.text === 'string' ? data.text : '';
       setText((prev) => (prev.trim() ? `${prev.trimEnd()}\n\n${transcribed}` : transcribed));
       clearImage();
-      emitToast('Texto transcrito. Revísalo antes de guardar.');
+      emitToast(t('journal.transcribeSuccess'));
     } catch (err) {
       console.error('[journal transcribe]', err);
-      emitToast(err.message || 'No se pudo transcribir la imagen.');
+      emitToast(err.message || t('journal.transcribeFailed'));
     } finally {
       setTranscribing(false);
     }
@@ -168,13 +161,13 @@ const Journal = () => {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'No se pudo guardar la entrada.');
+        throw new Error(data.message || t('journal.saveFailed'));
       }
       clearComposer();
-      emitToast('Entrada guardada en tu diario.');
+      emitToast(t('journal.saveSuccess'));
     } catch (err) {
       console.error('[journal POST]', err);
-      emitToast(err.message || 'No se pudo guardar la entrada.');
+      emitToast(err.message || t('journal.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -206,7 +199,7 @@ const Journal = () => {
       <Navigation />
       <main className="journal-page__main">
         <JournalSummaryBanner />
-        <h1 className="journal-page__prompt">¿Qué tienes en mente?</h1>
+        <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
 
         <div className="journal-page__composer">
           <div
@@ -216,12 +209,12 @@ const Journal = () => {
               fadeEdges.left ? ' journal-page__topics--fade-left' : ''
             }${fadeEdges.right ? ' journal-page__topics--fade-right' : ''}`}
             role="group"
-            aria-label="Temas del diario"
+            aria-label={t('journal.topicsLabel')}
             style={{
-              '--topic-cols': Math.max(1, Math.ceil(JOURNAL_TOPICS.length / 2)),
+              '--topic-cols': Math.max(1, Math.ceil(JOURNAL_TOPIC_IDS.length / 2)),
             }}
           >
-            {JOURNAL_TOPICS.map((topic) => {
+            {JOURNAL_TOPIC_IDS.map((topic) => {
               const selected = selectedTopics.includes(topic);
               const disabled = busy || (!selected && topicLimitReached);
               return (
@@ -233,7 +226,7 @@ const Journal = () => {
                   disabled={disabled}
                   aria-pressed={selected}
                 >
-                  {topic}
+                  {topicLabel(topic)}
                 </button>
               );
             })}
@@ -244,8 +237,8 @@ const Journal = () => {
             className="journal-page__textarea"
             value={text}
             onChange={handleTextChange}
-            placeholder="Escribe aquí..."
-            aria-label="Texto del diario"
+            placeholder={t('journal.placeholder')}
+            aria-label={t('journal.textLabel')}
             disabled={busy}
           />
 
@@ -268,13 +261,13 @@ const Journal = () => {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={busy}
                 >
-                  Escanear escritura a mano
+                  {t('journal.scan')}
                 </button>
               ) : (
                 <div className="journal-page__scan-preview">
                   <img
                     src={imagePreviewUrl}
-                    alt="Vista previa de la página escrita a mano"
+                    alt={t('journal.scanPreviewAlt')}
                     className="journal-page__scan-image"
                   />
                   {transcribing ? (
@@ -283,7 +276,7 @@ const Journal = () => {
                       role="status"
                       aria-live="polite"
                     >
-                      Transcribiendo...
+                      {t('journal.transcribing')}
                     </p>
                   ) : (
                     <div className="journal-page__scan-actions">
@@ -293,7 +286,7 @@ const Journal = () => {
                         onClick={transcribeImage}
                         disabled={busy}
                       >
-                        Transcribir
+                        {t('journal.transcribe')}
                       </button>
                       <button
                         type="button"
@@ -301,7 +294,7 @@ const Journal = () => {
                         onClick={clearImage}
                         disabled={busy}
                       >
-                        Cancelar
+                        {t('journal.cancel')}
                       </button>
                     </div>
                   )}
@@ -316,12 +309,12 @@ const Journal = () => {
             onClick={handleComplete}
             disabled={!text.trim() || busy || status === 'loading'}
           >
-            {saving ? 'GUARDANDO...' : 'COMPLETAR'}
+            {saving ? t('journal.saving') : t('journal.complete')}
           </button>
           <Link
             to="/journal/history"
             className="journal-page__history-link"
-            aria-label="Ver historial"
+            aria-label={t('journal.viewHistory')}
           >
             <span className="journal-page__history-icon" aria-hidden="true" />
           </Link>
@@ -331,15 +324,15 @@ const Journal = () => {
       {showGuestModal && (
         <JournalConfirmModal
           labelledById="journal-guest-modal-title"
-          title="Esta entrada no se guardará"
-          text="No has iniciado sesión. Si continúas, el texto se perderá al completar. Inicia sesión para guardarlo en tu diario."
+          title={t('journal.guestTitle')}
+          text={t('journal.guestText')}
           onClose={() => setShowGuestModal(false)}
-          primary={{ label: 'INICIAR SESIÓN', onClick: handleGuestLogin }}
+          primary={{ label: t('journal.guestLogin'), onClick: handleGuestLogin }}
           secondary={{
-            label: 'CONTINUAR SIN GUARDAR',
+            label: t('journal.guestContinue'),
             onClick: handleGuestDiscard,
           }}
-          closeText="Cerrar"
+          closeText={t('journal.close')}
         />
       )}
     </div>

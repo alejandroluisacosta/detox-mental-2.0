@@ -23,45 +23,48 @@ import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
 import Home from './Pages/Home/Home.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 import { DemoModeProvider } from './Context/DemoModeContext.jsx';
+import { LocaleProvider } from './Context/LocaleContext.jsx';
 
 const App = () => {
     return (
         <React.StrictMode>
             <BrowserRouter>
                 <ScrollToTop />
-                <AuthProvider>
-                    <AuthSessionToast />
-                    <DemoModeProvider>
-                        <SessionsProvider>
-                            <Routes>
-                                {/* Shared */}
-                                <Route path='/' element={<Home />} />
-                                <Route path='/login' element={<Login />} />
-                                <Route path='/auth/error' element={<AuthError />} />
-                                <Route path='/account' element={<Account />} />
+                <LocaleProvider>
+                    <AuthProvider>
+                        <AuthSessionToast />
+                        <DemoModeProvider>
+                            <SessionsProvider>
+                                <Routes>
+                                    {/* Shared */}
+                                    <Route path='/' element={<Home />} />
+                                    <Route path='/login' element={<Login />} />
+                                    <Route path='/auth/error' element={<AuthError />} />
+                                    <Route path='/account' element={<Account />} />
 
-                                {/* Journaling module — independent of onboarding */}
-                                <Route path='/journal' element={<Journal />} />
-                                <Route path='/journal/history' element={<JournalHistory />} />
-                                <Route path='/journal/summary' element={<JournalSummary />} />
+                                    {/* Journaling module — independent of onboarding */}
+                                    <Route path='/journal' element={<Journal />} />
+                                    <Route path='/journal/history' element={<JournalHistory />} />
+                                    <Route path='/journal/summary' element={<JournalSummary />} />
 
-                                {/* Educational module */}
-                                <Route path='/onboarding' element={<OnboardingWrapper />} />
-                                <Route path='/payment/success' element={<PaymentSuccess />} />
-                                <Route path='/payment/cancel' element={<PaymentCancel />} />
-                                <Route element={<OnboardingGate />}>
-                                    <Route path='/theory' element={<ArticleWrapper />} />
-                                    <Route path='/course' element={<CourseWrapper />} />
-                                    <Route path='/session/:sessionId' element={<Session />} />
-                                    <Route path='/instructions' element={<Instructions />} />
-                                    <Route path='/tests' element={<Tests />} />
-                                    <Route path='/test/:testId' element={<ThoughtsTest />} />
-                                    <Route path='/promo' element={<PromoGate />} />
-                                </Route>
-                            </Routes>
-                        </SessionsProvider>
-                    </DemoModeProvider>
-                </AuthProvider>
+                                    {/* Educational module */}
+                                    <Route path='/onboarding' element={<OnboardingWrapper />} />
+                                    <Route path='/payment/success' element={<PaymentSuccess />} />
+                                    <Route path='/payment/cancel' element={<PaymentCancel />} />
+                                    <Route element={<OnboardingGate />}>
+                                        <Route path='/theory' element={<ArticleWrapper />} />
+                                        <Route path='/course' element={<CourseWrapper />} />
+                                        <Route path='/session/:sessionId' element={<Session />} />
+                                        <Route path='/instructions' element={<Instructions />} />
+                                        <Route path='/tests' element={<Tests />} />
+                                        <Route path='/test/:testId' element={<ThoughtsTest />} />
+                                        <Route path='/promo' element={<PromoGate />} />
+                                    </Route>
+                                </Routes>
+                            </SessionsProvider>
+                        </DemoModeProvider>
+                    </AuthProvider>
+                </LocaleProvider>
             </BrowserRouter>
         </React.StrictMode>
     )

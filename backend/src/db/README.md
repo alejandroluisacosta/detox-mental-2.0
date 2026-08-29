@@ -343,6 +343,12 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/005_journal_summary_machiavelli.sql
 ```
 
+### Journal Summary Locale
+```sql
+-- Run after the Machiavelli summary migration
+\i backend/src/db/migrations/006_journal_summary_locale.sql
+```
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created

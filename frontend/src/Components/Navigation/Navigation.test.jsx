@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import Navigation from './Navigation.jsx';
 
 const mockUseLocation = vi.fn();
@@ -18,8 +19,15 @@ vi.mock('../../data/promoConfig.js', () => ({
     isPromoEnabled: () => false,
 }));
 
+const renderNav = (locale = 'en') =>
+    render(
+        <LocaleProvider initialLocale={locale}>
+            <Navigation />
+        </LocaleProvider>,
+    );
+
 const openMenu = () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Abrir menú' }));
+    fireEvent.click(screen.getByRole('button', { name: /Open menu|Abrir menú/ }));
 };
 
 describe('Navigation', () => {
@@ -33,37 +41,51 @@ describe('Navigation', () => {
 
     test('shows educational links on an educational route', () => {
         mockUseLocation.mockReturnValue({ pathname: '/theory' });
-        render(<Navigation />);
+        renderNav();
         openMenu();
 
-        expect(screen.getByRole('button', { name: 'TEORÍA' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'CURSO' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'THEORY' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'COURSE' })).toBeTruthy();
         expect(screen.getByRole('button', { name: 'TESTS' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'INSTRUCCIONES' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'INSTRUCTIONS' })).toBeTruthy();
         expect(screen.getByRole('button', { name: 'LOGIN' })).toBeTruthy();
-        expect(screen.queryByRole('button', { name: 'HISTORIAL' })).toBeNull();
-        expect(screen.queryByRole('button', { name: 'RESUMEN SEMANAL' })).toBeNull();
+        expect(screen.queryByRole('button', { name: 'HISTORY' })).toBeNull();
+        expect(screen.queryByRole('button', { name: 'WEEKLY SUMMARY' })).toBeNull();
     });
 
     test('shows journaling links on a journal route', () => {
         mockUseLocation.mockReturnValue({ pathname: '/journal' });
-        render(<Navigation />);
+        renderNav();
         openMenu();
 
-        expect(screen.getByRole('button', { name: 'DIARIO' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'HISTORIAL' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'RESUMEN SEMANAL' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'JOURNAL' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'HISTORY' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'WEEKLY SUMMARY' })).toBeTruthy();
         expect(screen.getByRole('button', { name: 'LOGIN' })).toBeTruthy();
-        expect(screen.queryByRole('button', { name: 'TEORÍA' })).toBeNull();
-        expect(screen.queryByRole('button', { name: 'CURSO' })).toBeNull();
+        expect(screen.queryByRole('button', { name: 'THEORY' })).toBeNull();
+        expect(screen.queryByRole('button', { name: 'COURSE' })).toBeNull();
     });
 
     test('sends the home control to the module chooser', () => {
         mockUseLocation.mockReturnValue({ pathname: '/journal/history' });
-        render(<Navigation />);
+        renderNav();
         openMenu();
 
-        fireEvent.click(screen.getByRole('button', { name: 'Inicio' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Home' }));
         expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+
+    test('switches journaling labels from English to Spanish with the flag controls', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/journal' });
+        renderNav('en');
+        openMenu();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Spanish' }));
+        expect(screen.getByRole('button', { name: 'DIARIO' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'HISTORIAL' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Español' })).toHaveAttribute(
+            'aria-pressed',
+            'true',
+        );
     });
 });

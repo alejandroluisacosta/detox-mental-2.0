@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import JournalSummary from './JournalSummary.jsx';
 import { apiFetch } from '../../api/client.js';
 
@@ -25,6 +26,13 @@ vi.mock('../../Components/Navigation/Navigation.jsx', () => ({
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 
+const renderSummary = (locale = 'en') =>
+  render(
+    <LocaleProvider initialLocale={locale}>
+      <JournalSummary />
+    </LocaleProvider>,
+  );
+
 describe('JournalSummary page states', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
@@ -42,9 +50,9 @@ describe('JournalSummary page states', () => {
 
   test('prompts guests to log in', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
-    render(<JournalSummary />);
+    renderSummary();
     expect(
-      screen.getByText(/Inicia sesión para ver o crear tu resumen semanal/i),
+      screen.getByText(/Sign in to view or create your weekly summary/i),
     ).toBeTruthy();
   });
 
@@ -67,10 +75,10 @@ describe('JournalSummary page states', () => {
       }),
     });
 
-    render(<JournalSummary />);
+    renderSummary();
     await waitFor(() => {
       expect(
-        screen.getByRole('button', { name: /CREAR RESUMEN/i }),
+        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
       ).toBeTruthy();
     });
   });
@@ -91,22 +99,22 @@ describe('JournalSummary page states', () => {
         entryCount: 3,
         minEntries: 2,
         summary: {
-          summaryText: 'Resumen de mitad de semana',
+          summaryText: 'Midweek summary',
           createdAt: '2026-07-29T12:00:00.000Z',
           mainTopics: ['Trabajo'],
-          bestQuote: 'Nunca es suficiente',
-          socraticText: '¿Qué prueba tienes de eso?',
+          bestQuote: 'Never enough',
+          socraticText: 'What proof do you have of that?',
         },
       }),
     });
 
-    render(<JournalSummary />);
+    renderSummary();
     await waitFor(() => {
       expect(
-        screen.getByRole('button', { name: /CREAR RESUMEN/i }),
+        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
       ).toBeTruthy();
     });
-    expect(screen.queryByText(/Resumen de mitad de semana/i)).toBeNull();
+    expect(screen.queryByText(/Midweek summary/i)).toBeNull();
   });
 
   test('renders stored summary sections and regenerate button', async () => {
@@ -125,37 +133,38 @@ describe('JournalSummary page states', () => {
         entryCount: 3,
         minEntries: 2,
         summary: {
-          summaryText: 'Escribiste sobre el trabajo y la duda.',
+          summaryText: 'You wrote about work and doubt.',
           mainTopics: ['Trabajo'],
-          bestQuote: 'Nunca es suficiente',
-          socraticText: '¿Qué prueba tienes de eso?',
+          bestQuote: 'Never enough',
+          socraticText: 'What proof do you have of that?',
           machiavelliText:
-            '¿Qué posición esperas ganar si sigues evitando el conflicto?',
+            'What position do you expect to gain if you keep avoiding conflict?',
           createdAt: '2026-08-02T11:00:00.000Z',
+          locale: 'en',
         },
       }),
     });
 
-    render(<JournalSummary />);
+    renderSummary();
     await waitFor(() => {
-      expect(screen.getByText(/Escribiste sobre el trabajo/i)).toBeTruthy();
-      expect(screen.getByText(/Nunca es suficiente/i)).toBeTruthy();
-      expect(screen.getByText(/Qué prueba tienes/i)).toBeTruthy();
-      expect(screen.getByRole('heading', { name: /Pregunta de Sócrates/i })).toBeTruthy();
+      expect(screen.getByText(/You wrote about work/i)).toBeTruthy();
+      expect(screen.getByText(/Never enough/i)).toBeTruthy();
+      expect(screen.getByText(/What proof do you have/i)).toBeTruthy();
+      expect(screen.getByRole('heading', { name: /Socrates' question/i })).toBeTruthy();
       expect(
-        screen.getByText(/Qué posición esperas ganar si sigues evitando/i),
+        screen.getByText(/What position do you expect to gain if you keep avoiding/i),
       ).toBeTruthy();
       expect(
-        screen.getByRole('heading', { name: /Desafío Machiavélico/i }),
+        screen.getByRole('heading', { name: /Machiavelli's challenge/i }),
       ).toBeTruthy();
-      const avatar = screen.getByAltText('Sócrates');
+      const avatar = screen.getByAltText('Socrates');
       expect(avatar.getAttribute('src')).toBe('/images/socrates.webp');
       const machiavelliAvatar = screen.getByAltText('Machiavelli');
       expect(machiavelliAvatar.getAttribute('src')).toBe(
         '/images/machiavelli.webp',
       );
       expect(
-        screen.getByRole('button', { name: /REGENERAR RESUMEN/i }),
+        screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
       ).toBeTruthy();
     });
   });
@@ -176,22 +185,22 @@ describe('JournalSummary page states', () => {
         entryCount: 3,
         minEntries: 2,
         summary: {
-          summaryText: 'Escribiste sobre el trabajo y la duda.',
+          summaryText: 'You wrote about work and doubt.',
           mainTopics: ['Trabajo'],
-          bestQuote: 'Nunca es suficiente',
-          socraticText: '¿Qué prueba tienes de eso?',
+          bestQuote: 'Never enough',
+          socraticText: 'What proof do you have of that?',
           createdAt: '2026-08-02T11:00:00.000Z',
         },
       }),
     });
 
-    render(<JournalSummary />);
+    renderSummary();
 
     await waitFor(() => {
-      expect(screen.getByText(/Escribiste sobre el trabajo/i)).toBeTruthy();
+      expect(screen.getByText(/You wrote about work/i)).toBeTruthy();
     });
     expect(
-      screen.queryByRole('heading', { name: /Desafío Machiavélico/i }),
+      screen.queryByRole('heading', { name: /Machiavelli's challenge/i }),
     ).toBeNull();
   });
 
@@ -202,39 +211,39 @@ describe('JournalSummary page states', () => {
       toggleDemoMode: vi.fn(),
     });
 
-    render(<JournalSummary />);
+    renderSummary();
 
     expect(
-      screen.getByText(/conviertes la necesidad de control en una virtud/i),
+      screen.getByText(/turn the need for control into a virtue/i),
     ).toBeTruthy();
     expect(
       screen.getByText(/Maybe I don't need a better plan/i),
     ).toBeTruthy();
     expect(apiFetch).not.toHaveBeenCalled();
     expect(
-      screen.queryByRole('button', { name: /REGENERAR RESUMEN/i }),
+      screen.queryByRole('button', { name: /REGENERATE SUMMARY/i }),
     ).toBeNull();
   });
 
   test('shows a spinner above the auth loading copy', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
-    render(<JournalSummary />);
-    expect(screen.getByText('Cargando…')).toBeTruthy();
+    renderSummary();
+    expect(screen.getByText('Loading…')).toBeTruthy();
     expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
   });
 
   test('shows a spinner above the summary loading copy', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     apiFetch.mockReturnValue(new Promise(() => {}));
-    render(<JournalSummary />);
-    expect(screen.getByText('Cargando resumen…')).toBeTruthy();
+    renderSummary();
+    expect(screen.getByText('Loading summary…')).toBeTruthy();
     expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
   });
 
-  test('replaces the history text link with a footer ESCRIBIR button', () => {
+  test('replaces the history text link with a footer WRITE button', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
-    render(<JournalSummary />);
-    expect(screen.getByText('ESCRIBIR')).toBeTruthy();
-    expect(screen.queryByText('Ver historial')).toBeNull();
+    renderSummary();
+    expect(screen.getByText('WRITE')).toBeTruthy();
+    expect(screen.queryByText('View history')).toBeNull();
   });
 });

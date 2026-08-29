@@ -31,9 +31,16 @@ test('accepts a valid WebP', () => {
   assert.deepEqual(result, { valid: true, mimeType: 'image/webp' });
 });
 
-test('rejects a missing file', () => {
+test('rejects a missing file with an English message by default', () => {
   const result = validateTranscriptionInput(undefined);
   assert.equal(result.valid, false);
+  assert.equal(result.message, 'No image was received.');
+});
+
+test('rejects a missing file with a Spanish message when requested', () => {
+  const result = validateTranscriptionInput(undefined, 'es');
+  assert.equal(result.valid, false);
+  assert.equal(result.message, 'No se recibió ninguna imagen.');
 });
 
 test('rejects an empty buffer', () => {

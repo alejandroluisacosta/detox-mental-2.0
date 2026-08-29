@@ -1,3 +1,6 @@
+import { translate } from './translate.js';
+import { getRequestLocale } from './locale.js';
+
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 export const MAX_UPLOAD_BYTES = 3 * 1024 * 1024;
 
@@ -8,14 +11,18 @@ const JPEG_QUALITY = 0.85;
  * Validates a selected file's type before any processing. Size is enforced
  * after downscaling, since raw phone photos are often large but shrink well.
  * @param { File | undefined | null } file
+ * @param { string } [locale]
  * @returns { { valid: true } | { valid: false, message: string } }
  */
-export const validateImageFile = (file) => {
+export const validateImageFile = (file, locale = getRequestLocale()) => {
   if (!file) {
-    return { valid: false, message: 'Selecciona una imagen.' };
+    return { valid: false, message: translate(locale, 'journal.imageMissing') };
   }
   if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-    return { valid: false, message: 'Formato no admitido. Usa JPG, PNG o WebP.' };
+    return {
+      valid: false,
+      message: translate(locale, 'journal.imageUnsupported'),
+    };
   }
   return { valid: true };
 };
@@ -25,9 +32,10 @@ export const validateImageFile = (file) => {
  * staying under the upload limit. Falls back to the original file if the
  * browser cannot process it.
  * @param { File } file
+ * @param { string } [locale]
  * @returns { Promise<Blob> }
  */
-export const prepareImageForUpload = (file) =>
+export const prepareImageForUpload = (file, locale = getRequestLocale()) =>
   new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -57,7 +65,7 @@ export const prepareImageForUpload = (file) =>
 
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('No se pudo procesar la imagen.'));
+      reject(new Error(translate(locale, 'journal.imageProcessFailed')));
     };
 
     img.src = url;
