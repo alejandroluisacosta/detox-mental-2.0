@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CloseIcon from '../CloseIcon/CloseIcon.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import {
@@ -18,6 +18,15 @@ const JournalTopicsModal = ({ initialTopics, onClose, onSave, saving }) => {
     if (saving) return;
     onClose();
   };
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key !== 'Escape' || saving) return;
+      onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose, saving]);
 
   const toggleTopic = (topic) => {
     if (saving) return;

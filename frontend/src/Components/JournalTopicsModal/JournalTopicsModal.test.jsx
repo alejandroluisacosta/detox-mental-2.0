@@ -74,4 +74,22 @@ describe('JournalTopicsModal', () => {
       'false',
     );
   });
+
+  test('closes when Escape is pressed', () => {
+    const onClose = vi.fn();
+    renderModal({ onClose });
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not close on Escape while saving', () => {
+    const onClose = vi.fn();
+    renderModal({ onClose, saving: true });
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
 });

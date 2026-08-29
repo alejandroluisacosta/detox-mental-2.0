@@ -269,7 +269,7 @@ const JournalHistory = () => {
                           aria-label={t('history.editTopics')}
                         >
                           <img
-                            src="/icons/tag.svg"
+                            src="/icons/edit.svg"
                             alt=""
                             className="journal-history__topics-edit-icon"
                             aria-hidden="true"
