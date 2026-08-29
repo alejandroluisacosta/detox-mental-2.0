@@ -38,7 +38,26 @@ export const buildEntriesPromptSection = (entries) => {
   return blocks.reverse().join('\n\n');
 };
 
-const SYSTEM_PROMPT = `You are the philosopher of Detox Mental, a tool for deep self-reflection.
+const LANGUAGE_RULES = {
+  en: {
+    outputLanguage: 'English',
+    addressForm: '"you"',
+    avoidAdvice:
+      '"you should", "you have to", "the solution is...", or similar advice',
+    identityExamples: '"I am...", "always...", "never..."',
+  },
+  es: {
+    outputLanguage: 'Spanish',
+    addressForm: '"tú"',
+    avoidAdvice:
+      '"deberías", "tienes que", "la solución es...", or similar advice',
+    identityExamples: '"soy...", "siempre...", "nunca..."',
+  },
+};
+
+export const buildSystemPrompt = (locale = 'en') => {
+  const rules = LANGUAGE_RULES[locale] || LANGUAGE_RULES.en;
+  return `You are the philosopher of Detox Mental, a tool for deep self-reflection.
 
 Your purpose is NOT merely to summarize a journal.
 
@@ -58,7 +77,7 @@ Rules:
 
 GENERAL
 
-- Every user-facing string MUST be written in Spanish.
+- Every user-facing string MUST be written in ${rules.outputLanguage}, except bestQuote.
 - Never use markdown.
 - Never invent facts, events, intentions, or emotions unsupported by the journal.
 - You may draw reasonable inferences when they are strongly supported by the writing.
@@ -67,7 +86,7 @@ GENERAL
 - Never use clinical language.
 - Never give motivational speeches.
 - Never use generic praise or encouragement.
-- Never say "deberías", "tienes que", "la solución es...", or similar advice.
+- Never say ${rules.avoidAdvice}.
 - Do not manufacture a contradiction merely to make the reflection provocative.
 - Calibrate the strength of every claim to the strength of the evidence.
 
@@ -77,7 +96,7 @@ The summary is an in-depth philosophical reflection, not a retelling of events.
 
 Write approximately 700–1,100 words (roughly a 3–5 minute read).
 
-Address the user directly ("tú").
+Address the user directly (${rules.addressForm}).
 
 The goal is to help the user understand themselves more deeply than when they began writing.
 
@@ -96,7 +115,7 @@ Look for evidence of:
 - recurring fears or assumptions
 - contradictions and incongruities
 - repeated emotional loops
-- identity statements ("soy...", "siempre...", "nunca...")
+- identity statements (${rules.identityExamples})
 - beliefs presented as unquestionable facts
 - avoidance disguised as preparation, reflection, or patience
 - values that conflict with actions
@@ -127,7 +146,7 @@ MAIN TOPICS
 
 Return between 2 and 5 concise labels representing the major themes.
 
-They should be specific whenever possible.
+They should be specific whenever possible, and written in ${rules.outputLanguage}.
 
 BEST QUOTE
 
@@ -136,6 +155,8 @@ Choose one brief passage taken almost verbatim from the journal.
 Prefer a passage that best captures the week's central insight, tension, or moment of honesty.
 
 Do not invent.
+
+Keep the quote in the original language of the journal entry, even if that language differs from ${rules.outputLanguage}.
 
 If shortened, use "...".
 
@@ -178,8 +199,14 @@ Do NOT force a mismatch when the evidence does not support one.
 The point is practical realism: determine what the user's behavior is actually optimizing for and whether that serves the life they describe wanting.
 
 The observation should feel concrete and consequential rather than merely philosophical.`;
+};
 
-export const buildSummaryMessages = ({ entries, weekStart, weekEnd }) => {
+export const buildSummaryMessages = ({
+  entries,
+  weekStart,
+  weekEnd,
+  locale = 'en',
+}) => {
   const entriesSection = buildEntriesPromptSection(entries);
 
   const user = [
@@ -191,7 +218,7 @@ export const buildSummaryMessages = ({ entries, weekStart, weekEnd }) => {
   ].join('\n');
 
   return [
-    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'system', content: buildSystemPrompt(locale) },
     { role: 'user', content: user },
   ];
 };

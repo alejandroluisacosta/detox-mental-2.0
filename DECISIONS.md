@@ -151,3 +151,27 @@ This is a product-oriented change that comes from experimentation with the produ
 **Why this revisits 2026-01-28:**  
 That decision treated onboarding as a precondition for accessing the app. The gate now guards the educational module only, so journaling can be used and advertised independently.
 
+### 2026-08-26 — Journaling module bilingual UI with English default
+
+**Decision:**  
+Open the journaling module to an English-speaking audience with a bilingual UI, English by default and a language switch in the navigation menu. The translation layer is built in-house — a per-locale catalog and a `t()` helper behind a `LocaleProvider` — rather than adopting an i18n library, and is deliberately shaped so that migrating to one later is cheap. Journal UI copy, shared navigation/home/account chrome, journal API errors, and weekly summary generation all follow the active locale.
+
+**Why this option was chosen:**  
+Reaching an English-speaking audience had been on the roadmap for months, and implementing it forced a choice: build our own translation layer, or install an established library such as react-i18next.
+
+The decision came down to the difference between easy and simple. Installing the library would have been the easier path, but it would have brought in machinery the product does not need yet, and every future contributor would have had to understand it. Given the modest number of strings and a single module to translate, a small catalog was the simpler thing to own.
+
+What makes this safe is that the layer is intentionally shaped like the library we would migrate to: flat dotted keys, one plain-object catalog per locale, and a `t(key, values)` signature. Adopting react-i18next later means rewriting one file rather than touching every screen. The codebase stays simple now and prepared for growth.
+
+**Why obvious alternatives were rejected:**  
+- **react-i18next or similar:** More capability than two locales and one module justify today. Revisit rather than pre-empt.
+- **Infer summary language from the journal entries:** Mixed-language weeks make this unreliable; the UI language at request time is the explicit signal.
+- **Store two summary versions per week:** Extra schema and generation cost for a case regenerating already solves.
+
+**What would trigger revisiting:**  
+Adopt a real i18n library once the layer would have to grow beyond string lookup and simple placeholder substitution. The practical signals are pluralization rules, formatting or rich text inside translated sentences, a third locale, or handing the catalogs to an external translator.
+
+**Operational implications (accepted):**  
+Apply `backend/src/db/migrations/006_journal_summary_locale.sql` to each environment. Existing summary rows backfill as `es`. Generated summaries keep the language they were created in until the user regenerates them. Topic values remain stored as the existing Spanish identifiers. Educational screens remain Spanish except the shared navigation/home/account labels.
+
+

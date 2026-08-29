@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import Journal from './Journal.jsx';
 
 const mockUseAuth = vi.fn();
@@ -27,6 +29,15 @@ vi.mock('../../Components/CloseIcon/CloseIcon.jsx', () => ({
 
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
+
+const renderJournal = (locale = 'en') => {
+  writeStoredLocale(locale);
+  return render(
+    <LocaleProvider>
+      <Journal />
+    </LocaleProvider>,
+  );
+};
 
 const mockScrollMetrics = (el, { scrollLeft, clientWidth, scrollWidth }) => {
   Object.defineProperty(el, 'scrollLeft', {
@@ -59,29 +70,39 @@ describe('Journal handwriting capture gating', () => {
 
   test('hides the scan control for guests', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
-    render(<Journal />);
-    expect(screen.queryByRole('button', { name: /Escanear/i })).toBeNull();
+    renderJournal();
+    expect(screen.queryByRole('button', { name: /Scan handwriting/i })).toBeNull();
   });
 
   test('shows the scan control for signed-in users', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    render(<Journal />);
-    expect(screen.getByRole('button', { name: /Escanear/i })).toBeTruthy();
+    renderJournal();
+    expect(screen.getByRole('button', { name: /Scan handwriting/i })).toBeTruthy();
   });
 
   test('hides the scan control while auth is still loading', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
-    render(<Journal />);
-    expect(screen.queryByRole('button', { name: /Escanear/i })).toBeNull();
+    renderJournal();
+    expect(screen.queryByRole('button', { name: /Scan handwriting/i })).toBeNull();
   });
 
   test('renders history as an accent icon link', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
-    render(<Journal />);
-    const link = screen.getByRole('link', { name: 'Ver historial' });
+    renderJournal();
+    const link = screen.getByRole('link', { name: 'View history' });
     expect(link.getAttribute('href')).toBe('/journal/history');
-    expect(screen.queryByText('Ver historial')).toBeNull();
+    expect(screen.queryByText('View history')).toBeNull();
     expect(link.querySelector('.journal-page__history-icon')).toBeTruthy();
+  });
+
+  test('shows localized topic labels while keeping Spanish identifiers selected', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderJournal();
+    expect(screen.getByRole('button', { name: 'Work' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Work' }));
+    expect(screen.getByRole('button', { name: 'Work' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
   });
 });
 
@@ -100,8 +121,8 @@ describe('Journal topic edge fade', () => {
   });
 
   test('toggles fade classes from scroll overflow', () => {
-    render(<Journal />);
-    const topics = screen.getByRole('group', { name: 'Temas del diario' });
+    renderJournal();
+    const topics = screen.getByRole('group', { name: 'Journal topics' });
 
     mockScrollMetrics(topics, {
       scrollLeft: 0,

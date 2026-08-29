@@ -1,3 +1,5 @@
+import { journalMessage } from '../i18n/journalMessages.js';
+
 export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 export const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
@@ -36,24 +38,25 @@ const detectImageType = (buffer) => {
 
 /**
  * Validates an uploaded image before it is sent to the vision model.
- * Returns a discriminated result with a Spanish message on failure and the
+ * Returns a discriminated result with a localized message on failure and the
  * signature-detected MIME type on success.
  * @param { { buffer?: Buffer, mimetype?: string } | undefined } file
+ * @param { string } [locale]
  * @returns { { valid: true, mimeType: string } | { valid: false, message: string } }
  */
-export const validateTranscriptionInput = (file) => {
+export const validateTranscriptionInput = (file, locale = 'en') => {
   if (!file || !file.buffer || file.buffer.length === 0) {
-    return { valid: false, message: 'No se recibió ninguna imagen.' };
+    return { valid: false, message: journalMessage(locale, 'missingImage') };
   }
   if (file.buffer.length > MAX_IMAGE_BYTES) {
-    return { valid: false, message: 'La imagen es demasiado grande (máximo 3 MB).' };
+    return { valid: false, message: journalMessage(locale, 'imageTooLarge') };
   }
   if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-    return { valid: false, message: 'Formato de imagen no admitido. Usa JPG, PNG o WebP.' };
+    return { valid: false, message: journalMessage(locale, 'unsupportedImageFormat') };
   }
   const mimeType = detectImageType(file.buffer);
   if (!mimeType) {
-    return { valid: false, message: 'El archivo no parece ser una imagen válida.' };
+    return { valid: false, message: journalMessage(locale, 'invalidImage') };
   }
   return { valid: true, mimeType };
 };

@@ -18,6 +18,7 @@ export const generateWeeklySummaryContent = async ({
   entries,
   weekStart,
   weekEnd,
+  locale = 'en',
 }) => {
   if (!process.env.HF_TOKEN) {
     const err = new Error('missing_hf_token');
@@ -27,9 +28,9 @@ export const generateWeeklySummaryContent = async ({
 
   const modelId = getSummaryModelId();
   const client = new InferenceClient(process.env.HF_TOKEN);
-  const messages = buildSummaryMessages({ entries, weekStart, weekEnd });
+  const messages = buildSummaryMessages({ entries, weekStart, weekEnd, locale });
 
-  // Long philosophical reflections (~700–1,100 Spanish words) need headroom
+  // Long philosophical reflections (~700–1,100 words) need headroom
   // beyond the JSON fields for quote / topics / socratic.
   const response = await client.chatCompletion({
     model: modelId,

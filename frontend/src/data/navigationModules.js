@@ -1,23 +1,23 @@
 export const EDUCATIONAL_LINKS = [
     {
-        label: 'TEORÍA',
+        labelKey: 'nav.theory',
         path: '/theory',
         isActive: (pathname) => pathname === '/theory',
     },
     {
-        label: 'CURSO',
+        labelKey: 'nav.course',
         path: '/course',
         isActive: (pathname) =>
             pathname.startsWith('/course') || pathname.startsWith('/session'),
     },
     {
-        label: 'TESTS',
+        labelKey: 'nav.tests',
         path: '/tests',
         isActive: (pathname) =>
             pathname.startsWith('/tests') || pathname.startsWith('/test'),
     },
     {
-        label: 'INSTRUCCIONES',
+        labelKey: 'nav.instructions',
         path: '/instructions',
         isActive: (pathname) => pathname.startsWith('/instructions'),
     },
@@ -25,17 +25,17 @@ export const EDUCATIONAL_LINKS = [
 
 export const JOURNALING_LINKS = [
     {
-        label: 'DIARIO',
+        labelKey: 'nav.journal',
         path: '/journal',
         isActive: (pathname) => pathname === '/journal',
     },
     {
-        label: 'HISTORIAL',
+        labelKey: 'nav.history',
         path: '/journal/history',
         isActive: (pathname) => pathname.startsWith('/journal/history'),
     },
     {
-        label: 'RESUMEN SEMANAL',
+        labelKey: 'nav.summary',
         path: '/journal/summary',
         isActive: (pathname) => pathname.startsWith('/journal/summary'),
     },

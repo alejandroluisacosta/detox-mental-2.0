@@ -10,6 +10,8 @@ import {
   upsertWeeklySummary,
 } from './journalSummaries.service.js';
 import { generateWeeklySummaryContent } from './journalSummaries.generation.js';
+import { journalMessage } from '../i18n/journalMessages.js';
+import { localeFromRequest } from '../i18n/locale.js';
 
 const buildCurrentPayload = async (userId, now = new Date()) => {
   const bounds = getWeekBounds(now);
@@ -30,16 +32,18 @@ const buildCurrentPayload = async (userId, now = new Date()) => {
 };
 
 export const getCurrentJournalSummary = async (req, res) => {
+  const locale = localeFromRequest(req);
   try {
     const payload = await buildCurrentPayload(req.user.id);
     return res.status(200).json(payload);
   } catch (err) {
     console.error('[journal-summaries GET current]', err);
-    return res.status(500).json({ message: 'Error al cargar el resumen.' });
+    return res.status(500).json({ message: journalMessage(locale, 'summaryLoadFailed') });
   }
 };
 
 export const postCurrentJournalSummary = async (req, res) => {
+  const locale = localeFromRequest(req);
   try {
     const now = new Date();
     const bounds = getWeekBounds(now);
@@ -52,7 +56,9 @@ export const postCurrentJournalSummary = async (req, res) => {
 
     if (entries.length < MIN_ENTRIES_FOR_SUMMARY) {
       return res.status(422).json({
-        message: `Necesitas al menos ${MIN_ENTRIES_FOR_SUMMARY} entradas esta semana para crear el resumen.`,
+        message: journalMessage(locale, 'needEntries', {
+          minEntries: MIN_ENTRIES_FOR_SUMMARY,
+        }),
         entryCount: entries.length,
         minEntries: MIN_ENTRIES_FOR_SUMMARY,
       });
@@ -64,17 +70,17 @@ export const postCurrentJournalSummary = async (req, res) => {
         entries,
         weekStart: bounds.weekStart,
         weekEnd: bounds.weekEnd,
+        locale,
       });
     } catch (genErr) {
       console.error('[journal-summaries POST generate]', genErr);
       if (genErr.code === 'missing_hf_token') {
         return res.status(503).json({
-          message: 'El servicio de resumen no está configurado.',
+          message: journalMessage(locale, 'summaryServiceUnconfigured'),
         });
       }
       return res.status(502).json({
-        message:
-          'No se pudo generar el resumen. Inténtalo de nuevo en unos momentos.',
+        message: journalMessage(locale, 'summaryGenerateFailed'),
       });
     }
 
@@ -92,10 +98,11 @@ export const postCurrentJournalSummary = async (req, res) => {
       machiavelliText: generated.machiavelliText,
       entryCount: entries.length,
       modelId: generated.modelId,
+      locale,
     });
     return res.status(201).json({ summary });
   } catch (err) {
     console.error('[journal-summaries POST current]', err);
-    return res.status(500).json({ message: 'Error al crear el resumen.' });
+    return res.status(500).json({ message: journalMessage(locale, 'summaryCreateFailed') });
   }
 };

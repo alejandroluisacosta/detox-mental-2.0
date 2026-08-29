@@ -25,6 +25,7 @@ const mapSummaryRow = (row) => ({
   machiavelliText: row.machiavelli_text,
   entryCount: row.entry_count,
   modelId: row.model_id,
+  locale: row.locale,
   createdAt: toIso(row.created_at),
 });
 
@@ -66,7 +67,7 @@ export const getWeeklySummaryForUser = async (userId, weekStart) => {
   const { rows } = await pool.query(
     `SELECT id, user_id, week_start, week_end, period_start, period_end,
             summary_text, main_topics, best_quote, best_quote_entry_id,
-            socratic_text, machiavelli_text, entry_count, model_id, created_at
+            socratic_text, machiavelli_text, entry_count, model_id, locale, created_at
      FROM journal_weekly_summaries
      WHERE user_id = $1 AND week_start = $2`,
     [userId, weekStart],
@@ -88,16 +89,17 @@ export const createWeeklySummary = async ({
   machiavelliText,
   entryCount,
   modelId,
+  locale,
 }) => {
   const { rows } = await pool.query(
     `INSERT INTO journal_weekly_summaries (
        user_id, week_start, week_end, period_start, period_end,
        summary_text, main_topics, best_quote, best_quote_entry_id,
-       socratic_text, machiavelli_text, entry_count, model_id
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       socratic_text, machiavelli_text, entry_count, model_id, locale
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      RETURNING id, user_id, week_start, week_end, period_start, period_end,
                summary_text, main_topics, best_quote, best_quote_entry_id,
-               socratic_text, machiavelli_text, entry_count, model_id, created_at`,
+               socratic_text, machiavelli_text, entry_count, model_id, locale, created_at`,
     [
       userId,
       weekStart,
@@ -112,6 +114,7 @@ export const createWeeklySummary = async ({
       machiavelliText,
       entryCount,
       modelId,
+      locale,
     ],
   );
   return mapSummaryRow(rows[0]);
@@ -132,13 +135,14 @@ export const upsertWeeklySummary = async ({
   machiavelliText,
   entryCount,
   modelId,
+  locale,
 }) => {
   const { rows } = await pool.query(
     `INSERT INTO journal_weekly_summaries (
        user_id, week_start, week_end, period_start, period_end,
        summary_text, main_topics, best_quote, best_quote_entry_id,
-       socratic_text, machiavelli_text, entry_count, model_id
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       socratic_text, machiavelli_text, entry_count, model_id, locale
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      ON CONFLICT (user_id, week_start) DO UPDATE SET
        week_end = EXCLUDED.week_end,
        period_start = EXCLUDED.period_start,
@@ -151,10 +155,11 @@ export const upsertWeeklySummary = async ({
        machiavelli_text = EXCLUDED.machiavelli_text,
        entry_count = EXCLUDED.entry_count,
        model_id = EXCLUDED.model_id,
+       locale = EXCLUDED.locale,
        created_at = NOW()
      RETURNING id, user_id, week_start, week_end, period_start, period_end,
                summary_text, main_topics, best_quote, best_quote_entry_id,
-               socratic_text, machiavelli_text, entry_count, model_id, created_at`,
+               socratic_text, machiavelli_text, entry_count, model_id, locale, created_at`,
     [
       userId,
       weekStart,
@@ -169,6 +174,7 @@ export const upsertWeeklySummary = async ({
       machiavelliText,
       entryCount,
       modelId,
+      locale,
     ],
   );
   return mapSummaryRow(rows[0]);

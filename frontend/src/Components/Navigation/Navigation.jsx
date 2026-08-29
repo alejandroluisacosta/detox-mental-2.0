@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './Navigation.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { isPromoEnabled } from '../../data/promoConfig.js';
 import {
     EDUCATIONAL_LINKS,
@@ -9,11 +10,17 @@ import {
     resolveNavModule,
 } from '../../data/navigationModules.js';
 
+const LANGUAGE_OPTIONS = [
+    { locale: 'en', flag: '🇺🇸', labelKey: 'nav.english' },
+    { locale: 'es', flag: '🇪🇸', labelKey: 'nav.spanish' },
+];
+
 const Navigation = () => {
     const [menuState, setMenuState] = useState('closed');
     const navigate = useNavigate();
     const location = useLocation();
     const { user, status } = useAuth();
+    const { locale, setLocale, t } = useLocale();
     const navModule = resolveNavModule(location.pathname);
     const moduleLinks = navModule === 'journaling' ? JOURNALING_LINKS : EDUCATIONAL_LINKS;
     const isPromoRoute = location.pathname.startsWith('/promo');
@@ -21,10 +28,11 @@ const Navigation = () => {
     const menuLinks = [
         ...moduleLinks.map((link) => ({
             ...link,
+            label: t(link.labelKey),
             isActive: link.isActive(location.pathname),
         })),
         {
-            label: user ? 'CUENTA' : 'LOGIN',
+            label: user ? t('nav.account') : t('nav.login'),
             path: user ? '/account' : '/login',
             isActive: isAccountRoute,
             disabled: !user && status !== 'ready',
@@ -67,7 +75,7 @@ const Navigation = () => {
                 >
                     <div className='navigation__menu-header'>
                         <button type='button' className='navigation__menu-close' onClick={closeMenu}>
-                            Cerrar
+                            {t('nav.close')}
                         </button>
                     </div>
                     <div className='navigation__menu-links'>
@@ -88,14 +96,14 @@ const Navigation = () => {
                                 className={`navigation__menu-link navigation__menu-link--promo${isPromoRoute ? ' navigation__menu-link--active' : ''}`}
                                 onClick={() => goTo('/promo')}
                             >
-                                GANA 25€
+                                {t('nav.promo')}
                             </button>
                         )}
                         <button
                             type='button'
                             className='navigation__menu-link navigation__menu-link--home'
                             onClick={() => goTo('/')}
-                            aria-label='Inicio'
+                            aria-label={t('nav.home')}
                         >
                             <img
                                 className='navigation__menu-home-icon'
@@ -104,6 +112,31 @@ const Navigation = () => {
                                 aria-hidden='true'
                             />
                         </button>
+                        <div
+                            className='navigation__language'
+                            role='group'
+                            aria-label={t('nav.language')}
+                        >
+                            {LANGUAGE_OPTIONS.map((option) => {
+                                const selected = locale === option.locale;
+                                const languageName = t(option.labelKey);
+                                return (
+                                    <button
+                                        key={option.locale}
+                                        type='button'
+                                        className={`navigation__language-button${selected ? ' navigation__language-button--active' : ''}`}
+                                        onClick={() => setLocale(option.locale)}
+                                        aria-pressed={selected}
+                                        aria-label={languageName}
+                                    >
+                                        <span className='navigation__language-flag' aria-hidden='true'>
+                                            {option.flag}
+                                        </span>
+                                        <span className='navigation__language-name'>{languageName}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             )}
@@ -112,7 +145,7 @@ const Navigation = () => {
                     type='button'
                     className='navigation__reveal'
                     onClick={openMenu}
-                    aria-label='Abrir menú'
+                    aria-label={t('nav.openMenu')}
                 >
                     <img
                         className='navigation__reveal-icon'

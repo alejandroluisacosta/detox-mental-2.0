@@ -8,14 +8,14 @@ const JPEG_QUALITY = 0.85;
  * Validates a selected file's type before any processing. Size is enforced
  * after downscaling, since raw phone photos are often large but shrink well.
  * @param { File | undefined | null } file
- * @returns { { valid: true } | { valid: false, message: string } }
+ * @returns { { valid: true } | { valid: false, messageKey: string } }
  */
 export const validateImageFile = (file) => {
   if (!file) {
-    return { valid: false, message: 'Selecciona una imagen.' };
+    return { valid: false, messageKey: 'journal.imageMissing' };
   }
   if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-    return { valid: false, message: 'Formato no admitido. Usa JPG, PNG o WebP.' };
+    return { valid: false, messageKey: 'journal.imageUnsupported' };
   }
   return { valid: true };
 };
@@ -57,7 +57,9 @@ export const prepareImageForUpload = (file) =>
 
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('No se pudo procesar la imagen.'));
+      const error = new Error('journal.imageProcessFailed');
+      error.messageKey = 'journal.imageProcessFailed';
+      reject(error);
     };
 
     img.src = url;

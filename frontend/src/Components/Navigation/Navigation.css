@@ -122,6 +122,50 @@
     height: 24px;
 }
 
+.navigation__language {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.navigation__language-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--background);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--background);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+
+.navigation__language-button--active {
+    background: var(--background);
+    color: var(--accent);
+}
+
+.navigation__language-button:focus-visible {
+    outline: 2px solid var(--background);
+    outline-offset: 2px;
+}
+
+.navigation__language-flag {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.navigation__language-name {
+    font-size: 14px;
+}
+
 @keyframes navigation-menu-slide-in {
     from {
         transform: translateX(-100%);
