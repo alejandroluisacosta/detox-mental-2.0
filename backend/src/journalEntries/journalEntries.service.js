@@ -37,3 +37,14 @@ export const deleteJournalEntryForUser = async (userId, entryId) => {
   );
   return rows[0]?.id ?? null;
 };
+
+export const updateJournalEntryTopicsForUser = async (userId, entryId, topics) => {
+  const { rows } = await pool.query(
+    `UPDATE journal_entries
+     SET topics = $3
+     WHERE id = $1 AND user_id = $2
+     RETURNING id, content, topics, created_at`,
+    [entryId, userId, topics],
+  );
+  return rows[0] ? mapRow(rows[0]) : null;
+};

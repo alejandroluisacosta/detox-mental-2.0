@@ -163,7 +163,7 @@ Stores free-form journal entries for the user diary (`/journal`). Separate from 
 - `id` (UUID, PK): Unique entry identifier
 - `user_id` (UUID, FK → users.id): Author
 - `content` (TEXT): Journal text
-- `topics` (TEXT[]): Optional topic tags (default empty; UI later)
+- `topics` (TEXT[]): Optional topic tags (default empty). Chosen when writing or edited later from History. Stored as the Spanish topic identifiers.
 - `created_at` (TIMESTAMP WITH TIME ZONE): When the entry was saved
 
 **Constraints:**

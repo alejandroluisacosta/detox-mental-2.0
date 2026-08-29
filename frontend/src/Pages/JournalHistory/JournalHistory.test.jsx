@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import { writeStoredLocale } from '../../utils/locale.js';
 import JournalHistory from './JournalHistory.jsx';
@@ -82,6 +82,7 @@ describe('JournalHistory page states', () => {
       screen.getByText(/Every time something stays ambiguous/i),
     ).toBeTruthy();
     expect(screen.queryByLabelText(/Delete entry/i)).toBeNull();
+    expect(screen.queryByLabelText(/Edit topics/i)).toBeNull();
     expect(apiFetch).not.toHaveBeenCalled();
   });
 
@@ -98,5 +99,47 @@ describe('JournalHistory page states', () => {
     renderHistory();
     expect(screen.getByText('Loading entries…')).toBeTruthy();
     expect(document.querySelector('.loading-status__spinner')).toBeTruthy();
+  });
+
+  test('opens the topics modal and saves a PATCH that updates the chips', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    const entry = {
+      id: 'e1',
+      content: 'A short entry.',
+      topics: ['Trabajo'],
+      createdAt: '2026-08-01T12:00:00.000Z',
+    };
+
+    apiFetch.mockImplementation((path, options = {}) => {
+      if (options.method === 'PATCH') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            entry: { ...entry, topics: ['Trabajo', 'Reflexión'] },
+          }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ entries: [entry] }),
+      });
+    });
+
+    renderHistory();
+
+    fireEvent.click(await screen.findByLabelText(/Edit topics/i));
+    fireEvent.click(screen.getByRole('button', { name: 'Reflection' }));
+    fireEvent.click(screen.getByRole('button', { name: 'SAVE' }));
+
+    await waitFor(() => {
+      expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries/e1', {
+        method: 'PATCH',
+        body: { topics: ['Trabajo', 'Reflexión'] },
+      });
+    });
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByText('Work')).toBeTruthy();
+    expect(screen.getByText('Reflection')).toBeTruthy();
   });
 });

@@ -11,6 +11,7 @@ import { emitToast } from '../../lib/toastBus.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
+import JournalTopicsModal from '../../Components/JournalTopicsModal/JournalTopicsModal.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import './JournalHistory.css';
 
@@ -43,6 +44,8 @@ const JournalHistory = () => {
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const [entryPendingDelete, setEntryPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [entryPendingTopics, setEntryPendingTopics] = useState(null);
+  const [savingTopics, setSavingTopics] = useState(false);
   const visibleEntries = demoMode ? getDemoEntries(locale) : entries;
 
   useEffect(() => {
@@ -51,6 +54,7 @@ const JournalHistory = () => {
       setExpandedIds(new Set());
       setLoading(false);
       setEntryPendingDelete(null);
+      setEntryPendingTopics(null);
       return undefined;
     }
 
@@ -59,6 +63,7 @@ const JournalHistory = () => {
       setExpandedIds(new Set());
       setLoading(false);
       setEntryPendingDelete(null);
+      setEntryPendingTopics(null);
       return undefined;
     }
 
@@ -107,6 +112,43 @@ const JournalHistory = () => {
   const closeDeleteModal = () => {
     if (deleting) return;
     setEntryPendingDelete(null);
+  };
+
+  const closeTopicsModal = () => {
+    if (savingTopics) return;
+    setEntryPendingTopics(null);
+  };
+
+  const saveEntryTopics = async (topics) => {
+    if (!entryPendingTopics || savingTopics) return;
+
+    const entryId = entryPendingTopics.id;
+    setSavingTopics(true);
+    try {
+      const res = await apiFetch(`/auth/me/journal-entries/${entryId}`, {
+        method: 'PATCH',
+        body: { topics },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || t('history.topicsUpdateFailed'));
+      }
+      const data = await res.json().catch(() => ({}));
+      setEntries((prev) =>
+        prev.map((entry) => {
+          if (entry.id !== entryId) return entry;
+          if (data.entry && data.entry.id === entryId) return data.entry;
+          return { ...entry, topics };
+        }),
+      );
+      setEntryPendingTopics(null);
+      emitToast(t('history.topicsUpdateSuccess'));
+    } catch (err) {
+      console.error('[journal PATCH]', err);
+      emitToast(err.message || t('history.topicsUpdateFailed'));
+    } finally {
+      setSavingTopics(false);
+    }
   };
 
   const confirmDeleteEntry = async () => {
@@ -205,6 +247,8 @@ const JournalHistory = () => {
                   : entry.content;
               const deleteDisabled =
                 deleting && entryPendingDelete?.id === entry.id;
+              const topicsEditDisabled =
+                savingTopics && entryPendingTopics?.id === entry.id;
 
               return (
                 <li key={entry.id} className="journal-history__card">
@@ -216,20 +260,36 @@ const JournalHistory = () => {
                       {formatEntryDate(entry.createdAt, locale, t('history.unknownDate'))}
                     </time>
                     {!demoMode && (
-                      <button
-                        type="button"
-                        className="journal-history__delete"
-                        onClick={() => setEntryPendingDelete(entry)}
-                        disabled={deleteDisabled}
-                        aria-label={t('history.deleteEntry')}
-                      >
-                        <img
-                          src="/icons/trash.svg"
-                          alt=""
-                          className="journal-history__delete-icon"
-                          aria-hidden="true"
-                        />
-                      </button>
+                      <div className="journal-history__card-actions">
+                        <button
+                          type="button"
+                          className="journal-history__topics-edit"
+                          onClick={() => setEntryPendingTopics(entry)}
+                          disabled={topicsEditDisabled}
+                          aria-label={t('history.editTopics')}
+                        >
+                          <img
+                            src="/icons/tag.svg"
+                            alt=""
+                            className="journal-history__topics-edit-icon"
+                            aria-hidden="true"
+                          />
+                        </button>
+                        <button
+                          type="button"
+                          className="journal-history__delete"
+                          onClick={() => setEntryPendingDelete(entry)}
+                          disabled={deleteDisabled}
+                          aria-label={t('history.deleteEntry')}
+                        >
+                          <img
+                            src="/icons/trash.svg"
+                            alt=""
+                            className="journal-history__delete-icon"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      </div>
                     )}
                   </div>
                   {Array.isArray(entry.topics) && entry.topics.length > 0 && (
@@ -288,6 +348,16 @@ const JournalHistory = () => {
           </Link>
         )}
       </main>
+
+      {entryPendingTopics && (
+        <JournalTopicsModal
+          key={entryPendingTopics.id}
+          initialTopics={entryPendingTopics.topics}
+          onClose={closeTopicsModal}
+          onSave={saveEntryTopics}
+          saving={savingTopics}
+        />
+      )}
 
       {entryPendingDelete && (
         <JournalConfirmModal

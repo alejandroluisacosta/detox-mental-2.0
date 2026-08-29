@@ -139,6 +139,10 @@ src/journalEntries/
 └── journalEntries.service.js     # SQL and domain persistence
 ```
 
+Journal entries are listed, created, and deleted under `/auth/me/journal-entries`.
+Topics on an existing entry are updated with `PATCH /auth/me/journal-entries/:id`
+(`{ topics }`); `content` is immutable after create.
+
 Use the existing layers:
 
 1. **Route**: declares path, HTTP method, middleware, and controller.

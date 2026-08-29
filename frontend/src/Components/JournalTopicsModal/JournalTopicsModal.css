@@ -1,0 +1,99 @@
+.journal-topics-modal {
+  position: fixed;
+  width: 80%;
+  margin: auto;
+  background-color: white;
+  border-radius: 16px;
+  padding: 40px 8%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.journal-topics-modal__title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.journal-topics-modal__text {
+  text-align: left;
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+
+.journal-topics-modal__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 1.25rem;
+}
+
+.journal-topics-modal__topic-chip {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.journal-topics-modal__topic-chip:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 8%, #fff);
+}
+
+.journal-topics-modal__topic-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journal-topics-modal__topic-chip--selected {
+  background: var(--accent);
+  color: var(--background);
+}
+
+.journal-topics-modal__topic-chip--selected:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+.journal-topics-modal__topic-chip:disabled {
+  border-color: var(--border, #d1d5db);
+  background: #ececec;
+  color: var(--muted, #6b7280);
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.journal-topics-modal__topic-chip--selected:disabled {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--background);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.journal-topics-modal__button {
+  width: 100%;
+  padding: 12px 0;
+  margin-bottom: 0.75rem;
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  color: var(--background);
+}
+
+.journal-topics-modal__button--secondary {
+  background: var(--background);
+  color: var(--accent);
+}
+
+@media (min-width: 1000px) {
+  .journal-topics-modal {
+    max-width: 500px;
+    padding: 40px;
+  }
+}

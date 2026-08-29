@@ -89,6 +89,13 @@ export const es = {
   'history.deleting': 'ELIMINANDO...',
   'history.delete': 'ELIMINAR',
   'history.cancel': 'CANCELAR',
+  'history.editTopics': 'Editar temas',
+  'history.topicsTitle': 'Editar temas',
+  'history.topicsHint': 'Selecciona hasta {max} temas.',
+  'history.topicsSave': 'GUARDAR',
+  'history.topicsSaving': 'GUARDANDO...',
+  'history.topicsUpdateSuccess': 'Temas actualizados.',
+  'history.topicsUpdateFailed': 'No se pudieron actualizar los temas.',
 
   'summary.title': 'Resumen semanal',
   'summary.write': 'Escribir',
