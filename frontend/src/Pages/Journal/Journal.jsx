@@ -10,13 +10,11 @@ import {
   prepareImageForUpload,
   MAX_UPLOAD_BYTES,
 } from '../../utils/journalImage.js';
-import { JOURNAL_TOPIC_IDS } from '../../data/journalTopics.js';
+import { JOURNAL_TOPIC_IDS, MAX_JOURNAL_TOPICS } from '../../data/journalTopics.js';
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import './Journal.css';
-
-const MAX_SELECTED_TOPICS = 3;
 
 const Journal = () => {
   const navigate = useNavigate();
@@ -36,7 +34,7 @@ const Journal = () => {
 
   const canUseImages = status === 'ready' && !!user;
   const busy = saving || transcribing;
-  const topicLimitReached = selectedTopics.length >= MAX_SELECTED_TOPICS;
+  const topicLimitReached = selectedTopics.length >= MAX_JOURNAL_TOPICS;
 
   const resizeTextarea = () => {
     const el = textareaRef.current;
@@ -86,7 +84,7 @@ const Journal = () => {
       if (prev.includes(topic)) {
         return prev.filter((item) => item !== topic);
       }
-      if (prev.length >= MAX_SELECTED_TOPICS) return prev;
+      if (prev.length >= MAX_JOURNAL_TOPICS) return prev;
       return [...prev, topic];
     });
   };

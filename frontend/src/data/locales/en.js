@@ -87,6 +87,13 @@ export const en = {
   'history.deleting': 'DELETING...',
   'history.delete': 'DELETE',
   'history.cancel': 'CANCEL',
+  'history.editTopics': 'Edit topics',
+  'history.topicsTitle': 'Edit topics',
+  'history.topicsHint': 'Select up to {max} topics.',
+  'history.topicsSave': 'SAVE',
+  'history.topicsSaving': 'SAVING...',
+  'history.topicsUpdateSuccess': 'Topics updated.',
+  'history.topicsUpdateFailed': 'Could not update the topics.',
 
   'summary.title': 'Weekly summary',
   'summary.write': 'Write',

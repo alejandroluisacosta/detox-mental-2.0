@@ -8,6 +8,7 @@ import {
   getJournalEntries,
   postJournalEntry,
   deleteJournalEntry,
+  patchJournalEntryTopics,
 } from '../journalEntries/journalEntries.controller.js';
 import {
   uploadJournalImage,
@@ -29,6 +30,7 @@ router.post('/me/unblocked-sessions', requireAuth, postSessionUnblock);
 router.get('/me/journal-entries', requireAuth, getJournalEntries);
 router.post('/me/journal-entries', requireAuth, postJournalEntry);
 router.delete('/me/journal-entries/:id', requireAuth, deleteJournalEntry);
+router.patch('/me/journal-entries/:id', requireAuth, patchJournalEntryTopics);
 router.post(
   '/me/journal-entries/transcribe',
   requireAuth,

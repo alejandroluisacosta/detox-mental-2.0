@@ -8,6 +8,10 @@ test('returns English journal errors by default', () => {
     journalMessage('de', 'saveFailed'),
     'Could not save the entry.',
   );
+  assert.equal(
+    journalMessage('en', 'topicsUpdateFailed'),
+    'Could not update the topics.',
+  );
 });
 
 test('returns Spanish journal errors and interpolates counts', () => {
@@ -18,6 +22,10 @@ test('returns Spanish journal errors and interpolates counts', () => {
   assert.equal(
     journalMessage('es', 'tooManyTopics', { max: 3 }),
     'Puedes seleccionar hasta 3 temas por entrada.',
+  );
+  assert.equal(
+    journalMessage('es', 'topicsUpdateFailed'),
+    'No se pudieron actualizar los temas.',
   );
 });
 
