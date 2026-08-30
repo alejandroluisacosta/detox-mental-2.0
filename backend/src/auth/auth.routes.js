@@ -11,6 +11,11 @@ import {
   patchJournalEntryTopics,
 } from '../journalEntries/journalEntries.controller.js';
 import {
+  getCustomTopics,
+  postCustomTopic,
+  patchCustomTopic,
+} from '../journalTopics/journalTopics.controller.js';
+import {
   uploadJournalImage,
   postJournalTranscription,
 } from '../journalTranscription/journalTranscription.controller.js';
@@ -31,6 +36,9 @@ router.get('/me/journal-entries', requireAuth, getJournalEntries);
 router.post('/me/journal-entries', requireAuth, postJournalEntry);
 router.delete('/me/journal-entries/:id', requireAuth, deleteJournalEntry);
 router.patch('/me/journal-entries/:id', requireAuth, patchJournalEntryTopics);
+router.get('/me/journal-topics', requireAuth, getCustomTopics);
+router.post('/me/journal-topics', requireAuth, postCustomTopic);
+router.patch('/me/journal-topics/:id', requireAuth, patchCustomTopic);
 router.post(
   '/me/journal-entries/transcribe',
   requireAuth,

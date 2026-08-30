@@ -4,6 +4,7 @@ import {
   deleteJournalEntryForUser,
   updateJournalEntryTopicsForUser,
 } from './journalEntries.service.js';
+import { listCustomTopicsForUser } from '../journalTopics/journalTopics.service.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
 
@@ -19,7 +20,7 @@ export const ALLOWED_JOURNAL_TOPICS = [
 
 const MAX_TOPICS = 3;
 
-const parseTopics = (raw, locale) => {
+const parseTopics = async (raw, locale, userId) => {
   if (raw === undefined || raw === null) {
     return { ok: true, topics: [] };
   }
@@ -35,9 +36,15 @@ const parseTopics = (raw, locale) => {
     };
   }
 
+  const custom = await listCustomTopicsForUser(userId);
+  const allowed = new Set([
+    ...ALLOWED_JOURNAL_TOPICS,
+    ...custom.map((topic) => topic.name),
+  ]);
+
   const topics = [];
   for (const item of raw) {
-    if (typeof item !== 'string' || !ALLOWED_JOURNAL_TOPICS.includes(item)) {
+    if (typeof item !== 'string' || !allowed.has(item)) {
       return { ok: false, message: journalMessage(locale, 'invalidTopic') };
     }
     if (topics.includes(item)) {
@@ -69,12 +76,12 @@ export const postJournalEntry = async (req, res) => {
     return res.status(400).json({ message: journalMessage(locale, 'emptyContent') });
   }
 
-  const parsedTopics = parseTopics(req.body?.topics, locale);
-  if (!parsedTopics.ok) {
-    return res.status(400).json({ message: parsedTopics.message });
-  }
-
   try {
+    const parsedTopics = await parseTopics(req.body?.topics, locale, req.user.id);
+    if (!parsedTopics.ok) {
+      return res.status(400).json({ message: parsedTopics.message });
+    }
+
     const entry = await createJournalEntry(req.user.id, content, parsedTopics.topics);
     return res.status(201).json({ entry });
   } catch (err) {
@@ -115,12 +122,12 @@ export const patchJournalEntryTopics = async (req, res) => {
     return res.status(400).json({ message: journalMessage(locale, 'topicsMustBeList') });
   }
 
-  const parsedTopics = parseTopics(req.body.topics, locale);
-  if (!parsedTopics.ok) {
-    return res.status(400).json({ message: parsedTopics.message });
-  }
-
   try {
+    const parsedTopics = await parseTopics(req.body.topics, locale, req.user.id);
+    if (!parsedTopics.ok) {
+      return res.status(400).json({ message: parsedTopics.message });
+    }
+
     const entry = await updateJournalEntryTopicsForUser(
       req.user.id,
       entryId,

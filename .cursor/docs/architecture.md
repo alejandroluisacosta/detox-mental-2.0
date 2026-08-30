@@ -42,10 +42,11 @@ BrowserRouter
 ├── ScrollToTop
 └── LocaleProvider
     └── AuthProvider
-        ├── AuthSessionToast
-        └── DemoModeProvider
-            └── SessionsProvider
-                └── Routes
+        └── JournalTopicsProvider
+            ├── AuthSessionToast
+            └── DemoModeProvider
+                └── SessionsProvider
+                    └── Routes
 ```
 
 The Vite development server is configured on port `3001` in
@@ -90,6 +91,8 @@ it. Follow existing BEM-style CSS names and global design tokens from
 - `AuthContext` bootstraps the session through `GET /auth/me` and exposes
   `user`, `status`, `refreshUser`, and `logout`.
 - `SessionsContext` combines static course content with persisted unlock state.
+- `JournalTopicsContext` loads the signed-in user's custom journal topics and
+  exposes create/rename helpers to the Journal composer and History topics modal.
 - Local UI state stays inside its page or component.
 - Use `apiFetch` for backend requests so the configured API base URL and
   HTTP-only authentication cookie are handled consistently. `apiFetch` also
@@ -137,11 +140,21 @@ Backend features are grouped by domain, for example:
 src/journalEntries/
 ├── journalEntries.controller.js  # HTTP validation and responses
 └── journalEntries.service.js     # SQL and domain persistence
+
+src/journalTopics/
+├── journalTopics.controller.js   # HTTP validation and responses
+├── journalTopics.service.js      # SQL for custom topics and rename rewrite
+└── parseTopicName.js             # Shared name normalization and reserved-name rules
 ```
 
 Journal entries are listed, created, and deleted under `/auth/me/journal-entries`.
 Topics on an existing entry are updated with `PATCH /auth/me/journal-entries/:id`
 (`{ topics }`); `content` is immutable after create.
+
+Custom topics are listed, created, and renamed under `/auth/me/journal-topics`.
+A rename also rewrites matching strings in that user's `journal_entries.topics`.
+Entry `POST`/`PATCH` topic validation accepts the built-in slugs plus the
+authenticated user's custom topic names.
 
 Use the existing layers:
 

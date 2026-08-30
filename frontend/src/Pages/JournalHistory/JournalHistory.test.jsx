@@ -20,6 +20,24 @@ vi.mock('../../Context/DemoModeContext.jsx', () => ({
   useDemoMode: () => mockUseDemoMode(),
 }));
 
+vi.mock('../../Context/JournalTopicsContext.jsx', () => ({
+  useJournalTopics: () => ({
+    customTopics: [],
+    allTopics: [
+      'work',
+      'interpersonal',
+      'reflection',
+      'wisdom',
+      'worries',
+      'meditations',
+      'private',
+    ],
+    status: 'ready',
+    createTopic: vi.fn(),
+    renameTopic: vi.fn(),
+  }),
+}));
+
 vi.mock('../../Components/Navigation/Navigation.jsx', () => ({
   default: () => null,
 }));

@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import CloseIcon from '../CloseIcon/CloseIcon.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
-import {
-  JOURNAL_TOPIC_IDS,
-  MAX_JOURNAL_TOPICS,
-} from '../../data/journalTopics.js';
+import { useJournalTopics } from '../../Context/JournalTopicsContext.jsx';
+import { MAX_JOURNAL_TOPICS } from '../../data/journalTopics.js';
 import './JournalTopicsModal.css';
 
 const JournalTopicsModal = ({ initialTopics, onClose, onSave, saving }) => {
   const { t, topicLabel } = useLocale();
+  const { allTopics } = useJournalTopics();
   const [selectedTopics, setSelectedTopics] = useState(() =>
     Array.isArray(initialTopics) ? [...initialTopics] : [],
   );
@@ -64,7 +63,7 @@ const JournalTopicsModal = ({ initialTopics, onClose, onSave, saving }) => {
           role="group"
           aria-label={t('journal.topicsLabel')}
         >
-          {JOURNAL_TOPIC_IDS.map((topic) => {
+          {allTopics.map((topic) => {
             const selected = selectedTopics.includes(topic);
             const disabled = saving || (!selected && topicLimitReached);
             return (

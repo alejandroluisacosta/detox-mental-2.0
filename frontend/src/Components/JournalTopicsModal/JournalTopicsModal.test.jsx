@@ -2,10 +2,17 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import { writeStoredLocale } from '../../utils/locale.js';
+import { JOURNAL_TOPIC_IDS } from '../../data/journalTopics.js';
 import JournalTopicsModal from './JournalTopicsModal.jsx';
+
+const mockUseJournalTopics = vi.fn();
 
 vi.mock('../CloseIcon/CloseIcon.jsx', () => ({
   default: () => null,
+}));
+
+vi.mock('../../Context/JournalTopicsContext.jsx', () => ({
+  useJournalTopics: () => mockUseJournalTopics(),
 }));
 
 const renderModal = ({
@@ -30,9 +37,21 @@ const renderModal = ({
 describe('JournalTopicsModal', () => {
   afterEach(() => {
     cleanup();
+    mockUseJournalTopics.mockReset();
   });
 
+  const stubTopics = (allTopics = JOURNAL_TOPIC_IDS) => {
+    mockUseJournalTopics.mockReturnValue({
+      customTopics: [],
+      allTopics,
+      status: 'ready',
+      createTopic: vi.fn(),
+      renameTopic: vi.fn(),
+    });
+  };
+
   test('renders localized pills with pressed state from initial topics', () => {
+    stubTopics();
     renderModal({ initialTopics: ['work', 'reflection'] });
 
     expect(screen.getByRole('button', { name: 'Work' }).getAttribute('aria-pressed')).toBe(
@@ -51,6 +70,7 @@ describe('JournalTopicsModal', () => {
   });
 
   test('toggles a pill on and off before saving the selected ids', () => {
+    stubTopics();
     const onSave = vi.fn();
     renderModal({ initialTopics: ['work'], onSave });
 
@@ -62,6 +82,7 @@ describe('JournalTopicsModal', () => {
   });
 
   test('disables unselected pills once the topic cap is reached', () => {
+    stubTopics();
     renderModal({
       initialTopics: ['work', 'interpersonal', 'reflection'],
     });
@@ -75,7 +96,15 @@ describe('JournalTopicsModal', () => {
     );
   });
 
+  test('renders custom topics from the shared catalog', () => {
+    stubTopics([...JOURNAL_TOPIC_IDS, 'Family']);
+    renderModal();
+
+    expect(screen.getByRole('button', { name: 'Family' })).toBeTruthy();
+  });
+
   test('closes when Escape is pressed', () => {
+    stubTopics();
     const onClose = vi.fn();
     renderModal({ onClose });
 
@@ -85,6 +114,7 @@ describe('JournalTopicsModal', () => {
   });
 
   test('does not close on Escape while saving', () => {
+    stubTopics();
     const onClose = vi.fn();
     renderModal({ onClose, saving: true });
 
