@@ -78,6 +78,20 @@ describe('Navigation', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/');
     });
 
+    test('places the home control above the module links', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/journal' });
+        renderNav();
+        openMenu();
+
+        const menu = document.querySelector('.navigation__menu-links');
+        const controls = [...menu.querySelectorAll('button')];
+        const homeIndex = controls.findIndex((button) => button.getAttribute('aria-label') === 'Home');
+        const journalIndex = controls.findIndex((button) => button.textContent === 'JOURNAL');
+
+        expect(homeIndex).toBe(0);
+        expect(journalIndex).toBeGreaterThan(homeIndex);
+    });
+
     test('switches journaling labels from English to Spanish with the flag controls', () => {
         mockUseLocation.mockReturnValue({ pathname: '/journal' });
         renderNav('en');

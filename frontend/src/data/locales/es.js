@@ -41,6 +41,7 @@ export const es = {
   'journal.saving': 'GUARDANDO...',
   'journal.complete': 'COMPLETAR',
   'journal.viewHistory': 'Ver historial',
+  'journal.history': 'Historial',
   'journal.guestTitle': 'Esta entrada no se guardará',
   'journal.guestText':
     'No has iniciado sesión. Si continúas, el texto se perderá al completar. Inicia sesión para guardarlo en tu diario.',

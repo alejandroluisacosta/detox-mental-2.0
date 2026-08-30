@@ -41,6 +41,7 @@ export const en = {
   'journal.saving': 'SAVING...',
   'journal.complete': 'COMPLETE',
   'journal.viewHistory': 'View history',
+  'journal.history': 'History',
   'journal.guestTitle': 'This entry will not be saved',
   'journal.guestText':
     'You are not signed in. If you continue, this text will be lost when you complete. Sign in to save it in your journal.',
