@@ -33,7 +33,7 @@ describe('JournalTopicsModal', () => {
   });
 
   test('renders localized pills with pressed state from initial topics', () => {
-    renderModal({ initialTopics: ['Trabajo', 'Reflexión'] });
+    renderModal({ initialTopics: ['work', 'reflection'] });
 
     expect(screen.getByRole('button', { name: 'Work' }).getAttribute('aria-pressed')).toBe(
       'true',
@@ -52,18 +52,18 @@ describe('JournalTopicsModal', () => {
 
   test('toggles a pill on and off before saving the selected ids', () => {
     const onSave = vi.fn();
-    renderModal({ initialTopics: ['Trabajo'], onSave });
+    renderModal({ initialTopics: ['work'], onSave });
 
     fireEvent.click(screen.getByRole('button', { name: 'Reflection' }));
     fireEvent.click(screen.getByRole('button', { name: 'Work' }));
     fireEvent.click(screen.getByRole('button', { name: 'SAVE' }));
 
-    expect(onSave).toHaveBeenCalledWith(['Reflexión']);
+    expect(onSave).toHaveBeenCalledWith(['reflection']);
   });
 
   test('disables unselected pills once the topic cap is reached', () => {
     renderModal({
-      initialTopics: ['Trabajo', 'Interpersonal', 'Reflexión'],
+      initialTopics: ['work', 'interpersonal', 'reflection'],
     });
 
     expect(screen.getByRole('button', { name: 'Wisdom' }).disabled).toBe(true);

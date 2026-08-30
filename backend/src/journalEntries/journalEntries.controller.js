@@ -8,13 +8,13 @@ import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
 
 export const ALLOWED_JOURNAL_TOPICS = [
-  'Trabajo',
-  'Interpersonal',
-  'Reflexión',
-  'Sabiduría',
-  'Preocupaciones',
-  'Meditaciones',
-  'Privado',
+  'work',
+  'interpersonal',
+  'reflection',
+  'wisdom',
+  'worries',
+  'meditations',
+  'private',
 ];
 
 const MAX_TOPICS = 3;

@@ -95,7 +95,7 @@ describe('Journal handwriting capture gating', () => {
     expect(link.querySelector('.journal-page__history-icon')).toBeTruthy();
   });
 
-  test('shows localized topic labels while keeping Spanish identifiers selected', () => {
+  test('shows localized topic labels while keeping topic slugs selected', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     renderJournal();
     expect(screen.getByRole('button', { name: 'Work' })).toBeTruthy();

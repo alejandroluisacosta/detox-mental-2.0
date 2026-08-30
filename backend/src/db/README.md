@@ -163,7 +163,7 @@ Stores free-form journal entries for the user diary (`/journal`). Separate from 
 - `id` (UUID, PK): Unique entry identifier
 - `user_id` (UUID, FK → users.id): Author
 - `content` (TEXT): Journal text
-- `topics` (TEXT[]): Optional topic tags (default empty). Chosen when writing or edited later from History. Stored as the Spanish topic identifiers.
+- `topics` (TEXT[]): Optional topic tags (default empty). Chosen when writing or edited later from History. Stored as English slugs (`work`, `interpersonal`, `reflection`, `wisdom`, `worries`, `meditations`, `private`).
 - `created_at` (TIMESTAMP WITH TIME ZONE): When the entry was saved
 
 **Constraints:**
@@ -347,6 +347,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after the Machiavelli summary migration
 \i backend/src/db/migrations/006_journal_summary_locale.sql
+```
+
+### Journal Topic Slugs
+```sql
+-- Run after the journal summary locale migration
+\i backend/src/db/migrations/007_journal_topic_slugs.sql
 ```
 
 ### Verify Migration Success

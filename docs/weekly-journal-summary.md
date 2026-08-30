@@ -211,7 +211,7 @@ Prompt responsibilities:
 | Section | Instruction sketch |
 |---|---|
 | Summary | Evidence-based philosophical reflection: recognize healthy insight and earnestness when present; flag supported incongruities; use user’s language (Spanish); no clinical labels |
-| Main topics | 2–5 short labels; may align with existing chips (`Trabajo`, `Interpersonal`, …) but can be freer |
+| Main topics | 2–5 short labels; may align with existing chips (`work`, `interpersonal`, …) but can be freer |
 | Best quote | Must be a **verbatim or near-verbatim** excerpt from the provided entries; prefer the week's central insight, tension, or moment of honesty; never invent |
 | Socratic | One precise question or statement that pushes from what the user already understands; expose a real contradiction if present, otherwise the strongest unanswered implication; no invented tension, no lectures, no “you should”, no diagnosis |
 | Machiavellian | One practical strategic observation about whether behavior matches stated goals; recognize coherent strategy when evidence supports it; no forced mismatch, no manipulation advice |
