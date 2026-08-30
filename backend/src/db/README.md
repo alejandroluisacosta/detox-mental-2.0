@@ -163,7 +163,7 @@ Stores free-form journal entries for the user diary (`/journal`). Separate from 
 - `id` (UUID, PK): Unique entry identifier
 - `user_id` (UUID, FK → users.id): Author
 - `content` (TEXT): Journal text
-- `topics` (TEXT[]): Optional topic tags (default empty). Chosen when writing or edited later from History. Stored as English slugs (`work`, `interpersonal`, `reflection`, `wisdom`, `worries`, `meditations`, `private`).
+- `topics` (TEXT[]): Optional topic tags (default empty). Chosen when writing or edited later from History. Each value is either a built-in English slug (`work`, `interpersonal`, `reflection`, `wisdom`, `worries`, `meditations`, `private`) or the literal name of a user-created topic from `journal_custom_topics`.
 - `created_at` (TIMESTAMP WITH TIME ZONE): When the entry was saved
 
 **Constraints:**
@@ -174,6 +174,29 @@ Stores free-form journal entries for the user diary (`/journal`). Separate from 
 - `idx_journal_entries_user_id`: User-scoped retrieval
 - `idx_journal_entries_created_at`: Chronological ordering (DESC)
 - `idx_journal_entries_topics`: GIN index for future topic filters
+
+---
+
+### 5b2. `journal_custom_topics`
+
+Stores per-user custom topic names for the journal composer. Built-in slugs stay in application code; this table holds only user-created names.
+
+**Columns:**
+- `id` (UUID, PK): Unique topic identifier
+- `user_id` (UUID, FK → users.id): Owner
+- `name` (TEXT): Display name stored as written. Read the same in every locale (unlike built-in slugs, which are translated in the UI).
+- `created_at` (TIMESTAMP WITH TIME ZONE): When the topic was created
+
+**Constraints:**
+- `user_id` references `users(id)` with CASCADE delete
+- Name cannot be empty after trim and cannot exceed 24 characters
+- Unique per user on `LOWER(name)`
+
+**Indexes:**
+- `idx_journal_custom_topics_user_name`: Case-insensitive uniqueness per user
+- `idx_journal_custom_topics_user_id`: User-scoped retrieval
+
+Renaming a custom topic updates this row and rewrites matching values in that user's `journal_entries.topics`. It does not change `journal_weekly_summaries.main_topics`.
 
 ---
 
@@ -353,6 +376,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after the journal summary locale migration
 \i backend/src/db/migrations/007_journal_topic_slugs.sql
+```
+
+### Journal Custom Topics
+```sql
+-- Run after the journal topic slugs migration
+\i backend/src/db/migrations/008_journal_custom_topics.sql
 ```
 
 ### Verify Migration Success
