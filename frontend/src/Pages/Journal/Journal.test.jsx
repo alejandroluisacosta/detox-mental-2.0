@@ -92,7 +92,16 @@ describe('Journal handwriting capture gating', () => {
     const link = screen.getByRole('link', { name: 'View history' });
     expect(link.getAttribute('href')).toBe('/journal/history');
     expect(screen.queryByText('View history')).toBeNull();
+    expect(screen.getByText('History')).toBeTruthy();
     expect(link.querySelector('.journal-page__history-icon')).toBeTruthy();
+  });
+
+  test('shows the Spanish history label next to the icon', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderJournal('es');
+    const link = screen.getByRole('link', { name: 'Ver historial' });
+    expect(link.getAttribute('href')).toBe('/journal/history');
+    expect(screen.getByText('Historial')).toBeTruthy();
   });
 
   test('shows localized topic labels while keeping topic slugs selected', () => {

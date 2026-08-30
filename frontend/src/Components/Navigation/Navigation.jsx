@@ -79,6 +79,19 @@ const Navigation = () => {
                         </button>
                     </div>
                     <div className='navigation__menu-links'>
+                        <button
+                            type='button'
+                            className='navigation__menu-link navigation__menu-link--home'
+                            onClick={() => goTo('/')}
+                            aria-label={t('nav.home')}
+                        >
+                            <img
+                                className='navigation__menu-home-icon'
+                                src='/images/home.svg'
+                                alt=''
+                                aria-hidden='true'
+                            />
+                        </button>
                         {menuLinks.map((link) => (
                             <button
                                 key={link.path}
@@ -99,19 +112,6 @@ const Navigation = () => {
                                 {t('nav.promo')}
                             </button>
                         )}
-                        <button
-                            type='button'
-                            className='navigation__menu-link navigation__menu-link--home'
-                            onClick={() => goTo('/')}
-                            aria-label={t('nav.home')}
-                        >
-                            <img
-                                className='navigation__menu-home-icon'
-                                src='/images/home.svg'
-                                alt=''
-                                aria-hidden='true'
-                            />
-                        </button>
                         <div
                             className='navigation__language'
                             role='group'

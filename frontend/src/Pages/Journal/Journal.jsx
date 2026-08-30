@@ -317,6 +317,7 @@ const Journal = () => {
             aria-label={t('journal.viewHistory')}
           >
             <span className="journal-page__history-icon" aria-hidden="true" />
+            <span className="journal-page__history-label">{t('journal.history')}</span>
           </Link>
         </div>
       </main>
