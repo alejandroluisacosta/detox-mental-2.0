@@ -106,7 +106,7 @@ describe('JournalHistory page states', () => {
     const entry = {
       id: 'e1',
       content: 'A short entry.',
-      topics: ['Trabajo'],
+      topics: ['work'],
       createdAt: '2026-08-01T12:00:00.000Z',
     };
 
@@ -115,7 +115,7 @@ describe('JournalHistory page states', () => {
         return Promise.resolve({
           ok: true,
           json: async () => ({
-            entry: { ...entry, topics: ['Trabajo', 'Reflexión'] },
+            entry: { ...entry, topics: ['work', 'reflection'] },
           }),
         });
       }
@@ -134,7 +134,7 @@ describe('JournalHistory page states', () => {
     await waitFor(() => {
       expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries/e1', {
         method: 'PATCH',
-        body: { topics: ['Trabajo', 'Reflexión'] },
+        body: { topics: ['work', 'reflection'] },
       });
     });
 

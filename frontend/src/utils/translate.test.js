@@ -21,9 +21,9 @@ describe('translate', () => {
 });
 
 describe('translateTopic', () => {
-  test('keeps stored Spanish identifiers and shows localized labels', () => {
-    expect(translateTopic('en', 'Trabajo')).toBe('Work');
-    expect(translateTopic('es', 'Trabajo')).toBe('Trabajo');
+  test('maps stored topic slugs to localized labels', () => {
+    expect(translateTopic('en', 'work')).toBe('Work');
+    expect(translateTopic('es', 'work')).toBe('Trabajo');
     expect(translateTopic('en', 'Unknown')).toBe('Unknown');
   });
 });
