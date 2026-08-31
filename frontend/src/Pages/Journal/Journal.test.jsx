@@ -184,6 +184,16 @@ describe('Journal custom topics', () => {
     expect(screen.getByRole('dialog', { name: 'New topic' })).toBeTruthy();
   });
 
+  test('shows the add-topic button for signed-in users when demo mode is on', () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({ demoMode: true, toggleDemoMode: vi.fn() });
+    renderJournal();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add topic' }));
+
+    expect(screen.getByRole('dialog', { name: 'New topic' })).toBeTruthy();
+  });
+
   test('opens rename with the current name after a long-press on a custom chip', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     mockUseJournalTopics.mockReturnValue({
