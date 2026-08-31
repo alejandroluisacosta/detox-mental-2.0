@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
-import { useDemoMode } from '../../Context/DemoModeContext.jsx';
 import { useJournalTopics } from '../../Context/JournalTopicsContext.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
@@ -26,7 +25,6 @@ import './Journal.css';
 const Journal = () => {
   const navigate = useNavigate();
   const { user, status } = useAuth();
-  const { demoMode } = useDemoMode();
   const { customTopics, allTopics, createTopic, renameTopic } = useJournalTopics();
   const { t, topicLabel } = useLocale();
   const textareaRef = useRef(null);
@@ -46,7 +44,7 @@ const Journal = () => {
   const [topicNameSaving, setTopicNameSaving] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
-  const canManageTopics = status === 'ready' && !!user && !demoMode;
+  const canManageTopics = status === 'ready' && !!user;
   const canShowAddChip =
     canManageTopics && customTopics.length < MAX_CUSTOM_JOURNAL_TOPICS;
   const busy = saving || transcribing;
