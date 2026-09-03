@@ -41,6 +41,7 @@ const JournalSummary = () => {
   const [generating, setGenerating] = useState(false);
   const [generateReady, setGenerateReady] = useState(false);
   const [pendingSummary, setPendingSummary] = useState(null);
+  const [pendingRange, setPendingRange] = useState(null);
 
   const loadCurrent = useCallback(async () => {
     if (demoMode) {
@@ -82,6 +83,7 @@ const JournalSummary = () => {
     setGenerating(true);
     setGenerateReady(false);
     setPendingSummary(null);
+    setPendingRange(null);
 
     try {
       const res = await apiFetch('/auth/me/journal-summaries/current', {
@@ -92,12 +94,18 @@ const JournalSummary = () => {
         throw new Error(data.message || t('summary.createFailed'));
       }
       setPendingSummary(data.summary ?? null);
+      setPendingRange(
+        data.weekStart && data.weekEnd
+          ? { weekStart: data.weekStart, weekEnd: data.weekEnd }
+          : null,
+      );
       setGenerateReady(true);
     } catch (err) {
       console.error('[journal-summaries POST]', err);
       setGenerating(false);
       setGenerateReady(false);
       setPendingSummary(null);
+      setPendingRange(null);
       emitToast(err.message || t('summary.createFailed'));
       loadCurrent();
     }
@@ -105,19 +113,28 @@ const JournalSummary = () => {
 
   const finishLoadingScreen = useCallback(() => {
     if (pendingSummary) {
-      setPayload((prev) =>
-        prev
-          ? {
-              ...prev,
-              summary: pendingSummary,
-            }
-          : prev,
-      );
+      setPayload((prev) => {
+        if (!prev) return prev;
+        const used =
+          pendingSummary.generationCount ?? (prev.quota?.used ?? 0) + 1;
+        const limit = prev.quota?.limit ?? 2;
+        return {
+          ...prev,
+          summary: pendingSummary,
+          ...(pendingRange ?? {}),
+          quota: {
+            ...(prev.quota ?? {}),
+            used,
+            remaining: Math.max(limit - used, 0),
+          },
+        };
+      });
     }
     setGenerating(false);
     setGenerateReady(false);
     setPendingSummary(null);
-  }, [pendingSummary]);
+    setPendingRange(null);
+  }, [pendingRange, pendingSummary]);
 
   if (generating) {
     return (
@@ -165,8 +182,23 @@ const JournalSummary = () => {
           </div>
         </header>
 
-        {weekLabel && (
-          <p className="journal-summary__week">{weekLabel}</p>
+        {(weekLabel ||
+          (!demoMode && status === 'ready' && user && !loading && payload)) && (
+          <div className="journal-summary__meta">
+            {weekLabel && (
+              <p className="journal-summary__week">{weekLabel}</p>
+            )}
+            {!demoMode && status === 'ready' && user && !loading && payload && (
+              <p className="journal-summary__quota">
+                {availability.remaining > 0
+                  ? t('summary.quotaRemaining', {
+                      remaining: availability.remaining,
+                      limit: availability.limit,
+                    })
+                  : t('summary.quotaExhausted')}
+              </p>
+            )}
+          </div>
         )}
 
         {!demoMode && status === 'loading' && (
@@ -241,7 +273,7 @@ const JournalSummary = () => {
               </section>
             )}
 
-            {!demoMode && (
+            {!demoMode && availability.canRegenerate && (
               <div className="journal-summary__regenerate">
                 <button
                   type="button"
@@ -284,8 +316,6 @@ const JournalSummary = () => {
                       {t('summary.write')}
                     </Link>
                   </>
-                ) : availability.windowEnforced && !availability.windowOpen ? (
-                  <p>{t('summary.windowClosed')}</p>
                 ) : (
                   <p>{t('summary.unavailable')}</p>
                 )}

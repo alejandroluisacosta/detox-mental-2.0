@@ -31,11 +31,13 @@ const messages = {
     invalidImage: 'The file does not appear to be a valid image.',
     summaryLoadFailed: 'Error loading the summary.',
     needEntries:
-      'You need at least {minEntries} entries this week to create the summary.',
+      'You need at least {minEntries} entries in the last 7 days to create the summary.',
     summaryServiceUnconfigured: 'The summary service is not configured.',
     summaryGenerateFailed:
       'Could not generate the summary. Try again in a few moments.',
     summaryCreateFailed: 'Error creating the summary.',
+    summaryQuotaExhausted:
+      'You have used both summaries this week. New ones are available on Monday.',
   },
   es: {
     topicsMustBeList: 'Los temas deben enviarse como una lista.',
@@ -68,11 +70,13 @@ const messages = {
     invalidImage: 'El archivo no parece ser una imagen válida.',
     summaryLoadFailed: 'Error al cargar el resumen.',
     needEntries:
-      'Necesitas al menos {minEntries} entradas esta semana para crear el resumen.',
+      'Necesitas al menos {minEntries} entradas en los últimos 7 días para crear el resumen.',
     summaryServiceUnconfigured: 'El servicio de resumen no está configurado.',
     summaryGenerateFailed:
       'No se pudo generar el resumen. Inténtalo de nuevo en unos momentos.',
     summaryCreateFailed: 'Error al crear el resumen.',
+    summaryQuotaExhausted:
+      'Ya has usado los dos resúmenes de esta semana. Podrás generar más el lunes.',
   },
 };
 

@@ -146,11 +146,12 @@ const DEMO_ENTRIES_ES = [
   },
 ];
 
-const DEMO_WINDOW = {
-  open: false,
-  enforced: true,
-  opensAt: '2026-08-02T10:00:00.000Z',
-  closesAt: '2026-08-02T16:00:00.000Z',
+const DEMO_QUOTA = {
+  timezone: 'Europe/Madrid',
+  limit: 2,
+  used: 1,
+  remaining: 1,
+  resetsAt: '2026-08-02T22:00:00.000Z',
 };
 
 const DEMO_SUMMARY_EN = {
@@ -182,7 +183,7 @@ const buildSummaryPayload = (entries, summary) => ({
   weekEnd: '2026-08-02',
   entryCount: entries.length,
   minEntries: 2,
-  window: DEMO_WINDOW,
+  quota: DEMO_QUOTA,
   summary,
 });
 

@@ -138,11 +138,23 @@
   margin-top: 32px;
 }
 
+.journal-summary__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .journal-summary__week {
   margin: -8px 0 0;
   color: var(--muted, #6b7280);
   font-size: 0.95rem;
   font-weight: 600;
+}
+
+.journal-summary__quota {
+  margin: 0;
+  color: var(--muted, #6b7280);
+  font-size: 0.9rem;
 }
 
 .journal-summary__create {

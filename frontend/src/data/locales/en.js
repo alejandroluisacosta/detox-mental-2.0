@@ -130,18 +130,18 @@ export const en = {
   'summary.machiavelliHeading': "Machiavelli's challenge",
   'summary.regenerate': 'REGENERATE SUMMARY',
   'summary.createLead':
-    'You can now create this week’s summary from your writing.',
+    'You can now create a summary from the last 7 days of writing.',
   'summary.create': 'CREATE SUMMARY',
   'summary.needEntries':
-    'You need at least {minEntries} entries this week to create the summary. You currently have {entryCount}.',
-  'summary.windowClosed':
-    'The summary can be created on Sunday from 12:00 to 18:00 (Madrid time). Keep writing in the meantime.',
+    'You need at least {minEntries} entries in the last 7 days to create the summary. You currently have {entryCount}.',
+  'summary.quotaRemaining':
+    '{remaining} of {limit} summaries left this week',
+  'summary.quotaExhausted':
+    'You have used both summaries this week. New ones on Monday.',
   'summary.unavailable': 'This week’s summary is not available right now.',
   'summary.writeFooter': 'WRITE',
   'summary.loadFailed': 'Could not load the summary.',
   'summary.createFailed': 'Could not create the summary.',
-  'summary.bannerText': 'Your weekly summary is ready to create.',
-  'summary.bannerLink': 'Go to the summary',
   'summary.preparing': 'Preparing your summary... [{percent}%]',
   'summary.preparingAria': 'Preparing weekly summary',
 };

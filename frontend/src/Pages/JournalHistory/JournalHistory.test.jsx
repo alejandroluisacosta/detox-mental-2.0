@@ -46,10 +46,6 @@ vi.mock('../../Components/CloseIcon/CloseIcon.jsx', () => ({
   default: () => null,
 }));
 
-vi.mock('../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx', () => ({
-  default: () => null,
-}));
-
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
 

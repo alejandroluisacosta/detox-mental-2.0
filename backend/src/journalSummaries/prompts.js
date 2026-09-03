@@ -210,7 +210,7 @@ export const buildSummaryMessages = ({
   const entriesSection = buildEntriesPromptSection(entries);
 
   const user = [
-    `Week from ${weekStart} to ${weekEnd} (Europe/Madrid).`,
+    `Last 7 days from ${weekStart} to ${weekEnd} (Europe/Madrid).`,
     `Number of entries included: ${entries.length}.`,
     '',
     'Journal entries:',

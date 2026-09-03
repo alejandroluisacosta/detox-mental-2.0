@@ -124,6 +124,9 @@ Generate the weekly journal reflection **on user click** during a limited Sunday
 
 **What would trigger revisiting:**  
 Persistent timeouts, desire for push/email reminders, or a multi-week archive/compare product surface.
+
+**Updated 2026-09-02:** The Sunday window and “regenerate freely is rejected” parts of this decision are superseded by the 2026-09-02 update on the 2026-08-09 entry. On-demand generation, one row per ISO week, and a single LLM call still stand.
+
 ### 2026-08-09 — Summary create gating moved to the SPA; POST upserts
 
 **Decision:**  
@@ -139,6 +142,9 @@ That decision required server-side window enforcement and rejected free regenera
 
 **Operational implications (accepted):**  
 An authenticated client can call POST outside the window (cost/abuse surface). Acceptable while Regenerar exists for testing.
+
+**Updated 2026-09-02 — reversed:**  
+Daily use made the Sunday window a pain: summaries were wanted before the weekend, and stretching or moving the window was technically complex. The window is gone, so there is nothing for the SPA to derive from a clock. `GET /current` now returns a `quota` block instead of `window`, and `POST /current` enforces a hard limit of 2 generations per ISO week server-side (`429` on the third), restoring the server-side enforcement this entry had waived. The temporary Regenerar button became the product’s second generation, so the create/regenerate limit is now a real product rule; a quota that costs LLM spend cannot be enforced by the client; and the staleness heuristic (`createdAt < window.opensAt`) has no meaning without a window.
 
 ### 2026-08-19 — Split the SPA into educational and journaling modules
 

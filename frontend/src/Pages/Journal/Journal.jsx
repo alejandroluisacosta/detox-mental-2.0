@@ -17,7 +17,6 @@ import {
 } from '../../data/journalTopics.js';
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import { createLongPressHandlers } from '../../utils/longPress.js';
-import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
 import './Journal.css';
@@ -275,7 +274,6 @@ const Journal = () => {
     <div className="journal-page">
       <Navigation />
       <main className="journal-page__main">
-        <JournalSummaryBanner />
         <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
 
         <div className="journal-page__composer">

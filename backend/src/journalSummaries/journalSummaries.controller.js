@@ -1,8 +1,11 @@
 import {
-  buildWindowPayload,
+  buildQuotaPayload,
+  getRollingEntryRange,
   getWeekBounds,
   MIN_ENTRIES_FOR_SUMMARY,
-} from './summaryWindow.js';
+  SUMMARY_GENERATIONS_PER_WEEK,
+  zonedDateString,
+} from './summaryWeek.js';
 import {
   listJournalEntriesInRange,
   countJournalEntriesInRange,
@@ -13,18 +16,39 @@ import { generateWeeklySummaryContent } from './journalSummaries.generation.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
 
-const buildCurrentPayload = async (userId, now = new Date()) => {
-  const bounds = getWeekBounds(now);
-  const window = buildWindowPayload(now);
-  const [entryCount, summary] = await Promise.all([
-    countJournalEntriesInRange(userId, bounds.periodStart, bounds.periodEnd),
-    getWeeklySummaryForUser(userId, bounds.weekStart),
-  ]);
+const quotaExhausted = (locale) => ({
+  message: journalMessage(locale, 'summaryQuotaExhausted'),
+});
+
+const displayRange = (summary, range) => {
+  if (!summary?.periodStart || !summary?.periodEnd) {
+    return { weekStart: range.rangeStart, weekEnd: range.rangeEnd };
+  }
+
+  const periodEndMs = new Date(summary.periodEnd).getTime();
+  const lastIncluded = Number.isNaN(periodEndMs)
+    ? new Date()
+    : new Date(periodEndMs - 1);
 
   return {
-    weekStart: bounds.weekStart,
-    weekEnd: bounds.weekEnd,
-    window,
+    weekStart: zonedDateString(new Date(summary.periodStart)),
+    weekEnd: zonedDateString(lastIncluded),
+  };
+};
+
+const buildCurrentPayload = async (userId, now = new Date()) => {
+  const quotaWeek = getWeekBounds(now);
+  const range = getRollingEntryRange(now);
+  const [entryCount, summary] = await Promise.all([
+    countJournalEntriesInRange(userId, range.periodStart, range.periodEnd),
+    getWeeklySummaryForUser(userId, quotaWeek.weekStart),
+  ]);
+  const { weekStart, weekEnd } = displayRange(summary, range);
+
+  return {
+    weekStart,
+    weekEnd,
+    quota: buildQuotaPayload(summary?.generationCount ?? 0, now),
     entryCount,
     minEntries: MIN_ENTRIES_FOR_SUMMARY,
     summary,
@@ -46,12 +70,21 @@ export const postCurrentJournalSummary = async (req, res) => {
   const locale = localeFromRequest(req);
   try {
     const now = new Date();
-    const bounds = getWeekBounds(now);
+    const quotaWeek = getWeekBounds(now);
+    const range = getRollingEntryRange(now);
+
+    const existing = await getWeeklySummaryForUser(
+      req.user.id,
+      quotaWeek.weekStart,
+    );
+    if ((existing?.generationCount ?? 0) >= SUMMARY_GENERATIONS_PER_WEEK) {
+      return res.status(429).json(quotaExhausted(locale));
+    }
 
     const entries = await listJournalEntriesInRange(
       req.user.id,
-      bounds.periodStart,
-      bounds.periodEnd,
+      range.periodStart,
+      range.periodEnd,
     );
 
     if (entries.length < MIN_ENTRIES_FOR_SUMMARY) {
@@ -68,8 +101,8 @@ export const postCurrentJournalSummary = async (req, res) => {
     try {
       generated = await generateWeeklySummaryContent({
         entries,
-        weekStart: bounds.weekStart,
-        weekEnd: bounds.weekEnd,
+        weekStart: range.rangeStart,
+        weekEnd: range.rangeEnd,
         locale,
       });
     } catch (genErr) {
@@ -86,10 +119,10 @@ export const postCurrentJournalSummary = async (req, res) => {
 
     const summary = await upsertWeeklySummary({
       userId: req.user.id,
-      weekStart: bounds.weekStart,
-      weekEnd: bounds.weekEnd,
-      periodStart: bounds.periodStart,
-      periodEnd: bounds.periodEnd,
+      weekStart: quotaWeek.weekStart,
+      weekEnd: quotaWeek.weekEnd,
+      periodStart: range.periodStart,
+      periodEnd: range.periodEnd,
       summaryText: generated.summaryText,
       mainTopics: generated.mainTopics,
       bestQuote: generated.bestQuote,
@@ -99,8 +132,18 @@ export const postCurrentJournalSummary = async (req, res) => {
       entryCount: entries.length,
       modelId: generated.modelId,
       locale,
+      limit: SUMMARY_GENERATIONS_PER_WEEK,
     });
-    return res.status(201).json({ summary });
+
+    if (!summary) {
+      return res.status(429).json(quotaExhausted(locale));
+    }
+
+    return res.status(201).json({
+      summary,
+      weekStart: range.rangeStart,
+      weekEnd: range.rangeEnd,
+    });
   } catch (err) {
     console.error('[journal-summaries POST current]', err);
     return res.status(500).json({ message: journalMessage(locale, 'summaryCreateFailed') });
