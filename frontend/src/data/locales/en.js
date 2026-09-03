@@ -130,10 +130,10 @@ export const en = {
   'summary.machiavelliHeading': "Machiavelli's challenge",
   'summary.regenerate': 'REGENERATE SUMMARY',
   'summary.createLead':
-    'You can now create this week’s summary from your writing.',
+    'You can now create a summary from the last 7 days of writing.',
   'summary.create': 'CREATE SUMMARY',
   'summary.needEntries':
-    'You need at least {minEntries} entries this week to create the summary. You currently have {entryCount}.',
+    'You need at least {minEntries} entries in the last 7 days to create the summary. You currently have {entryCount}.',
   'summary.quotaRemaining':
     '{remaining} of {limit} summaries left this week',
   'summary.quotaExhausted':

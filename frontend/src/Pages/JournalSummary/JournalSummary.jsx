@@ -41,6 +41,7 @@ const JournalSummary = () => {
   const [generating, setGenerating] = useState(false);
   const [generateReady, setGenerateReady] = useState(false);
   const [pendingSummary, setPendingSummary] = useState(null);
+  const [pendingRange, setPendingRange] = useState(null);
 
   const loadCurrent = useCallback(async () => {
     if (demoMode) {
@@ -82,6 +83,7 @@ const JournalSummary = () => {
     setGenerating(true);
     setGenerateReady(false);
     setPendingSummary(null);
+    setPendingRange(null);
 
     try {
       const res = await apiFetch('/auth/me/journal-summaries/current', {
@@ -92,12 +94,18 @@ const JournalSummary = () => {
         throw new Error(data.message || t('summary.createFailed'));
       }
       setPendingSummary(data.summary ?? null);
+      setPendingRange(
+        data.weekStart && data.weekEnd
+          ? { weekStart: data.weekStart, weekEnd: data.weekEnd }
+          : null,
+      );
       setGenerateReady(true);
     } catch (err) {
       console.error('[journal-summaries POST]', err);
       setGenerating(false);
       setGenerateReady(false);
       setPendingSummary(null);
+      setPendingRange(null);
       emitToast(err.message || t('summary.createFailed'));
       loadCurrent();
     }
@@ -113,6 +121,7 @@ const JournalSummary = () => {
         return {
           ...prev,
           summary: pendingSummary,
+          ...(pendingRange ?? {}),
           quota: {
             ...(prev.quota ?? {}),
             used,
@@ -124,7 +133,8 @@ const JournalSummary = () => {
     setGenerating(false);
     setGenerateReady(false);
     setPendingSummary(null);
-  }, [pendingSummary]);
+    setPendingRange(null);
+  }, [pendingRange, pendingSummary]);
 
   if (generating) {
     return (

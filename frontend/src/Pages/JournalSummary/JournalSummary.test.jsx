@@ -72,8 +72,8 @@ describe('JournalSummary page states', () => {
     apiFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
-        weekStart: '2026-07-27',
-        weekEnd: '2026-08-02',
+        weekStart: '2026-07-23',
+        weekEnd: '2026-07-29',
         quota: quota(0),
         entryCount: 3,
         minEntries: 2,
@@ -88,6 +88,7 @@ describe('JournalSummary page states', () => {
       ).toBeTruthy();
     });
     expect(screen.getByText(/2 of 2 summaries left this week/i)).toBeTruthy();
+    expect(screen.getByText(/July 23.*July 29/i)).toBeTruthy();
   });
 
   test('renders stored summary sections and regenerate button when quota remains', async () => {

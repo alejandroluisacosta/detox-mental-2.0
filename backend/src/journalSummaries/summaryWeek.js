@@ -1,12 +1,14 @@
 /**
- * Week bounds and generation quota for journal summaries.
- * Product timezone: Europe/Madrid. Week = Monday 00:00 → next Monday 00:00.
- * Quota: 2 successful generations per week; resets at next Monday 00:00.
+ * Quota week and rolling entry range for journal summaries.
+ * Product timezone: Europe/Madrid.
+ * Quota week: Monday 00:00 → next Monday 00:00 (2 generations; resets Monday 00:00).
+ * Entry window: the last 7 calendar days, ending today.
  */
 
 export const SUMMARY_TIMEZONE = 'Europe/Madrid';
 export const MIN_ENTRIES_FOR_SUMMARY = 2;
 export const SUMMARY_GENERATIONS_PER_WEEK = 2;
+export const SUMMARY_LOOKBACK_DAYS = 7;
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -135,6 +137,46 @@ export const getWeekBounds = (now = new Date(), timeZone = SUMMARY_TIMEZONE) => 
     weekEnd: toDateString(sunday.year, sunday.month, sunday.day),
     periodStart,
     periodEnd,
+    timezone: timeZone,
+  };
+};
+
+/** Calendar date of `date` in `timeZone` as YYYY-MM-DD. */
+export const zonedDateString = (date, timeZone = SUMMARY_TIMEZONE) => {
+  const parts = getZonedParts(date, timeZone);
+  return toDateString(parts.year, parts.month, parts.day);
+};
+
+/**
+ * Inclusive last `SUMMARY_LOOKBACK_DAYS` calendar days in the product timezone.
+ * periodStart is 00:00 of the first day; periodEnd is `now` (exclusive).
+ */
+export const getRollingEntryRange = (
+  now = new Date(),
+  timeZone = SUMMARY_TIMEZONE,
+) => {
+  const parts = getZonedParts(now, timeZone);
+  const start = addDaysToYmd(
+    parts.year,
+    parts.month,
+    parts.day,
+    -(SUMMARY_LOOKBACK_DAYS - 1),
+  );
+  const periodStart = zonedLocalToUtc(
+    start.year,
+    start.month,
+    start.day,
+    0,
+    0,
+    0,
+    timeZone,
+  );
+
+  return {
+    rangeStart: toDateString(start.year, start.month, start.day),
+    rangeEnd: toDateString(parts.year, parts.month, parts.day),
+    periodStart,
+    periodEnd: now,
     timezone: timeZone,
   };
 };

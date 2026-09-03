@@ -132,10 +132,10 @@ export const es = {
   'summary.machiavelliHeading': 'Desafío Machiavélico',
   'summary.regenerate': 'REGENERAR RESUMEN',
   'summary.createLead':
-    'Ya puedes crear el resumen de esta semana a partir de tus escrituras.',
+    'Ya puedes crear un resumen a partir de tus escrituras de los últimos 7 días.',
   'summary.create': 'CREAR RESUMEN',
   'summary.needEntries':
-    'Necesitas al menos {minEntries} entradas esta semana para crear el resumen. Llevas {entryCount}.',
+    'Necesitas al menos {minEntries} entradas en los últimos 7 días para crear el resumen. Llevas {entryCount}.',
   'summary.quotaRemaining':
     'Te quedan {remaining} de {limit} resúmenes esta semana',
   'summary.quotaExhausted':

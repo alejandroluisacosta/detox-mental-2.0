@@ -25,8 +25,8 @@ Once per week, a logged-in user can generate an AI-powered weekly reflection wit
 
 1. User journals during the week (existing `/journal` flow).
 2. User opens `/journal/summary` whenever they want.
-3. If no summary exists for the current week yet:
-   - Page shows remaining quota and a create CTA (when there are at least 2 entries).
+3. If no summary exists for the current quota week yet:
+   - Page shows remaining quota and a create CTA (when there are at least 2 entries in the last 7 days).
    - User clicks → loading screen (reuse Thoughts Test loading pattern) while the backend generates.
    - Results render in four sections on the same page.
 4. If a summary already exists for that week:
@@ -45,7 +45,7 @@ Once per week, a logged-in user can generate an AI-powered weekly reflection wit
 | Case | Behavior |
 |---|---|
 | Not logged in | Same pattern as journal history: prompt login |
-| Zero entries in the week | Do not call the model; show empty state asking them to write first |
+| Zero entries in the last 7 days | Do not call the model; show empty state asking them to write first |
 | Very few / very short entries | Still allow generation; prompt should ask model to be honest about sparse material |
 | Generation fails / timeout | Loading ends with error toast + retry (if quota remains and no row was stored) |
 | User deletes an entry after summary | Summary stays as a snapshot of that week (do not invalidate) |
@@ -114,8 +114,8 @@ CREATE TABLE journal_weekly_summaries (
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   week_start DATE NOT NULL,          -- Monday of the ISO week (product timezone date)
   week_end DATE NOT NULL,            -- Sunday of that week
-  period_start TIMESTAMPTZ NOT NULL, -- inclusive UTC instant used for entry query
-  period_end TIMESTAMPTZ NOT NULL,   -- exclusive UTC instant
+  period_start TIMESTAMPTZ NOT NULL, -- inclusive start of the last-7-days query
+  period_end TIMESTAMPTZ NOT NULL,   -- exclusive end of that query
   summary_text TEXT NOT NULL,
   main_topics TEXT[] NOT NULL DEFAULT '{}',
   best_quote TEXT NOT NULL,
@@ -149,8 +149,8 @@ computed on the frontend from this payload (see
 
 ```json
 {
-  "weekStart": "2026-07-27",
-  "weekEnd": "2026-08-02",
+  "weekStart": "2026-07-23",
+  "weekEnd": "2026-07-29",
   "quota": {
     "timezone": "Europe/Madrid",
     "limit": 2,
@@ -170,13 +170,13 @@ Frontend `canCreate` = no displayed summary + `entryCount >= minEntries` +
 ### `POST /auth/me/journal-summaries/current`
 
 - Requires auth
-- Server recomputes week bounds from the current time
+- Server recomputes the quota week and the last-7-days entry window from the current time
 - Rejects with `429` when `generation_count` already equals the weekly limit
   (checked before the model call; the upsert is the authoritative guard)
-- Loads entries in `[period_start, period_end)`
+- Loads entries from the last 7 calendar days (`[period_start, period_end)`)
 - Calls model, validates JSON, upserts the row for `(user_id, week_start)`
   (replaces any existing summary; increments `generation_count`; refreshes `created_at`)
-- Returns the created/updated summary
+- Returns the created/updated summary plus the inclusive `weekStart` / `weekEnd` dates of the rolling window (for the page label)
 - Errors: `422` if fewer than `minEntries` entries; `429` if quota is spent;
   `502`/`503` on generation failures
 
@@ -245,7 +245,8 @@ Locked defaults:
 - **Week:** Monday 00:00 inclusive → next Monday 00:00 exclusive
 - **Limit:** 2 successful generations per week
 - **Reset:** next Monday 00:00 Europe/Madrid (`quota.resetsAt`)
-- **Storage:** one row per `(user_id, week_start)`; the second generation overwrites it and increments `generation_count`
+- **Entry window:** last 7 calendar days in Europe/Madrid (today inclusive), independent of the quota week
+- **Storage:** one row per `(user_id, week_start)` for the quota week; `period_start` / `period_end` store the rolling window actually summarized. The page label uses that stored range after generation, or the current rolling window when none exists.
 
 Implementation: week bounds and quota payload live on the server
 (`backend/src/journalSummaries/summaryWeek.js`). The SPA derives CTAs from
@@ -273,9 +274,10 @@ Build in thin vertical slices; each slice shippable alone.
 ## 13. Locked product decisions (V1)
 
 1. **Availability:** anytime during the ISO week. No Sunday creation window.
-2. **Quota:** 2 successful generations per week (Monday 00:00 Europe/Madrid). The second overwrites the stored summary.
+2. **Quota:** 2 successful generations per ISO week (Monday 00:00 Europe/Madrid). The second overwrites the stored summary.
+   **Entry window:** last 7 calendar days ending today, independent of that quota week.
 3. **Regeneration:** `REGENERAR RESUMEN` is a product control, gated by remaining quota. Retry still applies when generation fails (failed calls do not consume quota).
-4. **Minimum writing:** At least **2 entries** in the week. No minimum character count.
+4. **Minimum writing:** At least **2 entries** in the last 7 days. No minimum character count.
 5. **Access:** All logged-in users (same as journal today).
 6. **Socratic tone:** Sharper / challenging (tunable later).
 7. **Machiavellian tone:** Practical and strategic; challenge the user's incentives without recommending manipulation.

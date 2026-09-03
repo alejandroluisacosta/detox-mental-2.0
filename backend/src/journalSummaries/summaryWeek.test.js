@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildQuotaPayload,
+  getRollingEntryRange,
   getWeekBounds,
   getZonedParts,
   SUMMARY_GENERATIONS_PER_WEEK,
@@ -20,7 +21,17 @@ test('zonedLocalToUtc maps Madrid summer noon to 10:00 UTC', () => {
   assert.equal(utc.toISOString(), '2026-07-05T10:00:00.000Z');
 });
 
-test('getWeekBounds returns Monday–Sunday for a mid-week instant', () => {
+test('getRollingEntryRange covers the last 7 calendar days ending today', () => {
+  // Wednesday 2026-07-29 15:00 Madrid = 13:00 UTC
+  const now = new Date('2026-07-29T13:00:00.000Z');
+  const range = getRollingEntryRange(now, 'Europe/Madrid');
+  assert.equal(range.rangeStart, '2026-07-23');
+  assert.equal(range.rangeEnd, '2026-07-29');
+  assert.equal(range.periodStart.toISOString(), '2026-07-22T22:00:00.000Z');
+  assert.equal(range.periodEnd.toISOString(), now.toISOString());
+});
+
+test('getWeekBounds returns Monday–Sunday for the quota week', () => {
   // Wednesday 2026-07-29 15:00 Madrid = 13:00 UTC
   const now = new Date('2026-07-29T13:00:00.000Z');
   const bounds = getWeekBounds(now, 'Europe/Madrid');

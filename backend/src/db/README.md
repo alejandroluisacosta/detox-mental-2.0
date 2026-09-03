@@ -207,8 +207,8 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 **Columns:**
 - `id` (UUID, PK)
 - `user_id` (UUID, FK → users.id)
-- `week_start` / `week_end` (DATE): Monday–Sunday of the ISO week in Europe/Madrid
-- `period_start` / `period_end` (TIMESTAMPTZ): UTC range used to select entries
+- `week_start` / `week_end` (DATE): Monday–Sunday of the quota ISO week in Europe/Madrid
+- `period_start` / `period_end` (TIMESTAMPTZ): UTC range of the last 7 calendar days used to select entries
 - `summary_text` (TEXT): Plain weekly overview
 - `main_topics` (TEXT[]): Model-derived topic labels
 - `best_quote` (TEXT): Highlighted sentence from the user’s writing

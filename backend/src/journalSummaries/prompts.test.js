@@ -32,3 +32,20 @@ test('buildSummaryMessages passes the requested locale into the system prompt', 
   });
   assert.match(system.content, /MUST be written in Spanish/);
 });
+
+test('buildSummaryMessages describes the last 7 days', () => {
+  const [, user] = buildSummaryMessages({
+    entries: [
+      {
+        id: '1',
+        content: 'hello',
+        topics: [],
+        createdAt: '2026-07-28T00:00:00.000Z',
+      },
+    ],
+    weekStart: '2026-07-23',
+    weekEnd: '2026-07-29',
+    locale: 'en',
+  });
+  assert.match(user.content, /Last 7 days from 2026-07-23 to 2026-07-29/);
+});

@@ -17,7 +17,7 @@ test('returns English journal errors by default', () => {
 test('returns Spanish journal errors and interpolates counts', () => {
   assert.equal(
     journalMessage('es', 'needEntries', { minEntries: 2 }),
-    'Necesitas al menos 2 entradas esta semana para crear el resumen.',
+    'Necesitas al menos 2 entradas en los últimos 7 días para crear el resumen.',
   );
   assert.equal(
     journalMessage('es', 'tooManyTopics', { max: 3 }),
