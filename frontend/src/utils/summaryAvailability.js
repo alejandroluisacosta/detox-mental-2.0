@@ -1,36 +1,23 @@
 /**
  * Derive create/display state from GET /journal-summaries/current payload.
- * Gating lives here so the backend stays a pure generator.
+ * Quota numbers come from the server; this helper only decides which CTAs to show.
  */
 export const resolveSummaryAvailability = (payload) => {
-  const windowOpen = Boolean(payload?.window?.open);
-  const windowEnforced = Boolean(payload?.window?.enforced);
   const entryCount = payload?.entryCount ?? 0;
   const minEntries = payload?.minEntries ?? 2;
-  const serverSummary = payload?.summary ?? null;
-  const opensAtMs = payload?.window?.opensAt
-    ? new Date(payload.window.opensAt).getTime()
-    : null;
-
-  const stale =
-    windowOpen &&
-    serverSummary?.createdAt &&
-    opensAtMs != null &&
-    !Number.isNaN(opensAtMs)
-      ? new Date(serverSummary.createdAt).getTime() < opensAtMs
-      : false;
-
-  const displayedSummary = stale ? null : serverSummary;
-  const canCreate =
-    windowOpen && entryCount >= minEntries && !displayedSummary;
+  const limit = payload?.quota?.limit ?? 2;
+  const used = payload?.quota?.used ?? 0;
+  const remaining = payload?.quota?.remaining ?? Math.max(limit - used, 0);
+  const displayedSummary = payload?.summary ?? null;
 
   return {
-    windowOpen,
-    windowEnforced,
     entryCount,
     minEntries,
-    stale,
+    limit,
+    used,
+    remaining,
     displayedSummary,
-    canCreate,
+    canCreate: !displayedSummary && entryCount >= minEntries && remaining > 0,
+    canRegenerate: Boolean(displayedSummary) && remaining > 0,
   };
 };

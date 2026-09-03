@@ -36,6 +36,14 @@ const renderSummary = (locale = 'en') => {
   );
 };
 
+const quota = (used, remaining = 2 - used) => ({
+  timezone: 'Europe/Madrid',
+  limit: 2,
+  used,
+  remaining,
+  resetsAt: '2026-08-02T22:00:00.000Z',
+});
+
 describe('JournalSummary page states', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
@@ -59,19 +67,14 @@ describe('JournalSummary page states', () => {
     ).toBeTruthy();
   });
 
-  test('shows create CTA when the window is open and there is no summary', async () => {
+  test('shows create CTA when there is quota left and there is no summary', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     apiFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
         weekStart: '2026-07-27',
         weekEnd: '2026-08-02',
-        window: {
-          open: true,
-          enforced: true,
-          opensAt: '2026-08-02T10:00:00.000Z',
-          closesAt: '2026-08-02T16:00:00.000Z',
-        },
+        quota: quota(0),
         entryCount: 3,
         minEntries: 2,
         summary: null,
@@ -84,55 +87,17 @@ describe('JournalSummary page states', () => {
         screen.getByRole('button', { name: /CREATE SUMMARY/i }),
       ).toBeTruthy();
     });
+    expect(screen.getByText(/2 of 2 summaries left this week/i)).toBeTruthy();
   });
 
-  test('shows create CTA when the only summary is stale for this window', async () => {
+  test('renders stored summary sections and regenerate button when quota remains', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     apiFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
         weekStart: '2026-07-27',
         weekEnd: '2026-08-02',
-        window: {
-          open: true,
-          enforced: true,
-          opensAt: '2026-08-02T10:00:00.000Z',
-          closesAt: '2026-08-02T16:00:00.000Z',
-        },
-        entryCount: 3,
-        minEntries: 2,
-        summary: {
-          summaryText: 'Midweek summary',
-          createdAt: '2026-07-29T12:00:00.000Z',
-          mainTopics: ['Trabajo'],
-          bestQuote: 'Never enough',
-          socraticText: 'What proof do you have of that?',
-        },
-      }),
-    });
-
-    renderSummary();
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
-      ).toBeTruthy();
-    });
-    expect(screen.queryByText(/Midweek summary/i)).toBeNull();
-  });
-
-  test('renders stored summary sections and regenerate button', async () => {
-    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        weekStart: '2026-07-27',
-        weekEnd: '2026-08-02',
-        window: {
-          open: false,
-          enforced: true,
-          opensAt: '2026-08-02T10:00:00.000Z',
-          closesAt: '2026-08-02T16:00:00.000Z',
-        },
+        quota: quota(1),
         entryCount: 3,
         minEntries: 2,
         summary: {
@@ -169,7 +134,42 @@ describe('JournalSummary page states', () => {
       expect(
         screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
       ).toBeTruthy();
+      expect(screen.getByText(/1 of 2 summaries left this week/i)).toBeTruthy();
     });
+  });
+
+  test('hides regenerate and shows the exhausted copy when quota is spent', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        weekStart: '2026-07-27',
+        weekEnd: '2026-08-02',
+        quota: quota(2),
+        entryCount: 3,
+        minEntries: 2,
+        summary: {
+          summaryText: 'You wrote about work and doubt.',
+          mainTopics: ['Trabajo'],
+          bestQuote: 'Never enough',
+          socraticText: 'What proof do you have of that?',
+          createdAt: '2026-08-02T11:00:00.000Z',
+          locale: 'en',
+          generationCount: 2,
+        },
+      }),
+    });
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByText(/You wrote about work/i)).toBeTruthy();
+    });
+    expect(
+      screen.queryByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeNull();
+    expect(
+      screen.getByText(/You have used both summaries this week/i),
+    ).toBeTruthy();
   });
 
   test('hides the Machiavelli section for summaries created before it existed', async () => {
@@ -179,12 +179,7 @@ describe('JournalSummary page states', () => {
       json: async () => ({
         weekStart: '2026-07-27',
         weekEnd: '2026-08-02',
-        window: {
-          open: false,
-          enforced: true,
-          opensAt: '2026-08-02T10:00:00.000Z',
-          closesAt: '2026-08-02T16:00:00.000Z',
-        },
+        quota: quota(1),
         entryCount: 3,
         minEntries: 2,
         summary: {

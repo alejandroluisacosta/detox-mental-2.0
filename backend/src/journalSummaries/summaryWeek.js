@@ -1,17 +1,12 @@
 /**
- * Week bounds and Sunday creation window for journal summaries.
+ * Week bounds and generation quota for journal summaries.
  * Product timezone: Europe/Madrid. Week = Monday 00:00 → next Monday 00:00.
- * Creation window: Sunday 12:00–18:00 (inclusive start, exclusive end).
+ * Quota: 2 successful generations per week; resets at next Monday 00:00.
  */
 
 export const SUMMARY_TIMEZONE = 'Europe/Madrid';
 export const MIN_ENTRIES_FOR_SUMMARY = 2;
-
-/** When true, creation window is Sunday 12:00–18:00 Europe/Madrid. */
-export const ENFORCE_SUMMARY_WINDOW = true;
-
-const WINDOW_START_HOUR = 12;
-const WINDOW_END_HOUR = 18;
+export const SUMMARY_GENERATIONS_PER_WEEK = 2;
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -135,58 +130,27 @@ export const getWeekBounds = (now = new Date(), timeZone = SUMMARY_TIMEZONE) => 
     timeZone,
   );
 
-  const opensAt = zonedLocalToUtc(
-    sunday.year,
-    sunday.month,
-    sunday.day,
-    WINDOW_START_HOUR,
-    0,
-    0,
-    timeZone,
-  );
-  const closesAt = zonedLocalToUtc(
-    sunday.year,
-    sunday.month,
-    sunday.day,
-    WINDOW_END_HOUR,
-    0,
-    0,
-    timeZone,
-  );
-
   return {
     weekStart: toDateString(monday.year, monday.month, monday.day),
     weekEnd: toDateString(sunday.year, sunday.month, sunday.day),
     periodStart,
     periodEnd,
-    opensAt,
-    closesAt,
     timezone: timeZone,
   };
 };
 
-/** Whether creation is allowed for `now` (respects ENFORCE_SUMMARY_WINDOW). */
-export const isSummaryWindowOpen = (
+export const buildQuotaPayload = (
+  used,
   now = new Date(),
   timeZone = SUMMARY_TIMEZONE,
 ) => {
-  if (!ENFORCE_SUMMARY_WINDOW) return true;
-
-  const bounds = getWeekBounds(now, timeZone);
-  const t = now.getTime();
-  return t >= bounds.opensAt.getTime() && t < bounds.closesAt.getTime();
-};
-
-export const buildWindowPayload = (
-  now = new Date(),
-  timeZone = SUMMARY_TIMEZONE,
-) => {
-  const bounds = getWeekBounds(now, timeZone);
+  const limit = SUMMARY_GENERATIONS_PER_WEEK;
+  const usedCount = Number.isFinite(used) ? used : 0;
   return {
     timezone: timeZone,
-    open: isSummaryWindowOpen(now, timeZone),
-    enforced: ENFORCE_SUMMARY_WINDOW,
-    opensAt: bounds.opensAt.toISOString(),
-    closesAt: bounds.closesAt.toISOString(),
+    limit,
+    used: usedCount,
+    remaining: Math.max(limit - usedCount, 0),
+    resetsAt: getWeekBounds(now, timeZone).periodEnd.toISOString(),
   };
 };

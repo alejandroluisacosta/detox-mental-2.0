@@ -36,6 +36,8 @@ const messages = {
     summaryGenerateFailed:
       'Could not generate the summary. Try again in a few moments.',
     summaryCreateFailed: 'Error creating the summary.',
+    summaryQuotaExhausted:
+      'You have used both summaries this week. New ones are available on Monday.',
   },
   es: {
     topicsMustBeList: 'Los temas deben enviarse como una lista.',
@@ -73,6 +75,8 @@ const messages = {
     summaryGenerateFailed:
       'No se pudo generar el resumen. Inténtalo de nuevo en unos momentos.',
     summaryCreateFailed: 'Error al crear el resumen.',
+    summaryQuotaExhausted:
+      'Ya has usado los dos resúmenes de esta semana. Podrás generar más el lunes.',
   },
 };
 

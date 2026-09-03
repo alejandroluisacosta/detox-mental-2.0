@@ -136,14 +136,14 @@ export const es = {
   'summary.create': 'CREAR RESUMEN',
   'summary.needEntries':
     'Necesitas al menos {minEntries} entradas esta semana para crear el resumen. Llevas {entryCount}.',
-  'summary.windowClosed':
-    'El resumen se puede crear el domingo de 12:00 a 18:00 (hora de Madrid). Mientras tanto, sigue escribiendo.',
+  'summary.quotaRemaining':
+    'Te quedan {remaining} de {limit} resúmenes esta semana',
+  'summary.quotaExhausted':
+    'Ya has usado los dos resúmenes de esta semana. Podrás generar más el lunes.',
   'summary.unavailable': 'El resumen de esta semana no está disponible ahora.',
   'summary.writeFooter': 'ESCRIBIR',
   'summary.loadFailed': 'No se pudo cargar el resumen.',
   'summary.createFailed': 'No se pudo crear el resumen.',
-  'summary.bannerText': 'Tu resumen semanal está disponible para crearse.',
-  'summary.bannerLink': 'Ir al resumen',
   'summary.preparing': 'Preparando tu resumen... [{percent}%]',
   'summary.preparingAria': 'Preparando resumen semanal',
 };

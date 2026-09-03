@@ -105,14 +105,21 @@ const JournalSummary = () => {
 
   const finishLoadingScreen = useCallback(() => {
     if (pendingSummary) {
-      setPayload((prev) =>
-        prev
-          ? {
-              ...prev,
-              summary: pendingSummary,
-            }
-          : prev,
-      );
+      setPayload((prev) => {
+        if (!prev) return prev;
+        const used =
+          pendingSummary.generationCount ?? (prev.quota?.used ?? 0) + 1;
+        const limit = prev.quota?.limit ?? 2;
+        return {
+          ...prev,
+          summary: pendingSummary,
+          quota: {
+            ...(prev.quota ?? {}),
+            used,
+            remaining: Math.max(limit - used, 0),
+          },
+        };
+      });
     }
     setGenerating(false);
     setGenerateReady(false);
@@ -165,8 +172,23 @@ const JournalSummary = () => {
           </div>
         </header>
 
-        {weekLabel && (
-          <p className="journal-summary__week">{weekLabel}</p>
+        {(weekLabel ||
+          (!demoMode && status === 'ready' && user && !loading && payload)) && (
+          <div className="journal-summary__meta">
+            {weekLabel && (
+              <p className="journal-summary__week">{weekLabel}</p>
+            )}
+            {!demoMode && status === 'ready' && user && !loading && payload && (
+              <p className="journal-summary__quota">
+                {availability.remaining > 0
+                  ? t('summary.quotaRemaining', {
+                      remaining: availability.remaining,
+                      limit: availability.limit,
+                    })
+                  : t('summary.quotaExhausted')}
+              </p>
+            )}
+          </div>
         )}
 
         {!demoMode && status === 'loading' && (
@@ -241,7 +263,7 @@ const JournalSummary = () => {
               </section>
             )}
 
-            {!demoMode && (
+            {!demoMode && availability.canRegenerate && (
               <div className="journal-summary__regenerate">
                 <button
                   type="button"
@@ -284,8 +306,6 @@ const JournalSummary = () => {
                       {t('summary.write')}
                     </Link>
                   </>
-                ) : availability.windowEnforced && !availability.windowOpen ? (
-                  <p>{t('summary.windowClosed')}</p>
                 ) : (
                   <p>{t('summary.unavailable')}</p>
                 )}

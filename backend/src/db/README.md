@@ -217,10 +217,13 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 - `machiavelli_text` (TEXT, nullable): Strategic Machiavellian challenge for new summaries
 - `entry_count` (INTEGER): How many entries were included
 - `model_id` (TEXT, nullable): HF model that produced the row
+- `locale` (TEXT): UI language used to generate the row (`en` or `es`)
+- `generation_count` (INTEGER): How many successful generations produced this week’s row (starts at 1; second generation overwrites the row and increments)
 - `created_at` (TIMESTAMPTZ)
 
 **Constraints:**
 - `UNIQUE (user_id, week_start)` — one summary per user per week
+- `generation_count >= 1` — incremented on each successful generation; server quota is 2 per week
 - Non-empty checks on summary / quote / socratic text and, when present, Machiavelli text
 
 **Indexes:**
@@ -382,6 +385,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after the journal topic slugs migration
 \i backend/src/db/migrations/008_journal_custom_topics.sql
+```
+
+### Journal Summary Generation Count
+```sql
+-- Run after the journal custom topics migration
+\i backend/src/db/migrations/009_journal_summary_generation_count.sql
 ```
 
 ### Verify Migration Success

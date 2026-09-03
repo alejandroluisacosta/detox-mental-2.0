@@ -9,7 +9,6 @@ import { apiFetch } from '../../api/client.js';
 import { getDemoEntries } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { formatLocaleDate } from '../../utils/locale.js';
-import JournalSummaryBanner from '../../Components/JournalSummaryBanner/JournalSummaryBanner.jsx';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalTopicsModal from '../../Components/JournalTopicsModal/JournalTopicsModal.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
@@ -207,8 +206,6 @@ const JournalHistory = () => {
             </Link>
           </div>
         </header>
-
-        {!demoMode && <JournalSummaryBanner />}
 
         {!demoMode && status === 'loading' && (
           <LoadingStatus>{t('history.loading')}</LoadingStatus>

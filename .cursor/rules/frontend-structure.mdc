@@ -45,10 +45,10 @@ A page is routed in `App.jsx`. Anything rendered by two or more pages belongs in
 
 ```text
 # BAD — shared UI living next to one of its callers
-Pages/Journal/JournalSummaryBanner.jsx
+Pages/Journal/JournalConfirmModal.jsx
 
 # GOOD
-Components/JournalSummaryBanner/JournalSummaryBanner.jsx
+Components/JournalConfirmModal/JournalConfirmModal.jsx
 ```
 
 A component used by only one page still belongs in `Components/` once it is a distinct UI unit with its own styles (modals, banners, loading screens). Do not keep it as a second `.jsx` file inside the page folder.

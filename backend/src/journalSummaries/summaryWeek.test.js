@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  ENFORCE_SUMMARY_WINDOW,
+  buildQuotaPayload,
   getWeekBounds,
   getZonedParts,
-  isSummaryWindowOpen,
+  SUMMARY_GENERATIONS_PER_WEEK,
   zonedLocalToUtc,
-} from './summaryWindow.js';
+} from './summaryWeek.js';
 
 test('zonedLocalToUtc maps Madrid winter noon to 11:00 UTC', () => {
   // 2026-01-11 is Sunday; CET = UTC+1
@@ -28,26 +28,30 @@ test('getWeekBounds returns Monday–Sunday for a mid-week instant', () => {
   assert.equal(bounds.weekEnd, '2026-08-02');
   assert.equal(bounds.periodStart.toISOString(), '2026-07-26T22:00:00.000Z');
   assert.equal(bounds.periodEnd.toISOString(), '2026-08-02T22:00:00.000Z');
-  assert.equal(bounds.opensAt.toISOString(), '2026-08-02T10:00:00.000Z');
-  assert.equal(bounds.closesAt.toISOString(), '2026-08-02T16:00:00.000Z');
 });
 
-test('getZonedParts reports Sunday in Madrid for window open instant', () => {
-  const openInstant = new Date('2026-08-02T10:00:00.000Z');
-  const parts = getZonedParts(openInstant, 'Europe/Madrid');
-  assert.equal(parts.weekday, 'Sun');
-  assert.equal(parts.hour, 12);
+test('getZonedParts reports Monday at week reset in Madrid', () => {
+  const mondayMidnight = new Date('2026-08-02T22:00:00.000Z');
+  const parts = getZonedParts(mondayMidnight, 'Europe/Madrid');
+  assert.equal(parts.weekday, 'Mon');
+  assert.equal(parts.hour, 0);
 });
 
-test('isSummaryWindowOpen respects ENFORCE_SUMMARY_WINDOW', () => {
-  const wednesday = new Date('2026-07-29T13:00:00.000Z');
-  if (!ENFORCE_SUMMARY_WINDOW) {
-    assert.equal(isSummaryWindowOpen(wednesday), true);
-  } else {
-    assert.equal(isSummaryWindowOpen(wednesday), false);
-    const sundayNoon = new Date('2026-08-02T10:30:00.000Z');
-    assert.equal(isSummaryWindowOpen(sundayNoon), true);
-    const sundayEvening = new Date('2026-08-02T16:00:00.000Z');
-    assert.equal(isSummaryWindowOpen(sundayEvening), false);
-  }
+test('buildQuotaPayload reports remaining generations and next Monday reset', () => {
+  const now = new Date('2026-07-29T13:00:00.000Z');
+  const unused = buildQuotaPayload(0, now, 'Europe/Madrid');
+  assert.equal(unused.limit, SUMMARY_GENERATIONS_PER_WEEK);
+  assert.equal(unused.used, 0);
+  assert.equal(unused.remaining, 2);
+  assert.equal(unused.timezone, 'Europe/Madrid');
+  assert.equal(unused.resetsAt, '2026-08-02T22:00:00.000Z');
+
+  const oneUsed = buildQuotaPayload(1, now, 'Europe/Madrid');
+  assert.equal(oneUsed.remaining, 1);
+
+  const exhausted = buildQuotaPayload(2, now, 'Europe/Madrid');
+  assert.equal(exhausted.remaining, 0);
+
+  const overLimit = buildQuotaPayload(5, now, 'Europe/Madrid');
+  assert.equal(overLimit.remaining, 0);
 });

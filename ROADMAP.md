@@ -49,7 +49,7 @@ Includes handwriting transcription from uploaded images—turning paper notes in
 
 State: ✅ V1 released. See `docs/weekly-journal-summary.md`.
 
-Turns stored journal entries into a Sunday-only AI reflection: weekly topic summary, a “best quote” from the user’s own writing, and a Socratic prompt. Generated on demand during a limited time window; persisted once per week.
+Turns stored journal entries into an on-demand AI reflection (two generations per week): weekly topic summary, a “best quote” from the user’s own writing, and a Socratic prompt. Generated on click; persisted once per week.
 
 ### Future Product Directions
 

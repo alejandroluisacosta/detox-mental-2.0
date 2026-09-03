@@ -26,6 +26,7 @@ const mapSummaryRow = (row) => ({
   entryCount: row.entry_count,
   modelId: row.model_id,
   locale: row.locale,
+  generationCount: row.generation_count,
   createdAt: toIso(row.created_at),
 });
 
@@ -67,7 +68,8 @@ export const getWeeklySummaryForUser = async (userId, weekStart) => {
   const { rows } = await pool.query(
     `SELECT id, user_id, week_start, week_end, period_start, period_end,
             summary_text, main_topics, best_quote, best_quote_entry_id,
-            socratic_text, machiavelli_text, entry_count, model_id, locale, created_at
+            socratic_text, machiavelli_text, entry_count, model_id, locale,
+            generation_count, created_at
      FROM journal_weekly_summaries
      WHERE user_id = $1 AND week_start = $2`,
     [userId, weekStart],
@@ -75,52 +77,10 @@ export const getWeeklySummaryForUser = async (userId, weekStart) => {
   return rows[0] ? mapSummaryRow(rows[0]) : null;
 };
 
-export const createWeeklySummary = async ({
-  userId,
-  weekStart,
-  weekEnd,
-  periodStart,
-  periodEnd,
-  summaryText,
-  mainTopics,
-  bestQuote,
-  bestQuoteEntryId,
-  socraticText,
-  machiavelliText,
-  entryCount,
-  modelId,
-  locale,
-}) => {
-  const { rows } = await pool.query(
-    `INSERT INTO journal_weekly_summaries (
-       user_id, week_start, week_end, period_start, period_end,
-       summary_text, main_topics, best_quote, best_quote_entry_id,
-       socratic_text, machiavelli_text, entry_count, model_id, locale
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-     RETURNING id, user_id, week_start, week_end, period_start, period_end,
-               summary_text, main_topics, best_quote, best_quote_entry_id,
-               socratic_text, machiavelli_text, entry_count, model_id, locale, created_at`,
-    [
-      userId,
-      weekStart,
-      weekEnd,
-      periodStart,
-      periodEnd,
-      summaryText,
-      mainTopics,
-      bestQuote,
-      bestQuoteEntryId,
-      socraticText,
-      machiavelliText,
-      entryCount,
-      modelId,
-      locale,
-    ],
-  );
-  return mapSummaryRow(rows[0]);
-};
-
-/** Insert or replace the week's summary. Always refreshes created_at. */
+/**
+ * Insert or replace the week's summary when quota remains.
+ * Increments generation_count on conflict; returns null when the limit is spent.
+ */
 export const upsertWeeklySummary = async ({
   userId,
   weekStart,
@@ -136,6 +96,7 @@ export const upsertWeeklySummary = async ({
   entryCount,
   modelId,
   locale,
+  limit,
 }) => {
   const { rows } = await pool.query(
     `INSERT INTO journal_weekly_summaries (
@@ -156,10 +117,13 @@ export const upsertWeeklySummary = async ({
        entry_count = EXCLUDED.entry_count,
        model_id = EXCLUDED.model_id,
        locale = EXCLUDED.locale,
+       generation_count = journal_weekly_summaries.generation_count + 1,
        created_at = NOW()
+     WHERE journal_weekly_summaries.generation_count < $15
      RETURNING id, user_id, week_start, week_end, period_start, period_end,
                summary_text, main_topics, best_quote, best_quote_entry_id,
-               socratic_text, machiavelli_text, entry_count, model_id, locale, created_at`,
+               socratic_text, machiavelli_text, entry_count, model_id, locale,
+               generation_count, created_at`,
     [
       userId,
       weekStart,
@@ -175,7 +139,8 @@ export const upsertWeeklySummary = async ({
       entryCount,
       modelId,
       locale,
+      limit,
     ],
   );
-  return mapSummaryRow(rows[0]);
+  return rows[0] ? mapSummaryRow(rows[0]) : null;
 };

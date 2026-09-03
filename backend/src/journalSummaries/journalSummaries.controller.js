@@ -1,8 +1,9 @@
 import {
-  buildWindowPayload,
+  buildQuotaPayload,
   getWeekBounds,
   MIN_ENTRIES_FOR_SUMMARY,
-} from './summaryWindow.js';
+  SUMMARY_GENERATIONS_PER_WEEK,
+} from './summaryWeek.js';
 import {
   listJournalEntriesInRange,
   countJournalEntriesInRange,
@@ -13,9 +14,12 @@ import { generateWeeklySummaryContent } from './journalSummaries.generation.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
 
+const quotaExhausted = (locale) => ({
+  message: journalMessage(locale, 'summaryQuotaExhausted'),
+});
+
 const buildCurrentPayload = async (userId, now = new Date()) => {
   const bounds = getWeekBounds(now);
-  const window = buildWindowPayload(now);
   const [entryCount, summary] = await Promise.all([
     countJournalEntriesInRange(userId, bounds.periodStart, bounds.periodEnd),
     getWeeklySummaryForUser(userId, bounds.weekStart),
@@ -24,7 +28,7 @@ const buildCurrentPayload = async (userId, now = new Date()) => {
   return {
     weekStart: bounds.weekStart,
     weekEnd: bounds.weekEnd,
-    window,
+    quota: buildQuotaPayload(summary?.generationCount ?? 0, now),
     entryCount,
     minEntries: MIN_ENTRIES_FOR_SUMMARY,
     summary,
@@ -47,6 +51,11 @@ export const postCurrentJournalSummary = async (req, res) => {
   try {
     const now = new Date();
     const bounds = getWeekBounds(now);
+
+    const existing = await getWeeklySummaryForUser(req.user.id, bounds.weekStart);
+    if ((existing?.generationCount ?? 0) >= SUMMARY_GENERATIONS_PER_WEEK) {
+      return res.status(429).json(quotaExhausted(locale));
+    }
 
     const entries = await listJournalEntriesInRange(
       req.user.id,
@@ -99,7 +108,13 @@ export const postCurrentJournalSummary = async (req, res) => {
       entryCount: entries.length,
       modelId: generated.modelId,
       locale,
+      limit: SUMMARY_GENERATIONS_PER_WEEK,
     });
+
+    if (!summary) {
+      return res.status(429).json(quotaExhausted(locale));
+    }
+
     return res.status(201).json({ summary });
   } catch (err) {
     console.error('[journal-summaries POST current]', err);
