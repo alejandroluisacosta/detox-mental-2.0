@@ -41,12 +41,15 @@
   transition: width 120ms linear;
 }
 
-.journal-summary-loading-screen__countdown {
+.journal-summary-loading-screen__percent {
   margin: 0;
-  font-size: 48px;
+  min-height: 1.2em;
+  font-size: 20px;
   font-weight: 700;
-  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
   color: var(--accent);
+  text-align: center;
 }
 
 .journal-summary-loading-screen__still-loading {

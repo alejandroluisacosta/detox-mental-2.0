@@ -27,7 +27,7 @@ Once per week, a logged-in user can generate an AI-powered weekly reflection wit
 2. User opens `/journal/summary` whenever they want.
 3. If no summary exists for the current quota week yet:
    - Page shows remaining quota and a create CTA (when there are at least 2 entries in the last 7 days).
-   - User clicks → 30s countdown ritual (then optional “Still loading” overtime) while the backend generates.
+   - User clicks → 30s loading ritual (then optional “Still loading” overtime) while the backend generates.
    - Results render in four sections on the same page.
 4. If a summary already exists for that week:
    - Page shows the stored result.
@@ -231,7 +231,7 @@ Also pass entry ids + timestamps so the backend can optionally attach `best_quot
 |---|---|
 | Route | `/journal/summary` in `App.jsx` beside existing journal routes |
 | Page | `frontend/src/Pages/JournalSummary/JournalSummary.jsx` |
-| Loading | 30s countdown ritual (bar to 99%, three quotes), then up to 15s glowing “Still loading”; 100% only when the POST succeeded. Timeouts restart the ritual up to 3 attempts. |
+| Loading | 30s ritual (bar and percent below it to 99%, three quotes), then glowing “Still loading”; 100% only when the POST succeeded. Timeouts restart the ritual up to 3 attempts. |
 | Quota | Remaining-generations counter on the summary page; Create vs Regenerar gated by `canCreate` / `canRegenerate` |
 | Result layout | Four stacked sections (not a dashboard of cards): Summary → Best quote → Socratic prompt → Machiavellian challenge |
 | History link | From journal header area: “Resumen” next to “Escribir” / history patterns |

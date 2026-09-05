@@ -95,6 +95,14 @@ const JournalSummary = () => {
   const handleGenerate = async () => {
     if (generating) return;
 
+    if (demoMode) {
+      setGenerating(true);
+      setGenerateExhausted(false);
+      setGenerateAttempt(1);
+      setGenerateReady(true);
+      return;
+    }
+
     setGenerating(true);
     setGenerateExhausted(false);
     setGenerateReady(false);
@@ -332,7 +340,8 @@ const JournalSummary = () => {
             {!demoMode && generateExhausted && (
               <p className="journal-summary__lead">{t('summary.tryLater')}</p>
             )}
-            {!demoMode && availability.canRegenerate && !generateExhausted && (
+            {(demoMode ||
+              (availability.canRegenerate && !generateExhausted)) && (
               <div className="journal-summary__regenerate">
                 <button
                   type="button"

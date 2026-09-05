@@ -32,10 +32,12 @@ describe('JournalSummaryLoadingScreen', () => {
     vi.useRealTimers();
   });
 
-  test('counts down, rotates quotes, and holds at 99% in overtime', () => {
+  test('keeps the percent below the bar, rotates quotes, and holds at 99% in overtime', () => {
     renderScreen();
 
-    expect(screen.getByText('30')).toBeTruthy();
+    expect(screen.getByText('Preparing your summary...')).toBeTruthy();
+    expect(screen.getByText('[0%]')).toBeTruthy();
+    expect(screen.queryByText('30')).toBeNull();
     expect(screen.getByText('First quote')).toBeTruthy();
     expect(screen.queryByText('Attempt 2 of 3')).toBeNull();
 
@@ -57,9 +59,9 @@ describe('JournalSummaryLoadingScreen', () => {
     act(() => {
       vi.advanceTimersByTime(SUMMARY_RITUAL_MS - 12000);
     });
-    expect(screen.getByText(/\[99%\]/)).toBeTruthy();
+    expect(screen.getByText('Preparing your summary...')).toBeTruthy();
+    expect(screen.getByText('[99%]')).toBeTruthy();
     expect(screen.getByText('Still loading')).toBeTruthy();
-    expect(screen.queryByText('30')).toBeNull();
     expect(screen.queryByText('First quote')).toBeNull();
   });
 

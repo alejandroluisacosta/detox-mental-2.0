@@ -18,9 +18,6 @@ const JournalSummaryLoadingScreen = ({
 }) => {
   const { locale, t } = useLocale();
   const [percent, setPercent] = useState(0);
-  const [countdown, setCountdown] = useState(
-    Math.ceil(SUMMARY_RITUAL_MS / 1000),
-  );
   const [minElapsed, setMinElapsed] = useState(false);
   const [quotes] = useState(() => pickDistinctQuotes(locale, 3));
   const [quoteIndex, setQuoteIndex] = useState(0);
@@ -38,7 +35,6 @@ const JournalSummaryLoadingScreen = ({
           ? 100
           : Math.min(99, Math.round(ritualRatio * 99)),
       );
-      setCountdown(Math.max(0, Math.ceil((SUMMARY_RITUAL_MS - elapsed) / 1000)));
       if (elapsed >= SUMMARY_RITUAL_MS) setMinElapsed(true);
     };
     tick();
@@ -76,7 +72,7 @@ const JournalSummaryLoadingScreen = ({
   return (
     <div className="journal-summary-loading-screen">
       <p className="journal-summary-loading-screen__text">
-        {t('summary.preparing', { percent: displayPercent })}
+        {t('summary.preparing')}
       </p>
       {attempt > 1 && (
         <p className="journal-summary-loading-screen__attempt">
@@ -96,20 +92,14 @@ const JournalSummaryLoadingScreen = ({
           style={{ width: `${displayPercent}%` }}
         />
       </div>
+      <p className="journal-summary-loading-screen__percent" aria-hidden="true">
+        [{displayPercent}%]
+      </p>
       {overtime ? (
         <p className="journal-summary-loading-screen__still-loading">
           {t('summary.stillLoading')}
         </p>
-      ) : (
-        countdown > 0 && (
-          <p
-            className="journal-summary-loading-screen__countdown"
-            aria-hidden="true"
-          >
-            {countdown}
-          </p>
-        )
-      )}
+      ) : null}
       {quote ? (
         <p className="journal-summary-loading-screen__quote">{quote}</p>
       ) : null}

@@ -142,7 +142,7 @@ export const en = {
   'summary.writeFooter': 'WRITE',
   'summary.loadFailed': 'Could not load the summary.',
   'summary.createFailed': 'Could not create the summary.',
-  'summary.preparing': 'Preparing your summary... [{percent}%]',
+  'summary.preparing': 'Preparing your summary...',
   'summary.preparingAria': 'Preparing weekly summary',
   'summary.stillLoading': 'Still loading',
   'summary.attempt': 'Attempt {n} of {total}',

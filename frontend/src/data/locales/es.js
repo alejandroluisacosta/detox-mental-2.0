@@ -144,7 +144,7 @@ export const es = {
   'summary.writeFooter': 'ESCRIBIR',
   'summary.loadFailed': 'No se pudo cargar el resumen.',
   'summary.createFailed': 'No se pudo crear el resumen.',
-  'summary.preparing': 'Preparando tu resumen... [{percent}%]',
+  'summary.preparing': 'Preparando tu resumen...',
   'summary.preparingAria': 'Preparando resumen semanal',
   'summary.stillLoading': 'Todavía cargando',
   'summary.attempt': 'Intento {n} de {total}',

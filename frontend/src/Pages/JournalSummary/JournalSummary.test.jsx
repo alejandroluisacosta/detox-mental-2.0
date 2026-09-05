@@ -8,6 +8,7 @@ import { emitToast } from '../../lib/toastBus.js';
 
 const mockUseAuth = vi.fn();
 const mockUseDemoMode = vi.fn();
+let lastLoadingScreenProps = null;
 
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to }) => <a href={to}>{children}</a>,
@@ -33,6 +34,7 @@ vi.mock(
     const { useEffect } = await import('react');
     return {
       default: function MockLoadingScreen({ ready, attempt, onDone }) {
+        lastLoadingScreenProps = { ready, attempt };
         useEffect(() => {
           if (ready) onDone?.();
         }, [onDone, ready]);
@@ -68,6 +70,7 @@ describe('JournalSummary page states', () => {
       demoMode: false,
       toggleDemoMode: vi.fn(),
     });
+    lastLoadingScreenProps = null;
   });
 
   afterEach(() => {
@@ -235,8 +238,35 @@ describe('JournalSummary page states', () => {
     ).toBeTruthy();
     expect(apiFetch).not.toHaveBeenCalled();
     expect(
-      screen.queryByRole('button', { name: /REGENERATE SUMMARY/i }),
-    ).toBeNull();
+      screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeTruthy();
+  });
+
+  test('plays the loading ritual in demo mode then shows the same summary', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    renderSummary();
+
+    fireEvent.click(screen.getByRole('button', { name: /REGENERATE SUMMARY/i }));
+
+    expect(lastLoadingScreenProps).toEqual({ ready: true, attempt: 1 });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/turn the need for control into a virtue/i),
+      ).toBeTruthy();
+    });
+    expect(
+      screen.getByText(/Maybe I don't need a better plan/i),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeTruthy();
+    expect(apiFetch).not.toHaveBeenCalled();
   });
 
   test('shows a spinner above the auth loading copy', () => {
