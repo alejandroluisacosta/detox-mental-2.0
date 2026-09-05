@@ -11,6 +11,9 @@ import {
   countJournalEntriesInRange,
   getWeeklySummaryForUser,
   upsertWeeklySummary,
+  countRecentGenerateAttempts,
+  recordGenerateAttempt,
+  MAX_GENERATE_ATTEMPTS_IN_WINDOW,
 } from './journalSummaries.service.js';
 import { generateWeeklySummaryContent } from './journalSummaries.generation.js';
 import { journalMessage } from '../i18n/journalMessages.js';
@@ -81,6 +84,14 @@ export const postCurrentJournalSummary = async (req, res) => {
       return res.status(429).json(quotaExhausted(locale));
     }
 
+    const recentAttempts = await countRecentGenerateAttempts(req.user.id, now);
+    if (recentAttempts >= MAX_GENERATE_ATTEMPTS_IN_WINDOW) {
+      return res.status(429).json({
+        code: 'summary_rate_limited',
+        message: journalMessage(locale, 'summaryTryLater'),
+      });
+    }
+
     const entries = await listJournalEntriesInRange(
       req.user.id,
       range.periodStart,
@@ -97,6 +108,12 @@ export const postCurrentJournalSummary = async (req, res) => {
       });
     }
 
+    await recordGenerateAttempt(req.user.id);
+
+    const abort = new AbortController();
+    const onClose = () => abort.abort();
+    req.on('close', onClose);
+
     let generated;
     try {
       generated = await generateWeeklySummaryContent({
@@ -104,6 +121,7 @@ export const postCurrentJournalSummary = async (req, res) => {
         weekStart: range.rangeStart,
         weekEnd: range.rangeEnd,
         locale,
+        signal: abort.signal,
       });
     } catch (genErr) {
       console.error('[journal-summaries POST generate]', genErr);
@@ -112,9 +130,17 @@ export const postCurrentJournalSummary = async (req, res) => {
           message: journalMessage(locale, 'summaryServiceUnconfigured'),
         });
       }
+      if (genErr.code === 'summary_timeout') {
+        return res.status(504).json({
+          code: 'summary_timeout',
+          message: journalMessage(locale, 'summaryTimeout'),
+        });
+      }
       return res.status(502).json({
         message: journalMessage(locale, 'summaryGenerateFailed'),
       });
+    } finally {
+      req.removeListener('close', onClose);
     }
 
     const summary = await upsertWeeklySummary({

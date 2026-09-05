@@ -144,4 +144,7 @@ export const en = {
   'summary.createFailed': 'Could not create the summary.',
   'summary.preparing': 'Preparing your summary... [{percent}%]',
   'summary.preparingAria': 'Preparing weekly summary',
+  'summary.stillLoading': 'Still loading',
+  'summary.attempt': 'Attempt {n} of {total}',
+  'summary.tryLater': 'Please try later.',
 };

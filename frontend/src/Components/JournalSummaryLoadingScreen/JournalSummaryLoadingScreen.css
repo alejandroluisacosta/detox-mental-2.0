@@ -17,6 +17,13 @@
   text-align: center;
 }
 
+.journal-summary-loading-screen__attempt {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+  text-align: center;
+}
+
 .journal-summary-loading-screen__bar {
   width: 100%;
   max-width: 320px;
@@ -31,20 +38,55 @@
   height: 100%;
   border-radius: 999px;
   background: var(--accent);
-  transition: width 5000ms ease;
+  transition: width 120ms linear;
 }
 
-.journal-summary-loading-screen__bar-fill--full {
-  width: 100%;
+.journal-summary-loading-screen__countdown {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.journal-summary-loading-screen__still-loading {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  animation: journal-summary-loading-glow 1.8s ease-in-out infinite;
 }
 
 .journal-summary-loading-screen__quote {
   margin: 8px 0 0;
   max-width: 320px;
+  min-height: 4.5em;
   font-size: 15px;
   font-style: italic;
   line-height: 1.5;
   color: var(--text);
   text-align: center;
   white-space: pre-line;
+}
+
+@keyframes journal-summary-loading-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-summary-loading-screen__still-loading {
+    animation: none;
+    opacity: 1;
+  }
+
+  .journal-summary-loading-screen__bar-fill {
+    transition: none;
+  }
 }

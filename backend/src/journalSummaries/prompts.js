@@ -94,7 +94,7 @@ SUMMARY
 
 The summary is an in-depth philosophical reflection, not a retelling of events.
 
-Write approximately 700–1,100 words (roughly a 3–5 minute read).
+Write approximately 400–600 words (roughly a 2–3 minute read).
 
 Address the user directly (${rules.addressForm}).
 

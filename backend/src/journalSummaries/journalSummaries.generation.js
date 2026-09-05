@@ -7,8 +7,18 @@ import {
 
 const DEFAULT_SUMMARY_MODEL = 'moonshotai/Kimi-K2-Instruct-0905:novita';
 
+export const SUMMARY_GENERATE_TIMEOUT_MS = 45_000;
+
 export const getSummaryModelId = () =>
   process.env.HF_JOURNAL_SUMMARY_MODEL || DEFAULT_SUMMARY_MODEL;
+
+const isAbortError = (err) =>
+  err?.name === 'AbortError' || err?.code === 'ABORT_ERR';
+
+const combinedSignal = (signal) => {
+  const timeout = AbortSignal.timeout(SUMMARY_GENERATE_TIMEOUT_MS);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+};
 
 /**
  * Call HF and return normalized summary fields + quote entry match.
@@ -19,6 +29,7 @@ export const generateWeeklySummaryContent = async ({
   weekStart,
   weekEnd,
   locale = 'en',
+  signal,
 }) => {
   if (!process.env.HF_TOKEN) {
     const err = new Error('missing_hf_token');
@@ -29,15 +40,38 @@ export const generateWeeklySummaryContent = async ({
   const modelId = getSummaryModelId();
   const client = new InferenceClient(process.env.HF_TOKEN);
   const messages = buildSummaryMessages({ entries, weekStart, weekEnd, locale });
+  const abortSignal = combinedSignal(signal);
 
-  // Long philosophical reflections (~700–1,100 words) need headroom
-  // beyond the JSON fields for quote / topics / socratic.
-  const response = await client.chatCompletion({
-    model: modelId,
-    messages,
-    max_tokens: 3200,
-    temperature: 0.5,
-  });
+  let response;
+  try {
+    // 400–600 word reflections plus quote / topics / socratic / machiavelli.
+    const completion = client.chatCompletion(
+      {
+        model: modelId,
+        messages,
+        max_tokens: 1800,
+        temperature: 0.5,
+      },
+      { signal: abortSignal },
+    );
+    const timeout = new Promise((_, reject) => {
+      const fail = () => {
+        const timeoutErr = new Error('summary_timeout');
+        timeoutErr.code = 'summary_timeout';
+        reject(timeoutErr);
+      };
+      if (abortSignal.aborted) fail();
+      else abortSignal.addEventListener('abort', fail, { once: true });
+    });
+    response = await Promise.race([completion, timeout]);
+  } catch (err) {
+    if (err?.code === 'summary_timeout' || abortSignal.aborted || isAbortError(err)) {
+      const timeoutErr = new Error('summary_timeout');
+      timeoutErr.code = 'summary_timeout';
+      throw timeoutErr;
+    }
+    throw err;
+  }
 
   const raw = response.choices?.[0]?.message?.content ?? '';
   const parsed = parseSummaryOutput(raw);

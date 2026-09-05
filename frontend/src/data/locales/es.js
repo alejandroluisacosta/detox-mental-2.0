@@ -146,4 +146,7 @@ export const es = {
   'summary.createFailed': 'No se pudo crear el resumen.',
   'summary.preparing': 'Preparando tu resumen... [{percent}%]',
   'summary.preparingAria': 'Preparando resumen semanal',
+  'summary.stillLoading': 'Todavía cargando',
+  'summary.attempt': 'Intento {n} de {total}',
+  'summary.tryLater': 'Inténtalo más tarde.',
 };

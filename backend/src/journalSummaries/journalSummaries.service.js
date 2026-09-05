@@ -144,3 +144,27 @@ export const upsertWeeklySummary = async ({
   );
   return rows[0] ? mapSummaryRow(rows[0]) : null;
 };
+
+export const GENERATE_ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
+export const MAX_GENERATE_ATTEMPTS_IN_WINDOW = 3;
+
+export const countRecentGenerateAttempts = async (
+  userId,
+  now = new Date(),
+) => {
+  const since = new Date(now.getTime() - GENERATE_ATTEMPT_WINDOW_MS);
+  const { rows } = await pool.query(
+    `SELECT COUNT(*)::int AS count
+     FROM journal_summary_generate_attempts
+     WHERE user_id = $1 AND created_at >= $2`,
+    [userId, since],
+  );
+  return rows[0]?.count ?? 0;
+};
+
+export const recordGenerateAttempt = async (userId) => {
+  await pool.query(
+    `INSERT INTO journal_summary_generate_attempts (user_id) VALUES ($1)`,
+    [userId],
+  );
+};
