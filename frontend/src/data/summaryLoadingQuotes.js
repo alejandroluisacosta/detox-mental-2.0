@@ -32,11 +32,6 @@ const quotesByLocale = {
 export const getSummaryLoadingQuotes = (locale) =>
   quotesByLocale[parseLocale(locale)];
 
-export const quoteDisplayMs = (quote) => {
-  const chars = String(quote ?? '').length;
-  return Math.min(8000, Math.max(3500, chars * 60));
-};
-
 export const pickDistinctQuotes = (locale, count, random = Math.random) => {
   const quotes = [...getSummaryLoadingQuotes(locale)];
   for (let i = quotes.length - 1; i > 0; i -= 1) {

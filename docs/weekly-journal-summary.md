@@ -231,7 +231,7 @@ Also pass entry ids + timestamps so the backend can optionally attach `best_quot
 |---|---|
 | Route | `/journal/summary` in `App.jsx` beside existing journal routes |
 | Page | `frontend/src/Pages/JournalSummary/JournalSummary.jsx` |
-| Loading | 30s ritual (bar and percent below it to 99%, three quotes), then glowing “Still loading”; 100% only when the POST succeeded. Timeouts restart the ritual up to 3 attempts. |
+| Loading | 30s ritual (bar and percent below it to 99%, three quotes at 10s each, looping), then glowing “Still loading”; 100% only when the POST succeeded. Timeouts restart the ritual up to 3 attempts. |
 | Quota | Remaining-generations counter on the summary page; Create vs Regenerar gated by `canCreate` / `canRegenerate` |
 | Result layout | Four stacked sections (not a dashboard of cards): Summary → Best quote → Socratic prompt → Machiavellian challenge |
 | History link | From journal header area: “Resumen” next to “Escribir” / history patterns |

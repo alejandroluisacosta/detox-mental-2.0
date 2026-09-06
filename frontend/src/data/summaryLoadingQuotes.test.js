@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest';
 import {
   getSummaryLoadingQuotes,
   pickDistinctQuotes,
-  quoteDisplayMs,
 } from './summaryLoadingQuotes.js';
 
 describe('summary loading quotes', () => {
@@ -23,11 +22,5 @@ describe('summary loading quotes', () => {
     picked.forEach((quote) => {
       expect(getSummaryLoadingQuotes('en')).toContain(quote);
     });
-  });
-
-  test('quoteDisplayMs is clamped between 3.5s and 8s', () => {
-    expect(quoteDisplayMs('x')).toBe(3500);
-    expect(quoteDisplayMs('a'.repeat(200))).toBe(8000);
-    expect(quoteDisplayMs('a'.repeat(80))).toBe(4800);
   });
 });

@@ -3,6 +3,7 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import { writeStoredLocale } from '../../utils/locale.js';
 import {
+  SUMMARY_QUOTE_MS,
   SUMMARY_REVEAL_MS,
   SUMMARY_RITUAL_MS,
 } from '../../utils/journalSummaryGenerate.js';
@@ -10,7 +11,6 @@ import JournalSummaryLoadingScreen from './JournalSummaryLoadingScreen.jsx';
 
 vi.mock('../../data/summaryLoadingQuotes.js', () => ({
   pickDistinctQuotes: () => ['First quote', 'Second quote', 'Third quote'],
-  quoteDisplayMs: () => 4000,
 }));
 
 const renderScreen = (props = {}) => {
@@ -42,27 +42,21 @@ describe('JournalSummaryLoadingScreen', () => {
     expect(screen.queryByText('Attempt 2 of 3')).toBeNull();
 
     act(() => {
-      vi.advanceTimersByTime(4000);
+      vi.advanceTimersByTime(SUMMARY_QUOTE_MS);
     });
     expect(screen.getByText('Second quote')).toBeTruthy();
 
     act(() => {
-      vi.advanceTimersByTime(4000);
+      vi.advanceTimersByTime(SUMMARY_QUOTE_MS);
     });
     expect(screen.getByText('Third quote')).toBeTruthy();
 
     act(() => {
-      vi.advanceTimersByTime(4000);
+      vi.advanceTimersByTime(SUMMARY_QUOTE_MS);
     });
-    expect(screen.queryByText('Third quote')).toBeNull();
-
-    act(() => {
-      vi.advanceTimersByTime(SUMMARY_RITUAL_MS - 12000);
-    });
-    expect(screen.getByText('Preparing your summary...')).toBeTruthy();
+    expect(screen.getByText('First quote')).toBeTruthy();
     expect(screen.getByText('[99%]')).toBeTruthy();
     expect(screen.getByText('Still loading')).toBeTruthy();
-    expect(screen.queryByText('First quote')).toBeNull();
   });
 
   test('shows attempt chrome on retries and reaches 100% only when ready', () => {
