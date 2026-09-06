@@ -38,6 +38,8 @@ const messages = {
     summaryCreateFailed: 'Error creating the summary.',
     summaryQuotaExhausted:
       'You have used both summaries this week. New ones are available on Monday.',
+    summaryTimeout: 'The summary took too long to generate.',
+    summaryTryLater: 'Please try later.',
   },
   es: {
     topicsMustBeList: 'Los temas deben enviarse como una lista.',
@@ -77,6 +79,8 @@ const messages = {
     summaryCreateFailed: 'Error al crear el resumen.',
     summaryQuotaExhausted:
       'Ya has usado los dos resúmenes de esta semana. Podrás generar más el lunes.',
+    summaryTimeout: 'El resumen tardó demasiado en generarse.',
+    summaryTryLater: 'Inténtalo más tarde.',
   },
 };
 

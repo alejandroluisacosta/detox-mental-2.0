@@ -1,12 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import { writeStoredLocale } from '../../utils/locale.js';
 import JournalSummary from './JournalSummary.jsx';
 import { apiFetch } from '../../api/client.js';
+import { emitToast } from '../../lib/toastBus.js';
 
 const mockUseAuth = vi.fn();
 const mockUseDemoMode = vi.fn();
+let lastLoadingScreenProps = null;
 
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to }) => <a href={to}>{children}</a>,
@@ -26,6 +28,21 @@ vi.mock('../../Components/Navigation/Navigation.jsx', () => ({
 
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 vi.mock('../../lib/toastBus.js', () => ({ emitToast: vi.fn() }));
+vi.mock(
+  '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx',
+  async () => {
+    const { useEffect } = await import('react');
+    return {
+      default: function MockLoadingScreen({ ready, attempt, onDone }) {
+        lastLoadingScreenProps = { ready, attempt };
+        useEffect(() => {
+          if (ready) onDone?.();
+        }, [onDone, ready]);
+        return <div>loading-attempt-{attempt}</div>;
+      },
+    };
+  },
+);
 
 const renderSummary = (locale = 'en') => {
   writeStoredLocale(locale);
@@ -53,6 +70,7 @@ describe('JournalSummary page states', () => {
       demoMode: false,
       toggleDemoMode: vi.fn(),
     });
+    lastLoadingScreenProps = null;
   });
 
   afterEach(() => {
@@ -220,8 +238,35 @@ describe('JournalSummary page states', () => {
     ).toBeTruthy();
     expect(apiFetch).not.toHaveBeenCalled();
     expect(
-      screen.queryByRole('button', { name: /REGENERATE SUMMARY/i }),
-    ).toBeNull();
+      screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeTruthy();
+  });
+
+  test('plays the loading ritual in demo mode then shows the same summary', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    renderSummary();
+
+    fireEvent.click(screen.getByRole('button', { name: /REGENERATE SUMMARY/i }));
+
+    expect(lastLoadingScreenProps).toEqual({ ready: true, attempt: 1 });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/turn the need for control into a virtue/i),
+      ).toBeTruthy();
+    });
+    expect(
+      screen.getByText(/Maybe I don't need a better plan/i),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeTruthy();
+    expect(apiFetch).not.toHaveBeenCalled();
   });
 
   test('shows a spinner above the auth loading copy', () => {
@@ -244,5 +289,148 @@ describe('JournalSummary page states', () => {
     renderSummary();
     expect(screen.getByText('WRITE')).toBeTruthy();
     expect(screen.queryByText('View history')).toBeNull();
+  });
+
+  const emptyCurrent = {
+    weekStart: '2026-07-23',
+    weekEnd: '2026-07-29',
+    quota: quota(0),
+    entryCount: 3,
+    minEntries: 2,
+    summary: null,
+  };
+
+  const mockGetThenPosts = (postImpl) => {
+    apiFetch.mockImplementation((_path, options = {}) => {
+      if (options.method === 'POST') return postImpl();
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => emptyCurrent,
+      });
+    });
+  };
+
+  test('retries generate timeouts then shows try later', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    const abortErr = Object.assign(new Error('aborted'), { name: 'AbortError' });
+    mockGetThenPosts(() => Promise.reject(abortErr));
+
+    renderSummary();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
+      ).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /CREATE SUMMARY/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Please try later/i)).toBeTruthy();
+    });
+    const posts = apiFetch.mock.calls.filter(
+      ([, options]) => options?.method === 'POST',
+    );
+    expect(posts).toHaveLength(3);
+  });
+
+  test('does not retry a 422 generate failure', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    mockGetThenPosts(() =>
+      Promise.resolve({
+        ok: false,
+        status: 422,
+        json: async () => ({ message: 'Need more entries' }),
+      }),
+    );
+
+    renderSummary();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
+      ).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /CREATE SUMMARY/i }));
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalled();
+    });
+    const posts = apiFetch.mock.calls.filter(
+      ([, options]) => options?.method === 'POST',
+    );
+    expect(posts).toHaveLength(1);
+    expect(screen.queryByText(/Please try later/i)).toBeNull();
+  });
+
+  test('retries a 502 then shows the summary', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    let posts = 0;
+    mockGetThenPosts(() => {
+      posts += 1;
+      if (posts === 1) {
+        return Promise.resolve({
+          ok: false,
+          status: 502,
+          json: async () => ({ message: 'generate failed' }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 201,
+        json: async () => ({
+          weekStart: '2026-07-23',
+          weekEnd: '2026-07-29',
+          summary: {
+            summaryText: 'You wrote about work and doubt.',
+            mainTopics: ['Work'],
+            bestQuote: 'Never enough',
+            socraticText: 'What proof do you have of that?',
+            generationCount: 1,
+          },
+        }),
+      });
+    });
+
+    renderSummary();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
+      ).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /CREATE SUMMARY/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/You wrote about work/i)).toBeTruthy();
+    });
+    expect(posts).toBe(2);
+  });
+
+  test('shows try later immediately when generate is rate limited', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    mockGetThenPosts(() =>
+      Promise.resolve({
+        ok: false,
+        status: 429,
+        json: async () => ({
+          code: 'summary_rate_limited',
+          message: 'Please try later.',
+        }),
+      }),
+    );
+
+    renderSummary();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /CREATE SUMMARY/i }),
+      ).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /CREATE SUMMARY/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Please try later/i)).toBeTruthy();
+    });
+    const posts = apiFetch.mock.calls.filter(
+      ([, options]) => options?.method === 'POST',
+    );
+    expect(posts).toHaveLength(1);
   });
 });

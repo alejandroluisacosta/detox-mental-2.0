@@ -2,6 +2,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildSummaryMessages, buildSystemPrompt } from './prompts.js';
 
+test('English prompt asks for a 400–600 word summary', () => {
+  const prompt = buildSystemPrompt('en');
+  assert.match(prompt, /400–600 words/);
+  assert.doesNotMatch(prompt, /700–1,100 words/);
+});
+
 test('English prompt requires English user-facing strings and keeps quotes verbatim', () => {
   const prompt = buildSystemPrompt('en');
   assert.match(prompt, /MUST be written in English/);

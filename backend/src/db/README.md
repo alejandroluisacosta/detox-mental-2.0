@@ -231,6 +231,20 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 
 ---
 
+### 5d. `journal_summary_generate_attempts`
+
+Rolling log of generate POSTs used to cap retries (3 per 15 minutes). Failed and timed-out calls count; successful quota generations also count.
+
+**Columns:**
+- `id` (UUID, PK)
+- `user_id` (UUID, FK → users.id)
+- `created_at` (TIMESTAMPTZ)
+
+**Indexes:**
+- `idx_journal_summary_generate_attempts_user_created`: Recent-attempt lookups
+
+---
+
 ### 6. `classifications`
 
 Stores cognitive distortion classifications for thoughts.
@@ -391,6 +405,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after the journal custom topics migration
 \i backend/src/db/migrations/009_journal_summary_generation_count.sql
+```
+
+### Journal Summary Generate Attempts
+```sql
+-- Run after the generation count migration
+\i backend/src/db/migrations/010_journal_summary_generate_attempts.sql
 ```
 
 ### Verify Migration Success

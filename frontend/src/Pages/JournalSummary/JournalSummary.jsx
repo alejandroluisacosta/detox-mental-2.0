@@ -10,6 +10,12 @@ import { getDemoSummaryPayload } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
+import {
+  SUMMARY_ATTEMPT_MS,
+  SUMMARY_MAX_ATTEMPTS,
+  isGenerateRateLimited,
+  shouldRetryGenerate,
+} from '../../utils/journalSummaryGenerate.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
 import './JournalSummary.css';
@@ -42,6 +48,8 @@ const JournalSummary = () => {
   const [generateReady, setGenerateReady] = useState(false);
   const [pendingSummary, setPendingSummary] = useState(null);
   const [pendingRange, setPendingRange] = useState(null);
+  const [generateAttempt, setGenerateAttempt] = useState(1);
+  const [generateExhausted, setGenerateExhausted] = useState(false);
 
   const loadCurrent = useCallback(async () => {
     if (demoMode) {
@@ -77,38 +85,92 @@ const JournalSummary = () => {
     loadCurrent();
   }, [loadCurrent]);
 
-  const handleGenerate = async () => {
-    if (generating) return;
-
-    setGenerating(true);
+  const stopGenerating = () => {
+    setGenerating(false);
     setGenerateReady(false);
     setPendingSummary(null);
     setPendingRange(null);
+  };
 
-    try {
-      const res = await apiFetch('/auth/me/journal-summaries/current', {
-        method: 'POST',
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.message || t('summary.createFailed'));
-      }
-      setPendingSummary(data.summary ?? null);
-      setPendingRange(
-        data.weekStart && data.weekEnd
-          ? { weekStart: data.weekStart, weekEnd: data.weekEnd }
-          : null,
-      );
+  const handleGenerate = async () => {
+    if (generating) return;
+
+    if (demoMode) {
+      setGenerating(true);
+      setGenerateExhausted(false);
+      setGenerateAttempt(1);
       setGenerateReady(true);
-    } catch (err) {
-      console.error('[journal-summaries POST]', err);
-      setGenerating(false);
-      setGenerateReady(false);
-      setPendingSummary(null);
-      setPendingRange(null);
-      emitToast(err.message || t('summary.createFailed'));
-      loadCurrent();
+      return;
     }
+
+    setGenerating(true);
+    setGenerateExhausted(false);
+    setGenerateReady(false);
+    setPendingSummary(null);
+    setPendingRange(null);
+    setGenerateAttempt(1);
+
+    for (let attempt = 1; attempt <= SUMMARY_MAX_ATTEMPTS; attempt += 1) {
+      setGenerateAttempt(attempt);
+      setGenerateReady(false);
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), SUMMARY_ATTEMPT_MS);
+      try {
+        const res = await apiFetch('/auth/me/journal-summaries/current', {
+          method: 'POST',
+          signal: controller.signal,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (isGenerateRateLimited(res.status, data)) {
+          stopGenerating();
+          setGenerateExhausted(true);
+          return;
+        }
+        if (!res.ok) {
+          if (shouldRetryGenerate(res.status)) {
+            if (attempt < SUMMARY_MAX_ATTEMPTS) continue;
+            stopGenerating();
+            setGenerateExhausted(true);
+            return;
+          }
+          throw new Error(data.message || t('summary.createFailed'));
+        }
+        setPendingSummary(data.summary ?? null);
+        setPendingRange(
+          data.weekStart && data.weekEnd
+            ? { weekStart: data.weekStart, weekEnd: data.weekEnd }
+            : null,
+        );
+        setGenerateReady(true);
+        return;
+      } catch (err) {
+        const retrying =
+          shouldRetryGenerate(null, err) && attempt < SUMMARY_MAX_ATTEMPTS;
+        if (!retrying) {
+          console.error('[journal-summaries POST]', err);
+        }
+        if (shouldRetryGenerate(null, err) && attempt < SUMMARY_MAX_ATTEMPTS) {
+          continue;
+        }
+        if (
+          shouldRetryGenerate(null, err) &&
+          attempt >= SUMMARY_MAX_ATTEMPTS
+        ) {
+          stopGenerating();
+          setGenerateExhausted(true);
+          return;
+        }
+        stopGenerating();
+        emitToast(err.message || t('summary.createFailed'));
+        loadCurrent();
+        return;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    stopGenerating();
+    setGenerateExhausted(true);
   };
 
   const finishLoadingScreen = useCallback(() => {
@@ -141,6 +203,8 @@ const JournalSummary = () => {
       <div className="journal-page journal-page--summary">
         <Navigation />
         <JournalSummaryLoadingScreen
+          key={generateAttempt}
+          attempt={generateAttempt}
           ready={generateReady}
           onDone={finishLoadingScreen}
         />
@@ -273,7 +337,11 @@ const JournalSummary = () => {
               </section>
             )}
 
-            {!demoMode && availability.canRegenerate && (
+            {!demoMode && generateExhausted && (
+              <p className="journal-summary__lead">{t('summary.tryLater')}</p>
+            )}
+            {(demoMode ||
+              (availability.canRegenerate && !generateExhausted)) && (
               <div className="journal-summary__regenerate">
                 <button
                   type="button"
@@ -289,7 +357,9 @@ const JournalSummary = () => {
 
         {!demoMode && status === 'ready' && user && !loading && !summary && (
           <div className="journal-summary__create">
-            {availability.canCreate ? (
+            {generateExhausted ? (
+              <p className="journal-summary__lead">{t('summary.tryLater')}</p>
+            ) : availability.canCreate ? (
               <>
                 <p className="journal-summary__lead">
                   {t('summary.createLead')}

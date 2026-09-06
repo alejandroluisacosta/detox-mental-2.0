@@ -27,7 +27,7 @@ Once per week, a logged-in user can generate an AI-powered weekly reflection wit
 2. User opens `/journal/summary` whenever they want.
 3. If no summary exists for the current quota week yet:
    - Page shows remaining quota and a create CTA (when there are at least 2 entries in the last 7 days).
-   - User clicks → loading screen (reuse Thoughts Test loading pattern) while the backend generates.
+   - User clicks → 30s loading ritual (then optional “Still loading” overtime) while the backend generates.
    - Results render in four sections on the same page.
 4. If a summary already exists for that week:
    - Page shows the stored result.
@@ -47,7 +47,7 @@ Once per week, a logged-in user can generate an AI-powered weekly reflection wit
 | Not logged in | Same pattern as journal history: prompt login |
 | Zero entries in the last 7 days | Do not call the model; show empty state asking them to write first |
 | Very few / very short entries | Still allow generation; prompt should ask model to be honest about sparse material |
-| Generation fails / timeout | Loading ends with error toast + retry (if quota remains and no row was stored) |
+| Generation fails / timeout | Loading restarts the 30s ritual (up to 3 attempts). After that, the page shows “please try later”. |
 | User deletes an entry after summary | Summary stays as a snapshot of that week (do not invalidate) |
 
 ## 4. Scope boundaries (v1)
@@ -70,7 +70,7 @@ Once per week, a logged-in user can generate an AI-powered weekly reflection wit
 
 ## 5. Architecture (fits current stack)
 
-Stack today: React/Vite frontend, Express backend on Vercel (`maxDuration: 20`), Postgres via `pg`, Hugging Face `InferenceClient` for LLM/vision, JWT cookie auth.
+Stack today: React/Vite frontend, Express backend on Vercel (`maxDuration: 60`), Postgres via `pg`, Hugging Face `InferenceClient` for LLM/vision, JWT cookie auth.
 
 ```
 [Journal pages]
@@ -96,17 +96,18 @@ Stack today: React/Vite frontend, Express backend on Vercel (`maxDuration: 20`),
 
 ### Timeout risk
 
-Backend Vercel `maxDuration` is **20s**. Mitigation for v1:
+Backend Vercel `maxDuration` is **60s**. Each generate attempt aborts the model call at **45s**. Mitigation:
 
-- Cap total input characters (e.g. newest-first truncate to ~8–12k chars).
+- Cap total input characters (newest-first truncate to ~10k chars).
 - Prefer **one** model call that returns all four sections as structured JSON (one round-trip).
-- Keep output short (summary paragraphs + one quote + one Socratic item + one Machiavellian challenge).
-- If timeouts appear in practice, revisit: faster/smaller model, raise `maxDuration`, or async generation.
+- Keep the summary at **400–600 words**.
+- Client and server share the 45s abort; the client retries twice with a fresh loading ritual, then shows “please try later”.
+- A rolling cap of 3 generate POSTs per 15 minutes blocks clients that ignore that limit.
 
 ## 6. Data model
 
 New migration: `backend/src/db/migrations/004_journal_weekly_summaries.sql`
-(`generation_count` added later by `009_journal_summary_generation_count.sql`)
+(`generation_count` added later by `009_journal_summary_generation_count.sql`; generate-attempt log by `010_journal_summary_generate_attempts.sql`)
 
 ```sql
 CREATE TABLE journal_weekly_summaries (
@@ -210,7 +211,7 @@ Prompt responsibilities:
 
 | Section | Instruction sketch |
 |---|---|
-| Summary | Evidence-based philosophical reflection: recognize healthy insight and earnestness when present; flag supported incongruities; use user’s language (Spanish); no clinical labels |
+| Summary | Evidence-based philosophical reflection, **400–600 words**; recognize healthy insight and earnestness when present; flag supported incongruities; match the active UI language; no clinical labels |
 | Main topics | 2–5 short labels; may align with existing chips (`work`, `interpersonal`, …) but can be freer |
 | Best quote | Must be a **verbatim or near-verbatim** excerpt from the provided entries; prefer the week's central insight, tension, or moment of honesty; never invent |
 | Socratic | One precise question or statement that pushes from what the user already understands; expose a real contradiction if present, otherwise the strongest unanswered implication; no invented tension, no lectures, no “you should”, no diagnosis |
@@ -230,7 +231,7 @@ Also pass entry ids + timestamps so the backend can optionally attach `best_quot
 |---|---|
 | Route | `/journal/summary` in `App.jsx` beside existing journal routes |
 | Page | `frontend/src/Pages/JournalSummary/JournalSummary.jsx` |
-| Loading | Adapt `TestLoadingScreen` pattern: progress + reflective quote, but `onDone` waits for **real** `POST` |
+| Loading | 30s ritual (bar and percent below it to 99%, three quotes at 10s each, looping), then glowing “Still loading”; 100% only when the POST succeeded. Timeouts restart the ritual up to 3 attempts. |
 | Quota | Remaining-generations counter on the summary page; Create vs Regenerar gated by `canCreate` / `canRegenerate` |
 | Result layout | Four stacked sections (not a dashboard of cards): Summary → Best quote → Socratic prompt → Machiavellian challenge |
 | History link | From journal header area: “Resumen” next to “Escribir” / history patterns |
@@ -297,4 +298,4 @@ increment past the limit.
 - Socratic section produces a question the user could actually journal about next.
 - Machiavellian section exposes whether the user's strategy supports their stated goal.
 - Creation cannot be spammed: two generations per week, enforced server-side.
-- Experience stays within the 20s serverless budget for typical weekly volume.
+- Experience stays within the 60s serverless budget; each attempt is killed at 45s.
