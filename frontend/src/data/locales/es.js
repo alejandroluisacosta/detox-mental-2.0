@@ -147,6 +147,11 @@ export const es = {
   'summary.preparing': 'Preparando tu resumen...',
   'summary.preparingAria': 'Preparando resumen semanal',
   'summary.stillLoading': 'Todavía cargando',
+  'summary.tasksAria': 'Pasos de preparación del resumen',
+  'summary.taskReading': 'Leyendo tus entradas de los últimos 7 días',
+  'summary.taskSocrates': 'Sócrates está escribiendo su pregunta',
+  'summary.taskMachiavelli': 'Machiavelli está definiendo su desafío',
+  'summary.taskFinishing': 'Terminando tu resumen',
   'summary.attempt': 'Intento {n} de {total}',
   'summary.tryLater': 'Inténtalo más tarde.',
 };

@@ -145,6 +145,11 @@ export const en = {
   'summary.preparing': 'Preparing your summary...',
   'summary.preparingAria': 'Preparing weekly summary',
   'summary.stillLoading': 'Still loading',
+  'summary.tasksAria': 'Summary preparation steps',
+  'summary.taskReading': 'Reading your entries of the last 7 days',
+  'summary.taskSocrates': 'Socrates is writing his question',
+  'summary.taskMachiavelli': 'Machiavelli is defining his challenge',
+  'summary.taskFinishing': 'Finishing your summary',
   'summary.attempt': 'Attempt {n} of {total}',
   'summary.tryLater': 'Please try later.',
 };

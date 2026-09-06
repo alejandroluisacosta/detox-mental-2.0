@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import { pickDistinctQuotes } from '../../data/summaryLoadingQuotes.js';
 import {
+  getSummaryTaskStatuses,
   SUMMARY_MAX_ATTEMPTS,
   SUMMARY_QUOTE_MS,
   SUMMARY_REVEAL_MS,
@@ -9,12 +10,28 @@ import {
 } from '../../utils/journalSummaryGenerate.js';
 import './JournalSummaryLoadingScreen.css';
 
+const LOADING_TASKS = [
+  { copyKey: 'summary.taskReading' },
+  {
+    copyKey: 'summary.taskSocrates',
+    avatarSrc: '/images/socrates.webp',
+    avatarAltKey: 'summary.socratesAlt',
+  },
+  {
+    copyKey: 'summary.taskMachiavelli',
+    avatarSrc: '/images/machiavelli.webp',
+    avatarAltKey: 'summary.machiavelliAlt',
+  },
+  { copyKey: 'summary.taskFinishing' },
+];
+
 const JournalSummaryLoadingScreen = ({
   ready = false,
   attempt = 1,
   onDone,
 }) => {
   const { locale, t } = useLocale();
+  const [elapsedMs, setElapsedMs] = useState(0);
   const [percent, setPercent] = useState(0);
   const [minElapsed, setMinElapsed] = useState(false);
   const [quotes] = useState(() => pickDistinctQuotes(locale, 3));
@@ -28,6 +45,7 @@ const JournalSummaryLoadingScreen = ({
       const elapsed = Date.now() - start;
       const ritualRatio = Math.min(elapsed / SUMMARY_RITUAL_MS, 1);
       const isReady = readyRef.current;
+      setElapsedMs(elapsed);
       setPercent(
         isReady && elapsed >= SUMMARY_RITUAL_MS
           ? 100
@@ -58,6 +76,7 @@ const JournalSummaryLoadingScreen = ({
   const overtime = minElapsed && !ready;
   const quote = quotes[quoteIndex] ?? null;
   const displayPercent = ready && minElapsed ? 100 : percent;
+  const taskStatuses = getSummaryTaskStatuses(elapsedMs, { ready, minElapsed });
 
   return (
     <div className="journal-summary-loading-screen">
@@ -97,6 +116,57 @@ const JournalSummaryLoadingScreen = ({
         {quote ? (
           <p className="journal-summary-loading-screen__quote">{quote}</p>
         ) : null}
+        <ul
+          className="journal-summary-loading-screen__tasks"
+          aria-label={t('summary.tasksAria')}
+        >
+          {LOADING_TASKS.map((task, index) => {
+            const status = taskStatuses[index] ?? 'pending';
+            const isActive = status === 'active';
+            const isCompleted = status === 'completed';
+            const markerClass = isCompleted
+              ? 'journal-summary-loading-screen__task-marker journal-summary-loading-screen__task-marker--completed'
+              : 'journal-summary-loading-screen__task-marker';
+            const labelClass = isActive
+              ? 'journal-summary-loading-screen__task-label journal-summary-loading-screen__task-label--glow'
+              : 'journal-summary-loading-screen__task-label';
+
+            return (
+              <li
+                key={task.copyKey}
+                className={
+                  isActive
+                    ? 'journal-summary-loading-screen__task journal-summary-loading-screen__task--active'
+                    : 'journal-summary-loading-screen__task'
+                }
+                aria-current={isActive ? 'step' : undefined}
+              >
+                <span className={markerClass} aria-hidden="true">
+                  {isCompleted ? (
+                    <svg viewBox="0 0 12 12" width="8" height="8">
+                      <path
+                        d="M2 6.5 4.8 9.2 10 3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : null}
+                </span>
+                <span className={labelClass}>{t(task.copyKey)}</span>
+                {task.avatarSrc ? (
+                  <img
+                    src={task.avatarSrc}
+                    alt={t(task.avatarAltKey)}
+                    className="journal-summary-loading-screen__task-avatar"
+                  />
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
