@@ -107,12 +107,11 @@ const JournalSummaryLoadingScreen = ({
         </p>
       </div>
       <div className="journal-summary-loading-screen__footer">
-        <p
-          className="journal-summary-loading-screen__still-loading"
-          hidden={!overtime}
-        >
-          {t('summary.stillLoading')}
-        </p>
+        {overtime ? (
+          <p className="journal-summary-loading-screen__still-loading">
+            {t('summary.stillLoading')}
+          </p>
+        ) : null}
         {quote ? (
           <p className="journal-summary-loading-screen__quote">{quote}</p>
         ) : null}

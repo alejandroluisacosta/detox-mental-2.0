@@ -70,6 +70,7 @@ describe('JournalSummaryLoadingScreen', () => {
     expect(screen.queryByText('30')).toBeNull();
     expect(screen.getByText('First quote')).toBeTruthy();
     expect(screen.queryByText('Attempt 2 of 3')).toBeNull();
+    expect(screen.queryByText('Still loading')).toBeNull();
 
     act(() => {
       vi.advanceTimersByTime(SUMMARY_QUOTE_MS);
