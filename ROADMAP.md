@@ -47,7 +47,7 @@ Includes handwriting transcription from uploaded images—turning paper notes in
 
 ### Weekly Journal Summary (self-reflection ritual)
 
-State: ✅ V1 released. See `docs/weekly-journal-summary.md`.
+State: ✅ V1 released.
 
 Turns stored journal entries into an on-demand AI reflection (two generations per week): weekly topic summary, a “best quote” from the user’s own writing, and a Socratic prompt. Generated on click; persisted once per week.
 

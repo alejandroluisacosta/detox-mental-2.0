@@ -3,7 +3,7 @@
 This document describes the architecture that new work should follow. It is a
 practical map of the current repository, not a list of aspirational patterns.
 For detailed authentication decisions, environment variables, and historical
-trade-offs, also read `AUTH_ARCHITECTURE.md`, `ENV_SETUP.md`, and `DECISIONS.md`.
+trade-offs, also read `ENV_SETUP.md` and `DECISIONS.md`.
 
 ## 1. Repository shape
 
@@ -13,10 +13,8 @@ Detox Mental is a monorepo with two independently managed JavaScript packages:
 detox_mental/
 ├── frontend/          # React + Vite single-page application
 ├── backend/           # Express API and PostgreSQL access
-├── docs/              # Cross-project workflows and feature documentation
-├── .cursor/docs/      # AI implementation and review instructions
+├── .cursor/docs/      # Architecture and implementation workflow
 ├── .cursor/rules/     # Always-applied engineering conventions
-├── AUTH_ARCHITECTURE.md
 ├── DECISIONS.md
 └── ENV_SETUP.md
 ```

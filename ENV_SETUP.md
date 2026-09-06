@@ -129,4 +129,4 @@ Copy the printed `whsec_...` value into `STRIPE_WEBHOOK_SECRET` in `backend/.env
 
 ## Cross-reference
 
-For auth behavior and Stripe flow details, see **`AUTH_ARCHITECTURE.md`**.
+For auth behavior and Stripe flow details, see **`.cursor/docs/architecture.md`**.

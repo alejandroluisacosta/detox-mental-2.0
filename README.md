@@ -41,9 +41,7 @@ Core product experience includes:
 ├─ backend/
 │  ├─ src/
 │  └─ api/
-├─ docs/
 ├─ ROADMAP.md
-├─ AUTH_ARCHITECTURE.md
 ├─ DECISIONS.md
 └─ ENV_SETUP.md
 ```
@@ -121,10 +119,9 @@ npm run test
 ## Documentation
 
 - [ROADMAP.md](./ROADMAP.md) - planned milestones and future features
-- [AUTH_ARCHITECTURE.md](./AUTH_ARCHITECTURE.md) - auth design and decisions
 - [DECISIONS.md](./DECISIONS.md) - architectural/product decisions log
 - [ENV_SETUP.md](./ENV_SETUP.md) - environment setup notes
-- [docs/harness.md](./docs/harness.md) - feature validation checklist before commit
+- [`.cursor/docs/workflow.md`](./.cursor/docs/workflow.md) - feature implementation and handoff
 - [`.cursor/rules/frontend-structure.mdc`](./.cursor/rules/frontend-structure.mdc) - frontend folder layout (one folder per page/component)
 
 ## 🤝 Contributing

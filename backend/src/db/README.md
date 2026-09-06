@@ -133,7 +133,7 @@ When a user enters a valid unblocking code, a record is inserted here to grant a
 
 ### 5. `thoughts`
 
-Stores user cognitive entries (automatic thoughts) for CBT exercises.
+Unused, retained from migration 001. Stores user cognitive entries (automatic thoughts) for CBT exercises.
 
 **Columns:**
 - `id` (UUID, PK): Unique thought identifier
@@ -247,7 +247,7 @@ Rolling log of generate POSTs used to cap retries (3 per 15 minutes). Failed and
 
 ### 6. `classifications`
 
-Stores cognitive distortion classifications for thoughts.
+Unused, retained from migration 001. Stores cognitive distortion classifications for thoughts.
 
 **Columns:**
 - `id` (UUID, PK): Unique classification identifier
@@ -278,7 +278,7 @@ Stores cognitive distortion classifications for thoughts.
 
 ### 7. `plans`
 
-Stores behavioral action plans to address cognitive distortions.
+Unused, retained from migration 001. Stores behavioral action plans to address cognitive distortions.
 
 **Columns:**
 - `id` (UUID, PK): Unique plan identifier
@@ -450,6 +450,8 @@ SELECT EXISTS(
 ```
 
 ### Get User's Recent Thoughts with Classifications
+Unused, retained from migration 001.
+
 ```sql
 SELECT
     t.id,
@@ -536,7 +538,7 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ## Support
 
 For questions or issues related to the database schema, please refer to:
-- **Architecture Document**: `AUTH_ARCHITECTURE.md`
+- **Architecture Document**: `.cursor/docs/architecture.md`
 - **Project Issues**: GitHub repository issues
 - **Database Documentation**: PostgreSQL official docs
 

@@ -108,7 +108,7 @@ In production we hit authentication instability: `/auth/me` returned unauthorize
 ### 2026-08-01 — Weekly journal summary: on-demand generation, not cron
 
 **Decision:**  
-Generate the weekly journal reflection **on user click** during a limited Sunday window, persist **one row per user per ISO week**, and produce **summary + best quote + Socratic prompt in a single LLM call**. Full design: `docs/weekly-journal-summary.md`.
+Generate the weekly journal reflection **on user click** during a limited Sunday window, persist **one row per user per ISO week**, and produce **summary + best quote + Socratic prompt in a single LLM call**. Summaries must not use clinical language, mood scores, or diagnosis-like framing.
 
 **Why this option was chosen:**  
 - The product goal is a **ritual** (user is present), not a batch report emailed into the void.
