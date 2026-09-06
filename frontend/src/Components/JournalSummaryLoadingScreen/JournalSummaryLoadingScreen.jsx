@@ -143,7 +143,7 @@ const JournalSummaryLoadingScreen = ({
               >
                 <span className={markerClass} aria-hidden="true">
                   {isCompleted ? (
-                    <svg viewBox="0 0 12 12" width="8" height="8">
+                    <svg viewBox="0 0 12 12" width="10" height="10">
                       <path
                         d="M2 6.5 4.8 9.2 10 3.5"
                         fill="none"
