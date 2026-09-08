@@ -5,6 +5,8 @@ alwaysApply: true
 
 # Engineering Principles
 
+When implementing a feature, follow `.cursor/docs/workflow.md`.
+
 ## Simplicity
 
 Choose the simplest solution that satisfies the requirements.
