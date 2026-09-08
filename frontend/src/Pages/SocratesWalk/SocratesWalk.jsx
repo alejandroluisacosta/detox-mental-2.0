@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createSocratesWalkWorld } from '../../utils/createSocratesWalkWorld.js';
-import { readAnalogStick } from '../../utils/socratesWalkPhysics.js';
+import { readAnalogStick, softenStickInput } from '../../utils/socratesWalkPhysics.js';
 import './SocratesWalk.css';
 
-const STICK_RADIUS = 56;
+const STICK_RADIUS = 72;
 const MOVE_KEYS = {
   ArrowUp: { x: 0, z: 1 },
   ArrowDown: { x: 0, z: -1 },
@@ -119,38 +119,14 @@ const SocratesWalk = () => {
     }
   };
 
-  const onStickPointerDown = (event) => {
-    event.preventDefault();
-    const pad = stickRef.current;
-    const world = worldRef.current;
-    if (!pad || !world) return;
-    stickPointerRef.current = event.pointerId;
-    pad.setPointerCapture(event.pointerId);
-    const rect = pad.getBoundingClientRect();
-    const originX = rect.left + rect.width / 2;
-    const originY = rect.top + rect.height / 2;
-    const analog = readAnalogStick(
-      event.clientX,
-      event.clientY,
-      originX,
-      originY,
-      STICK_RADIUS,
-    );
-    if (thumbRef.current) {
-      thumbRef.current.style.transform = `translate(${analog.thumbX}px, ${analog.thumbY}px)`;
-    }
-    world.setMove(analog.x, -analog.y);
-  };
-
-  const onStickPointerMove = (event) => {
-    if (stickPointerRef.current !== event.pointerId) return;
+  const applyStickFromPointer = (clientX, clientY) => {
     const pad = stickRef.current;
     const world = worldRef.current;
     if (!pad || !world) return;
     const rect = pad.getBoundingClientRect();
     const analog = readAnalogStick(
-      event.clientX,
-      event.clientY,
+      clientX,
+      clientY,
       rect.left + rect.width / 2,
       rect.top + rect.height / 2,
       STICK_RADIUS,
@@ -158,7 +134,23 @@ const SocratesWalk = () => {
     if (thumbRef.current) {
       thumbRef.current.style.transform = `translate(${analog.thumbX}px, ${analog.thumbY}px)`;
     }
-    world.setMove(analog.x, -analog.y);
+    const soft = softenStickInput(analog.x, analog.y);
+    world.setMove(soft.x, -soft.y);
+  };
+
+  const onStickPointerDown = (event) => {
+    event.preventDefault();
+    const pad = stickRef.current;
+    const world = worldRef.current;
+    if (!pad || !world) return;
+    stickPointerRef.current = event.pointerId;
+    pad.setPointerCapture(event.pointerId);
+    applyStickFromPointer(event.clientX, event.clientY);
+  };
+
+  const onStickPointerMove = (event) => {
+    if (stickPointerRef.current !== event.pointerId) return;
+    applyStickFromPointer(event.clientX, event.clientY);
   };
 
   const onStickPointerUp = (event) => {

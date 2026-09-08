@@ -1,14 +1,17 @@
 import { describe, expect, test } from 'vitest';
 import {
   GRAVITY,
+  HOUSE,
   JUMP_SPEED,
   MOVE_SPEED,
   PLAYER_RADIUS,
+  STICK_DEADZONE,
   WORLD_HALF,
   clampMagnitude,
   createWalkerState,
   readAnalogStick,
   shortestAngleDelta,
+  softenStickInput,
   stepWalker,
 } from './socratesWalkPhysics.js';
 
@@ -39,6 +42,24 @@ describe('readAnalogStick', () => {
     expect(result.y).toBeCloseTo(0);
     expect(result.thumbX).toBeCloseTo(40);
     expect(result.thumbY).toBeCloseTo(0);
+  });
+});
+
+describe('softenStickInput', () => {
+  test('ignores movement inside the deadzone', () => {
+    expect(softenStickInput(STICK_DEADZONE * 0.5, 0)).toEqual({ x: 0, y: 0 });
+  });
+
+  test('keeps full throw near full speed', () => {
+    const result = softenStickInput(1, 0);
+    expect(result.x).toBeCloseTo(1);
+    expect(result.y).toBeCloseTo(0);
+  });
+
+  test('makes a modest throw much slower than linear', () => {
+    const result = softenStickInput(0.5, 0);
+    expect(result.x).toBeGreaterThan(0);
+    expect(result.x).toBeLessThan(0.25);
   });
 });
 
@@ -95,6 +116,16 @@ describe('stepWalker', () => {
     );
     const distance = Math.hypot(blocked.x - 5, blocked.z - 5);
     expect(distance).toBeCloseTo(PLAYER_RADIUS + 0.5);
+  });
+
+  test('keeps the walker out of the Detox Mental house', () => {
+    const blocked = stepWalker(
+      { ...createWalkerState(), x: HOUSE.x, z: HOUSE.z },
+      {},
+      0,
+    );
+    const distance = Math.hypot(blocked.x - HOUSE.x, blocked.z - HOUSE.z);
+    expect(distance).toBeCloseTo(PLAYER_RADIUS + HOUSE.radius);
   });
 
   test('keeps the walker inside the plaza bounds', () => {

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import {
-  DEFAULT_OBSTACLES,
+  COLUMN_SPOTS,
+  HOUSE,
+  TREE_SPOTS,
   createWalkerState,
   shortestAngleDelta,
   stepWalker,
@@ -17,9 +19,11 @@ const TREE_LEAVES = 0x6d7a4e;
 const ROBE = 0xe8d5b7;
 const STRAP = 0x6b4a32;
 const SKIN = 0xc9956c;
-
-const COLUMN_SPOTS = DEFAULT_OBSTACLES.slice(0, 6).map((spot) => [spot.x, spot.z]);
-const TREE_SPOTS = DEFAULT_OBSTACLES.slice(6).map((spot) => [spot.x, spot.z]);
+const SANDAL = 0x5c4030;
+const HOUSE_WALL = 0xe6d5be;
+const HOUSE_ROOF = 0x845d43;
+const HOUSE_TRIM = 0x2d3142;
+const HOUSE_DOOR = 0x5a3d2b;
 
 const disposeMaterial = (material) => {
   if (!material) return;
@@ -73,39 +77,156 @@ const createTree = (x, z) => {
   return group;
 };
 
+const createLimb = (radiusTop, radiusBottom, height, material) => {
+  const mesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(radiusTop, radiusBottom, height, 10),
+    material,
+  );
+  mesh.castShadow = true;
+  return mesh;
+};
+
+const createArm = (side, sleeveMaterial, skinMaterial) => {
+  const arm = new THREE.Group();
+  const sleeve = createLimb(0.08, 0.07, 0.4, sleeveMaterial);
+  sleeve.position.y = -0.18;
+  const forearm = createLimb(0.055, 0.045, 0.34, skinMaterial);
+  forearm.position.y = -0.52;
+  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), skinMaterial);
+  hand.position.y = -0.72;
+  hand.castShadow = true;
+  arm.add(sleeve, forearm, hand);
+  arm.position.set(side * 0.42, 1.3, 0);
+  arm.rotation.z = side * 0.16;
+  return arm;
+};
+
 const createCharacter = () => {
   const group = new THREE.Group();
+  const robeMaterial = new THREE.MeshStandardMaterial({ color: ROBE, roughness: 0.78 });
+  const strapMaterial = new THREE.MeshStandardMaterial({ color: STRAP, roughness: 0.75 });
+  const skinMaterial = new THREE.MeshStandardMaterial({ color: SKIN, roughness: 0.68 });
+  const sandalMaterial = new THREE.MeshStandardMaterial({ color: SANDAL, roughness: 0.9 });
 
-  const robe = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.42, 0.5, 1.2, 14),
-    new THREE.MeshStandardMaterial({ color: ROBE, roughness: 0.8 }),
+  const leftFoot = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.07, 0.32), sandalMaterial);
+  leftFoot.position.set(-0.15, 0.04, 0.05);
+  const rightFoot = leftFoot.clone();
+  rightFoot.position.x = 0.15;
+
+  const skirt = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.26, 0.48, 0.82, 16),
+    robeMaterial,
   );
-  robe.position.y = 0.6;
-  robe.castShadow = true;
+  skirt.position.y = 0.47;
+  skirt.castShadow = true;
+
+  const torso = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.3, 0.28, 0.52, 14),
+    robeMaterial,
+  );
+  torso.position.y = 1.08;
+  torso.castShadow = true;
+
+  const shoulders = new THREE.Mesh(new THREE.SphereGeometry(0.32, 12, 10), robeMaterial);
+  shoulders.scale.set(1.2, 0.52, 0.72);
+  shoulders.position.y = 1.32;
+  shoulders.castShadow = true;
 
   const strap = new THREE.Mesh(
-    new THREE.TorusGeometry(0.34, 0.05, 8, 16, Math.PI),
-    new THREE.MeshStandardMaterial({ color: STRAP, roughness: 0.75 }),
+    new THREE.TorusGeometry(0.28, 0.045, 8, 18, Math.PI),
+    strapMaterial,
   );
-  strap.position.set(0.02, 1.05, 0.08);
-  strap.rotation.set(0.2, 0, 1.15);
+  strap.position.set(0.05, 1.16, 0.08);
+  strap.rotation.set(0.35, 0.15, 1.05);
 
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.32, 18, 14),
-    new THREE.MeshStandardMaterial({ color: SKIN, roughness: 0.7 }),
+  const neck = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.1, 0.12, 0.16, 10),
+    skinMaterial,
   );
-  head.position.y = 1.48;
-  head.castShadow = true;
+  neck.position.y = 1.52;
+  neck.castShadow = true;
+
+  const leftArm = createArm(-1, robeMaterial, skinMaterial);
+  const rightArm = createArm(1, robeMaterial, skinMaterial);
 
   const faceMaterial = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
+    side: THREE.DoubleSide,
   });
-  const face = new THREE.Mesh(new THREE.CircleGeometry(0.3, 24), faceMaterial);
-  face.position.set(0, 1.48, 0.3);
+  const face = new THREE.Mesh(new THREE.CircleGeometry(0.4, 32), faceMaterial);
 
-  group.add(robe, strap, head, face);
-  return { group, faceMaterial };
+  group.add(
+    leftFoot,
+    rightFoot,
+    skirt,
+    torso,
+    shoulders,
+    strap,
+    neck,
+    leftArm,
+    rightArm,
+  );
+  return { group, face, faceMaterial, leftArm, rightArm };
+};
+
+const createHouseSignTexture = (label) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 256;
+  const context = canvas.getContext('2d');
+  context.fillStyle = '#f4efe6';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.strokeStyle = '#2d3142';
+  context.lineWidth = 18;
+  context.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
+  context.fillStyle = '#2d3142';
+  context.font = '700 96px Montserrat, sans-serif';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText(label, canvas.width / 2, canvas.height / 2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+};
+
+const createHouse = () => {
+  const group = new THREE.Group();
+  const wallMaterial = new THREE.MeshStandardMaterial({ color: HOUSE_WALL, roughness: 0.82 });
+  const roofMaterial = new THREE.MeshStandardMaterial({ color: HOUSE_ROOF, roughness: 0.7 });
+  const trimMaterial = new THREE.MeshStandardMaterial({ color: HOUSE_TRIM, roughness: 0.6 });
+  const doorMaterial = new THREE.MeshStandardMaterial({ color: HOUSE_DOOR, roughness: 0.85 });
+
+  const walls = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.7, 3.2), wallMaterial);
+  walls.position.y = 1.35;
+  walls.castShadow = true;
+  walls.receiveShadow = true;
+
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(3.35, 1.5, 4), roofMaterial);
+  roof.position.y = 3.4;
+  roof.rotation.y = Math.PI / 4;
+  roof.castShadow = true;
+
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.25, 0.08), doorMaterial);
+  door.position.set(0, 0.63, -1.62);
+
+  const leftWindow = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.06), trimMaterial);
+  leftWindow.position.set(-1.25, 1.55, -1.62);
+  const rightWindow = leftWindow.clone();
+  rightWindow.position.x = 1.25;
+
+  const sign = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.2, 0.72),
+    new THREE.MeshBasicMaterial({ map: createHouseSignTexture('Detox Mental') }),
+  );
+  sign.position.set(0, 2.25, -1.63);
+
+  const step = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 0.55), wallMaterial);
+  step.position.set(0, 0.06, -1.85);
+
+  group.add(walls, roof, door, leftWindow, rightWindow, sign, step);
+  group.position.set(HOUSE.x, 0, HOUSE.z);
+  return group;
 };
 
 export const createSocratesWalkWorld = ({ container, faceUrl = FACE_URL }) => {
@@ -133,7 +254,7 @@ export const createSocratesWalkWorld = ({ container, faceUrl = FACE_URL }) => {
   renderer.domElement.style.touchAction = 'none';
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(SKY, 14, 42);
+  scene.fog = new THREE.Fog(SKY, 20, 50);
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 80);
 
@@ -143,11 +264,11 @@ export const createSocratesWalkWorld = ({ container, faceUrl = FACE_URL }) => {
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024);
   sun.shadow.camera.near = 1;
-  sun.shadow.camera.far = 36;
-  sun.shadow.camera.left = -16;
-  sun.shadow.camera.right = 16;
-  sun.shadow.camera.top = 16;
-  sun.shadow.camera.bottom = -16;
+  sun.shadow.camera.far = 42;
+  sun.shadow.camera.left = -20;
+  sun.shadow.camera.right = 20;
+  sun.shadow.camera.top = 20;
+  sun.shadow.camera.bottom = -20;
   scene.add(sun);
 
   const ground = new THREE.Mesh(
@@ -169,9 +290,11 @@ export const createSocratesWalkWorld = ({ container, faceUrl = FACE_URL }) => {
 
   COLUMN_SPOTS.forEach(([x, z]) => scene.add(createColumn(x, z)));
   TREE_SPOTS.forEach(([x, z]) => scene.add(createTree(x, z)));
+  scene.add(createHouse());
 
-  const { group: character, faceMaterial } = createCharacter();
+  const { group: character, face, faceMaterial, leftArm, rightArm } = createCharacter();
   scene.add(character);
+  scene.add(face);
 
   const textureLoader = new THREE.TextureLoader();
   textureLoader.load(faceUrl, (texture) => {
@@ -216,9 +339,13 @@ export const createSocratesWalkWorld = ({ container, faceUrl = FACE_URL }) => {
       walkPhase += dt * 11;
     }
 
-    const bob = state.grounded && moving ? Math.sin(walkPhase) * 0.045 : 0;
+    const bob = state.grounded && moving ? Math.sin(walkPhase) * 0.04 : 0;
+    const swing = state.grounded && moving ? Math.sin(walkPhase) * 0.32 : 0;
     character.position.set(state.x, state.y + bob, state.z);
     character.rotation.y = state.yaw;
+    leftArm.rotation.x = swing;
+    rightArm.rotation.x = -swing;
+    face.position.set(state.x, state.y + 1.78 + bob, state.z);
 
     const cameraDistance = 6.4;
     const cameraHeight = 2.7;
@@ -228,6 +355,7 @@ export const createSocratesWalkWorld = ({ container, faceUrl = FACE_URL }) => {
       state.z - Math.cos(cameraYaw) * cameraDistance,
     );
     camera.lookAt(state.x, state.y + 1.25, state.z);
+    face.lookAt(camera.position);
 
     renderer.render(scene, camera);
     rafId = requestAnimationFrame(tick);

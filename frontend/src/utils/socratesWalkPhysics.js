@@ -3,18 +3,31 @@ export const PLAYER_RADIUS = 0.45;
 export const MOVE_SPEED = 5.4;
 export const JUMP_SPEED = 7.4;
 export const GRAVITY = -24;
+export const STICK_DEADZONE = 0.24;
+export const STICK_CURVE = 2.2;
+
+export const COLUMN_SPOTS = [
+  [5, 5],
+  [5, -5],
+  [-5, 5],
+  [-5, -5],
+  [8.5, 0],
+  [-8.5, 0],
+];
+
+export const TREE_SPOTS = [
+  [11, 8],
+  [-12, -4],
+  [3, -11],
+  [-7, 11],
+];
+
+export const HOUSE = { x: 0, z: 9.4, radius: 2.75 };
 
 export const DEFAULT_OBSTACLES = [
-  { x: 5, z: 5, radius: 0.5 },
-  { x: 5, z: -5, radius: 0.5 },
-  { x: -5, z: 5, radius: 0.5 },
-  { x: -5, z: -5, radius: 0.5 },
-  { x: 8.5, z: 0, radius: 0.5 },
-  { x: -8.5, z: 0, radius: 0.5 },
-  { x: 11, z: 8, radius: 0.4 },
-  { x: -12, z: -4, radius: 0.4 },
-  { x: 3, z: -11, radius: 0.4 },
-  { x: -7, z: 11, radius: 0.4 },
+  ...COLUMN_SPOTS.map(([x, z]) => ({ x, z, radius: 0.5 })),
+  ...TREE_SPOTS.map(([x, z]) => ({ x, z, radius: 0.4 })),
+  HOUSE,
 ];
 
 export const createWalkerState = () => ({
@@ -47,6 +60,19 @@ export const readAnalogStick = (clientX, clientY, originX, originY, maxRadius) =
     y: maxRadius === 0 ? 0 : thumbY / maxRadius,
     thumbX,
     thumbY,
+  };
+};
+
+export const softenStickInput = (x, y) => {
+  const length = Math.hypot(x, y);
+  if (length <= STICK_DEADZONE) {
+    return { x: 0, y: 0 };
+  }
+  const t = Math.min(1, (length - STICK_DEADZONE) / (1 - STICK_DEADZONE));
+  const scaled = t ** STICK_CURVE;
+  return {
+    x: (x / length) * scaled,
+    y: (y / length) * scaled,
   };
 };
 

@@ -61,10 +61,10 @@ describe('SocratesWalk', () => {
     vi.spyOn(stick, 'getBoundingClientRect').mockReturnValue({
       left: 0,
       top: 0,
-      width: 132,
-      height: 132,
-      right: 132,
-      bottom: 132,
+      width: 168,
+      height: 168,
+      right: 168,
+      bottom: 168,
       x: 0,
       y: 0,
       toJSON: () => {},
@@ -81,13 +81,16 @@ describe('SocratesWalk', () => {
       stick.dispatchEvent(event);
     };
 
-    dispatchPointer('pointerdown', 126, 66);
-    expect(setMove).toHaveBeenCalled();
-    const [moveX, moveZ] = setMove.mock.calls.at(-1);
-    expect(moveX).toBeGreaterThan(0.5);
-    expect(moveZ).toBeCloseTo(0, 1);
+    dispatchPointer('pointerdown', 104, 84);
+    const [nudgeX] = setMove.mock.calls.at(-1);
+    expect(Math.abs(nudgeX)).toBeLessThan(0.08);
 
-    dispatchPointer('pointerup', 126, 66);
+    dispatchPointer('pointerdown', 156, 84);
+    const [fullX, fullZ] = setMove.mock.calls.at(-1);
+    expect(fullX).toBeGreaterThan(0.8);
+    expect(fullZ).toBeCloseTo(0, 1);
+
+    dispatchPointer('pointerup', 156, 84);
     expect(setMove).toHaveBeenLastCalledWith(0, 0);
   });
 });
