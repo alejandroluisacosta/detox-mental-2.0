@@ -215,16 +215,26 @@ const createHouse = () => {
   const rightWindow = leftWindow.clone();
   rightWindow.position.x = 1.25;
 
-  const sign = new THREE.Mesh(
-    new THREE.PlaneGeometry(3.2, 0.72),
-    new THREE.MeshBasicMaterial({ map: createHouseSignTexture('Detox Mental') }),
+  const plaque = new THREE.Mesh(
+    new THREE.BoxGeometry(3.4, 0.82, 0.08),
+    new THREE.MeshStandardMaterial({ color: 0xf4efe6, roughness: 0.55 }),
   );
-  sign.position.set(0, 2.25, -1.63);
+  plaque.position.set(0, 2.22, -1.64);
+
+  const sign = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.2, 0.7),
+    new THREE.MeshBasicMaterial({
+      map: createHouseSignTexture('Detox Mental'),
+      side: THREE.DoubleSide,
+    }),
+  );
+  sign.position.set(0, 2.22, -1.69);
+  sign.rotation.y = Math.PI;
 
   const step = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 0.55), wallMaterial);
   step.position.set(0, 0.06, -1.85);
 
-  group.add(walls, roof, door, leftWindow, rightWindow, sign, step);
+  group.add(walls, roof, door, leftWindow, rightWindow, plaque, sign, step);
   group.position.set(HOUSE.x, 0, HOUSE.z);
   return group;
 };
