@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, and behavioral therapy data storage.
+This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, and journal data.
 
 ## Database Technology
 
@@ -131,33 +131,9 @@ When a user enters a valid unblocking code, a record is inserted here to grant a
 
 ---
 
-### 5. `thoughts`
+### 5. `journal_entries`
 
-Unused, retained from migration 001. Stores user cognitive entries (automatic thoughts) for CBT exercises.
-
-**Columns:**
-- `id` (UUID, PK): Unique thought identifier
-- `user_id` (UUID, FK → users.id): User who recorded the thought
-- `content` (TEXT): The thought content
-- `created_at` (TIMESTAMP WITH TIME ZONE): When thought was recorded
-
-**Constraints:**
-- `user_id` references `users(id)` with CASCADE delete
-- `content` cannot be empty (trimmed length > 0)
-
-**Indexes:**
-- `idx_thoughts_user_id`: Fast user thought retrieval
-- `idx_thoughts_created_at`: Chronological ordering (DESC for recent-first)
-
-**Relationships:**
-- One thought can have multiple classifications (1:N)
-- One thought can have multiple plans (1:N)
-
----
-
-### 5b. `journal_entries`
-
-Stores free-form journal entries for the user diary (`/journal`). Separate from CBT `thoughts`.
+Stores free-form journal entries for the user diary (`/journal`).
 
 **Columns:**
 - `id` (UUID, PK): Unique entry identifier
@@ -177,7 +153,7 @@ Stores free-form journal entries for the user diary (`/journal`). Separate from 
 
 ---
 
-### 5b2. `journal_custom_topics`
+### 6. `journal_custom_topics`
 
 Stores per-user custom topic names for the journal composer. Built-in slugs stay in application code; this table holds only user-created names.
 
@@ -200,7 +176,7 @@ Renaming a custom topic updates this row and rewrites matching values in that us
 
 ---
 
-### 5c. `journal_weekly_summaries`
+### 7. `journal_weekly_summaries`
 
 Stores the once-per-week AI reflection generated from `journal_entries` (`/journal/summary`).
 
@@ -231,7 +207,7 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 
 ---
 
-### 5d. `journal_summary_generate_attempts`
+### 8. `journal_summary_generate_attempts`
 
 Rolling log of generate POSTs used to cap retries (3 per 15 minutes). Failed and timed-out calls count; successful quota generations also count.
 
@@ -245,60 +221,6 @@ Rolling log of generate POSTs used to cap retries (3 per 15 minutes). Failed and
 
 ---
 
-### 6. `classifications`
-
-Unused, retained from migration 001. Stores cognitive distortion classifications for thoughts.
-
-**Columns:**
-- `id` (UUID, PK): Unique classification identifier
-- `thought_id` (UUID, FK → thoughts.id): Associated thought
-- `distortion_type` (VARCHAR(100)): Type of cognitive distortion identified
-- `created_at` (TIMESTAMP WITH TIME ZONE): Classification timestamp
-
-**Constraints:**
-- `thought_id` references `thoughts(id)` with CASCADE delete
-- `distortion_type` cannot be empty
-
-**Indexes:**
-- `idx_classifications_thought_id`: Fast thought-based queries
-- `idx_classifications_distortion_type`: Analytics on distortion patterns
-
-**Common Distortion Types:**
-- All-or-nothing thinking
-- Overgeneralization
-- Mental filter
-- Jumping to conclusions
-- Catastrophizing
-- Emotional reasoning
-- Should statements
-- Labeling
-- Personalization
-
----
-
-### 7. `plans`
-
-Unused, retained from migration 001. Stores behavioral action plans to address cognitive distortions.
-
-**Columns:**
-- `id` (UUID, PK): Unique plan identifier
-- `thought_id` (UUID, FK → thoughts.id): Associated thought
-- `plan_text` (TEXT): The action plan description
-- `created_at` (TIMESTAMP WITH TIME ZONE): Plan creation timestamp
-
-**Constraints:**
-- `thought_id` references `thoughts(id)` with CASCADE delete
-- `plan_text` cannot be empty
-
-**Indexes:**
-- `idx_plans_thought_id`: Fast thought-based queries
-- `idx_plans_created_at`: Chronological ordering (DESC)
-
-**Usage:**
-After identifying cognitive distortions, users create actionable plans to reframe or respond to the thought constructively.
-
----
-
 ## Relationships Diagram
 
 ```
@@ -306,11 +228,13 @@ users (1) ──────< (N) magic_link_tokens
   │
   ├──────< (N) user_unblocked_sessions >────── (1) course_sessions
   │
-  └──────< (N) thoughts
-              │
-              ├──────< (N) classifications
-              │
-              └──────< (N) plans
+  ├──────< (N) journal_entries
+  │
+  ├──────< (N) journal_custom_topics
+  │
+  ├──────< (N) journal_weekly_summaries
+  │
+  └──────< (N) journal_summary_generate_attempts
 ```
 
 ---
@@ -334,8 +258,7 @@ users (1) ──────< (N) magic_link_tokens
 ### 4. Cascade Deletes
 - **Why**: Automatic cleanup of related data when parent is deleted
 - **Applied to**:
-  - User deletion → cascades to tokens, thoughts, unblocked sessions
-  - Thought deletion → cascades to classifications and plans
+  - User deletion → cascades to tokens, unblocked sessions, and journal data
   - Session deletion → cascades to unblock records
 
 ### 5. Timestamp Best Practices
@@ -413,6 +336,12 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/010_journal_summary_generate_attempts.sql
 ```
 
+### Drop Unused Thought Tables
+```sql
+-- Run after generate-attempts migration. Drops unused CBT tables from 001.
+\i backend/src/db/migrations/011_drop_unused_thought_tables.sql
+```
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created
@@ -447,23 +376,6 @@ SELECT EXISTS(
     FROM user_unblocked_sessions
     WHERE user_id = $1 AND session_id = $2
 );
-```
-
-### Get User's Recent Thoughts with Classifications
-Unused, retained from migration 001.
-
-```sql
-SELECT
-    t.id,
-    t.content,
-    t.created_at,
-    ARRAY_AGG(c.distortion_type) AS distortions
-FROM thoughts t
-LEFT JOIN classifications c ON c.thought_id = t.id
-WHERE t.user_id = $1
-GROUP BY t.id, t.content, t.created_at
-ORDER BY t.created_at DESC
-LIMIT 10;
 ```
 
 ### Cleanup Expired Tokens (Maintenance Query)
@@ -544,6 +456,6 @@ For questions or issues related to the database schema, please refer to:
 
 ---
 
-**Last Updated**: March 2026
-**Schema Version**: 001
+**Last Updated**: September 2026
+**Schema Version**: 011
 **Seed Version**: 002

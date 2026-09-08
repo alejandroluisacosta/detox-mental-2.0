@@ -179,5 +179,3 @@ Adopt a real i18n library once the layer would have to grow beyond string lookup
 
 **Operational implications (accepted):**  
 Apply `backend/src/db/migrations/006_journal_summary_locale.sql` to each environment. Existing summary rows backfill as `es`. Generated summaries keep the language they were created in until the user regenerates them. Topic values remain stored as the existing Spanish identifiers. Educational screens remain Spanish except the shared navigation/home/account labels.
-
-
