@@ -225,7 +225,7 @@ For new work:
 4. Keep frontend authorization UX separate from backend authorization checks.
 5. Add tests for new business rules, parsing, validation, or important user
    behavior.
-6. Record significant architectural or product trade-offs in `DECISIONS.md`.
+6. Do not add to DECISIONS.md unless the user explicitly asks.
 7. Update relevant documentation when routes, environment variables, schema,
    deployment behavior, or developer commands change.
 8. Keep implementation names, comments, and prompts in English. User-facing
