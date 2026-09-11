@@ -46,12 +46,45 @@ test('parseRevisionComments caps the number of comments', () => {
   assert.equal(parseRevisionComments(tooMany).error, 'too_many_comments');
 });
 
-test('parseRevisionComments rejects two comments on the same section', () => {
+test('parseRevisionComments accepts two comments on different summary paragraphs', () => {
   const parsed = parseRevisionComments([
-    { section: 'summaryText', note: 'First' },
-    { section: 'summaryText', note: 'Second' },
+    {
+      section: 'summaryText',
+      quotedText: 'First insight.',
+      note: 'Soften this.',
+    },
+    {
+      section: 'summaryText',
+      quotedText: 'Second insight.',
+      note: 'Keep this.',
+    },
   ]);
-  assert.equal(parsed.error, 'duplicate_section');
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value.length, 2);
+});
+
+test('parseRevisionComments rejects two comments on the same passage', () => {
+  const parsed = parseRevisionComments([
+    {
+      section: 'summaryText',
+      quotedText: 'First insight.',
+      note: 'First',
+    },
+    {
+      section: 'summaryText',
+      quotedText: 'First insight.',
+      note: 'Second',
+    },
+  ]);
+  assert.equal(parsed.error, 'duplicate_comment');
+});
+
+test('parseRevisionComments still rejects two comments on the same quote', () => {
+  const parsed = parseRevisionComments([
+    { section: 'bestQuote', quotedText: 'Never enough', note: 'First' },
+    { section: 'bestQuote', quotedText: 'Never enough', note: 'Second' },
+  ]);
+  assert.equal(parsed.error, 'duplicate_comment');
 });
 
 test('toRevisionSummaryJson uses the generate schema keys', () => {

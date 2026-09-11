@@ -5,16 +5,23 @@ const SummaryCommentTarget = ({
   className,
   text,
   disabled = false,
+  commented = false,
+  commentMarkAlt,
   onComment,
   ariaLabel,
 }) => {
   const Tag = as;
+  const mark = commented ? (
+    <img
+      src="/icons/note.svg"
+      alt={commentMarkAlt}
+      className="summary-comment-target__mark"
+    />
+  ) : null;
 
-  if (disabled) {
-    return <Tag className={className}>{text}</Tag>;
-  }
-
-  return (
+  const body = disabled ? (
+    <Tag className={className}>{text}</Tag>
+  ) : (
     <button
       type="button"
       className={['summary-comment-target', className].filter(Boolean).join(' ')}
@@ -23,6 +30,20 @@ const SummaryCommentTarget = ({
     >
       {text}
     </button>
+  );
+
+  return (
+    <div
+      className={[
+        'summary-comment-target-wrap',
+        commented && 'summary-comment-target-wrap--marked',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {body}
+      {mark}
+    </div>
   );
 };
 

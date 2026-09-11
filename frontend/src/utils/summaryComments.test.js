@@ -1,21 +1,39 @@
 import { describe, expect, test } from 'vitest';
-import { upsertSectionComment } from './summaryComments.js';
+import {
+  commentTargetId,
+  upsertTargetComment,
+} from './summaryComments.js';
 
-describe('upsertSectionComment', () => {
-  test('appends a comment for a new section', () => {
-    const next = upsertSectionComment(
-      [{ id: 1, section: 'bestQuote', quotedText: 'A', note: 'Keep' }],
-      { id: 2, section: 'summaryText', quotedText: 'B', note: 'Change' },
-    );
-    expect(next).toHaveLength(2);
-    expect(next[1].section).toBe('summaryText');
-  });
-
-  test('replaces the existing comment for the same section', () => {
-    const next = upsertSectionComment(
+describe('upsertTargetComment', () => {
+  test('appends a comment for a new passage', () => {
+    const next = upsertTargetComment(
       [
         {
           id: 1,
+          targetId: commentTargetId('summaryText', 0),
+          section: 'summaryText',
+          quotedText: 'A',
+          note: 'Keep',
+        },
+      ],
+      {
+        id: 2,
+        targetId: commentTargetId('summaryText', 1),
+        section: 'summaryText',
+        quotedText: 'B',
+        note: 'Change',
+      },
+    );
+    expect(next).toHaveLength(2);
+    expect(next[1].targetId).toBe('summaryText:1');
+  });
+
+  test('replaces the existing comment for the same passage', () => {
+    const next = upsertTargetComment(
+      [
+        {
+          id: 1,
+          targetId: commentTargetId('summaryText', 0),
           section: 'summaryText',
           quotedText: 'First paragraph.',
           note: 'Too harsh.',
@@ -23,16 +41,18 @@ describe('upsertSectionComment', () => {
       ],
       {
         id: 99,
+        targetId: commentTargetId('summaryText', 0),
         section: 'summaryText',
-        quotedText: 'Second paragraph.',
+        quotedText: 'First paragraph.',
         note: 'Softer, please.',
       },
     );
     expect(next).toHaveLength(1);
     expect(next[0]).toEqual({
       id: 1,
+      targetId: 'summaryText:0',
       section: 'summaryText',
-      quotedText: 'Second paragraph.',
+      quotedText: 'First paragraph.',
       note: 'Softer, please.',
     });
   });

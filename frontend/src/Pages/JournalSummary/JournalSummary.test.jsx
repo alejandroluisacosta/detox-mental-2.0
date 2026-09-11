@@ -530,6 +530,13 @@ describe('JournalSummary page states', () => {
     fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
     expect(screen.getByText('Soften this.')).toBeTruthy();
 
+    fireEvent.click(screen.getByRole('button', { name: /Second insight\./i }));
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Keep the second.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+    expect(screen.getByText('Keep the second.')).toBeTruthy();
+
     fireEvent.click(screen.getByRole('button', { name: /SEND COMMENTS/i }));
 
     await waitFor(() => {
@@ -543,11 +550,18 @@ describe('JournalSummary page states', () => {
         path === '/auth/me/journal-summaries/current/revise',
     );
     expect(revisePosts).toHaveLength(1);
-    expect(revisePosts[0][1].body.comments[0]).toEqual({
-      section: 'summaryText',
-      quotedText: 'First insight.',
-      note: 'Soften this.',
-    });
+    expect(revisePosts[0][1].body.comments).toEqual([
+      {
+        section: 'summaryText',
+        quotedText: 'First insight.',
+        note: 'Soften this.',
+      },
+      {
+        section: 'summaryText',
+        quotedText: 'Second insight.',
+        note: 'Keep the second.',
+      },
+    ]);
   });
 
   test('clears unsent comments when regenerate starts', async () => {
@@ -577,7 +591,7 @@ describe('JournalSummary page states', () => {
     expect(screen.queryByText('Soften this.')).toBeNull();
   });
 
-  test('keeps one editable comment per section and marks it with a note icon', async () => {
+  test('queues a separate comment per paragraph and marks each with a note icon', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     mockUseDemoMode.mockReturnValue({
       demoMode: true,
@@ -596,22 +610,44 @@ describe('JournalSummary page states', () => {
     fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
 
     expect(screen.getByText('Too harsh.')).toBeTruthy();
-    expect(
-      screen.getByAltText('This section has a comment'),
-    ).toBeTruthy();
+    expect(screen.getByAltText('This passage has a comment')).toBeTruthy();
 
     fireEvent.click(
       screen.getByRole('button', { name: /You yourself notice the limit/i }),
     );
-    const field = screen.getByPlaceholderText('What should change?');
-    expect(field.value).toBe('Too harsh.');
-    fireEvent.change(field, { target: { value: 'I was exhausted.' } });
-    fireEvent.click(screen.getByRole('button', { name: /SAVE COMMENT/i }));
+    const secondField = screen.getByPlaceholderText('What should change?');
+    expect(secondField.value).toBe('');
+    fireEvent.change(secondField, { target: { value: 'I was exhausted.' } });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
 
+    expect(screen.getByText('Too harsh.')).toBeTruthy();
     expect(screen.getByText('I was exhausted.')).toBeTruthy();
-    expect(screen.queryByText('Too harsh.')).toBeNull();
+    expect(screen.getAllByAltText('This passage has a comment')).toHaveLength(2);
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /turn the need for control into a virtue/i,
+      }),
+    );
+    expect(screen.getByPlaceholderText('What should change?').value).toBe(
+      'Too harsh.',
+    );
+    fireEvent.click(screen.getByRole('button', { name: /CANCEL/i }));
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /If you recognize that much of your planning/i,
+      }),
+    );
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Sharper question.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+    expect(screen.getByText('Sharper question.')).toBeTruthy();
+    expect(screen.getAllByAltText('This passage has a comment')).toHaveLength(3);
     expect(
-      screen.getAllByAltText('This section has a comment'),
-    ).toHaveLength(1);
+      document.querySelectorAll('.summary-comment-target__mark'),
+    ).toHaveLength(3);
+    expect(document.querySelector('.journal-summary__comment-mark')).toBeNull();
   });
 });

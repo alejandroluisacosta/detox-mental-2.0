@@ -24,7 +24,11 @@ import {
   splitSummaryParagraphs,
   truncateSummaryQuote,
 } from '../../utils/summaryParagraphs.js';
-import { upsertSectionComment } from '../../utils/summaryComments.js';
+import {
+  MAX_QUEUED_COMMENTS,
+  commentTargetId,
+  upsertTargetComment,
+} from '../../utils/summaryComments.js';
 import './JournalSummary.css';
 
 const formatWeekLabel = (weekStart, weekEnd, locale) => {
@@ -280,8 +284,9 @@ const JournalSummary = () => {
     if (!activeTarget) return;
     commentIdRef.current += 1;
     setComments((prev) =>
-      upsertSectionComment(prev, {
+      upsertTargetComment(prev, {
         id: commentIdRef.current,
+        targetId: activeTarget.targetId,
         section: activeTarget.section,
         quotedText: activeTarget.quotedText,
         note,
@@ -316,28 +321,43 @@ const JournalSummary = () => {
   );
   const showQuotaExhausted =
     availability.remaining <= 0 && !availability.canRevise;
-  const summaryParagraphs = splitSummaryParagraphs(summary?.summaryText ?? '');
   const commentDisabled = !availability.canRevise;
-  const commentedSections = new Set(comments.map((comment) => comment.section));
+  const atCommentLimit = comments.length >= MAX_QUEUED_COMMENTS;
+  const isCommented = (targetId) =>
+    comments.some((comment) => comment.targetId === targetId);
 
-  const openComment = (section, quotedText) => {
+  const openComment = (section, quotedText, targetId) => {
     if (commentDisabled) return;
-    const existing = comments.find((comment) => comment.section === section);
+    const existing = comments.find((comment) => comment.targetId === targetId);
+    if (!existing && atCommentLimit) return;
     setActiveTarget({
       section,
+      targetId,
       quotedText,
       note: existing?.note ?? '',
     });
   };
 
-  const commentMark = (section) =>
-    commentedSections.has(section) ? (
-      <img
-        src="/icons/note.svg"
-        alt={t('summary.commentMarked')}
-        className="journal-summary__comment-mark"
-      />
-    ) : null;
+  const renderPassages = (section, text, className, as) => {
+    const paragraphs = splitSummaryParagraphs(text);
+    const parts = paragraphs.length > 0 ? paragraphs : text ? [text] : [];
+    return parts.map((paragraph, index) => {
+      const targetId = commentTargetId(section, index);
+      const commented = isCommented(targetId);
+      return (
+        <SummaryCommentTarget
+          key={targetId}
+          as={as}
+          className={className}
+          text={paragraph}
+          disabled={commentDisabled || (!commented && atCommentLimit)}
+          commented={commented}
+          commentMarkAlt={t('summary.commentMarked')}
+          onComment={(quotedText) => openComment(section, quotedText, targetId)}
+        />
+      );
+    });
+  };
 
   return (
     <div className="journal-page journal-page--summary">
@@ -409,7 +429,6 @@ const JournalSummary = () => {
             )}
 
             <section className="journal-summary__section">
-              {commentMark('summaryText')}
               <h2 className="journal-summary__heading">{t('summary.thisWeek')}</h2>
               {Array.isArray(summary.mainTopics) &&
                 summary.mainTopics.length > 0 && (
@@ -424,38 +443,24 @@ const JournalSummary = () => {
                     ))}
                   </ul>
                 )}
-              {(summaryParagraphs.length > 0
-                ? summaryParagraphs
-                : [summary.summaryText]
-              ).map((paragraph, index) => (
-                <SummaryCommentTarget
-                  key={`summary-${index}`}
-                  className="journal-summary__body"
-                  text={paragraph}
-                  disabled={commentDisabled}
-                  onComment={(quotedText) =>
-                    openComment('summaryText', quotedText)
-                  }
-                />
-              ))}
+              {renderPassages(
+                'summaryText',
+                summary.summaryText,
+                'journal-summary__body',
+              )}
             </section>
 
             <section className="journal-summary__section">
-              {commentMark('bestQuote')}
               <h2 className="journal-summary__heading">{t('summary.bestQuote')}</h2>
-              <SummaryCommentTarget
-                as="blockquote"
-                className="journal-summary__quote"
-                text={summary.bestQuote}
-                disabled={commentDisabled}
-                onComment={(quotedText) =>
-                  openComment('bestQuote', quotedText)
-                }
-              />
+              {renderPassages(
+                'bestQuote',
+                summary.bestQuote,
+                'journal-summary__quote',
+                'blockquote',
+              )}
             </section>
 
             <section className="journal-summary__section">
-              {commentMark('socraticText')}
               <h2 className="journal-summary__heading journal-summary__heading--socratic">
                 <img
                   src="/images/socrates.webp"
@@ -464,19 +469,15 @@ const JournalSummary = () => {
                 />
                 {t('summary.socraticHeading')}
               </h2>
-              <SummaryCommentTarget
-                className="journal-summary__socratic"
-                text={summary.socraticText}
-                disabled={commentDisabled}
-                onComment={(quotedText) =>
-                  openComment('socraticText', quotedText)
-                }
-              />
+              {renderPassages(
+                'socraticText',
+                summary.socraticText,
+                'journal-summary__socratic',
+              )}
             </section>
 
             {summary.machiavelliText && (
               <section className="journal-summary__section">
-                {commentMark('machiavelliText')}
                 <h2 className="journal-summary__heading journal-summary__heading--machiavelli">
                   <img
                     src="/images/machiavelli.webp"
@@ -485,14 +486,11 @@ const JournalSummary = () => {
                   />
                   {t('summary.machiavelliHeading')}
                 </h2>
-                <SummaryCommentTarget
-                  className="journal-summary__machiavelli"
-                  text={summary.machiavelliText}
-                  disabled={commentDisabled}
-                  onComment={(quotedText) =>
-                    openComment('machiavelliText', quotedText)
-                  }
-                />
+                {renderPassages(
+                  'machiavelliText',
+                  summary.machiavelliText,
+                  'journal-summary__machiavelli',
+                )}
               </section>
             )}
 
@@ -604,7 +602,7 @@ const JournalSummary = () => {
 
       {activeTarget && (
         <SummaryCommentModal
-          key={`${activeTarget.section}-${activeTarget.quotedText.slice(0, 24)}`}
+          key={activeTarget.targetId}
           labelledById="summary-comment-title"
           title={t('summary.commentTitle')}
           quotedText={activeTarget.quotedText}

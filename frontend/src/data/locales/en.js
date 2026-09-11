@@ -161,6 +161,6 @@ export const en = {
   'summary.commentSend': 'SEND COMMENTS',
   'summary.commentRemove': 'Remove',
   'summary.commentQueued': 'Queued comments',
-  'summary.commentMarked': 'This section has a comment',
+  'summary.commentMarked': 'This passage has a comment',
   'summary.reviseFailed': 'Could not revise the summary.',
 };

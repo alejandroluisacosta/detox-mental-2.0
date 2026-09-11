@@ -163,6 +163,6 @@ export const es = {
   'summary.commentSend': 'ENVIAR COMENTARIOS',
   'summary.commentRemove': 'Quitar',
   'summary.commentQueued': 'Comentarios en cola',
-  'summary.commentMarked': 'Esta sección tiene un comentario',
+  'summary.commentMarked': 'Este pasaje tiene un comentario',
   'summary.reviseFailed': 'No se pudo revisar el resumen.',
 };

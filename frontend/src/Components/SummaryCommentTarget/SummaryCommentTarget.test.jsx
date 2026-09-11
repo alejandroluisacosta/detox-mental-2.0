@@ -23,6 +23,21 @@ describe('SummaryCommentTarget', () => {
     expect(onComment).toHaveBeenCalledWith('You treat planning as safety.');
   });
 
+  test('shows a note icon on a commented passage', () => {
+    render(
+      <SummaryCommentTarget
+        text="You treat planning as safety."
+        commented
+        commentMarkAlt="This passage has a comment"
+        onComment={vi.fn()}
+      />,
+    );
+
+    const mark = screen.getByAltText('This passage has a comment');
+    expect(mark.getAttribute('src')).toBe('/icons/note.svg');
+    expect(mark.className).toContain('summary-comment-target__mark');
+  });
+
   test('renders static text when commenting is disabled', () => {
     render(
       <SummaryCommentTarget

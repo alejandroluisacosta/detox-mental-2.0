@@ -5,7 +5,7 @@ export const COMMENT_SECTIONS = [
   'machiavelliText',
 ];
 
-export const MAX_REVISION_COMMENTS = COMMENT_SECTIONS.length;
+export const MAX_REVISION_COMMENTS = 20;
 export const MAX_COMMENT_NOTE_LENGTH = 1000;
 export const MAX_QUOTED_TEXT_LENGTH = 4000;
 
@@ -25,7 +25,7 @@ export const parseRevisionComments = (raw) => {
   }
 
   const comments = [];
-  const seenSections = new Set();
+  const seenTargets = new Set();
   for (const item of raw) {
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
       return { ok: false, error: 'invalid_comment' };
@@ -33,10 +33,6 @@ export const parseRevisionComments = (raw) => {
     if (!COMMENT_SECTIONS.includes(item.section)) {
       return { ok: false, error: 'invalid_section' };
     }
-    if (seenSections.has(item.section)) {
-      return { ok: false, error: 'duplicate_section' };
-    }
-    seenSections.add(item.section);
 
     const note = asTrimmedString(item.note);
     if (!note || note.length > MAX_COMMENT_NOTE_LENGTH) {
@@ -47,6 +43,11 @@ export const parseRevisionComments = (raw) => {
       0,
       MAX_QUOTED_TEXT_LENGTH,
     );
+    const targetKey = `${item.section}:${quotedText}`;
+    if (seenTargets.has(targetKey)) {
+      return { ok: false, error: 'duplicate_comment' };
+    }
+    seenTargets.add(targetKey);
 
     comments.push({
       section: item.section,
