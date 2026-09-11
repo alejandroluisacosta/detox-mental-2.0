@@ -1,7 +1,15 @@
+.summary-comment-modal__overlay {
+  z-index: 40;
+}
+
 .summary-comment-modal {
-  position: fixed;
+  position: relative;
   width: 80%;
+  max-height: calc(100dvh - 32px);
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background-color: white;
   border-radius: 16px;
   padding: 40px 8%;
@@ -11,17 +19,54 @@
 
 .summary-comment-modal__title {
   margin: 0 0 1rem;
+  padding-right: 28px;
+  flex-shrink: 0;
   font-size: 1.25rem;
   color: var(--primary);
 }
 
 .summary-comment-modal__quote {
+  flex: 0 1 auto;
+  max-height: 300px;
   margin: 0 0 1.25rem;
-  padding: 0 0 0 16px;
+  padding: 0 8px 0 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   border-left: 3px solid var(--accent);
   font-style: italic;
   line-height: 1.5;
   color: var(--text);
+}
+
+.summary-comment-modal__textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin: 0 0 1.25rem;
+  padding: 12px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  background: var(--background);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+@media (max-height: 720px) {
+  .summary-comment-modal {
+    padding: 28px 6%;
+  }
+
+  .summary-comment-modal__quote {
+    max-height: 250px;
+  }
+
+  .summary-comment-modal__textarea {
+    margin-bottom: 0.85rem;
+  }
 }
 
 .summary-comment-modal__label {
@@ -36,25 +81,11 @@
   border: 0;
 }
 
-.summary-comment-modal__textarea {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0 0 1.25rem;
-  padding: 12px;
-  border: 2px solid var(--accent);
-  border-radius: 16px;
-  background: var(--background);
-  color: var(--text);
-  font: inherit;
-  line-height: 1.5;
-  resize: vertical;
-}
-
 .summary-comment-modal__button {
   width: 100%;
   padding: 12px 0;
   margin-bottom: 0.75rem;
+  flex-shrink: 0;
   background: var(--accent);
   border: 2px solid var(--accent);
   color: var(--background);

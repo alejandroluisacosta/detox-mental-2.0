@@ -9,10 +9,11 @@ const SummaryCommentModal = ({
   addLabel,
   cancelLabel,
   labelledById,
+  initialNote = '',
   onClose,
   onAdd,
 }) => {
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState(initialNote);
   const trimmed = note.trim();
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const SummaryCommentModal = ({
 
   return (
     <div
-      className="modal-overlay"
+      className="modal-overlay summary-comment-modal__overlay"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -52,7 +53,7 @@ const SummaryCommentModal = ({
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder={placeholder}
-          rows={5}
+          rows={4}
         />
         <button
           type="button"

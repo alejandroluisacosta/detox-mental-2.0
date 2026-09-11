@@ -576,4 +576,42 @@ describe('JournalSummary page states', () => {
     });
     expect(screen.queryByText('Soften this.')).toBeNull();
   });
+
+  test('keeps one editable comment per section and marks it with a note icon', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    renderSummary();
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /turn the need for control into a virtue/i,
+      }),
+    );
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Too harsh.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+
+    expect(screen.getByText('Too harsh.')).toBeTruthy();
+    expect(
+      screen.getByAltText('This section has a comment'),
+    ).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /You yourself notice the limit/i }),
+    );
+    const field = screen.getByPlaceholderText('What should change?');
+    expect(field.value).toBe('Too harsh.');
+    fireEvent.change(field, { target: { value: 'I was exhausted.' } });
+    fireEvent.click(screen.getByRole('button', { name: /SAVE COMMENT/i }));
+
+    expect(screen.getByText('I was exhausted.')).toBeTruthy();
+    expect(screen.queryByText('Too harsh.')).toBeNull();
+    expect(
+      screen.getAllByAltText('This section has a comment'),
+    ).toHaveLength(1);
+  });
 });

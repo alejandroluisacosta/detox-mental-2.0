@@ -158,9 +158,11 @@ export const es = {
   'summary.commentTitle': 'Comenta este pasaje',
   'summary.commentPlaceholder': '¿Qué debería cambiar?',
   'summary.commentAdd': 'AÑADIR COMENTARIO',
+  'summary.commentSave': 'GUARDAR COMENTARIO',
   'summary.commentCancel': 'CANCELAR',
   'summary.commentSend': 'ENVIAR COMENTARIOS',
   'summary.commentRemove': 'Quitar',
   'summary.commentQueued': 'Comentarios en cola',
+  'summary.commentMarked': 'Esta sección tiene un comentario',
   'summary.reviseFailed': 'No se pudo revisar el resumen.',
 };

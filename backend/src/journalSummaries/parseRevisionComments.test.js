@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  COMMENT_SECTIONS,
   MAX_REVISION_COMMENTS,
   parseRevisionComments,
   toRevisionSummaryJson,
@@ -38,11 +39,19 @@ test('parseRevisionComments rejects an empty list and unknown sections', () => {
 });
 
 test('parseRevisionComments caps the number of comments', () => {
-  const tooMany = Array.from({ length: MAX_REVISION_COMMENTS + 1 }, () => ({
-    section: 'socraticText',
+  const tooMany = Array.from({ length: MAX_REVISION_COMMENTS + 1 }, (_, i) => ({
+    section: COMMENT_SECTIONS[i] ?? 'summaryText',
     note: 'Please soften this.',
   }));
   assert.equal(parseRevisionComments(tooMany).error, 'too_many_comments');
+});
+
+test('parseRevisionComments rejects two comments on the same section', () => {
+  const parsed = parseRevisionComments([
+    { section: 'summaryText', note: 'First' },
+    { section: 'summaryText', note: 'Second' },
+  ]);
+  assert.equal(parsed.error, 'duplicate_section');
 });
 
 test('toRevisionSummaryJson uses the generate schema keys', () => {

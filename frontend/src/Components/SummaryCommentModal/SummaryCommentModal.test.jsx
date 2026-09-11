@@ -45,4 +45,27 @@ describe('SummaryCommentModal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'ADD COMMENT' }));
     expect(onAdd).toHaveBeenCalledWith('Soften this.');
   });
+
+  test('prefills an existing note so it can be edited', () => {
+    const onAdd = vi.fn();
+    render(
+      <SummaryCommentModal
+        labelledById="summary-comment-title"
+        title="Comment on this passage"
+        quotedText="You treat planning as safety."
+        placeholder="What should change?"
+        addLabel="SAVE COMMENT"
+        cancelLabel="CANCEL"
+        initialNote="Too harsh."
+        onClose={vi.fn()}
+        onAdd={onAdd}
+      />,
+    );
+
+    const field = screen.getByPlaceholderText('What should change?');
+    expect(field.value).toBe('Too harsh.');
+    fireEvent.change(field, { target: { value: 'Softer, please.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'SAVE COMMENT' }));
+    expect(onAdd).toHaveBeenCalledWith('Softer, please.');
+  });
 });

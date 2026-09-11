@@ -24,9 +24,8 @@ import {
   splitSummaryParagraphs,
   truncateSummaryQuote,
 } from '../../utils/summaryParagraphs.js';
+import { upsertSectionComment } from '../../utils/summaryComments.js';
 import './JournalSummary.css';
-
-const MAX_QUEUED_COMMENTS = 10;
 
 const formatWeekLabel = (weekStart, weekEnd, locale) => {
   if (!weekStart || !weekEnd) return '';
@@ -278,17 +277,16 @@ const JournalSummary = () => {
   }, [demoMode, pendingIsRevise, pendingRange, pendingSummary]);
 
   const addQueuedComment = (note) => {
-    if (!activeTarget || comments.length >= MAX_QUEUED_COMMENTS) return;
+    if (!activeTarget) return;
     commentIdRef.current += 1;
-    setComments((prev) => [
-      ...prev,
-      {
+    setComments((prev) =>
+      upsertSectionComment(prev, {
         id: commentIdRef.current,
         section: activeTarget.section,
         quotedText: activeTarget.quotedText,
         note,
-      },
-    ]);
+      }),
+    );
     setActiveTarget(null);
   };
 
@@ -320,11 +318,26 @@ const JournalSummary = () => {
     availability.remaining <= 0 && !availability.canRevise;
   const summaryParagraphs = splitSummaryParagraphs(summary?.summaryText ?? '');
   const commentDisabled = !availability.canRevise;
+  const commentedSections = new Set(comments.map((comment) => comment.section));
 
   const openComment = (section, quotedText) => {
-    if (commentDisabled || comments.length >= MAX_QUEUED_COMMENTS) return;
-    setActiveTarget({ section, quotedText });
+    if (commentDisabled) return;
+    const existing = comments.find((comment) => comment.section === section);
+    setActiveTarget({
+      section,
+      quotedText,
+      note: existing?.note ?? '',
+    });
   };
+
+  const commentMark = (section) =>
+    commentedSections.has(section) ? (
+      <img
+        src="/icons/note.svg"
+        alt={t('summary.commentMarked')}
+        className="journal-summary__comment-mark"
+      />
+    ) : null;
 
   return (
     <div className="journal-page journal-page--summary">
@@ -396,6 +409,7 @@ const JournalSummary = () => {
             )}
 
             <section className="journal-summary__section">
+              {commentMark('summaryText')}
               <h2 className="journal-summary__heading">{t('summary.thisWeek')}</h2>
               {Array.isArray(summary.mainTopics) &&
                 summary.mainTopics.length > 0 && (
@@ -427,6 +441,7 @@ const JournalSummary = () => {
             </section>
 
             <section className="journal-summary__section">
+              {commentMark('bestQuote')}
               <h2 className="journal-summary__heading">{t('summary.bestQuote')}</h2>
               <SummaryCommentTarget
                 as="blockquote"
@@ -440,6 +455,7 @@ const JournalSummary = () => {
             </section>
 
             <section className="journal-summary__section">
+              {commentMark('socraticText')}
               <h2 className="journal-summary__heading journal-summary__heading--socratic">
                 <img
                   src="/images/socrates.webp"
@@ -460,6 +476,7 @@ const JournalSummary = () => {
 
             {summary.machiavelliText && (
               <section className="journal-summary__section">
+                {commentMark('machiavelliText')}
                 <h2 className="journal-summary__heading journal-summary__heading--machiavelli">
                   <img
                     src="/images/machiavelli.webp"
@@ -587,12 +604,18 @@ const JournalSummary = () => {
 
       {activeTarget && (
         <SummaryCommentModal
+          key={`${activeTarget.section}-${activeTarget.quotedText.slice(0, 24)}`}
           labelledById="summary-comment-title"
           title={t('summary.commentTitle')}
           quotedText={activeTarget.quotedText}
           placeholder={t('summary.commentPlaceholder')}
-          addLabel={t('summary.commentAdd')}
+          addLabel={
+            activeTarget.note
+              ? t('summary.commentSave')
+              : t('summary.commentAdd')
+          }
           cancelLabel={t('summary.commentCancel')}
+          initialNote={activeTarget.note}
           onClose={() => setActiveTarget(null)}
           onAdd={addQueuedComment}
         />

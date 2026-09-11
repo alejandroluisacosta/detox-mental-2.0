@@ -156,9 +156,11 @@ export const en = {
   'summary.commentTitle': 'Comment on this passage',
   'summary.commentPlaceholder': 'What should change?',
   'summary.commentAdd': 'ADD COMMENT',
+  'summary.commentSave': 'SAVE COMMENT',
   'summary.commentCancel': 'CANCEL',
   'summary.commentSend': 'SEND COMMENTS',
   'summary.commentRemove': 'Remove',
   'summary.commentQueued': 'Queued comments',
+  'summary.commentMarked': 'This section has a comment',
   'summary.reviseFailed': 'Could not revise the summary.',
 };
