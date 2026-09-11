@@ -1,5 +1,5 @@
 import { InferenceClient } from '@huggingface/inference';
-import { buildSummaryMessages } from './prompts.js';
+import { buildRevisionMessages, buildSummaryMessages } from './prompts.js';
 import {
   findBestQuoteEntryId,
   parseSummaryOutput,
@@ -24,11 +24,9 @@ const combinedSignal = (signal) => {
  * Call HF and return normalized summary fields + quote entry match.
  * @throws Error with code-like message prefixes for controller mapping
  */
-export const generateWeeklySummaryContent = async ({
+const completeSummaryFromMessages = async ({
+  messages,
   entries,
-  weekStart,
-  weekEnd,
-  locale = 'en',
   signal,
 }) => {
   if (!process.env.HF_TOKEN) {
@@ -39,7 +37,6 @@ export const generateWeeklySummaryContent = async ({
 
   const modelId = getSummaryModelId();
   const client = new InferenceClient(process.env.HF_TOKEN);
-  const messages = buildSummaryMessages({ entries, weekStart, weekEnd, locale });
   const abortSignal = combinedSignal(signal);
 
   let response;
@@ -91,4 +88,42 @@ export const generateWeeklySummaryContent = async ({
     bestQuoteEntryId,
     modelId,
   };
+};
+
+export const generateWeeklySummaryContent = async ({
+  entries,
+  weekStart,
+  weekEnd,
+  locale = 'en',
+  signal,
+}) => {
+  const messages = buildSummaryMessages({
+    entries,
+    weekStart,
+    weekEnd,
+    locale,
+  });
+  return completeSummaryFromMessages({ messages, entries, signal });
+};
+
+export const generateWeeklySummaryRevision = async ({
+  entries,
+  weekStart,
+  weekEnd,
+  locale = 'en',
+  generationCount,
+  previousSummary,
+  comments,
+  signal,
+}) => {
+  const messages = buildRevisionMessages({
+    entries,
+    weekStart,
+    weekEnd,
+    locale,
+    generationCount,
+    previousSummary,
+    comments,
+  });
+  return completeSummaryFromMessages({ messages, entries, signal });
 };

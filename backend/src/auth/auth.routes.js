@@ -22,6 +22,7 @@ import {
 import {
   getCurrentJournalSummary,
   postCurrentJournalSummary,
+  postCurrentJournalSummaryRevision,
 } from '../journalSummaries/journalSummaries.controller.js';
 import { requireAuth } from './auth.middleware.js';
 
@@ -54,6 +55,11 @@ router.post(
   '/me/journal-summaries/current',
   requireAuth,
   postCurrentJournalSummary,
+);
+router.post(
+  '/me/journal-summaries/current/revise',
+  requireAuth,
+  postCurrentJournalSummaryRevision,
 );
 router.get('/me', requireAuth, me);
 

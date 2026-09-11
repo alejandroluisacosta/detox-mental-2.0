@@ -152,4 +152,13 @@ export const en = {
   'summary.taskFinishing': 'Finishing your summary',
   'summary.attempt': 'Attempt {n} of {total}',
   'summary.tryLater': 'Please try later.',
+  'summary.commentHint': 'Tap a paragraph to comment. You can send comments once on this summary.',
+  'summary.commentTitle': 'Comment on this passage',
+  'summary.commentPlaceholder': 'What should change?',
+  'summary.commentAdd': 'ADD COMMENT',
+  'summary.commentCancel': 'CANCEL',
+  'summary.commentSend': 'SEND COMMENTS',
+  'summary.commentRemove': 'Remove',
+  'summary.commentQueued': 'Queued comments',
+  'summary.reviseFailed': 'Could not revise the summary.',
 };

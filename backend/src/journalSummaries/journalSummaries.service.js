@@ -11,6 +11,11 @@ const toIso = (value) => {
   return value;
 };
 
+const SUMMARY_RETURNING = `id, user_id, week_start, week_end, period_start, period_end,
+            summary_text, main_topics, best_quote, best_quote_entry_id,
+            socratic_text, machiavelli_text, entry_count, model_id, locale,
+            generation_count, feedback_count, created_at`;
+
 const mapSummaryRow = (row) => ({
   id: row.id,
   weekStart: toDateOnly(row.week_start),
@@ -27,6 +32,7 @@ const mapSummaryRow = (row) => ({
   modelId: row.model_id,
   locale: row.locale,
   generationCount: row.generation_count,
+  feedbackCount: row.feedback_count ?? 0,
   createdAt: toIso(row.created_at),
 });
 
@@ -66,10 +72,7 @@ export const countJournalEntriesInRange = async (
 
 export const getWeeklySummaryForUser = async (userId, weekStart) => {
   const { rows } = await pool.query(
-    `SELECT id, user_id, week_start, week_end, period_start, period_end,
-            summary_text, main_topics, best_quote, best_quote_entry_id,
-            socratic_text, machiavelli_text, entry_count, model_id, locale,
-            generation_count, created_at
+    `SELECT ${SUMMARY_RETURNING}
      FROM journal_weekly_summaries
      WHERE user_id = $1 AND week_start = $2`,
     [userId, weekStart],
@@ -118,12 +121,10 @@ export const upsertWeeklySummary = async ({
        model_id = EXCLUDED.model_id,
        locale = EXCLUDED.locale,
        generation_count = journal_weekly_summaries.generation_count + 1,
+       feedback_count = 0,
        created_at = NOW()
      WHERE journal_weekly_summaries.generation_count < $15
-     RETURNING id, user_id, week_start, week_end, period_start, period_end,
-               summary_text, main_topics, best_quote, best_quote_entry_id,
-               socratic_text, machiavelli_text, entry_count, model_id, locale,
-               generation_count, created_at`,
+     RETURNING ${SUMMARY_RETURNING}`,
     [
       userId,
       weekStart,
@@ -140,6 +141,57 @@ export const upsertWeeklySummary = async ({
       modelId,
       locale,
       limit,
+    ],
+  );
+  return rows[0] ? mapSummaryRow(rows[0]) : null;
+};
+
+/**
+ * Replace the displayed summary text when its one feedback slot is unused.
+ * Does not increment generation_count. Returns null when the slot is spent.
+ */
+export const reviseWeeklySummary = async ({
+  userId,
+  weekStart,
+  summaryText,
+  mainTopics,
+  bestQuote,
+  bestQuoteEntryId,
+  socraticText,
+  machiavelliText,
+  entryCount,
+  modelId,
+  locale,
+}) => {
+  const { rows } = await pool.query(
+    `UPDATE journal_weekly_summaries
+     SET summary_text = $3,
+         main_topics = $4,
+         best_quote = $5,
+         best_quote_entry_id = $6,
+         socratic_text = $7,
+         machiavelli_text = $8,
+         entry_count = $9,
+         model_id = $10,
+         locale = $11,
+         feedback_count = 1,
+         created_at = NOW()
+     WHERE user_id = $1
+       AND week_start = $2
+       AND feedback_count = 0
+     RETURNING ${SUMMARY_RETURNING}`,
+    [
+      userId,
+      weekStart,
+      summaryText,
+      mainTopics,
+      bestQuote,
+      bestQuoteEntryId,
+      socraticText,
+      machiavelliText,
+      entryCount,
+      modelId,
+      locale,
     ],
   );
   return rows[0] ? mapSummaryRow(rows[0]) : null;

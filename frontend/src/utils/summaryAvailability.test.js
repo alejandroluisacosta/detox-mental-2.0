@@ -42,8 +42,30 @@ describe('resolveSummaryAvailability', () => {
     });
     expect(result.canCreate).toBe(false);
     expect(result.canRegenerate).toBe(true);
+    expect(result.canRevise).toBe(true);
     expect(result.displayedSummary).toEqual(summary);
     expect(result.remaining).toBe(1);
+  });
+
+  test('allows revise when generation quota is spent but feedback remains', () => {
+    const summary = {
+      summaryText: 'This week’s summary',
+      createdAt: '2026-08-06T12:00:00.000Z',
+      generationCount: 2,
+      feedbackCount: 0,
+    };
+    const result = resolveSummaryAvailability({
+      ...basePayload,
+      quota: {
+        ...basePayload.quota,
+        used: 2,
+        remaining: 0,
+      },
+      summary,
+    });
+    expect(result.canCreate).toBe(false);
+    expect(result.canRegenerate).toBe(false);
+    expect(result.canRevise).toBe(true);
   });
 
   test('blocks create and regenerate when the weekly quota is spent', () => {
@@ -63,8 +85,29 @@ describe('resolveSummaryAvailability', () => {
     });
     expect(result.canCreate).toBe(false);
     expect(result.canRegenerate).toBe(false);
+    expect(result.canRevise).toBe(true);
     expect(result.displayedSummary).toEqual(summary);
     expect(result.remaining).toBe(0);
+  });
+
+  test('blocks revise after the summary has used its feedback slot', () => {
+    const summary = {
+      summaryText: 'This week’s summary',
+      createdAt: '2026-08-06T12:00:00.000Z',
+      generationCount: 1,
+      feedbackCount: 1,
+    };
+    const result = resolveSummaryAvailability({
+      ...basePayload,
+      quota: {
+        ...basePayload.quota,
+        used: 1,
+        remaining: 1,
+      },
+      summary,
+    });
+    expect(result.canRegenerate).toBe(true);
+    expect(result.canRevise).toBe(false);
   });
 
   test('blocks create when there are too few entries', () => {

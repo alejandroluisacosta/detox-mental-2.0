@@ -135,7 +135,75 @@
 }
 
 .journal-summary__regenerate {
+  margin-top: 0;
+}
+
+.journal-summary__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 32px;
+}
+
+.journal-summary__comment-hint {
+  margin: 0;
+  color: var(--muted, #6b7280);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.journal-summary__comment-queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-summary__comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+}
+
+.journal-summary__comment-item-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.journal-summary__comment-item-quote {
+  margin: 0 0 6px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--muted, #6b7280);
+}
+
+.journal-summary__comment-item-note {
+  margin: 0;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.journal-summary__comment-remove {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 8px 12px;
+  margin: 0;
+  background: var(--background);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.journal-summary__body.summary-comment-target,
+.journal-summary__socratic.summary-comment-target,
+.journal-summary__machiavelli.summary-comment-target,
+.journal-summary__quote.summary-comment-target {
+  font-weight: 400;
 }
 
 .journal-summary__meta {

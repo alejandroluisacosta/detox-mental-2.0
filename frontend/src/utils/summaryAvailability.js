@@ -19,5 +19,7 @@ export const resolveSummaryAvailability = (payload) => {
     displayedSummary,
     canCreate: !displayedSummary && entryCount >= minEntries && remaining > 0,
     canRegenerate: Boolean(displayedSummary) && remaining > 0,
+    canRevise:
+      Boolean(displayedSummary) && (displayedSummary.feedbackCount ?? 0) === 0,
   };
 };

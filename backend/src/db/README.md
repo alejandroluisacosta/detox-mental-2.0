@@ -195,11 +195,13 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 - `model_id` (TEXT, nullable): HF model that produced the row
 - `locale` (TEXT): UI language used to generate the row (`en` or `es`)
 - `generation_count` (INTEGER): How many successful generations produced this week’s row (starts at 1; second generation overwrites the row and increments)
+- `feedback_count` (INTEGER): `0` or `1` — whether the displayed summary has used its one comment revision
 - `created_at` (TIMESTAMPTZ)
 
 **Constraints:**
 - `UNIQUE (user_id, week_start)` — one summary per user per week
 - `generation_count >= 1` — incremented on each successful generation; server quota is 2 per week
+- `feedback_count IN (0, 1)` — reset to `0` on a fresh generation; set to `1` after a successful revise
 - Non-empty checks on summary / quote / socratic text and, when present, Machiavelli text
 
 **Indexes:**
@@ -209,7 +211,7 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 
 ### 8. `journal_summary_generate_attempts`
 
-Rolling log of generate POSTs used to cap retries (3 per 15 minutes). Failed and timed-out calls count; successful quota generations also count.
+Rolling log of generate and revise POSTs used to cap retries (3 per 15 minutes). Failed and timed-out calls count; successful quota generations and revisions also count.
 
 **Columns:**
 - `id` (UUID, PK)
@@ -340,6 +342,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after generate-attempts migration. Drops unused CBT tables from 001.
 \i backend/src/db/migrations/011_drop_unused_thought_tables.sql
+```
+
+### Journal Summary Feedback Count
+```sql
+-- Run after the unused-thought-tables migration
+\i backend/src/db/migrations/012_journal_summary_feedback_count.sql
 ```
 
 ### Verify Migration Success

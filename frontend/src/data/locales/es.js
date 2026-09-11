@@ -154,4 +154,13 @@ export const es = {
   'summary.taskFinishing': 'Terminando tu resumen',
   'summary.attempt': 'Intento {n} de {total}',
   'summary.tryLater': 'Inténtalo más tarde.',
+  'summary.commentHint': 'Toca un párrafo para comentar. Puedes enviar comentarios una vez en este resumen.',
+  'summary.commentTitle': 'Comenta este pasaje',
+  'summary.commentPlaceholder': '¿Qué debería cambiar?',
+  'summary.commentAdd': 'AÑADIR COMENTARIO',
+  'summary.commentCancel': 'CANCELAR',
+  'summary.commentSend': 'ENVIAR COMENTARIOS',
+  'summary.commentRemove': 'Quitar',
+  'summary.commentQueued': 'Comentarios en cola',
+  'summary.reviseFailed': 'No se pudo revisar el resumen.',
 };

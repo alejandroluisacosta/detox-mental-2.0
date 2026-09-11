@@ -38,6 +38,11 @@ const messages = {
     summaryCreateFailed: 'Error creating the summary.',
     summaryQuotaExhausted:
       'You have used both summaries this week. New ones are available on Monday.',
+    summaryFeedbackExhausted:
+      'You have already sent comments on this summary.',
+    summaryNotFound: 'There is no summary to revise this week.',
+    summaryInvalidComments: 'Comments are missing or not valid.',
+    summaryReviseFailed: 'Could not revise the summary.',
     summaryTimeout: 'The summary took too long to generate.',
     summaryTryLater: 'Please try later.',
   },
@@ -79,6 +84,11 @@ const messages = {
     summaryCreateFailed: 'Error al crear el resumen.',
     summaryQuotaExhausted:
       'Ya has usado los dos resúmenes de esta semana. Podrás generar más el lunes.',
+    summaryFeedbackExhausted:
+      'Ya has enviado comentarios sobre este resumen.',
+    summaryNotFound: 'No hay un resumen que revisar esta semana.',
+    summaryInvalidComments: 'Faltan comentarios o no son válidos.',
+    summaryReviseFailed: 'No se pudo revisar el resumen.',
     summaryTimeout: 'El resumen tardó demasiado en generarse.',
     summaryTryLater: 'Inténtalo más tarde.',
   },

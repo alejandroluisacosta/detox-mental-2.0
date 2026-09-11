@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSummaryMessages, buildSystemPrompt } from './prompts.js';
+import { buildRevisionMessages, buildSummaryMessages, buildSystemPrompt } from './prompts.js';
 
 test('English prompt asks for a 400–600 word summary', () => {
   const prompt = buildSystemPrompt('en');
@@ -54,4 +54,48 @@ test('buildSummaryMessages describes the last 7 days', () => {
     locale: 'en',
   });
   assert.match(user.content, /Last 7 days from 2026-07-23 to 2026-07-29/);
+});
+
+test('English prompt requires blank-line paragraphs in the summary', () => {
+  const prompt = buildSystemPrompt('en');
+  assert.match(prompt, /Separate paragraphs in summary with a blank line/);
+});
+
+test('revision messages name generation N and include previous JSON plus comments', () => {
+  const [system, user] = buildRevisionMessages({
+    entries: [
+      {
+        id: '1',
+        content: 'I keep making lists.',
+        topics: [],
+        createdAt: '2026-07-28T00:00:00.000Z',
+      },
+    ],
+    weekStart: '2026-07-23',
+    weekEnd: '2026-07-29',
+    locale: 'en',
+    generationCount: 1,
+    previousSummary: {
+      summaryText: 'You treat planning as safety.',
+      mainTopics: ['Worries'],
+      bestQuote: 'I need a better plan.',
+      socraticText: 'What is the plan protecting you from?',
+      machiavelliText: 'What do you gain by delaying the decision?',
+    },
+    comments: [
+      {
+        section: 'summaryText',
+        quotedText: 'You treat planning as safety.',
+        note: 'I was exhausted, not making planning into an identity.',
+      },
+    ],
+  });
+
+  assert.match(system.content, /revision 1 of generation 1 of 2/i);
+  assert.match(system.content, /not a new weekly summary from scratch/i);
+  assert.match(user.content, /revision 1 of weekly summary generation 1 of 2/);
+  assert.match(user.content, /"summary": "You treat planning as safety\."/);
+  assert.match(user.content, /section=summaryText/);
+  assert.match(user.content, /exhausted, not making planning/);
+  assert.match(user.content, /I keep making lists/);
 });

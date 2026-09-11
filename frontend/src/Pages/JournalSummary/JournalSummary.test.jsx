@@ -175,6 +175,7 @@ describe('JournalSummary page states', () => {
           createdAt: '2026-08-02T11:00:00.000Z',
           locale: 'en',
           generationCount: 2,
+          feedbackCount: 1,
         },
       }),
     });
@@ -189,6 +190,9 @@ describe('JournalSummary page states', () => {
     expect(
       screen.getByText(/You have used both summaries this week/i),
     ).toBeTruthy();
+    expect(
+      screen.queryByText(/Tap a paragraph to comment/i),
+    ).toBeNull();
   });
 
   test('hides the Machiavelli section for summaries created before it existed', async () => {
@@ -432,5 +436,144 @@ describe('JournalSummary page states', () => {
       ([, options]) => options?.method === 'POST',
     );
     expect(posts).toHaveLength(1);
+  });
+
+  test('keeps comments available when generation quota is spent', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        weekStart: '2026-07-27',
+        weekEnd: '2026-08-02',
+        quota: quota(2),
+        entryCount: 3,
+        minEntries: 2,
+        summary: {
+          summaryText: 'You wrote about work and doubt.',
+          mainTopics: ['Trabajo'],
+          bestQuote: 'Never enough',
+          socraticText: 'What proof do you have of that?',
+          machiavelliText: 'A challenge.',
+          createdAt: '2026-08-02T11:00:00.000Z',
+          locale: 'en',
+          generationCount: 2,
+          feedbackCount: 0,
+        },
+      }),
+    });
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByText(/You wrote about work/i)).toBeTruthy();
+    });
+    expect(
+      screen.queryByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeNull();
+    expect(
+      screen.queryByText(/You have used both summaries this week/i),
+    ).toBeNull();
+    expect(screen.getByText(/0 of 2 summaries left this week/i)).toBeTruthy();
+    expect(screen.getByText(/Tap a paragraph to comment/i)).toBeTruthy();
+  });
+
+  test('queues a paragraph comment, sends revise, and clears the notes', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    const current = {
+      weekStart: '2026-07-27',
+      weekEnd: '2026-08-02',
+      quota: quota(1),
+      entryCount: 3,
+      minEntries: 2,
+      summary: {
+        summaryText: 'First insight.\n\nSecond insight.',
+        mainTopics: ['Work'],
+        bestQuote: 'Never enough',
+        socraticText: 'What proof do you have of that?',
+        machiavelliText: 'A challenge.',
+        generationCount: 1,
+        feedbackCount: 0,
+      },
+    };
+    apiFetch.mockImplementation((_path, options = {}) => {
+      if (options.method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          status: 201,
+          json: async () => ({
+            weekStart: current.weekStart,
+            weekEnd: current.weekEnd,
+            summary: {
+              ...current.summary,
+              summaryText: 'Revised first insight.\n\nSecond insight.',
+              feedbackCount: 1,
+            },
+          }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => current,
+      });
+    });
+
+    renderSummary();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /First insight\./i }),
+      ).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /First insight\./i }));
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Soften this.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+    expect(screen.getByText('Soften this.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: /SEND COMMENTS/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Revised first insight/i)).toBeTruthy();
+    });
+    expect(screen.queryByText('Soften this.')).toBeNull();
+    expect(screen.queryByText(/Tap a paragraph to comment/i)).toBeNull();
+    const revisePosts = apiFetch.mock.calls.filter(
+      ([path, options]) =>
+        options?.method === 'POST' &&
+        path === '/auth/me/journal-summaries/current/revise',
+    );
+    expect(revisePosts).toHaveLength(1);
+    expect(revisePosts[0][1].body.comments[0]).toEqual({
+      section: 'summaryText',
+      quotedText: 'First insight.',
+      note: 'Soften this.',
+    });
+  });
+
+  test('clears unsent comments when regenerate starts', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    renderSummary();
+    fireEvent.click(
+      screen.getByRole('button', { name: /turn the need for control into a virtue/i }),
+    );
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Soften this.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+    expect(screen.getByText('Soften this.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: /REGENERATE SUMMARY/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/turn the need for control into a virtue/i),
+      ).toBeTruthy();
+    });
+    expect(screen.queryByText('Soften this.')).toBeNull();
   });
 });
