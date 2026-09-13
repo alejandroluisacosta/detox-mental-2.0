@@ -1,3 +1,5 @@
+import { SUMMARY_GENERATIONS_PER_WEEK } from './summaryWeek.js';
+
 const MAX_INPUT_CHARS = 10000;
 
 const formatEntryBlock = (entry, index) => {
@@ -79,6 +81,7 @@ GENERAL
 
 - Every user-facing string MUST be written in ${rules.outputLanguage}, except bestQuote.
 - Never use markdown.
+- Separate paragraphs in summary with a blank line.
 - Never invent facts, events, intentions, or emotions unsupported by the journal.
 - You may draw reasonable inferences when they are strongly supported by the writing.
 - Clearly distinguish what the user explicitly recognizes from what you are inferring.
@@ -131,6 +134,8 @@ When you find an incongruity, describe it clearly and fairly. Consider whether i
 Whenever possible, support important observations using multiple parts of the journal.
 
 Every paragraph should introduce a meaningful new insight.
+
+Separate those paragraphs with a blank line so each insight can be read on its own.
 
 Avoid repetition and generic psychological observations.
 
@@ -219,6 +224,85 @@ export const buildSummaryMessages = ({
 
   return [
     { role: 'system', content: buildSystemPrompt(locale) },
+    { role: 'user', content: user },
+  ];
+};
+
+const formatCommentBlock = (comment, index) => {
+  const lines = [`${index + 1}. section=${comment.section}`];
+  if (comment.quotedText) {
+    lines.push(`   quoted=${JSON.stringify(comment.quotedText)}`);
+  }
+  lines.push(`   note=${JSON.stringify(comment.note)}`);
+  return lines.join('\n');
+};
+
+const toPreviousSummaryJson = (summary) => ({
+  summary: summary?.summaryText ?? '',
+  mainTopics: Array.isArray(summary?.mainTopics) ? summary.mainTopics : [],
+  bestQuote: summary?.bestQuote ?? '',
+  socratic: summary?.socraticText ?? '',
+  machiavelli: summary?.machiavelliText ?? '',
+});
+
+export const buildRevisionSystemPrompt = (locale = 'en', generationCount = 1) => {
+  const generation =
+    Number.isFinite(generationCount) && generationCount > 0
+      ? generationCount
+      : 1;
+  return `${buildSystemPrompt(locale)}
+
+REVISION
+
+This is not a new weekly summary from scratch.
+
+This is revision 1 of generation ${generation} of ${SUMMARY_GENERATIONS_PER_WEEK} this week.
+
+Return the same JSON schema.
+
+Address each user comment at the quoted passage.
+
+Do not start over unless a comment requires it.
+
+Copy fields and paragraphs the user did not comment on unless a small change is required for coherence.
+
+Separate paragraphs in summary with a blank line.`;
+};
+
+export const buildRevisionMessages = ({
+  entries,
+  weekStart,
+  weekEnd,
+  locale = 'en',
+  generationCount = 1,
+  previousSummary,
+  comments,
+}) => {
+  const entriesSection = buildEntriesPromptSection(entries);
+  const commentLines = (Array.isArray(comments) ? comments : []).map(
+    (comment, index) => formatCommentBlock(comment, index),
+  );
+
+  const user = [
+    `This is revision 1 of weekly summary generation ${generationCount} of ${SUMMARY_GENERATIONS_PER_WEEK}.`,
+    `Last 7 days from ${weekStart} to ${weekEnd} (Europe/Madrid).`,
+    `Number of entries included: ${entries.length}.`,
+    '',
+    'Previous summary JSON:',
+    JSON.stringify(toPreviousSummaryJson(previousSummary), null, 2),
+    '',
+    'User comments:',
+    commentLines.join('\n'),
+    '',
+    'Journal entries:',
+    entriesSection,
+  ].join('\n');
+
+  return [
+    {
+      role: 'system',
+      content: buildRevisionSystemPrompt(locale, generationCount),
+    },
     { role: 'user', content: user },
   ];
 };

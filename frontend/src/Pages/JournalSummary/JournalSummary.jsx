@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
+import SummaryCommentModal from '../../Components/SummaryCommentModal/SummaryCommentModal.jsx';
+import SummaryCommentTarget from '../../Components/SummaryCommentTarget/SummaryCommentTarget.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useDemoMode } from '../../Context/DemoModeContext.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
@@ -18,6 +20,15 @@ import {
 } from '../../utils/journalSummaryGenerate.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
+import {
+  splitSummaryParagraphs,
+  truncateSummaryQuote,
+} from '../../utils/summaryParagraphs.js';
+import {
+  MAX_QUEUED_COMMENTS,
+  commentTargetId,
+  upsertTargetComment,
+} from '../../utils/summaryComments.js';
 import './JournalSummary.css';
 
 const formatWeekLabel = (weekStart, weekEnd, locale) => {
@@ -38,6 +49,17 @@ const formatWeekLabel = (weekStart, weekEnd, locale) => {
   return `${startLabel} – ${endLabel}`;
 };
 
+const withDemoFeedback = (payload, demoFeedbackUsed) => {
+  if (!payload?.summary) return payload;
+  return {
+    ...payload,
+    summary: {
+      ...payload.summary,
+      feedbackCount: demoFeedbackUsed ? 1 : 0,
+    },
+  };
+};
+
 const JournalSummary = () => {
   const { user, status } = useAuth();
   const { demoMode } = useDemoMode();
@@ -48,8 +70,19 @@ const JournalSummary = () => {
   const [generateReady, setGenerateReady] = useState(false);
   const [pendingSummary, setPendingSummary] = useState(null);
   const [pendingRange, setPendingRange] = useState(null);
+  const [pendingIsRevise, setPendingIsRevise] = useState(false);
   const [generateAttempt, setGenerateAttempt] = useState(1);
   const [generateExhausted, setGenerateExhausted] = useState(false);
+  const [reviseExhausted, setReviseExhausted] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [activeTarget, setActiveTarget] = useState(null);
+  const [demoFeedbackUsed, setDemoFeedbackUsed] = useState(false);
+  const commentIdRef = useRef(0);
+
+  const clearComments = () => {
+    setComments([]);
+    setActiveTarget(null);
+  };
 
   const loadCurrent = useCallback(async () => {
     if (demoMode) {
@@ -90,24 +123,28 @@ const JournalSummary = () => {
     setGenerateReady(false);
     setPendingSummary(null);
     setPendingRange(null);
+    setPendingIsRevise(false);
   };
 
-  const handleGenerate = async () => {
-    if (generating) return;
-
-    if (demoMode) {
-      setGenerating(true);
-      setGenerateExhausted(false);
-      setGenerateAttempt(1);
-      setGenerateReady(true);
-      return;
+  const markAttemptExhausted = (isRevise) => {
+    if (isRevise) {
+      setReviseExhausted(true);
+    } else {
+      setGenerateExhausted(true);
     }
+  };
 
+  const runSummaryPost = async ({ url, body, isRevise }) => {
     setGenerating(true);
-    setGenerateExhausted(false);
+    if (isRevise) {
+      setReviseExhausted(false);
+    } else {
+      setGenerateExhausted(false);
+    }
     setGenerateReady(false);
     setPendingSummary(null);
     setPendingRange(null);
+    setPendingIsRevise(Boolean(isRevise));
     setGenerateAttempt(1);
 
     for (let attempt = 1; attempt <= SUMMARY_MAX_ATTEMPTS; attempt += 1) {
@@ -116,24 +153,28 @@ const JournalSummary = () => {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), SUMMARY_ATTEMPT_MS);
       try {
-        const res = await apiFetch('/auth/me/journal-summaries/current', {
+        const res = await apiFetch(url, {
           method: 'POST',
           signal: controller.signal,
+          ...(body ? { body } : {}),
         });
         const data = await res.json().catch(() => ({}));
         if (isGenerateRateLimited(res.status, data)) {
           stopGenerating();
-          setGenerateExhausted(true);
+          markAttemptExhausted(isRevise);
           return;
         }
         if (!res.ok) {
           if (shouldRetryGenerate(res.status)) {
             if (attempt < SUMMARY_MAX_ATTEMPTS) continue;
             stopGenerating();
-            setGenerateExhausted(true);
+            markAttemptExhausted(isRevise);
             return;
           }
-          throw new Error(data.message || t('summary.createFailed'));
+          throw new Error(
+            data.message ||
+              t(isRevise ? 'summary.reviseFailed' : 'summary.createFailed'),
+          );
         }
         setPendingSummary(data.summary ?? null);
         setPendingRange(
@@ -157,11 +198,14 @@ const JournalSummary = () => {
           attempt >= SUMMARY_MAX_ATTEMPTS
         ) {
           stopGenerating();
-          setGenerateExhausted(true);
+          markAttemptExhausted(isRevise);
           return;
         }
         stopGenerating();
-        emitToast(err.message || t('summary.createFailed'));
+        emitToast(
+          err.message ||
+            t(isRevise ? 'summary.reviseFailed' : 'summary.createFailed'),
+        );
         loadCurrent();
         return;
       } finally {
@@ -170,7 +214,53 @@ const JournalSummary = () => {
     }
 
     stopGenerating();
-    setGenerateExhausted(true);
+    markAttemptExhausted(isRevise);
+  };
+
+  const handleGenerate = async () => {
+    if (generating) return;
+    clearComments();
+
+    if (demoMode) {
+      setDemoFeedbackUsed(false);
+      setGenerating(true);
+      setGenerateExhausted(false);
+      setReviseExhausted(false);
+      setGenerateAttempt(1);
+      setPendingIsRevise(false);
+      setGenerateReady(true);
+      return;
+    }
+
+    await runSummaryPost({
+      url: '/auth/me/journal-summaries/current',
+      isRevise: false,
+    });
+  };
+
+  const handleRevise = async () => {
+    if (generating || comments.length === 0) return;
+
+    if (demoMode) {
+      setGenerating(true);
+      setReviseExhausted(false);
+      setGenerateAttempt(1);
+      setPendingIsRevise(true);
+      setGenerateReady(true);
+      return;
+    }
+
+    await runSummaryPost({
+      url: '/auth/me/journal-summaries/current/revise',
+      body: {
+        comments: comments.map(({ section, quotedText, note }) => ({
+          section,
+          quotedText,
+          note,
+        })),
+      },
+      isRevise: true,
+    });
   };
 
   const finishLoadingScreen = useCallback(() => {
@@ -192,11 +282,32 @@ const JournalSummary = () => {
         };
       });
     }
+    if (pendingIsRevise && demoMode) {
+      setDemoFeedbackUsed(true);
+    }
+    setComments([]);
+    setActiveTarget(null);
     setGenerating(false);
     setGenerateReady(false);
     setPendingSummary(null);
     setPendingRange(null);
-  }, [pendingRange, pendingSummary]);
+    setPendingIsRevise(false);
+  }, [demoMode, pendingIsRevise, pendingRange, pendingSummary]);
+
+  const addQueuedComment = (note) => {
+    if (!activeTarget) return;
+    commentIdRef.current += 1;
+    setComments((prev) =>
+      upsertTargetComment(prev, {
+        id: commentIdRef.current,
+        targetId: activeTarget.targetId,
+        section: activeTarget.section,
+        quotedText: activeTarget.quotedText,
+        note,
+      }),
+    );
+    setActiveTarget(null);
+  };
 
   if (generating) {
     return (
@@ -212,7 +323,9 @@ const JournalSummary = () => {
     );
   }
 
-  const effectivePayload = demoMode ? getDemoSummaryPayload(locale) : payload;
+  const effectivePayload = demoMode
+    ? withDemoFeedback(getDemoSummaryPayload(locale), demoFeedbackUsed)
+    : payload;
   const availability = resolveSummaryAvailability(effectivePayload);
   const summary = availability.displayedSummary;
   const weekLabel = formatWeekLabel(
@@ -220,6 +333,49 @@ const JournalSummary = () => {
     effectivePayload?.weekEnd,
     locale,
   );
+  const showQuotaExhausted =
+    availability.remaining <= 0 && !availability.canRevise;
+  const commentDisabled = !availability.canRevise;
+  const hasQueuedComments = comments.length > 0;
+  const atCommentLimit = comments.length >= MAX_QUEUED_COMMENTS;
+  const isCommented = (targetId) =>
+    comments.some((comment) => comment.targetId === targetId);
+
+  const openComment = (section, quotedText, targetId) => {
+    if (commentDisabled) return;
+    const existing = comments.find((comment) => comment.targetId === targetId);
+    if (!existing && atCommentLimit) return;
+    setActiveTarget({
+      section,
+      targetId,
+      quotedText,
+      note: existing?.note ?? '',
+    });
+  };
+
+  const renderPassages = (section, text, className, as) => {
+    const paragraphs = splitSummaryParagraphs(text);
+    const parts = paragraphs.length > 0 ? paragraphs : text ? [text] : [];
+    return parts.map((paragraph, index) => {
+      const targetId = commentTargetId(section, index);
+      const commented = isCommented(targetId);
+      return (
+        <SummaryCommentTarget
+          key={targetId}
+          as={as}
+          className={className}
+          text={paragraph}
+          disabled={commentDisabled || (!commented && atCommentLimit)}
+          commented={commented}
+          commentMarkAlt={t('summary.commentMarked')}
+          ariaLabel={t('summary.commentAria', {
+            passage: truncateSummaryQuote(paragraph),
+          })}
+          onComment={(quotedText) => openComment(section, quotedText, targetId)}
+        />
+      );
+    });
+  };
 
   return (
     <div className="journal-page journal-page--summary">
@@ -231,12 +387,14 @@ const JournalSummary = () => {
             <DemoModeToggle />
           </div>
           <div className="journal-summary__header-actions">
-            <Link
-              to="/journal"
-              className="journal-summary__write-button journal-summary__write-button--header"
-            >
-              {t('summary.write')}
-            </Link>
+            {!hasQueuedComments && (
+              <Link
+                to="/journal"
+                className="journal-summary__write-button journal-summary__write-button--header"
+              >
+                {t('summary.write')}
+              </Link>
+            )}
             <Link
               to="/journal/history"
               className="journal-summary__write-button journal-summary__write-button--header journal-summary__write-button--secondary"
@@ -254,12 +412,12 @@ const JournalSummary = () => {
             )}
             {!demoMode && status === 'ready' && user && !loading && payload && (
               <p className="journal-summary__quota">
-                {availability.remaining > 0
-                  ? t('summary.quotaRemaining', {
+                {showQuotaExhausted
+                  ? t('summary.quotaExhausted')
+                  : t('summary.quotaRemaining', {
                       remaining: availability.remaining,
                       limit: availability.limit,
-                    })
-                  : t('summary.quotaExhausted')}
+                    })}
               </p>
             )}
           </div>
@@ -284,6 +442,12 @@ const JournalSummary = () => {
 
         {(demoMode || (status === 'ready' && user && !loading && summary)) && (
           <div className="journal-summary__result">
+            {availability.canRevise && (
+              <p className="journal-summary__comment-hint">
+                {t('summary.commentHint')}
+              </p>
+            )}
+
             <section className="journal-summary__section">
               <h2 className="journal-summary__heading">{t('summary.thisWeek')}</h2>
               {Array.isArray(summary.mainTopics) &&
@@ -299,14 +463,21 @@ const JournalSummary = () => {
                     ))}
                   </ul>
                 )}
-              <p className="journal-summary__body">{summary.summaryText}</p>
+              {renderPassages(
+                'summaryText',
+                summary.summaryText,
+                'journal-summary__body',
+              )}
             </section>
 
             <section className="journal-summary__section">
               <h2 className="journal-summary__heading">{t('summary.bestQuote')}</h2>
-              <blockquote className="journal-summary__quote">
-                {summary.bestQuote}
-              </blockquote>
+              {renderPassages(
+                'bestQuote',
+                summary.bestQuote,
+                'journal-summary__quote',
+                'blockquote',
+              )}
             </section>
 
             <section className="journal-summary__section">
@@ -318,7 +489,11 @@ const JournalSummary = () => {
                 />
                 {t('summary.socraticHeading')}
               </h2>
-              <p className="journal-summary__socratic">{summary.socraticText}</p>
+              {renderPassages(
+                'socraticText',
+                summary.socraticText,
+                'journal-summary__socratic',
+              )}
             </section>
 
             {summary.machiavelliText && (
@@ -331,27 +506,70 @@ const JournalSummary = () => {
                   />
                   {t('summary.machiavelliHeading')}
                 </h2>
-                <p className="journal-summary__machiavelli">
-                  {summary.machiavelliText}
-                </p>
+                {renderPassages(
+                  'machiavelliText',
+                  summary.machiavelliText,
+                  'journal-summary__machiavelli',
+                )}
               </section>
             )}
 
-            {!demoMode && generateExhausted && (
+            {hasQueuedComments && (
+              <ul className="journal-summary__comment-queue" aria-label={t('summary.commentQueued')}>
+                {comments.map((comment) => (
+                  <li key={comment.id} className="journal-summary__comment-item">
+                    <div className="journal-summary__comment-item-body">
+                      <p className="journal-summary__comment-item-quote">
+                        {truncateSummaryQuote(comment.quotedText)}
+                      </p>
+                      <p className="journal-summary__comment-item-note">
+                        {comment.note}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="journal-summary__comment-remove"
+                      onClick={() =>
+                        setComments((prev) =>
+                          prev.filter((item) => item.id !== comment.id),
+                        )
+                      }
+                    >
+                      {t('summary.commentRemove')}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {!demoMode && (generateExhausted || reviseExhausted) && (
               <p className="journal-summary__lead">{t('summary.tryLater')}</p>
             )}
-            {(demoMode ||
-              (availability.canRegenerate && !generateExhausted)) && (
-              <div className="journal-summary__regenerate">
-                <button
-                  type="button"
-                  className="journal-summary__complete-button journal-summary__complete-button--secondary"
-                  onClick={handleGenerate}
-                >
-                  {t('summary.regenerate')}
-                </button>
-              </div>
-            )}
+            <div className="journal-summary__actions">
+              {availability.canRevise &&
+                hasQueuedComments &&
+                !reviseExhausted && (
+                  <button
+                    type="button"
+                    className="journal-summary__complete-button"
+                    onClick={handleRevise}
+                  >
+                    {t('summary.commentSend')}
+                  </button>
+                )}
+              {(demoMode ||
+                (availability.canRegenerate && !generateExhausted)) && (
+                <div className="journal-summary__regenerate">
+                  <button
+                    type="button"
+                    className="journal-summary__complete-button journal-summary__complete-button--secondary"
+                    onClick={handleGenerate}
+                  >
+                    {t('summary.regenerate')}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -394,7 +612,7 @@ const JournalSummary = () => {
           </div>
         )}
 
-        {(demoMode || status !== 'loading') && (
+        {(demoMode || status !== 'loading') && !hasQueuedComments && (
           <Link
             to="/journal"
             className="journal-summary__write-button journal-summary__write-button--footer"
@@ -403,6 +621,25 @@ const JournalSummary = () => {
           </Link>
         )}
       </main>
+
+      {activeTarget && (
+        <SummaryCommentModal
+          key={activeTarget.targetId}
+          labelledById="summary-comment-title"
+          title={t('summary.commentTitle')}
+          quotedText={activeTarget.quotedText}
+          placeholder={t('summary.commentPlaceholder')}
+          addLabel={
+            activeTarget.note
+              ? t('summary.commentSave')
+              : t('summary.commentAdd')
+          }
+          cancelLabel={t('summary.commentCancel')}
+          initialNote={activeTarget.note}
+          onClose={() => setActiveTarget(null)}
+          onAdd={addQueuedComment}
+        />
+      )}
     </div>
   );
 };

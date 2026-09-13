@@ -154,6 +154,13 @@ A rename also rewrites matching strings in that user's `journal_entries.topics`.
 Entry `POST`/`PATCH` topic validation accepts the built-in slugs plus the
 authenticated user's custom topic names.
 
+Weekly summaries live under `/auth/me/journal-summaries/current`.
+`GET` returns the current week row, rolling entry counts, and fresh-generation
+quota. `POST` creates or regenerates the week's JSON reflection (max 2 per
+week). `POST /auth/me/journal-summaries/current/revise` applies user comments
+to that same JSON once per displayed summary (`feedback_count`), without
+consuming a fresh generation.
+
 Use the existing layers:
 
 1. **Route**: declares path, HTTP method, middleware, and controller.
