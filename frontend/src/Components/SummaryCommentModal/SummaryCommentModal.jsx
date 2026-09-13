@@ -53,6 +53,7 @@ const SummaryCommentModal = ({
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder={placeholder}
+          maxLength={1000}
           rows={4}
         />
         <button

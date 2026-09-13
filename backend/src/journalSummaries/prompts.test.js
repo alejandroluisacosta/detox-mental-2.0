@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildRevisionMessages, buildSummaryMessages, buildSystemPrompt } from './prompts.js';
+import { SUMMARY_GENERATIONS_PER_WEEK } from './summaryWeek.js';
 
 test('English prompt asks for a 400–600 word summary', () => {
   const prompt = buildSystemPrompt('en');
@@ -91,10 +92,26 @@ test('revision messages name generation N and include previous JSON plus comment
     ],
   });
 
-  assert.match(system.content, /revision 1 of generation 1 of 2/i);
+  assert.match(
+    system.content,
+    new RegExp(
+      `revision 1 of generation 1 of ${SUMMARY_GENERATIONS_PER_WEEK}`,
+      'i',
+    ),
+  );
   assert.match(system.content, /not a new weekly summary from scratch/i);
-  assert.match(user.content, /revision 1 of weekly summary generation 1 of 2/);
+  assert.match(
+    user.content,
+    new RegExp(
+      `revision 1 of weekly summary generation 1 of ${SUMMARY_GENERATIONS_PER_WEEK}`,
+    ),
+  );
   assert.match(user.content, /"summary": "You treat planning as safety\."/);
+  assert.match(user.content, /"socratic": "What is the plan protecting you from\?"/);
+  assert.match(
+    user.content,
+    /"machiavelli": "What do you gain by delaying the decision\?"/,
+  );
   assert.match(user.content, /section=summaryText/);
   assert.match(user.content, /exhausted, not making planning/);
   assert.match(user.content, /I keep making lists/);

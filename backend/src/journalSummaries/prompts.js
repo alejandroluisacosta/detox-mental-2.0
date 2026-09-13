@@ -1,3 +1,5 @@
+import { SUMMARY_GENERATIONS_PER_WEEK } from './summaryWeek.js';
+
 const MAX_INPUT_CHARS = 10000;
 
 const formatEntryBlock = (entry, index) => {
@@ -254,7 +256,7 @@ REVISION
 
 This is not a new weekly summary from scratch.
 
-This is revision 1 of generation ${generation} of 2 this week.
+This is revision 1 of generation ${generation} of ${SUMMARY_GENERATIONS_PER_WEEK} this week.
 
 Return the same JSON schema.
 
@@ -282,7 +284,7 @@ export const buildRevisionMessages = ({
   );
 
   const user = [
-    `This is revision 1 of weekly summary generation ${generationCount} of 2.`,
+    `This is revision 1 of weekly summary generation ${generationCount} of ${SUMMARY_GENERATIONS_PER_WEEK}.`,
     `Last 7 days from ${weekStart} to ${weekEnd} (Europe/Madrid).`,
     `Number of entries included: ${entries.length}.`,
     '',

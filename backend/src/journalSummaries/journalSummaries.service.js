@@ -198,25 +198,42 @@ export const reviseWeeklySummary = async ({
 };
 
 export const GENERATE_ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
+export const GENERATE_ATTEMPT_KIND = 'generate';
+export const REVISE_ATTEMPT_KIND = 'revise';
 export const MAX_GENERATE_ATTEMPTS_IN_WINDOW = 3;
+export const MAX_REVISE_ATTEMPTS_IN_WINDOW = 3;
 
-export const countRecentGenerateAttempts = async (
+const countRecentAttempts = async (
   userId,
+  kind,
   now = new Date(),
+  db = pool,
 ) => {
   const since = new Date(now.getTime() - GENERATE_ATTEMPT_WINDOW_MS);
-  const { rows } = await pool.query(
+  const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count
      FROM journal_summary_generate_attempts
-     WHERE user_id = $1 AND created_at >= $2`,
-    [userId, since],
+     WHERE user_id = $1 AND kind = $2 AND created_at >= $3`,
+    [userId, kind, since],
   );
   return rows[0]?.count ?? 0;
 };
 
-export const recordGenerateAttempt = async (userId) => {
-  await pool.query(
-    `INSERT INTO journal_summary_generate_attempts (user_id) VALUES ($1)`,
-    [userId],
+const recordAttempt = async (userId, kind, db = pool) => {
+  await db.query(
+    `INSERT INTO journal_summary_generate_attempts (user_id, kind) VALUES ($1, $2)`,
+    [userId, kind],
   );
 };
+
+export const countRecentGenerateAttempts = (userId, now, db = pool) =>
+  countRecentAttempts(userId, GENERATE_ATTEMPT_KIND, now, db);
+
+export const countRecentReviseAttempts = (userId, now, db = pool) =>
+  countRecentAttempts(userId, REVISE_ATTEMPT_KIND, now, db);
+
+export const recordGenerateAttempt = (userId, db = pool) =>
+  recordAttempt(userId, GENERATE_ATTEMPT_KIND, db);
+
+export const recordReviseAttempt = (userId, db = pool) =>
+  recordAttempt(userId, REVISE_ATTEMPT_KIND, db);

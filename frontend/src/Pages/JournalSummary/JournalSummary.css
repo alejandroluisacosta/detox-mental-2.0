@@ -199,13 +199,6 @@
   font-size: 13px;
 }
 
-.journal-summary__body.summary-comment-target,
-.journal-summary__socratic.summary-comment-target,
-.journal-summary__machiavelli.summary-comment-target,
-.journal-summary__quote.summary-comment-target {
-  font-weight: 400;
-}
-
 .journal-summary__meta {
   display: flex;
   flex-direction: column;

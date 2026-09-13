@@ -4,7 +4,6 @@ import {
   COMMENT_SECTIONS,
   MAX_REVISION_COMMENTS,
   parseRevisionComments,
-  toRevisionSummaryJson,
 } from './parseRevisionComments.js';
 
 test('parseRevisionComments accepts a valid comment with quoted text', () => {
@@ -85,23 +84,4 @@ test('parseRevisionComments still rejects two comments on the same quote', () =>
     { section: 'bestQuote', quotedText: 'Never enough', note: 'Second' },
   ]);
   assert.equal(parsed.error, 'duplicate_comment');
-});
-
-test('toRevisionSummaryJson uses the generate schema keys', () => {
-  assert.deepEqual(
-    toRevisionSummaryJson({
-      summaryText: 'Reflection',
-      mainTopics: ['Work'],
-      bestQuote: 'A line',
-      socraticText: 'A question?',
-      machiavelliText: 'A challenge.',
-    }),
-    {
-      summary: 'Reflection',
-      mainTopics: ['Work'],
-      bestQuote: 'A line',
-      socratic: 'A question?',
-      machiavelli: 'A challenge.',
-    },
-  );
 });

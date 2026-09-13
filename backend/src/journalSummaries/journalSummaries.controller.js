@@ -13,8 +13,11 @@ import {
   upsertWeeklySummary,
   reviseWeeklySummary,
   countRecentGenerateAttempts,
+  countRecentReviseAttempts,
   recordGenerateAttempt,
+  recordReviseAttempt,
   MAX_GENERATE_ATTEMPTS_IN_WINDOW,
+  MAX_REVISE_ATTEMPTS_IN_WINDOW,
 } from './journalSummaries.service.js';
 import {
   generateWeeklySummaryContent,
@@ -215,12 +218,13 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
     const parsedComments = parseRevisionComments(req.body?.comments);
     if (!parsedComments.ok) {
       return res.status(400).json({
+        code: parsedComments.error,
         message: journalMessage(locale, 'summaryInvalidComments'),
       });
     }
 
-    const recentAttempts = await countRecentGenerateAttempts(req.user.id, now);
-    if (recentAttempts >= MAX_GENERATE_ATTEMPTS_IN_WINDOW) {
+    const recentAttempts = await countRecentReviseAttempts(req.user.id, now);
+    if (recentAttempts >= MAX_REVISE_ATTEMPTS_IN_WINDOW) {
       return res.status(429).json(rateLimited(locale));
     }
 
@@ -230,7 +234,7 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
       range.periodEnd,
     );
 
-    await recordGenerateAttempt(req.user.id);
+    await recordReviseAttempt(req.user.id);
 
     const abort = new AbortController();
     const onClose = () => abort.abort();

@@ -20,11 +20,11 @@ const SummaryCommentTarget = ({
   ) : null;
 
   const body = disabled ? (
-    <Tag className={className}>{text}</Tag>
+    text
   ) : (
     <button
       type="button"
-      className={['summary-comment-target', className].filter(Boolean).join(' ')}
+      className="summary-comment-target"
       onClick={() => onComment?.(text)}
       aria-label={ariaLabel}
     >
@@ -41,7 +41,7 @@ const SummaryCommentTarget = ({
         .filter(Boolean)
         .join(' ')}
     >
-      {body}
+      <Tag className={className}>{body}</Tag>
       {mark}
     </div>
   );

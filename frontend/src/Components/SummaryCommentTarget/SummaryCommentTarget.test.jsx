@@ -41,6 +41,8 @@ describe('SummaryCommentTarget', () => {
   test('renders static text when commenting is disabled', () => {
     render(
       <SummaryCommentTarget
+        as="blockquote"
+        className="journal-summary__quote"
         text="You treat planning as safety."
         disabled
         ariaLabel="Add a comment on this passage"
@@ -49,8 +51,28 @@ describe('SummaryCommentTarget', () => {
     );
 
     expect(screen.getByText('You treat planning as safety.')).toBeTruthy();
+    expect(document.querySelector('blockquote.journal-summary__quote')).toBeTruthy();
     expect(
       screen.queryByRole('button', { name: 'Add a comment on this passage' }),
     ).toBeNull();
+  });
+
+  test('keeps the requested tag when the passage is commentable', () => {
+    render(
+      <SummaryCommentTarget
+        as="blockquote"
+        className="journal-summary__quote"
+        text="Never enough"
+        ariaLabel="Never enough. Add a comment"
+        onComment={vi.fn()}
+      />,
+    );
+
+    const quote = document.querySelector('blockquote.journal-summary__quote');
+    expect(quote).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Never enough. Add a comment' }),
+    ).toBeTruthy();
+    expect(quote.contains(screen.getByRole('button'))).toBe(true);
   });
 });

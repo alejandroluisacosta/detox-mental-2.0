@@ -73,6 +73,7 @@ const JournalSummary = () => {
   const [pendingIsRevise, setPendingIsRevise] = useState(false);
   const [generateAttempt, setGenerateAttempt] = useState(1);
   const [generateExhausted, setGenerateExhausted] = useState(false);
+  const [reviseExhausted, setReviseExhausted] = useState(false);
   const [comments, setComments] = useState([]);
   const [activeTarget, setActiveTarget] = useState(null);
   const [demoFeedbackUsed, setDemoFeedbackUsed] = useState(false);
@@ -125,9 +126,21 @@ const JournalSummary = () => {
     setPendingIsRevise(false);
   };
 
+  const markAttemptExhausted = (isRevise) => {
+    if (isRevise) {
+      setReviseExhausted(true);
+    } else {
+      setGenerateExhausted(true);
+    }
+  };
+
   const runSummaryPost = async ({ url, body, isRevise }) => {
     setGenerating(true);
-    setGenerateExhausted(false);
+    if (isRevise) {
+      setReviseExhausted(false);
+    } else {
+      setGenerateExhausted(false);
+    }
     setGenerateReady(false);
     setPendingSummary(null);
     setPendingRange(null);
@@ -148,14 +161,14 @@ const JournalSummary = () => {
         const data = await res.json().catch(() => ({}));
         if (isGenerateRateLimited(res.status, data)) {
           stopGenerating();
-          setGenerateExhausted(true);
+          markAttemptExhausted(isRevise);
           return;
         }
         if (!res.ok) {
           if (shouldRetryGenerate(res.status)) {
             if (attempt < SUMMARY_MAX_ATTEMPTS) continue;
             stopGenerating();
-            setGenerateExhausted(true);
+            markAttemptExhausted(isRevise);
             return;
           }
           throw new Error(
@@ -185,7 +198,7 @@ const JournalSummary = () => {
           attempt >= SUMMARY_MAX_ATTEMPTS
         ) {
           stopGenerating();
-          setGenerateExhausted(true);
+          markAttemptExhausted(isRevise);
           return;
         }
         stopGenerating();
@@ -201,7 +214,7 @@ const JournalSummary = () => {
     }
 
     stopGenerating();
-    setGenerateExhausted(true);
+    markAttemptExhausted(isRevise);
   };
 
   const handleGenerate = async () => {
@@ -212,6 +225,7 @@ const JournalSummary = () => {
       setDemoFeedbackUsed(false);
       setGenerating(true);
       setGenerateExhausted(false);
+      setReviseExhausted(false);
       setGenerateAttempt(1);
       setPendingIsRevise(false);
       setGenerateReady(true);
@@ -229,7 +243,7 @@ const JournalSummary = () => {
 
     if (demoMode) {
       setGenerating(true);
-      setGenerateExhausted(false);
+      setReviseExhausted(false);
       setGenerateAttempt(1);
       setPendingIsRevise(true);
       setGenerateReady(true);
@@ -353,6 +367,9 @@ const JournalSummary = () => {
           disabled={commentDisabled || (!commented && atCommentLimit)}
           commented={commented}
           commentMarkAlt={t('summary.commentMarked')}
+          ariaLabel={t('summary.commentAria', {
+            passage: truncateSummaryQuote(paragraph),
+          })}
           onComment={(quotedText) => openComment(section, quotedText, targetId)}
         />
       );
@@ -522,19 +539,21 @@ const JournalSummary = () => {
               </ul>
             )}
 
-            {!demoMode && generateExhausted && (
+            {!demoMode && (generateExhausted || reviseExhausted) && (
               <p className="journal-summary__lead">{t('summary.tryLater')}</p>
             )}
             <div className="journal-summary__actions">
-              {availability.canRevise && comments.length > 0 && (
-                <button
-                  type="button"
-                  className="journal-summary__complete-button"
-                  onClick={handleRevise}
-                >
-                  {t('summary.commentSend')}
-                </button>
-              )}
+              {availability.canRevise &&
+                comments.length > 0 &&
+                !reviseExhausted && (
+                  <button
+                    type="button"
+                    className="journal-summary__complete-button"
+                    onClick={handleRevise}
+                  >
+                    {t('summary.commentSend')}
+                  </button>
+                )}
               {(demoMode ||
                 (availability.canRegenerate && !generateExhausted)) && (
                 <div className="journal-summary__regenerate">

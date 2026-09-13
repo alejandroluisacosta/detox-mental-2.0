@@ -58,12 +58,3 @@ export const parseRevisionComments = (raw) => {
 
   return { ok: true, value: comments };
 };
-
-/** Model-facing JSON for the previous summary (same keys as generate output). */
-export const toRevisionSummaryJson = (summary) => ({
-  summary: summary?.summaryText ?? '',
-  mainTopics: Array.isArray(summary?.mainTopics) ? summary.mainTopics : [],
-  bestQuote: summary?.bestQuote ?? '',
-  socratic: summary?.socraticText ?? '',
-  machiavelli: summary?.machiavelliText ?? '',
-});

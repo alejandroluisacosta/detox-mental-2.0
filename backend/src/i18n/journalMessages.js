@@ -44,7 +44,7 @@ const messages = {
     summaryInvalidComments: 'Comments are missing or not valid.',
     summaryReviseFailed: 'Could not revise the summary.',
     summaryTimeout: 'The summary took too long to generate.',
-    summaryTryLater: 'Please try later.',
+    summaryTryLater: 'Please try later. Wait a few minutes and try again.',
   },
   es: {
     topicsMustBeList: 'Los temas deben enviarse como una lista.',
@@ -90,7 +90,7 @@ const messages = {
     summaryInvalidComments: 'Faltan comentarios o no son válidos.',
     summaryReviseFailed: 'No se pudo revisar el resumen.',
     summaryTimeout: 'El resumen tardó demasiado en generarse.',
-    summaryTryLater: 'Inténtalo más tarde.',
+    summaryTryLater: 'Inténtalo más tarde. Espera unos minutos y vuelve a intentarlo.',
   },
 };
 

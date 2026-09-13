@@ -211,15 +211,16 @@ Stores the once-per-week AI reflection generated from `journal_entries` (`/journ
 
 ### 8. `journal_summary_generate_attempts`
 
-Rolling log of generate and revise POSTs used to cap retries (3 per 15 minutes). Failed and timed-out calls count; successful quota generations and revisions also count.
+Rolling log of generate and revise POSTs used to cap retries (3 per kind per 15 minutes). Generate retries do not consume the revise budget, so the four weekly model calls stay reachable back to back. Failed and timed-out calls count; successful quota generations and revisions also count.
 
 **Columns:**
 - `id` (UUID, PK)
 - `user_id` (UUID, FK → users.id)
+- `kind` (`generate` or `revise`)
 - `created_at` (TIMESTAMPTZ)
 
 **Indexes:**
-- `idx_journal_summary_generate_attempts_user_created`: Recent-attempt lookups
+- `idx_journal_summary_generate_attempts_user_kind_created`: Recent-attempt lookups by kind
 
 ---
 
@@ -348,6 +349,12 @@ users (1) ──────< (N) magic_link_tokens
 ```sql
 -- Run after the unused-thought-tables migration
 \i backend/src/db/migrations/012_journal_summary_feedback_count.sql
+```
+
+### Journal Summary Attempt Kind
+```sql
+-- Run after the feedback-count migration. Separates generate and revise retry budgets.
+\i backend/src/db/migrations/013_journal_summary_attempt_kind.sql
 ```
 
 ### Verify Migration Success

@@ -2,7 +2,6 @@
   position: relative;
 }
 
-.summary-comment-target-wrap--marked .summary-comment-target,
 .summary-comment-target-wrap--marked > p,
 .summary-comment-target-wrap--marked > blockquote {
   padding-right: 18px;

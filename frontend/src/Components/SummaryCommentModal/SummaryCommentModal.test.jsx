@@ -42,6 +42,9 @@ describe('SummaryCommentModal', () => {
     fireEvent.change(screen.getByPlaceholderText('What should change?'), {
       target: { value: '  Soften this.  ' },
     });
+    expect(screen.getByPlaceholderText('What should change?').maxLength).toBe(
+      1000,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'ADD COMMENT' }));
     expect(onAdd).toHaveBeenCalledWith('Soften this.');
   });

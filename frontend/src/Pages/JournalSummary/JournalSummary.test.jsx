@@ -564,6 +564,68 @@ describe('JournalSummary page states', () => {
     ]);
   });
 
+  test('hides send comments after a revise rate limit and keeps regenerate', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    const current = {
+      weekStart: '2026-07-27',
+      weekEnd: '2026-08-02',
+      quota: quota(1),
+      entryCount: 3,
+      minEntries: 2,
+      summary: {
+        summaryText: 'First insight.\n\nSecond insight.',
+        mainTopics: ['Work'],
+        bestQuote: 'Never enough',
+        socraticText: 'What proof do you have of that?',
+        machiavelliText: 'A challenge.',
+        generationCount: 1,
+        feedbackCount: 0,
+      },
+    };
+    apiFetch.mockImplementation((_path, options = {}) => {
+      if (options.method === 'POST') {
+        return Promise.resolve({
+          ok: false,
+          status: 429,
+          json: async () => ({
+            code: 'summary_rate_limited',
+            message: 'Please try later. Wait a few minutes and try again.',
+          }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => current,
+      });
+    });
+
+    renderSummary();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /First insight\./i }),
+      ).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /First insight\./i }));
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Soften this.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+    fireEvent.click(screen.getByRole('button', { name: /SEND COMMENTS/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Wait a few minutes and try again/i),
+      ).toBeTruthy();
+    });
+    expect(
+      screen.queryByRole('button', { name: /SEND COMMENTS/i }),
+    ).toBeNull();
+    expect(
+      screen.getByRole('button', { name: /REGENERATE SUMMARY/i }),
+    ).toBeTruthy();
+  });
+
   test('clears unsent comments when regenerate starts', async () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     mockUseDemoMode.mockReturnValue({
