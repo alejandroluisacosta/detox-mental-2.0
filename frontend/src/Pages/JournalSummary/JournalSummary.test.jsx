@@ -653,6 +653,40 @@ describe('JournalSummary page states', () => {
     expect(screen.queryByText('Soften this.')).toBeNull();
   });
 
+  test('hides Write links while comments are queued and shows them after removal', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    renderSummary();
+    expect(screen.getByRole('link', { name: 'Write' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'WRITE' })).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /turn the need for control into a virtue/i,
+      }),
+    );
+    expect(screen.getByRole('link', { name: 'Write' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'WRITE' })).toBeTruthy();
+
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'Too harsh.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+
+    expect(screen.queryByRole('link', { name: 'Write' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'WRITE' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'History' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: /Remove/i }));
+
+    expect(screen.getByRole('link', { name: 'Write' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'WRITE' })).toBeTruthy();
+  });
+
   test('queues a separate comment per paragraph and marks each with a note icon', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     mockUseDemoMode.mockReturnValue({

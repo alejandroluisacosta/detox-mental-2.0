@@ -336,6 +336,7 @@ const JournalSummary = () => {
   const showQuotaExhausted =
     availability.remaining <= 0 && !availability.canRevise;
   const commentDisabled = !availability.canRevise;
+  const hasQueuedComments = comments.length > 0;
   const atCommentLimit = comments.length >= MAX_QUEUED_COMMENTS;
   const isCommented = (targetId) =>
     comments.some((comment) => comment.targetId === targetId);
@@ -386,12 +387,14 @@ const JournalSummary = () => {
             <DemoModeToggle />
           </div>
           <div className="journal-summary__header-actions">
-            <Link
-              to="/journal"
-              className="journal-summary__write-button journal-summary__write-button--header"
-            >
-              {t('summary.write')}
-            </Link>
+            {!hasQueuedComments && (
+              <Link
+                to="/journal"
+                className="journal-summary__write-button journal-summary__write-button--header"
+              >
+                {t('summary.write')}
+              </Link>
+            )}
             <Link
               to="/journal/history"
               className="journal-summary__write-button journal-summary__write-button--header journal-summary__write-button--secondary"
@@ -511,7 +514,7 @@ const JournalSummary = () => {
               </section>
             )}
 
-            {comments.length > 0 && (
+            {hasQueuedComments && (
               <ul className="journal-summary__comment-queue" aria-label={t('summary.commentQueued')}>
                 {comments.map((comment) => (
                   <li key={comment.id} className="journal-summary__comment-item">
@@ -544,7 +547,7 @@ const JournalSummary = () => {
             )}
             <div className="journal-summary__actions">
               {availability.canRevise &&
-                comments.length > 0 &&
+                hasQueuedComments &&
                 !reviseExhausted && (
                   <button
                     type="button"
@@ -609,7 +612,7 @@ const JournalSummary = () => {
           </div>
         )}
 
-        {(demoMode || status !== 'loading') && (
+        {(demoMode || status !== 'loading') && !hasQueuedComments && (
           <Link
             to="/journal"
             className="journal-summary__write-button journal-summary__write-button--footer"
