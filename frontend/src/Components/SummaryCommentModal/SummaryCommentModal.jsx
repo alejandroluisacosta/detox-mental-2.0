@@ -41,9 +41,9 @@ const SummaryCommentModal = ({
         <h2 id={labelledById} className="summary-comment-modal__title">
           {title}
         </h2>
-        <blockquote className="summary-comment-modal__quote">
+        <p className="summary-comment-modal__quote">
           {quotedText}
-        </blockquote>
+        </p>
         <label className="summary-comment-modal__label" htmlFor="summary-comment-note">
           {placeholder}
         </label>

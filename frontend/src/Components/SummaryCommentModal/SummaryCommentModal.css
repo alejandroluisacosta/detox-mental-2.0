@@ -29,11 +29,10 @@
   flex: 0 1 auto;
   max-height: 300px;
   margin: 0 0 1.25rem;
-  padding: 0 8px 0 16px;
+  padding: 0 8px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  border-left: 3px solid var(--accent);
   font-style: italic;
   line-height: 1.5;
   color: var(--text);
