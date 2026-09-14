@@ -22,6 +22,15 @@ describe('resolveNavModule', () => {
     });
 });
 
+describe('personal-site isolation', () => {
+    test('module menus do not include the Alejandro Luis blog', () => {
+        const paths = [...EDUCATIONAL_LINKS, ...JOURNALING_LINKS].map((link) => link.path);
+        expect(paths.some((path) => path.includes('alejandroluis') || path.includes('blog'))).toBe(
+            false,
+        );
+    });
+});
+
 describe('module link active matching', () => {
     const isActive = (links, path, pathname) =>
         links.find((link) => link.path === path).isActive(pathname);

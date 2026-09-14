@@ -21,6 +21,10 @@ import Journal from './Pages/Journal/Journal.jsx';
 import JournalHistory from './Pages/JournalHistory/JournalHistory.jsx';
 import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
 import Home from './Pages/Home/Home.jsx';
+import AlejandroLuis from './Pages/AlejandroLuis/AlejandroLuis.jsx';
+import Blog from './Pages/Blog/Blog.jsx';
+import BlogPost from './Pages/BlogPost/BlogPost.jsx';
+import BlogComposer from './Pages/BlogComposer/BlogComposer.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 import { DemoModeProvider } from './Context/DemoModeContext.jsx';
 import { JournalTopicsProvider } from './Context/JournalTopicsContext.jsx';
@@ -43,6 +47,13 @@ const App = () => {
                                         <Route path='/login' element={<Login />} />
                                         <Route path='/auth/error' element={<AuthError />} />
                                         <Route path='/account' element={<Account />} />
+
+                                        {/* Personal site — unlinked from journal and education */}
+                                        <Route path='/alejandroluis' element={<AlejandroLuis />} />
+                                        <Route path='/alejandroluis/blog' element={<Blog />} />
+                                        <Route path='/alejandroluis/blog/new' element={<BlogComposer />} />
+                                        <Route path='/alejandroluis/blog/:slug' element={<BlogPost />} />
+                                        <Route path='/alejandroluis/blog/:slug/edit' element={<BlogComposer />} />
 
                                         {/* Journaling module — independent of onboarding */}
                                         <Route path='/journal' element={<Journal />} />

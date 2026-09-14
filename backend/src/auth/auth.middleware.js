@@ -1,6 +1,8 @@
 import { verifyJwt, COOKIE_NAME } from './jwt.js';
 import { findUserById } from './auth.service.js';
 
+export const isAdminRole = (role) => role === 'admin';
+
 export async function requireAuth(req, res, next) {
   const token = req.cookies?.[COOKIE_NAME];
 
@@ -29,4 +31,11 @@ export async function requireAuth(req, res, next) {
     console.error('[auth/middleware]', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
+}
+
+export async function requireAdmin(req, res, next) {
+  if (!isAdminRole(req.user?.role)) {
+    return res.status(404).json({ message: 'Not found.' });
+  }
+  return next();
 }

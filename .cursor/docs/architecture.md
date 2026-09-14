@@ -57,6 +57,11 @@ to `/?auth=success`. Shared account and auth routes (`/login`, `/auth/error`,
 `/account`) and the journaling module (`/journal`, `/journal/history`,
 `/journal/summary`) are reachable without onboarding.
 
+The personal site (`/alejandroluis`, `/alejandroluis/blog`,
+`/alejandroluis/blog/:slug`, plus unlisted admin compose routes) is also
+outside `OnboardingGate`. It is not linked from Home, journal, education, or
+product navigation. Visitors reach it by URL.
+
 The educational module (`/theory`, `/course`, `/session/:sessionId`,
 `/instructions`, `/tests`, `/test/:testId`, `/promo`) is nested under
 `OnboardingGate`, which checks the `onboardingRevealed` local-storage flag.
@@ -122,7 +127,7 @@ implementation details that make harmless refactors expensive.
 - ESLint
 
 `backend/src/index.js` configures CORS, Stripe's raw webhook body, JSON parsing,
-cookies, and the `/chat`, `/auth`, and `/stripe` route groups. It starts a local
+cookies, and the `/chat`, `/auth`, `/stripe`, and `/blog` route groups. It starts a local
 server outside Vercel and exports the Express app for serverless deployment.
 
 `backend/api/chat.js` is the stateless Vercel handler for onboarding chat. Keep
@@ -143,6 +148,12 @@ src/journalTopics/
 ├── journalTopics.controller.js   # HTTP validation and responses
 ├── journalTopics.service.js      # SQL for custom topics and rename rewrite
 └── parseTopicName.js             # Shared name normalization and reserved-name rules
+
+src/blogPosts/
+├── blogPosts.routes.js       # Public list/detail and admin write paths
+├── blogPosts.controller.js   # HTTP validation and responses
+├── blogPosts.service.js      # SQL for posts
+└── parseBlogPost.js          # Slug, category, and status rules
 ```
 
 Journal entries are listed, created, and deleted under `/auth/me/journal-entries`.
@@ -187,6 +198,11 @@ Protected user resources live under `/auth/me/...` and apply `requireAuth`.
 They are currently registered together in `backend/src/auth/auth.routes.js`,
 even when their controllers and services belong to domains such as journal
 entries or session unlocks.
+
+Public blog reads live under `/blog/posts`. Writes live under `/blog/admin/posts`
+and apply `requireAuth` then `requireAdmin`. Non-admin callers receive **404**,
+not 403, so the admin API does not advertise itself.
+
 Cookie-enabled CORS requires the frontend and backend environment origins to
 remain aligned.
 
@@ -211,7 +227,8 @@ application command and verify the resulting schema in the feature handoff.
 
 ## 5. External services and deployment
 
-- PostgreSQL stores users, auth tokens, progress, journal data, and summaries.
+- PostgreSQL stores users, auth tokens, progress, journal data, summaries, and
+  published blog posts.
 - Resend sends magic-link emails.
 - Stripe provides Checkout and webhook-driven payment updates.
 - Hugging Face powers onboarding, journal transcription, and weekly summaries.

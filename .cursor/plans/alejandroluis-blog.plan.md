@@ -4,19 +4,19 @@ overview: 'Add a personal site at /alejandroluis on the same Detox Mental domain
 todos:
   - id: isolation-routes
     content: 'Register /alejandroluis routes outside OnboardingGate; own chrome (no product Navigation); assert no inbound links from Home, nav, journal, education, account'
-    status: pending
+    status: completed
   - id: schema-api
-    content: 'Migration 014 blog_posts; public list/detail; requireAuth+requireAdmin create/update; slug and draft rules'
-    status: pending
+    content: 'Migration 014 blog_posts with categories; public list/detail; requireAuth+requireAdmin create/update; slug and draft rules'
+    status: completed
   - id: public-ui
-    content: 'AlejandroLuis landing, Blog index, BlogPost markdown reader using Detox Mental tokens and long-form article rhythm'
-    status: pending
+    content: 'AlejandroLuis landing, Blog index with category filters, BlogPost markdown reader, two mock articles'
+    status: completed
   - id: composer
     content: 'Admin-only BlogComposer at /alejandroluis/blog/new and /:slug/edit; Write control only when user.role is admin'
-    status: pending
+    status: completed
   - id: tests-docs
     content: 'Isolation, slug, draft visibility, composer auth tests; architecture + db README; apply migration 014'
-    status: pending
+    status: completed
 isProject: true
 ---
 

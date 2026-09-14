@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, and journal data.
+This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, journal data, and the personal blog.
 
 ## Database Technology
 
@@ -224,6 +224,30 @@ Rolling log of generate and revise POSTs used to cap retries (3 per kind per 15 
 
 ---
 
+### 9. `blog_posts`
+
+Markdown articles for the unlinked personal site at `/alejandroluis/blog`.
+
+**Columns:**
+- `id` (UUID, PK)
+- `slug` (VARCHAR(120), UNIQUE): URL slug (`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
+- `title` (VARCHAR(200))
+- `excerpt` (TEXT): Short index blurb
+- `body` (TEXT): Markdown article
+- `category` (VARCHAR(40)): `personal-development` or `technology`
+- `status` (VARCHAR(20)): `draft` or `published`
+- `author_id` (UUID, FK → users.id, ON DELETE SET NULL)
+- `published_at` (TIMESTAMPTZ): Set on first publish
+- `created_at` / `updated_at` (TIMESTAMPTZ)
+
+**Indexes:**
+- `idx_blog_posts_published_at`: Public index order
+- `idx_blog_posts_category`: Published posts by category
+
+Migration `014` also seeds two published mock posts, one per category.
+
+---
+
 ## Relationships Diagram
 
 ```
@@ -237,7 +261,9 @@ users (1) ──────< (N) magic_link_tokens
   │
   ├──────< (N) journal_weekly_summaries
   │
-  └──────< (N) journal_summary_generate_attempts
+  ├──────< (N) journal_summary_generate_attempts
+  │
+  └──────< (N) blog_posts
 ```
 
 ---
@@ -357,6 +383,12 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/013_journal_summary_attempt_kind.sql
 ```
 
+### Blog Posts
+```sql
+-- Run after the summary attempt-kind migration
+\i backend/src/db/migrations/014_blog_posts.sql
+```
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created
@@ -472,5 +504,5 @@ For questions or issues related to the database schema, please refer to:
 ---
 
 **Last Updated**: September 2026
-**Schema Version**: 011
-**Seed Version**: 002
+**Schema Version**: 014
+**Seed Version**: 014

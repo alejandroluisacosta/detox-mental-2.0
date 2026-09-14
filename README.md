@@ -7,8 +7,8 @@ It combines long-form educational content, an unlockable 15-session course with 
 
 This repository is a monorepo with:
 
-- `frontend/` - React + Vite SPA (article, course, onboarding, journal, account, payments, instructions)
-- `backend/` - Express API (auth, session unlock persistence, chat, Stripe, journal entries and transcription)
+- `frontend/` - React + Vite SPA (article, course, onboarding, journal, account, payments, instructions, personal blog)
+- `backend/` - Express API (auth, session unlock persistence, chat, Stripe, journal entries and transcription, blog posts)
 
 Core product experience includes:
 
@@ -19,6 +19,7 @@ Core product experience includes:
 - AI-powered onboarding chat
 - Passwordless authentication via magic links
 - Stripe Checkout for course membership
+- Unlinked personal site at `/alejandroluis` with a markdown blog
 
 ## 🛠️ Tech Stack
 
