@@ -505,4 +505,6 @@ For questions or issues related to the database schema, please refer to:
 
 **Last Updated**: September 2026
 **Schema Version**: 014
-**Seed Version**: 014
+**Seed Version**: 002
+
+Course sessions are seeded by `002_seed_course_sessions.sql`. The two initial blog articles are inserted by migration `014_blog_posts.sql`, not by a seed file.

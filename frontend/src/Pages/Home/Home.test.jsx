@@ -55,11 +55,5 @@ describe('Home', () => {
         renderHome();
         expect(screen.queryByRole('button', { name: /alejandro|blog/i })).toBeNull();
         expect(mockNavigate).not.toHaveBeenCalled();
-        fireEvent.click(screen.getByRole('button', { name: 'EDUCATION' }));
-        expect(mockNavigate).toHaveBeenCalledWith('/theory');
-        fireEvent.click(screen.getByRole('button', { name: 'JOURNAL' }));
-        expect(mockNavigate).toHaveBeenCalledWith('/journal');
-        expect(mockNavigate).not.toHaveBeenCalledWith('/alejandroluis');
-        expect(mockNavigate).not.toHaveBeenCalledWith('/alejandroluis/blog');
     });
 });

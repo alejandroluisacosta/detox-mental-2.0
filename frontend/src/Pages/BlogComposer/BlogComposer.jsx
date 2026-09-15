@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BlogChrome from '../../Components/BlogChrome/BlogChrome.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { BLOG_CATEGORIES } from '../../data/blogCategories.js';
 import { suggestBlogSlug } from '../../utils/blogSlug.js';
@@ -13,7 +14,7 @@ const EMPTY_FORM = {
   slug: '',
   excerpt: '',
   body: '',
-  category: BLOG_CATEGORIES[0].slug,
+  category: BLOG_CATEGORIES[0],
   status: 'draft',
 };
 
@@ -22,6 +23,7 @@ const BlogComposer = () => {
   const isEdit = Boolean(routeSlug);
   const navigate = useNavigate();
   const { user, status: authStatus } = useAuth();
+  const { t, blogCategoryLabel } = useLocale();
   const isAdmin = user?.role === 'admin';
 
   const [form, setForm] = useState(EMPTY_FORM);
@@ -104,11 +106,18 @@ const BlogComposer = () => {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.message || 'No se pudo guardar el artículo.');
+        throw new Error(data.message || t('blog.saveFailed'));
       }
-      navigate(`/alejandroluis/blog/${data.post.slug}`);
+      if (!data.post?.slug) {
+        throw new Error(t('blog.saveFailed'));
+      }
+      const nextPath =
+        data.post.status === 'draft'
+          ? `/alejandroluis/blog/${data.post.slug}/edit`
+          : `/alejandroluis/blog/${data.post.slug}`;
+      navigate(nextPath);
     } catch (err) {
-      setError(err.message || 'No se pudo guardar el artículo.');
+      setError(err.message || t('blog.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -121,19 +130,19 @@ const BlogComposer = () => {
       <BlogChrome editSlug={isEdit ? routeSlug : undefined} />
       <main className="blog-composer__main">
         {authStatus === 'loading' || loading ? (
-          <LoadingStatus>Cargando…</LoadingStatus>
+          <LoadingStatus>{t('blog.loadingComposer')}</LoadingStatus>
         ) : !showComposer ? (
           <div className="blog-composer__missing">
-            <h1 className="blog-composer__title">No encontrado</h1>
-            <p className="blog-composer__copy">Este artículo no existe.</p>
+            <h1 className="blog-composer__title">{t('blog.notFound')}</h1>
+            <p className="blog-composer__copy">{t('blog.notFoundCopy')}</p>
           </div>
         ) : (
           <form className="blog-composer__form" onSubmit={handleSubmit}>
             <h1 className="blog-composer__title">
-              {isEdit ? 'Editar artículo' : 'Nuevo artículo'}
+              {isEdit ? t('blog.editTitle') : t('blog.newTitle')}
             </h1>
             <label className="blog-composer__label" htmlFor="blog-title">
-              Título
+              {t('blog.fieldTitle')}
             </label>
             <input
               id="blog-title"
@@ -143,7 +152,7 @@ const BlogComposer = () => {
               required
             />
             <label className="blog-composer__label" htmlFor="blog-slug">
-              Slug
+              {t('blog.fieldSlug')}
             </label>
             <input
               id="blog-slug"
@@ -156,7 +165,7 @@ const BlogComposer = () => {
               required
             />
             <label className="blog-composer__label" htmlFor="blog-category">
-              Categoría
+              {t('blog.fieldCategory')}
             </label>
             <select
               id="blog-category"
@@ -164,14 +173,14 @@ const BlogComposer = () => {
               value={form.category}
               onChange={(event) => updateField('category', event.target.value)}
             >
-              {BLOG_CATEGORIES.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.label}
+              {BLOG_CATEGORIES.map((slug) => (
+                <option key={slug} value={slug}>
+                  {blogCategoryLabel(slug)}
                 </option>
               ))}
             </select>
             <label className="blog-composer__label" htmlFor="blog-excerpt">
-              Extracto
+              {t('blog.fieldExcerpt')}
             </label>
             <textarea
               id="blog-excerpt"
@@ -180,7 +189,7 @@ const BlogComposer = () => {
               onChange={(event) => updateField('excerpt', event.target.value)}
             />
             <label className="blog-composer__label" htmlFor="blog-body">
-              Artículo
+              {t('blog.fieldBody')}
             </label>
             <textarea
               id="blog-body"
@@ -190,7 +199,7 @@ const BlogComposer = () => {
               required
             />
             <fieldset className="blog-composer__status">
-              <legend className="blog-composer__label">Estado</legend>
+              <legend className="blog-composer__label">{t('blog.fieldStatus')}</legend>
               <label className="blog-composer__choice">
                 <input
                   type="radio"
@@ -199,7 +208,7 @@ const BlogComposer = () => {
                   checked={form.status === 'draft'}
                   onChange={() => updateField('status', 'draft')}
                 />
-                Borrador
+                {t('blog.statusDraft')}
               </label>
               <label className="blog-composer__choice">
                 <input
@@ -209,7 +218,7 @@ const BlogComposer = () => {
                   checked={form.status === 'published'}
                   onChange={() => updateField('status', 'published')}
                 />
-                Publicado
+                {t('blog.statusPublished')}
               </label>
             </fieldset>
             {error ? (
@@ -218,7 +227,7 @@ const BlogComposer = () => {
               </p>
             ) : null}
             <button type="submit" className="blog-composer__submit" disabled={saving}>
-              {saving ? 'Guardando…' : 'Guardar'}
+              {saving ? t('blog.saving') : t('blog.save')}
             </button>
           </form>
         )}

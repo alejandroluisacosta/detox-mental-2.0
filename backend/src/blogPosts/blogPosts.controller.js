@@ -1,3 +1,4 @@
+import pool from '../db/db.js';
 import {
   parseBlogCategoryQuery,
   parseBlogPostInput,
@@ -12,6 +13,8 @@ import {
   updateBlogPost,
 } from './blogPosts.service.js';
 
+const dbFor = (req) => req.db ?? pool;
+
 const readSlug = (req) =>
   typeof req.params.slug === 'string' ? req.params.slug.trim() : '';
 
@@ -22,7 +25,7 @@ export const getPublishedPosts = async (req, res) => {
   }
 
   try {
-    const posts = await listPublishedBlogPosts(parsedCategory.category);
+    const posts = await listPublishedBlogPosts(parsedCategory.category, dbFor(req));
     return res.status(200).json({ posts });
   } catch (err) {
     console.error('[blog-posts GET]', err);
@@ -37,7 +40,7 @@ export const getPublishedPost = async (req, res) => {
   }
 
   try {
-    const post = await getPublishedBlogPostBySlug(slug);
+    const post = await getPublishedBlogPostBySlug(slug, dbFor(req));
     if (!post) {
       return res.status(404).json({ message: 'Not found.' });
     }
@@ -48,9 +51,9 @@ export const getPublishedPost = async (req, res) => {
   }
 };
 
-export const getAdminPosts = async (_req, res) => {
+export const getAdminPosts = async (req, res) => {
   try {
-    const posts = await listAdminBlogPosts();
+    const posts = await listAdminBlogPosts(dbFor(req));
     return res.status(200).json({ posts });
   } catch (err) {
     console.error('[blog-posts admin GET]', err);
@@ -65,7 +68,7 @@ export const getAdminPost = async (req, res) => {
   }
 
   try {
-    const post = await getAdminBlogPostBySlug(slug);
+    const post = await getAdminBlogPostBySlug(slug, dbFor(req));
     if (!post) {
       return res.status(404).json({ message: 'Not found.' });
     }
@@ -83,7 +86,7 @@ export const postAdminPost = async (req, res) => {
   }
 
   try {
-    const post = await createBlogPost(parsed.value, req.user.id);
+    const post = await createBlogPost(parsed.value, req.user.id, dbFor(req));
     return res.status(201).json({ post });
   } catch (err) {
     if (err.code === '23505') {
@@ -106,7 +109,7 @@ export const patchAdminPost = async (req, res) => {
   }
 
   try {
-    const post = await updateBlogPost(slug, parsed.value);
+    const post = await updateBlogPost(slug, parsed.value, dbFor(req));
     if (!post) {
       return res.status(404).json({ message: 'Not found.' });
     }
@@ -127,7 +130,7 @@ export const deleteAdminPost = async (req, res) => {
   }
 
   try {
-    const deletedId = await deleteBlogPost(slug);
+    const deletedId = await deleteBlogPost(slug, dbFor(req));
     if (!deletedId) {
       return res.status(404).json({ message: 'Not found.' });
     }

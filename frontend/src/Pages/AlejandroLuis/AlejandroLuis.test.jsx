@@ -1,5 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import AlejandroLuis from './AlejandroLuis.jsx';
 
 const mockNavigate = vi.fn();
@@ -7,6 +9,15 @@ const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
+
+const renderLanding = () => {
+  writeStoredLocale('en');
+  return render(
+    <LocaleProvider>
+      <AlejandroLuis />
+    </LocaleProvider>,
+  );
+};
 
 describe('AlejandroLuis', () => {
   beforeEach(() => {
@@ -18,7 +29,7 @@ describe('AlejandroLuis', () => {
   });
 
   test('sends BLOG to the personal blog index', () => {
-    render(<AlejandroLuis />);
+    renderLanding();
 
     expect(screen.getByRole('heading', { name: 'Alejandro Luis' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'BLOG' }));
@@ -26,7 +37,7 @@ describe('AlejandroLuis', () => {
   });
 
   test('does not offer product module controls', () => {
-    render(<AlejandroLuis />);
+    renderLanding();
 
     expect(screen.queryByRole('button', { name: /education|journal|educación|diario/i })).toBeNull();
   });

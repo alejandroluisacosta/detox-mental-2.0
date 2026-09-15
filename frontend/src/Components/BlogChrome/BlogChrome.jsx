@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import './BlogChrome.css';
 
 const BlogChrome = ({ editSlug }) => {
   const { user } = useAuth();
+  const { t } = useLocale();
   const isAdmin = user?.role === 'admin';
 
   return (
@@ -11,13 +13,13 @@ const BlogChrome = ({ editSlug }) => {
       <Link className="blog-chrome__brand" to="/alejandroluis">
         Alejandro Luis
       </Link>
-      <nav className="blog-chrome__nav" aria-label="Blog">
+      <nav className="blog-chrome__nav" aria-label={t('blog.nav')}>
         <Link className="blog-chrome__link" to="/alejandroluis/blog">
-          Blog
+          {t('blog.title')}
         </Link>
         {isAdmin && (
           <Link className="blog-chrome__link" to="/alejandroluis/blog/new">
-            Escribir
+            {t('blog.write')}
           </Link>
         )}
         {isAdmin && editSlug ? (
@@ -25,7 +27,7 @@ const BlogChrome = ({ editSlug }) => {
             className="blog-chrome__link"
             to={`/alejandroluis/blog/${editSlug}/edit`}
           >
-            Editar
+            {t('blog.edit')}
           </Link>
         ) : null}
       </nav>

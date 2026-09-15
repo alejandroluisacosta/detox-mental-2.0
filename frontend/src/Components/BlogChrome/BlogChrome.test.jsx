@@ -1,6 +1,8 @@
 import { MemoryRouter } from 'react-router-dom';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { LocaleProvider } from '../../Context/LocaleContext.jsx';
+import { writeStoredLocale } from '../../utils/locale.js';
 import BlogChrome from './BlogChrome.jsx';
 
 const mockUseAuth = vi.fn();
@@ -11,12 +13,16 @@ vi.mock('../../Context/AuthContext.jsx', () => ({
 
 const PRODUCT_HREFS = ['/', '/journal', '/theory', '/course', '/account', '/login'];
 
-const renderChrome = () =>
-  render(
+const renderChrome = (props) => {
+  writeStoredLocale('en');
+  return render(
     <MemoryRouter>
-      <BlogChrome />
+      <LocaleProvider>
+        <BlogChrome {...props} />
+      </LocaleProvider>
     </MemoryRouter>,
   );
+};
 
 describe('BlogChrome', () => {
   beforeEach(() => {
@@ -40,8 +46,8 @@ describe('BlogChrome', () => {
   test('hides write and edit from the public chrome', () => {
     renderChrome();
 
-    expect(screen.queryByRole('link', { name: 'Escribir' })).toBeNull();
-    expect(screen.queryByRole('link', { name: 'Editar' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Write' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Edit' })).toBeNull();
   });
 
   test('shows write when the signed-in user is an admin', () => {
@@ -50,16 +56,12 @@ describe('BlogChrome', () => {
       status: 'ready',
     });
 
-    render(
-      <MemoryRouter>
-        <BlogChrome editSlug="quiet-tools" />
-      </MemoryRouter>,
-    );
+    renderChrome({ editSlug: 'quiet-tools' });
 
-    expect(screen.getByRole('link', { name: 'Escribir' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'Write' }).getAttribute('href')).toBe(
       '/alejandroluis/blog/new',
     );
-    expect(screen.getByRole('link', { name: 'Editar' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'Edit' }).getAttribute('href')).toBe(
       '/alejandroluis/blog/quiet-tools/edit',
     );
   });
