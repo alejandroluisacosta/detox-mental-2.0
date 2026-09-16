@@ -101,16 +101,11 @@ describe('Blog', () => {
     expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
   });
 
-  test('sends a validated category to the API', async () => {
-    apiFetch.mockImplementation(async (path) => {
-      if (String(path).includes('category=technology')) {
-        return jsonResponse({ posts: [techPost] });
-      }
-      return jsonResponse({ posts: [personalPost, techPost] });
-    });
-
+  test('filters articles in memory without a second fetch', async () => {
     renderBlog();
     await screen.findByRole('link', { name: /Attention is a vote/ });
+    expect(apiFetch).toHaveBeenCalledTimes(1);
+    expect(apiFetch).toHaveBeenCalledWith('/blog/posts');
 
     fireEvent.click(screen.getByRole('button', { name: 'Technology' }));
 
@@ -118,7 +113,27 @@ describe('Blog', () => {
       expect(screen.queryByRole('link', { name: /Attention is a vote/ })).toBeNull();
     });
     expect(screen.getByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
-    expect(apiFetch).toHaveBeenCalledWith('/blog/posts?category=technology');
+    expect(apiFetch).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Personal development' }));
+
+    expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /The phone is not the enemy/ })).toBeNull();
+    expect(apiFetch).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'All' }));
+
+    expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
+    expect(apiFetch).toHaveBeenCalledTimes(1);
+  });
+
+  test('applies a known category from the URL after one unfiltered fetch', async () => {
+    renderBlog('/alejandroluis/blog?category=technology');
+
+    expect(await screen.findByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /Attention is a vote/ })).toBeNull();
+    expect(apiFetch).toHaveBeenCalledTimes(1);
+    expect(apiFetch).toHaveBeenCalledWith('/blog/posts');
   });
 
   test('treats an unknown category as all', async () => {

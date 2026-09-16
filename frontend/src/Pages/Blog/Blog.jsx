@@ -16,12 +16,32 @@ const formatPostDate = (iso, locale) =>
     year: 'numeric',
   }) || '';
 
+const categoryFromSearch = (params) => {
+  const raw = params.get('category') || '';
+  return BLOG_CATEGORIES.includes(raw) ? raw : '';
+};
+
+const writeCategorySearch = (next) => {
+  const url = new URL(window.location.href);
+  if (next) {
+    url.searchParams.set('category', next);
+  } else {
+    url.searchParams.delete('category');
+  }
+  window.history.replaceState(
+    window.history.state,
+    '',
+    `${url.pathname}${url.search}${url.hash}`,
+  );
+};
+
 const Blog = () => {
   const { user, status: authStatus } = useAuth();
   const { locale, t, blogCategoryLabel } = useLocale();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const rawCategory = searchParams.get('category') || '';
-  const selectedCategory = BLOG_CATEGORIES.includes(rawCategory) ? rawCategory : '';
+  const [searchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState(() =>
+    categoryFromSearch(searchParams),
+  );
   const isAdmin = user?.role === 'admin';
 
   const [posts, setPosts] = useState([]);
@@ -38,23 +58,14 @@ const Blog = () => {
       setLoading(true);
       setError(false);
       try {
-        const path = isAdmin
-          ? '/blog/admin/posts'
-          : selectedCategory
-            ? `/blog/posts?category=${encodeURIComponent(selectedCategory)}`
-            : '/blog/posts';
+        const path = isAdmin ? '/blog/admin/posts' : '/blog/posts';
         const res = await apiFetch(path);
         if (!res.ok) {
           throw new Error('load-failed');
         }
         const data = await res.json();
         if (cancelled) return;
-        const list = Array.isArray(data.posts) ? data.posts : [];
-        setPosts(
-          isAdmin && selectedCategory
-            ? list.filter((post) => post.category === selectedCategory)
-            : list,
-        );
+        setPosts(Array.isArray(data.posts) ? data.posts : []);
       } catch {
         if (!cancelled) {
           setPosts([]);
@@ -69,14 +80,16 @@ const Blog = () => {
     return () => {
       cancelled = true;
     };
-  }, [authStatus, isAdmin, selectedCategory, retryCount]);
+  }, [authStatus, isAdmin, retryCount]);
+
+  const visiblePosts = selectedCategory
+    ? posts.filter((post) => post.category === selectedCategory)
+    : posts;
 
   const selectCategory = (slug) => {
-    if (!slug) {
-      setSearchParams({});
-      return;
-    }
-    setSearchParams({ category: slug });
+    const next = BLOG_CATEGORIES.includes(slug) ? slug : '';
+    setSelectedCategory(next);
+    writeCategorySearch(next);
   };
 
   return (
@@ -123,11 +136,11 @@ const Blog = () => {
               {t('blog.retry')}
             </button>
           </div>
-        ) : posts.length === 0 ? (
+        ) : visiblePosts.length === 0 ? (
           <p className="blog-index__empty">{t('blog.empty')}</p>
         ) : (
           <ul className="blog-index__feed">
-            {posts.map((post) => {
+            {visiblePosts.map((post) => {
               const href =
                 post.status === 'draft'
                   ? `/alejandroluis/blog/${post.slug}/edit`

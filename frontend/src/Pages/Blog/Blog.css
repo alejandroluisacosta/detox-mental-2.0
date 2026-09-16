@@ -43,7 +43,8 @@
 
 .blog-index__filter:hover,
 .blog-index__filter:focus-visible {
-  background: color-mix(in srgb, var(--accent) 10%, #fff);
+  background: var(--accent);
+  color: var(--background);
 }
 
 .blog-index__filter:focus-visible {
