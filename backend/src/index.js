@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import onboardingRoutes from "./onboarding/onboarding.routes.js";
 import authRoutes from "./auth/auth.routes.js";
 import stripeRoutes from "./stripe/stripe.routes.js";
+import blogRoutes from "./blogPosts/blogPosts.routes.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 app.use("/chat", onboardingRoutes);
 app.use("/auth", authRoutes);
 app.use("/stripe", stripeRoutes);
+app.use("/blog", blogRoutes);
 
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;

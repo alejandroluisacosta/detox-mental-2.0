@@ -13,3 +13,8 @@ export const translateTopic = (locale, topicId) => {
   const key = `journal.topics.${topicId}`;
   return getCatalog(locale)[key] ?? getCatalog(DEFAULT_LOCALE)[key] ?? topicId;
 };
+
+export const translateBlogCategory = (locale, slug) => {
+  const key = `blog.category.${slug}`;
+  return getCatalog(locale)[key] ?? getCatalog(DEFAULT_LOCALE)[key] ?? slug;
+};

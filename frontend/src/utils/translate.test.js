@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { catalogs } from '../data/locales/catalogs.js';
-import { translate, translateTopic } from './translate.js';
+import { translate, translateBlogCategory, translateTopic } from './translate.js';
 
 describe('translate', () => {
   test('returns English copy by default and interpolates values', () => {
@@ -25,6 +25,14 @@ describe('translateTopic', () => {
     expect(translateTopic('en', 'work')).toBe('Work');
     expect(translateTopic('es', 'work')).toBe('Trabajo');
     expect(translateTopic('en', 'Unknown')).toBe('Unknown');
+  });
+});
+
+describe('translateBlogCategory', () => {
+  test('maps stored category slugs to localized labels', () => {
+    expect(translateBlogCategory('en', 'technology')).toBe('Technology');
+    expect(translateBlogCategory('es', 'technology')).toBe('Tecnología');
+    expect(translateBlogCategory('en', 'unknown')).toBe('unknown');
   });
 });
 

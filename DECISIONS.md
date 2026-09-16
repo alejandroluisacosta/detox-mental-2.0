@@ -179,3 +179,16 @@ Adopt a real i18n library once the layer would have to grow beyond string lookup
 
 **Operational implications (accepted):**  
 Apply `backend/src/db/migrations/006_journal_summary_locale.sql` to each environment. Existing summary rows backfill as `es`. Generated summaries keep the language they were created in until the user regenerates them. Topic values remain stored as the existing Spanish identifiers. Educational screens remain Spanish except the shared navigation/home/account labels.
+
+### 2026-09-16 — Blog category chips filter in memory, not via the API
+
+**Decision:**  
+Fetch the personal-blog article list **once** when `/alejandroluis/blog` is ready, keep it in the Blog page’s local React state, and apply category chips (`?category=`) as an in-memory filter. Do not send `GET /blog/posts?category=` (or refetch the admin list) when the reader changes a chip.
+
+**Why this option was chosen:**  
+The first blog implementation treated each chip as a new backend query. Smoke-testing that flow made it obvious those calls were too much for a small, already-loaded catalog: categorization is a client concern once the list is in the SPA. Local state on the index is enough because no other screen needs that list. Opening an article still loads by slug.
+
+**Why obvious alternatives were rejected:**  
+- **Keep per-chip API filters:** Extra latency and load for no product gain at this catalog size. The public `?category=` query can stay on the API unused by the index.  
+- **Redux or a new `BlogPostsContext`:** Heavier than one page’s `useState`. Revisit only if the same list must survive Blog → article → Blog without a second fetch, or be shared with the composer.  
+- **Reuse `AuthContext` / `LocaleContext`:** Those providers own session and copy, not blog posts.

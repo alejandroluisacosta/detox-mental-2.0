@@ -56,6 +56,21 @@ describe('Navigation', () => {
         expect(screen.queryByRole('button', { name: 'WEEKLY SUMMARY' })).toBeNull();
     });
 
+    test('does not offer a personal-site control on journal or education routes', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/journal' });
+        renderNav();
+        openMenu();
+
+        expect(screen.queryByRole('button', { name: /blog|alejandro/i })).toBeNull();
+        cleanup();
+
+        mockUseLocation.mockReturnValue({ pathname: '/theory' });
+        renderNav();
+        openMenu();
+
+        expect(screen.queryByRole('button', { name: /blog|alejandro/i })).toBeNull();
+    });
+
     test('shows journaling links on a journal route', () => {
         mockUseLocation.mockReturnValue({ pathname: '/journal' });
         renderNav();

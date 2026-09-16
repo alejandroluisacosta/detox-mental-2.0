@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { translate, translateTopic } from '../utils/translate.js';
+import { translate, translateBlogCategory, translateTopic } from '../utils/translate.js';
 import {
   applyDocumentLocale,
   readStoredLocale,
@@ -24,6 +24,10 @@ export const LocaleProvider = ({ children }) => {
     (topicId) => translateTopic(locale, topicId),
     [locale],
   );
+  const blogCategoryLabel = useCallback(
+    (slug) => translateBlogCategory(locale, slug),
+    [locale],
+  );
 
   const value = useMemo(
     () => ({
@@ -31,8 +35,9 @@ export const LocaleProvider = ({ children }) => {
       setLocale,
       t,
       topicLabel,
+      blogCategoryLabel,
     }),
-    [locale, setLocale, t, topicLabel],
+    [locale, setLocale, t, topicLabel, blogCategoryLabel],
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

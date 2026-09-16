@@ -50,4 +50,10 @@ describe('Home', () => {
         expect(screen.getByRole('button', { name: 'EDUCACIÓN' })).toBeTruthy();
         expect(screen.getByRole('button', { name: 'DIARIO' })).toBeTruthy();
     });
+
+    test('does not offer a control to the personal site', () => {
+        renderHome();
+        expect(screen.queryByRole('button', { name: /alejandro|blog/i })).toBeNull();
+        expect(mockNavigate).not.toHaveBeenCalled();
+    });
 });
