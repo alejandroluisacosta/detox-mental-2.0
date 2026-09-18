@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthProvider from './Context/AuthContext.jsx';
 import SessionsProvider from './Context/SessionsContext.jsx';
@@ -30,6 +30,25 @@ import { DemoModeProvider } from './Context/DemoModeContext.jsx';
 import { JournalTopicsProvider } from './Context/JournalTopicsContext.jsx';
 import { LocaleProvider } from './Context/LocaleContext.jsx';
 
+const SocratesWalk = lazy(() => import('./Pages/SocratesWalk/SocratesWalk.jsx'));
+
+const SocratesWalkFallback = () => (
+    <div
+        style={{
+            position: 'fixed',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#cbb9a5',
+            color: '#2d3142',
+            fontWeight: 700,
+        }}
+    >
+        Loading the grove…
+    </div>
+);
+
 const App = () => {
     return (
         <React.StrictMode>
@@ -59,6 +78,16 @@ const App = () => {
                                         <Route path='/journal' element={<Journal />} />
                                         <Route path='/journal/history' element={<JournalHistory />} />
                                         <Route path='/journal/summary' element={<JournalSummary />} />
+
+                                        {/* Isolated prototype: not linked from product navigation */}
+                                        <Route
+                                            path='/dev/socrates-walk'
+                                            element={(
+                                                <Suspense fallback={<SocratesWalkFallback />}>
+                                                    <SocratesWalk />
+                                                </Suspense>
+                                            )}
+                                        />
 
                                         {/* Educational module */}
                                         <Route path='/onboarding' element={<OnboardingWrapper />} />

@@ -1,0 +1,147 @@
+.socrates-walk {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #cbb9a5;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.socrates-walk__stage {
+  position: absolute;
+  inset: 0;
+}
+
+.socrates-walk__stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.socrates-walk__hud {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) 0 calc(16px + env(safe-area-inset-left, 0px));
+  pointer-events: none;
+}
+
+.socrates-walk__exit {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(45, 49, 66, 0.82);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.socrates-walk__exit:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.socrates-walk__hint {
+  margin: 0;
+  max-width: 16rem;
+  color: #2d3142;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: right;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.socrates-walk__controls {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 calc(20px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) calc(20px + env(safe-area-inset-left, 0px));
+  pointer-events: none;
+}
+
+.socrates-walk__stick {
+  pointer-events: auto;
+  position: relative;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  background: rgba(45, 49, 66, 0.28);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  touch-action: none;
+}
+
+.socrates-walk__thumb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(45, 49, 66, 0.25);
+  pointer-events: none;
+}
+
+.socrates-walk__jump {
+  pointer-events: auto;
+  width: 76px;
+  min-width: 76px;
+  height: 76px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(132, 93, 67, 0.94);
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.socrates-walk__jump:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.socrates-walk__error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: min(20rem, calc(100% - 32px));
+  margin: 0;
+  padding: 16px;
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
+  background: rgba(244, 242, 240, 0.95);
+  color: #2d3142;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .socrates-walk__hint {
+    max-width: 22rem;
+  }
+}

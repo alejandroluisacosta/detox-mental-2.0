@@ -68,6 +68,10 @@ The educational module (`/theory`, `/course`, `/session/:sessionId`,
 `/onboarding` and the payment result pages stay outside the gate to avoid
 redirect loops and to complete Stripe return URLs.
 
+`/dev/socrates-walk` is an isolated Three.js prototype (walk / jump). It is
+not linked from Home or Navigation and is loaded with a dynamic import so
+`three` stays out of the main bundle.
+
 `OnboardingGate` is not an authentication gate. Pages that require an account
 must check `useAuth()` or rely on a protected backend endpoint. Authentication
 and authorization must always be enforced by the backend for user-owned data.
