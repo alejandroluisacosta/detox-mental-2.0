@@ -69,6 +69,10 @@ describe('BlogComposer', () => {
     expect(await screen.findByRole('heading', { name: 'New article' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Save' })).toBeTruthy();
     expect(screen.getByLabelText('Category')).toBeTruthy();
+    expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Bold' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Italic' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Link' })).toBeTruthy();
   });
 
   test('sends a saved draft to its edit URL', async () => {
@@ -126,5 +130,39 @@ describe('BlogComposer', () => {
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  test('wraps selected article text as bold, italic, and a link', async () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: 'admin-1', role: 'admin' },
+      status: 'ready',
+    });
+    renderComposer();
+    await screen.findByRole('heading', { name: 'New article' });
+
+    const body = screen.getByLabelText('Article');
+    const selectAll = (value) => {
+      fireEvent.change(body, { target: { value } });
+      body.focus();
+      body.setSelectionRange(0, value.length);
+    };
+
+    selectAll('Hello');
+    fireEvent.click(screen.getByRole('button', { name: 'Bold' }));
+    await waitFor(() => {
+      expect(body.value).toBe('**Hello**');
+    });
+
+    selectAll('Hello');
+    fireEvent.click(screen.getByRole('button', { name: 'Italic' }));
+    await waitFor(() => {
+      expect(body.value).toBe('*Hello*');
+    });
+
+    selectAll('Hello');
+    fireEvent.click(screen.getByRole('button', { name: 'Link' }));
+    await waitFor(() => {
+      expect(body.value).toBe('[Hello](https://)');
+    });
   });
 });
