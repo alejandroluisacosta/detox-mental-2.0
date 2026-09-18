@@ -47,8 +47,8 @@ describe('wrapMarkdownLink', () => {
   test('turns selected text into a markdown link and selects the URL', () => {
     expect(wrapMarkdownLink('See the site', 4, 12)).toEqual({
       value: 'See [the site](https://)',
-      selectionStart: 16,
-      selectionEnd: 24,
+      selectionStart: 15,
+      selectionEnd: 23,
     });
   });
 
