@@ -44,6 +44,15 @@
   margin-bottom: 1.2rem;
 }
 
+.blog-post__body strong {
+  font-weight: 700;
+}
+
+.blog-post__body em {
+  font-style: italic;
+  font-synthesis: style;
+}
+
 .blog-post__body h2,
 .blog-post__body h3 {
   margin: 20px 0 15px;
@@ -51,7 +60,20 @@
 }
 
 .blog-post__body a {
-  color: var(--text);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.blog-post__body a:hover,
+.blog-post__body a:focus-visible {
+  color: var(--primary);
+}
+
+.blog-post__body a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .blog-post__body blockquote {

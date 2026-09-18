@@ -91,4 +91,24 @@ describe('BlogPost', () => {
     expect(screen.queryByRole('heading', { name: 'Attention is a vote' })).toBeNull();
     expect(screen.queryByRole('heading', { name: 'Not found' })).toBeNull();
   });
+
+  test('renders markdown bold, italic, and links in the article body', async () => {
+    apiFetch.mockResolvedValue(
+      jsonResponse({
+        post: {
+          ...publishedPost,
+          body: 'Read **this**, then *that*, and the [site](https://example.com).',
+        },
+      }),
+    );
+    renderPost('attention-is-a-vote');
+
+    expect(await screen.findByText('this')).toBeTruthy();
+    expect(screen.getByText('this').closest('strong')).toBeTruthy();
+    expect(screen.getByText('that').closest('em')).toBeTruthy();
+    const link = screen.getByRole('link', { name: 'site' });
+    expect(link.getAttribute('href')).toBe('https://example.com');
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toContain('noopener');
+  });
 });
