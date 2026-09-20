@@ -2,6 +2,8 @@
 
 This document lists environment variables the app expects today: **Express backend**, **authentication**, **Stripe**, **chat**, and **Vite frontend**.
 
+Vercel Preview frontends (`detox-mental-2-0*.vercel.app`) are allowed by backend CORS in addition to `FRONTEND_ORIGIN`, so public blog reads work on pull-request deployments. Those hosts cannot hold the production auth cookie. Preview builds expose `VITE_VERCEL_ENV` from Vercel’s `VERCEL_ENV`; when it is `preview`, the blog composer is review-only and does not persist.
+
 ---
 
 ## Where to put values

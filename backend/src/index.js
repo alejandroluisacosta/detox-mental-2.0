@@ -6,11 +6,19 @@ import onboardingRoutes from "./onboarding/onboarding.routes.js";
 import authRoutes from "./auth/auth.routes.js";
 import stripeRoutes from "./stripe/stripe.routes.js";
 import blogRoutes from "./blogPosts/blogPosts.routes.js";
+import { isAllowedCorsOrigin } from "./cors.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, isAllowedCorsOrigin(origin));
+    },
+    credentials: true,
+  }),
+);
 // Raw body required for Stripe webhook signature verification — must precede express.json()
 app.use("/stripe/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());

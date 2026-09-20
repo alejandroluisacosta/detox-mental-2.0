@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, journal data, and the personal blog.
+This document describes the PostgreSQL database schema for the Detox Mental backend. The schema supports passwordless authentication, course management, journal data, and the personal blog (including uploaded article images).
 
 ## Database Technology
 
@@ -248,6 +248,21 @@ Migration `014` also seeds two published mock posts, one per category.
 
 ---
 
+### 10. `blog_images`
+
+Binary images inserted into blog markdown via the admin composer.
+
+**Columns:**
+- `id` (UUID, PK)
+- `author_id` (UUID, FK → users.id, ON DELETE SET NULL)
+- `mime_type` (VARCHAR(32)): `image/jpeg`, `image/png`, or `image/webp`
+- `bytes` (BYTEA): File contents, max 5 MB
+- `created_at` (TIMESTAMPTZ)
+
+Public reads use `GET /blog/images/:id`. Markdown stores the path `/blog/images/:id`.
+
+---
+
 ## Relationships Diagram
 
 ```
@@ -263,7 +278,9 @@ users (1) ──────< (N) magic_link_tokens
   │
   ├──────< (N) journal_summary_generate_attempts
   │
-  └──────< (N) blog_posts
+  ├──────< (N) blog_posts
+  │
+  └──────< (N) blog_images
 ```
 
 ---
@@ -389,6 +406,12 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/014_blog_posts.sql
 ```
 
+### Blog Images
+```sql
+-- Run after the blog posts migration
+\i backend/src/db/migrations/015_blog_images.sql
+```
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created
@@ -504,7 +527,7 @@ For questions or issues related to the database schema, please refer to:
 ---
 
 **Last Updated**: September 2026
-**Schema Version**: 014
+**Schema Version**: 015
 **Seed Version**: 002
 
 Course sessions are seeded by `002_seed_course_sessions.sql`. The two initial blog articles are inserted by migration `014_blog_posts.sql`, not by a seed file.

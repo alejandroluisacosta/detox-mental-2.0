@@ -59,6 +59,14 @@
   color: var(--primary);
 }
 
+.blog-post__body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.2rem auto;
+  border-radius: 12px;
+}
+
 .blog-post__body a {
   color: var(--accent);
   font-weight: 600;

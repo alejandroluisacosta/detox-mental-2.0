@@ -8,6 +8,21 @@ import BlogComposer from './BlogComposer.jsx';
 
 const mockUseAuth = vi.fn();
 const mockNavigate = vi.fn();
+const previewState = { enabled: false };
+
+vi.mock('../../Context/AuthContext.jsx', () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
+vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
+
+vi.mock('../../data/blogPreviewReview.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    isBlogPreviewReview: () => previewState.enabled,
+  };
+});
 
 vi.mock('../../Context/AuthContext.jsx', () => ({
   useAuth: () => mockUseAuth(),
@@ -45,6 +60,7 @@ describe('BlogComposer', () => {
   beforeEach(() => {
     mockNavigate.mockReset();
     apiFetch.mockReset();
+    previewState.enabled = false;
   });
 
   afterEach(() => {
@@ -73,6 +89,7 @@ describe('BlogComposer', () => {
     expect(screen.getByRole('button', { name: 'Bold' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Italic' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Link' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Image' })).toBeTruthy();
   });
 
   test('sends a saved draft to its edit URL', async () => {
@@ -164,5 +181,52 @@ describe('BlogComposer', () => {
     await waitFor(() => {
       expect(body.value).toBe('[Hello](https://)');
     });
+  });
+
+  test('uploads an image and inserts markdown into the article', async () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: 'admin-1', role: 'admin' },
+      status: 'ready',
+    });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        image: { url: '/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee' },
+      }),
+    });
+    renderComposer();
+    await screen.findByRole('heading', { name: 'New article' });
+
+    const file = new File(['jpeg-bytes'], 'quiet-morning.jpg', { type: 'image/jpeg' });
+    fireEvent.change(document.querySelector('input[type="file"]'), {
+      target: { files: [file] },
+    });
+
+    await waitFor(() => {
+      expect(apiFetch).toHaveBeenCalledWith(
+        '/blog/admin/images',
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+    expect(apiFetch.mock.calls[0][1].body).toBeInstanceOf(FormData);
+    expect(screen.getByLabelText('Article').value).toContain(
+      '![quiet morning](/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)',
+    );
+  });
+
+  test('lets a visitor open the composer on a Vercel preview without saving', async () => {
+    previewState.enabled = true;
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderComposer();
+
+    expect(await screen.findByRole('heading', { name: 'New article' })).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toMatch(/Preview review/);
+    expect(screen.getByRole('button', { name: 'Save' }).disabled).toBe(true);
+
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Should not save' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(apiFetch).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

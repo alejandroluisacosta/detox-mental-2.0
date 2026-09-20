@@ -10,7 +10,23 @@ vi.mock('../../Context/AuthContext.jsx', () => ({
   useAuth: () => ({ user: null, status: 'ready' }),
 }));
 
-vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
+vi.mock('../../api/client.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    apiFetch: vi.fn(),
+  };
+});
+
+const previewState = { enabled: false };
+
+vi.mock('../../data/blogPreviewReview.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    isBlogPreviewReview: () => previewState.enabled,
+  };
+});
 
 const publishedPost = {
   slug: 'attention-is-a-vote',
@@ -42,6 +58,7 @@ const renderPost = (slug) => {
 describe('BlogPost', () => {
   beforeEach(() => {
     apiFetch.mockReset();
+    previewState.enabled = false;
   });
 
   afterEach(() => {
@@ -110,5 +127,33 @@ describe('BlogPost', () => {
     expect(link.getAttribute('href')).toBe('https://example.com');
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toContain('noopener');
+  });
+
+  test('renders markdown images from stored paths and public files', async () => {
+    apiFetch.mockResolvedValue(
+      jsonResponse({
+        post: {
+          ...publishedPost,
+          body: 'See ![sunrise](/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee) now.',
+        },
+      }),
+    );
+    renderPost('attention-is-a-vote');
+
+    const image = await screen.findByRole('img', { name: 'sunrise' });
+    expect(image.getAttribute('src')).toBe(
+      'http://localhost:3000/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+    );
+  });
+
+  test('renders the preview sample article without calling the API', async () => {
+    previewState.enabled = true;
+    renderPost('review-sample');
+
+    expect(await screen.findByRole('heading', { name: 'Preview sample' })).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'Socrates' }).getAttribute('src')).toBe(
+      '/images/socrates.webp',
+    );
+    expect(apiFetch).not.toHaveBeenCalled();
   });
 });
