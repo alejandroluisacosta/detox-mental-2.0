@@ -7,8 +7,8 @@ const mapRow = (row) => ({
   createdAt: row.created_at,
 });
 
-export const createJournalEntry = async (userId, content, topics = []) => {
-  const { rows } = await pool.query(
+export const createJournalEntry = async (userId, content, topics = [], db = pool) => {
+  const { rows } = await db.query(
     `INSERT INTO journal_entries (user_id, content, topics)
      VALUES ($1, $2, $3)
      RETURNING id, content, topics, created_at`,
@@ -17,8 +17,8 @@ export const createJournalEntry = async (userId, content, topics = []) => {
   return mapRow(rows[0]);
 };
 
-export const listJournalEntriesForUser = async (userId) => {
-  const { rows } = await pool.query(
+export const listJournalEntriesForUser = async (userId, db = pool) => {
+  const { rows } = await db.query(
     `SELECT id, content, topics, created_at
      FROM journal_entries
      WHERE user_id = $1
@@ -28,8 +28,8 @@ export const listJournalEntriesForUser = async (userId) => {
   return rows.map(mapRow);
 };
 
-export const deleteJournalEntryForUser = async (userId, entryId) => {
-  const { rows } = await pool.query(
+export const deleteJournalEntryForUser = async (userId, entryId, db = pool) => {
+  const { rows } = await db.query(
     `DELETE FROM journal_entries
      WHERE id = $1 AND user_id = $2
      RETURNING id`,
@@ -38,8 +38,8 @@ export const deleteJournalEntryForUser = async (userId, entryId) => {
   return rows[0]?.id ?? null;
 };
 
-export const updateJournalEntryTopicsForUser = async (userId, entryId, topics) => {
-  const { rows } = await pool.query(
+export const updateJournalEntryTopicsForUser = async (userId, entryId, topics, db = pool) => {
+  const { rows } = await db.query(
     `UPDATE journal_entries
      SET topics = $3
      WHERE id = $1 AND user_id = $2

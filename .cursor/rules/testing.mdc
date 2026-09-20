@@ -1,0 +1,38 @@
+---
+description: How and when to write tests in this repository
+alwaysApply: true
+---
+
+# Testing
+
+## 1. Test behavior a user or an attacker could observe
+A test earns its place by failing when the product breaks. Before writing one,
+name the bug it would catch. If you cannot, do not write it.
+
+## 2. Never assert a constant against its own literal
+`assert.equal(MAX_ATTEMPTS, 3)` cannot fail for any reason that matters.
+Assert what the constant *causes*: the 4th attempt is rejected.
+
+## 3. A fake must enforce every rule the real dependency enforces
+If a fake DB ignores the `created_at >= $3` filter, the test proves nothing
+about the time window. Make the fake fail the way production fails.
+
+## 4. Prefer the controller boundary to the mocked component
+Drive controllers with a fake `req`/`res` and an injected `db`, as in
+`blogPosts.controller.test.js`. Services take `db = pool` so tests can pass a
+fake. New services must keep that seam.
+
+## 5. Assert outcomes, not mock calls
+`expect(navigate).toHaveBeenCalled()` passes when the request went to the wrong
+endpoint. Assert the rendered result or the request that was actually sent.
+
+## 6. Every user-owned resource needs a cross-user test
+For each protected route: user A must not read, update, or delete user B's row.
+
+## 7. Do not test prompt wording or static data contents
+Asserting a template literal contains its own substrings, or that an array has
+11 items, is maintenance cost with no risk reduction. Test the branch that
+selects the prompt, not the prose.
+
+## 8. Coverage percentage is not a goal
+An untested `requireAuth` matters more than a hundred covered format helpers.

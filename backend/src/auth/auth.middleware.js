@@ -3,35 +3,39 @@ import { findUserById } from './auth.service.js';
 
 export const isAdminRole = (role) => role === 'admin';
 
-export async function requireAuth(req, res, next) {
-  const token = req.cookies?.[COOKIE_NAME];
+export function createRequireAuth({ findUserById: lookup = findUserById } = {}) {
+  return async function requireAuth(req, res, next) {
+    const token = req.cookies?.[COOKIE_NAME];
 
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized.' });
-  }
-
-  let payload;
-  try {
-    payload = verifyJwt(token); // throws if expired or invalid
-  } catch {
-    return res.status(401).json({ message: 'Unauthorized.' });
-  }
-
-  try {
-    const user = await findUserById(payload.user_id);
-
-    if (!user) {
-      // Covers both "user not found" and soft-deleted users (deleted_at IS NOT NULL)
+    if (!token) {
       return res.status(401).json({ message: 'Unauthorized.' });
     }
 
-    req.user = user;
-    return next();
-  } catch (err) {
-    console.error('[auth/middleware]', err);
-    return res.status(500).json({ message: 'Internal server error.' });
-  }
+    let payload;
+    try {
+      payload = verifyJwt(token); // throws if expired or invalid
+    } catch {
+      return res.status(401).json({ message: 'Unauthorized.' });
+    }
+
+    try {
+      const user = await lookup(payload.user_id);
+
+      if (!user) {
+        // Covers both "user not found" and soft-deleted users (deleted_at IS NOT NULL)
+        return res.status(401).json({ message: 'Unauthorized.' });
+      }
+
+      req.user = user;
+      return next();
+    } catch (err) {
+      console.error('[auth/middleware]', err);
+      return res.status(500).json({ message: 'Internal server error.' });
+    }
+  };
 }
+
+export const requireAuth = createRequireAuth();
 
 export async function requireAdmin(req, res, next) {
   if (!isAdminRole(req.user?.role)) {
