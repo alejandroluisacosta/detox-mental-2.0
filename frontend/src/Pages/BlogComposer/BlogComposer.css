@@ -1,4 +1,5 @@
 .blog-composer {
+  position: relative;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -72,6 +73,33 @@
 .blog-composer__format-button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.blog-composer__format-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.blog-composer__file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.blog-composer__banner {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 12%, #fff);
+  color: var(--primary);
+  font-size: 0.95rem;
+  line-height: 1.45;
 }
 
 .blog-composer__input,

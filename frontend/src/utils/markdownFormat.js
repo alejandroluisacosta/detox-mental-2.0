@@ -80,3 +80,20 @@ export const wrapMarkdownLink = (text, start, end, url = 'https://') => {
     selectionEnd: lo + 1 + label.length,
   };
 };
+
+export const wrapMarkdownImage = (text, start, end, url, alt) => {
+  const value = typeof text === 'string' ? text : '';
+  const href = typeof url === 'string' && url ? url : 'https://';
+  const [lo, hi] = normalizeRange(value, start, end);
+  const selected = value.slice(lo, hi);
+  const label =
+    (typeof alt === 'string' && alt.trim()) || selected || 'image';
+  const insertion = `![${label}](${href})`;
+  const next = replaceRange(value, lo, hi, insertion);
+  const altStart = lo + 2;
+  return {
+    value: next,
+    selectionStart: altStart,
+    selectionEnd: altStart + label.length,
+  };
+};

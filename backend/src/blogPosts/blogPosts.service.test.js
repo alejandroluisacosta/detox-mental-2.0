@@ -1,8 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  createBlogImage,
   createBlogPost,
   getAdminBlogPostBySlug,
+  getBlogImage,
   getPublishedBlogPostBySlug,
   listPublishedBlogPosts,
   updateBlogPost,
@@ -163,6 +165,59 @@ test('unpublish sets status to draft and preserves published_at', async () => {
   assert.equal(unpublished.status, 'draft');
   assert.equal(unpublished.publishedAt, publishedAt);
   assert.equal(await getPublishedBlogPostBySlug(published.slug, db), null);
+});
+
+test('createBlogImage returns a public url and getBlogImage reads the same bytes', async () => {
+  const bytes = Buffer.from([0xff, 0xd8, 0xff, 0x11]);
+  const db = {
+    async query(sql, params = []) {
+      const text = sql.replace(/\s+/g, ' ');
+      if (/INSERT INTO blog_images/.test(text)) {
+        return {
+          rows: [{ id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', mime_type: params[1] }],
+        };
+      }
+      if (/FROM blog_images/.test(text)) {
+        assert.equal(params[0], 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee');
+        return {
+          rows: [
+            {
+              id: params[0],
+              mime_type: 'image/jpeg',
+              bytes,
+            },
+          ],
+        };
+      }
+      return { rows: [] };
+    },
+  };
+
+  const created = await createBlogImage(
+    { authorId: 'author-1', mimeType: 'image/jpeg', bytes },
+    db,
+  );
+  assert.equal(created.url, '/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee');
+
+  const loaded = await getBlogImage(created.id, db);
+  assert.equal(loaded.mimeType, 'image/jpeg');
+  assert.deepEqual(loaded.bytes, bytes);
+});
+
+test('getBlogImage returns null when the id is missing', async () => {
+  const storedId = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
+  const db = {
+    async query(sql, params = []) {
+      if (params[0] === storedId) {
+        return {
+          rows: [{ id: storedId, mime_type: 'image/jpeg', bytes: Buffer.from([1]) }],
+        };
+      }
+      return { rows: [] };
+    },
+  };
+
+  assert.equal(await getBlogImage('bbbbbbbb-cccc-dddd-eeee-ffffffffffff', db), null);
 });
 
 test('a slug rename updates the row addressed by the old slug', async () => {

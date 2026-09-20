@@ -150,10 +150,11 @@ src/journalTopics/
 └── parseTopicName.js             # Shared name normalization and reserved-name rules
 
 src/blogPosts/
-├── blogPosts.routes.js       # Public list/detail and admin write paths
+├── blogPosts.routes.js       # Public list/detail/images and admin write paths
 ├── blogPosts.controller.js   # HTTP validation and responses
-├── blogPosts.service.js      # SQL for posts
-└── parseBlogPost.js          # Slug, category, and status rules
+├── blogPosts.service.js      # SQL for posts and images
+├── parseBlogPost.js          # Slug, category, and status rules
+└── parseBlogImage.js         # Upload type, size, and id rules
 ```
 
 Journal entries are listed, created, and deleted under `/auth/me/journal-entries`.
@@ -199,12 +200,25 @@ They are currently registered together in `backend/src/auth/auth.routes.js`,
 even when their controllers and services belong to domains such as journal
 entries or session unlocks.
 
-Public blog reads live under `/blog/posts`. Writes live under `/blog/admin/posts`
+Public blog reads live under `/blog/posts`. Image bytes live under `/blog/images/:id`. Writes live under `/blog/admin/posts` and `/blog/admin/images`
 and apply `requireAuth` then `requireAdmin`. Non-admin callers receive **404**,
-not 403, so the admin API does not advertise itself.
+not 403, so the admin API does not advertise itself. CORS allows the configured
+`FRONTEND_ORIGIN` and this project’s Vercel preview hosts (`detox-mental-2-0*.vercel.app`)
+so a pull-request frontend can load public posts. Preview hosts still cannot
+carry the production auth cookie (`SameSite=Lax` on a different site), so
+composer review uses a frontend-only preview fixture instead of an admin session.
 
 Cookie-enabled CORS requires the frontend and backend environment origins to
-remain aligned.
+remain aligned. The backend also allows this project’s Vercel preview origins
+so public `GET /blog/posts` works from a pull-request deployment. Those
+preview origins are a different site from `detoxmental.es`, so the session
+cookie is not sent there.
+
+Vercel Preview builds set `VERCEL_ENV=preview`, which Vite exposes as
+`VITE_VERCEL_ENV`. On those builds only, the blog composer, Write control, and
+a sample article at `/alejandroluis/blog/review-sample` are visible without an
+admin session so the deployment can be reviewed. Saving and image upload to
+the API stay disabled there. Production and local still require `users.role = 'admin'`.
 
 ## 4. Database
 
@@ -227,8 +241,8 @@ application command and verify the resulting schema in the feature handoff.
 
 ## 5. External services and deployment
 
-- PostgreSQL stores users, auth tokens, progress, journal data, summaries, and
-  published blog posts.
+- PostgreSQL stores users, auth tokens, progress, journal data, summaries,
+  published blog posts, and uploaded blog images.
 - Resend sends magic-link emails.
 - Stripe provides Checkout and webhook-driven payment updates.
 - Hugging Face powers onboarding, journal transcription, and weekly summaries.

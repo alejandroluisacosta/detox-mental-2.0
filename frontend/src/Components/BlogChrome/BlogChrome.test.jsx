@@ -6,6 +6,19 @@ import { writeStoredLocale } from '../../utils/locale.js';
 import BlogChrome from './BlogChrome.jsx';
 
 const mockUseAuth = vi.fn();
+const previewState = { enabled: false };
+
+vi.mock('../../Context/AuthContext.jsx', () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
+vi.mock('../../data/blogPreviewReview.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    isBlogPreviewReview: () => previewState.enabled,
+  };
+});
 
 vi.mock('../../Context/AuthContext.jsx', () => ({
   useAuth: () => mockUseAuth(),
@@ -27,6 +40,7 @@ const renderChrome = (props) => {
 describe('BlogChrome', () => {
   beforeEach(() => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    previewState.enabled = false;
   });
 
   afterEach(() => {
@@ -63,6 +77,15 @@ describe('BlogChrome', () => {
     );
     expect(screen.getByRole('link', { name: 'Edit' }).getAttribute('href')).toBe(
       '/alejandroluis/blog/quiet-tools/edit',
+    );
+  });
+
+  test('shows write on a Vercel preview without an admin session', () => {
+    previewState.enabled = true;
+    renderChrome();
+
+    expect(screen.getByRole('link', { name: 'Write' }).getAttribute('href')).toBe(
+      '/alejandroluis/blog/new',
     );
   });
 });

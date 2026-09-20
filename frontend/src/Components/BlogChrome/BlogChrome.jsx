@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
+import { isBlogPreviewReview } from '../../data/blogPreviewReview.js';
 import './BlogChrome.css';
 
 const BlogChrome = ({ editSlug }) => {
   const { user } = useAuth();
   const { t } = useLocale();
-  const isAdmin = user?.role === 'admin';
+  const canWrite = user?.role === 'admin' || isBlogPreviewReview();
 
   return (
     <header className="blog-chrome">
@@ -17,12 +18,12 @@ const BlogChrome = ({ editSlug }) => {
         <Link className="blog-chrome__link" to="/alejandroluis/blog">
           {t('blog.title')}
         </Link>
-        {isAdmin && (
+        {canWrite && (
           <Link className="blog-chrome__link" to="/alejandroluis/blog/new">
             {t('blog.write')}
           </Link>
         )}
-        {isAdmin && editSlug ? (
+        {canWrite && editSlug ? (
           <Link
             className="blog-chrome__link"
             to={`/alejandroluis/blog/${editSlug}/edit`}

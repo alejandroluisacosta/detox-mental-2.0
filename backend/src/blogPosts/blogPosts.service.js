@@ -140,3 +140,33 @@ export const deleteBlogPost = async (slug, db = pool) => {
   );
   return rows[0]?.id ?? null;
 };
+
+export const createBlogImage = async ({ authorId, mimeType, bytes }, db = pool) => {
+  const { rows } = await db.query(
+    `INSERT INTO blog_images (author_id, mime_type, bytes)
+     VALUES ($1, $2, $3)
+     RETURNING id, mime_type`,
+    [authorId, mimeType, bytes],
+  );
+  const row = rows[0];
+  return {
+    id: row.id,
+    mimeType: row.mime_type,
+    url: `/blog/images/${row.id}`,
+  };
+};
+
+export const getBlogImage = async (id, db = pool) => {
+  const { rows } = await db.query(
+    `SELECT id, mime_type, bytes
+     FROM blog_images
+     WHERE id = $1`,
+    [id],
+  );
+  if (!rows[0]) return null;
+  return {
+    id: rows[0].id,
+    mimeType: rows[0].mime_type,
+    bytes: rows[0].bytes,
+  };
+};

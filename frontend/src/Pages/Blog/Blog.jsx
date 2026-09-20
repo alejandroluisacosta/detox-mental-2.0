@@ -6,6 +6,10 @@ import { useAuth } from '../../Context/AuthContext.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { BLOG_CATEGORIES } from '../../data/blogCategories.js';
+import {
+  BLOG_REVIEW_SAMPLE_POST,
+  isBlogPreviewReview,
+} from '../../data/blogPreviewReview.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import './Blog.css';
 
@@ -43,6 +47,7 @@ const Blog = () => {
     categoryFromSearch(searchParams),
   );
   const isAdmin = user?.role === 'admin';
+  const isPreviewReview = isBlogPreviewReview();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,11 +70,14 @@ const Blog = () => {
         }
         const data = await res.json();
         if (cancelled) return;
-        setPosts(Array.isArray(data.posts) ? data.posts : []);
+        const loaded = Array.isArray(data.posts) ? data.posts : [];
+        setPosts(
+          isPreviewReview ? [BLOG_REVIEW_SAMPLE_POST, ...loaded] : loaded,
+        );
       } catch {
         if (!cancelled) {
-          setPosts([]);
-          setError(true);
+          setPosts(isPreviewReview ? [BLOG_REVIEW_SAMPLE_POST] : []);
+          setError(!isPreviewReview);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -80,7 +88,7 @@ const Blog = () => {
     return () => {
       cancelled = true;
     };
-  }, [authStatus, isAdmin, retryCount]);
+  }, [authStatus, isAdmin, isPreviewReview, retryCount]);
 
   const visiblePosts = selectedCategory
     ? posts.filter((post) => post.category === selectedCategory)

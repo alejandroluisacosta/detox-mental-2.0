@@ -5,6 +5,12 @@ import BlogChrome from '../../Components/BlogChrome/BlogChrome.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import {
+  BLOG_REVIEW_SAMPLE_POST,
+  BLOG_REVIEW_SAMPLE_SLUG,
+  isBlogPreviewReview,
+} from '../../data/blogPreviewReview.js';
+import { resolveBlogImageSrc } from '../../utils/blogImageSrc.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import './BlogPost.css';
 
@@ -13,6 +19,9 @@ const markdownComponents = {
     <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
       {children}
     </a>
+  ),
+  img: ({ src, alt, ...props }) => (
+    <img src={resolveBlogImageSrc(src)} alt={alt || ''} {...props} />
   ),
 };
 
@@ -40,6 +49,12 @@ const BlogPost = () => {
       setError(false);
       setNotFound(false);
       setPost(null);
+
+      if (isBlogPreviewReview() && slug === BLOG_REVIEW_SAMPLE_SLUG) {
+        setPost(BLOG_REVIEW_SAMPLE_POST);
+        setLoading(false);
+        return;
+      }
 
       try {
         const res = await apiFetch(`/blog/posts/${encodeURIComponent(slug)}`);

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { wrapMarkdownEmphasis, wrapMarkdownLink } from './markdownFormat.js';
+import { wrapMarkdownEmphasis, wrapMarkdownImage, wrapMarkdownLink } from './markdownFormat.js';
 
 describe('wrapMarkdownEmphasis', () => {
   test('wraps the selection in bold markers', () => {
@@ -57,6 +57,26 @@ describe('wrapMarkdownLink', () => {
       value: '[link text](https://)',
       selectionStart: 1,
       selectionEnd: 10,
+    });
+  });
+});
+
+describe('wrapMarkdownImage', () => {
+  test('inserts an image and selects the alt text', () => {
+    expect(
+      wrapMarkdownImage('Hello', 5, 5, '/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', 'photo'),
+    ).toEqual({
+      value: 'Hello![photo](/blog/images/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)',
+      selectionStart: 7,
+      selectionEnd: 12,
+    });
+  });
+
+  test('uses the selection as alt text when none is given', () => {
+    expect(wrapMarkdownImage('See sunrise', 4, 11, '/images/socrates.webp')).toEqual({
+      value: 'See ![sunrise](/images/socrates.webp)',
+      selectionStart: 6,
+      selectionEnd: 13,
     });
   });
 });

@@ -14,6 +14,16 @@ vi.mock('../../Context/AuthContext.jsx', () => ({
 
 vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 
+const previewState = { enabled: false };
+
+vi.mock('../../data/blogPreviewReview.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    isBlogPreviewReview: () => previewState.enabled,
+  };
+});
+
 const personalPost = {
   id: '1',
   slug: 'attention-is-a-vote',
@@ -64,6 +74,7 @@ const renderBlog = (path = '/alejandroluis/blog') => {
 describe('Blog', () => {
   beforeEach(() => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    previewState.enabled = false;
     apiFetch.mockReset();
     apiFetch.mockResolvedValue(jsonResponse({ posts: [personalPost, techPost] }));
   });
@@ -160,6 +171,18 @@ describe('Blog', () => {
       '/alejandroluis/blog/quiet-tools/edit',
     );
     expect(apiFetch).toHaveBeenCalledWith('/blog/admin/posts');
+  });
+
+  test('includes a sample article on a Vercel preview even if the API fails', async () => {
+    previewState.enabled = true;
+    apiFetch.mockRejectedValue(new Error('cors'));
+    renderBlog();
+
+    expect(await screen.findByRole('link', { name: /Preview sample/ })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /Preview sample/ }).getAttribute('href')).toBe(
+      '/alejandroluis/blog/review-sample',
+    );
+    expect(screen.queryByText('Could not load articles.')).toBeNull();
   });
 
   test('does not link into the journal or education modules', async () => {
