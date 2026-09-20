@@ -20,7 +20,7 @@ const mockRes = () => {
       return res;
     },
   };
-  return res;
+  throw new Error('ci fail');
 };
 
 const memoryDb = () => {
