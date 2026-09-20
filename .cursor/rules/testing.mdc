@@ -36,3 +36,12 @@ selects the prompt, not the prose.
 
 ## 8. Coverage percentage is not a goal
 An untested `requireAuth` matters more than a hundred covered format helpers.
+
+## 9. Prefer test-first when the behavior is well-defined
+For new behavior, use a test-first approach when the behavior is sufficiently
+well-defined and the tests provide meaningful design or correctness value. For
+complex logic, business rules, edge cases, and bug fixes, prefer writing a
+failing test before implementation. Do not force strict TDD for trivial
+changes, styling, configuration, straightforward refactors, or changes where
+test-first development provides little value. Existing tests are not required
+to be rewritten unless explicitly requested.

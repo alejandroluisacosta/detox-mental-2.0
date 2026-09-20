@@ -23,6 +23,5 @@ running app.
 
 ## Handing off
 Report what changed, what you verified, what you did NOT verify, and any
-migration or env step. Propose a commit message.
-
-Never commit, push, open a PR, merge, or deploy without explicit authorization.
+migration or env step. Do not open a PR or deploy without explicit
+authorization.
