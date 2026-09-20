@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BlogChrome from '../../Components/BlogChrome/BlogChrome.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
@@ -7,6 +7,7 @@ import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
 import { BLOG_CATEGORIES } from '../../data/blogCategories.js';
 import { suggestBlogSlug } from '../../utils/blogSlug.js';
+import { wrapMarkdownEmphasis, wrapMarkdownLink } from '../../utils/markdownFormat.js';
 import './BlogComposer.css';
 
 const EMPTY_FORM = {
@@ -32,6 +33,8 @@ const BlogComposer = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [pendingSelection, setPendingSelection] = useState(null);
+  const bodyRef = useRef(null);
 
   useEffect(() => {
     if (authStatus !== 'ready') return undefined;
@@ -80,6 +83,13 @@ const BlogComposer = () => {
     };
   }, [authStatus, isAdmin, isEdit, routeSlug]);
 
+  useLayoutEffect(() => {
+    if (!pendingSelection || !bodyRef.current) return;
+    bodyRef.current.focus();
+    bodyRef.current.setSelectionRange(pendingSelection.start, pendingSelection.end);
+    setPendingSelection(null);
+  }, [pendingSelection, form.body]);
+
   const updateField = (field, value) => {
     setForm((prev) => {
       const next = { ...prev, [field]: value };
@@ -88,6 +98,35 @@ const BlogComposer = () => {
       }
       return next;
     });
+  };
+
+  const applyBodyFormat = (kind) => {
+    const textarea = bodyRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart ?? 0;
+    const end = textarea.selectionEnd ?? 0;
+    const current = textarea.value;
+    const result =
+      kind === 'link'
+        ? wrapMarkdownLink(current, start, end)
+        : wrapMarkdownEmphasis(current, start, end, kind === 'bold' ? '**' : '*');
+    updateField('body', result.value);
+    setPendingSelection({ start: result.selectionStart, end: result.selectionEnd });
+  };
+
+  const handleBodyKeyDown = (event) => {
+    if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+    const key = event.key.toLowerCase();
+    if (key === 'b') {
+      event.preventDefault();
+      applyBodyFormat('bold');
+    } else if (key === 'i') {
+      event.preventDefault();
+      applyBodyFormat('italic');
+    } else if (key === 'k') {
+      event.preventDefault();
+      applyBodyFormat('link');
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -191,11 +230,40 @@ const BlogComposer = () => {
             <label className="blog-composer__label" htmlFor="blog-body">
               {t('blog.fieldBody')}
             </label>
+            <p className="blog-composer__hint">{t('blog.formatHint')}</p>
+            <div className="blog-composer__format" role="toolbar" aria-label={t('blog.formatLabel')}>
+              <button
+                type="button"
+                className="blog-composer__format-button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => applyBodyFormat('bold')}
+              >
+                {t('blog.formatBold')}
+              </button>
+              <button
+                type="button"
+                className="blog-composer__format-button blog-composer__format-button--italic"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => applyBodyFormat('italic')}
+              >
+                {t('blog.formatItalic')}
+              </button>
+              <button
+                type="button"
+                className="blog-composer__format-button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => applyBodyFormat('link')}
+              >
+                {t('blog.formatLink')}
+              </button>
+            </div>
             <textarea
               id="blog-body"
+              ref={bodyRef}
               className="blog-composer__textarea"
               value={form.body}
               onChange={(event) => updateField('body', event.target.value)}
+              onKeyDown={handleBodyKeyDown}
               required
             />
             <fieldset className="blog-composer__status">
