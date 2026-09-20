@@ -100,8 +100,8 @@ export const upsertWeeklySummary = async ({
   modelId,
   locale,
   limit,
-}) => {
-  const { rows } = await pool.query(
+}, db = pool) => {
+  const { rows } = await db.query(
     `INSERT INTO journal_weekly_summaries (
        user_id, week_start, week_end, period_start, period_end,
        summary_text, main_topics, best_quote, best_quote_entry_id,
@@ -162,8 +162,8 @@ export const reviseWeeklySummary = async ({
   entryCount,
   modelId,
   locale,
-}) => {
-  const { rows } = await pool.query(
+}, db = pool) => {
+  const { rows } = await db.query(
     `UPDATE journal_weekly_summaries
      SET summary_text = $3,
          main_topics = $4,
