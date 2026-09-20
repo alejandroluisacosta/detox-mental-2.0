@@ -1,0 +1,14 @@
+---
+description: Git operations require explicit user approval
+alwaysApply: true
+---
+
+# Git Operations
+
+Never commit, push, merge, rebase, reset, or otherwise modify Git history
+without explicit user approval. You may inspect Git state and modify
+working-tree files, but committing or pushing requires explicit authorization
+from the user.
+
+After any working-tree change, propose a commit message in the reply. Do not
+commit unless the user explicitly asks.
