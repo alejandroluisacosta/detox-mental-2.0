@@ -122,8 +122,9 @@ npm run test
 - [ROADMAP.md](./ROADMAP.md) - planned milestones and future features
 - [DECISIONS.md](./DECISIONS.md) - architectural/product decisions log
 - [ENV_SETUP.md](./ENV_SETUP.md) - environment setup notes
-- [`.cursor/docs/workflow.md`](./.cursor/docs/workflow.md) - feature implementation and handoff
-- [`.cursor/rules/frontend-structure.mdc`](./.cursor/rules/frontend-structure.mdc) - frontend folder layout (one folder per page/component)
+- [`AGENTS.md`](./AGENTS.md) - agent instructions (git, testing, workflow)
+- [`frontend/AGENTS.md`](./frontend/AGENTS.md) - frontend folder layout (one folder per page/component)
+- [`backend/AGENTS.md`](./backend/AGENTS.md) - backend invariants (auth, SQL, migrations)
 
 ## 🤝 Contributing
 

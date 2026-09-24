@@ -1,9 +1,3 @@
----
-description: Non-negotiable backend rules for auth, SQL, and migrations
-globs: backend/**
-alwaysApply: false
----
-
 # Backend Invariants
 
 ## 1. Never trust a client-supplied user ID
@@ -31,3 +25,12 @@ services.
 ## 5. Migrations are append-only
 Add a new numbered file in `backend/src/db/migrations/`. Never edit an
 applied one.
+
+## Additional constraints
+
+- Non-admin callers of blog admin routes get **404**, not 403.
+- Onboarding chat stays stateless; do not add server-held chat session state
+  without an explicit decision.
+- Migrations are applied manually via `\i backend/src/db/migrations/<NNN>_<name>.sql`
+  in PostgreSQL (see `backend/src/db/README.md`). Handoffs that add a migration
+  must name the file and note that the schema was checked.

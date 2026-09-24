@@ -1,12 +1,7 @@
----
-description: Where frontend files go and how folders are structured
-globs: frontend/src/**
-alwaysApply: false
----
-
 # Frontend Structure
 
-These rules apply to `frontend/src/`. Follow them when adding or moving files. Do not dump extra files into an existing page or component folder.
+These rules apply under `frontend/`. Follow them when adding or moving files.
+Do not dump extra files into an existing page or component folder.
 
 ## 1. One folder per page, one folder per component
 
@@ -114,3 +109,9 @@ Pages/Journal/Journal.test.jsx
 ## 8. Hard stop
 
 If a change would add a second page-level `.jsx` to an existing page folder, create a new folder instead. Do not "just put it next to the other journal files."
+
+## Product invariants
+
+`OnboardingGate` is not an authentication gate. Pages that require an account
+must check `useAuth()` or rely on a protected backend endpoint. Authentication
+and authorization for user-owned data must always be enforced by the backend.
