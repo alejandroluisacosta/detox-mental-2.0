@@ -192,3 +192,15 @@ The first blog implementation treated each chip as a new backend query. Smoke-te
 - **Keep per-chip API filters:** Extra latency and load for no product gain at this catalog size. The public `?category=` query can stay on the API unused by the index.  
 - **Redux or a new `BlogPostsContext`:** Heavier than one page’s `useState`. Revisit only if the same list must survive Blog → article → Blog without a second fetch, or be shared with the composer.  
 - **Reuse `AuthContext` / `LocaleContext`:** Those providers own session and copy, not blog posts.
+
+### 2026-09-24 — Tool-agnostic agent instructions in AGENTS.md
+
+**Decision:**  
+Move agent documentation and conventions out of `.cursor/` into three plain `AGENTS.md` files: one at the repo root, one in `frontend/`, and one in `backend/`. Delete the duplicated Cursor rule files that previously injected the same text.
+
+**Why this option was chosen:**  
+The goal of this update was to make the development of the project **tool-agnostic**, allowing me to use either Cursor, Claude Code, Codex, and similar tools—all of which load `AGENTS.md` automatically. Collapsing the scattered `.cursor/rules` and workflow docs into three files gives a single source of predefined instructions that works across tools without Cursor-specific duplication.
+
+**Why obvious alternatives were rejected:**  
+- **Keep conventions only in `.cursor/rules`:** Ties instructions to Cursor; other agents would miss them or need a separate copy.  
+- **Symlinks or per-tool files (`CLAUDE.md`, etc.):** More surface area to keep in sync; one canonical file per scope is enough.

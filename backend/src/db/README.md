@@ -497,7 +497,7 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ## Support
 
 For questions or issues related to the database schema, please refer to:
-- **Architecture Document**: `.cursor/docs/architecture.md`
+- **Architecture Document**: `architecture.md`
 - **Project Issues**: GitHub repository issues
 - **Database Documentation**: PostgreSQL official docs
 

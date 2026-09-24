@@ -13,8 +13,8 @@ Detox Mental is a monorepo with two independently managed JavaScript packages:
 detox_mental/
 ├── frontend/          # React + Vite single-page application
 ├── backend/           # Express API and PostgreSQL access
-├── .cursor/docs/      # Architecture and implementation workflow
-├── .cursor/rules/     # Always-applied engineering conventions
+├── architecture.md    # Human architecture documentation
+├── AGENTS.md          # Agent instructions (root and per-package)
 ├── DECISIONS.md
 └── ENV_SETUP.md
 ```
