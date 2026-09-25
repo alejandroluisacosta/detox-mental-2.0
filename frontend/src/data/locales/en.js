@@ -122,7 +122,9 @@ export const en = {
   'meditations.login': 'Log in',
   'meditations.noEntries': 'No entries are tagged as Meditations yet.',
   'meditations.goToHistory': 'Tag entries in History',
+  'meditations.write': 'Write',
   'meditations.history': 'History',
+  'meditations.writeFooter': 'WRITE',
   'meditations.unknownDate': 'Unknown date',
   'meditations.loadFailed': 'Could not load your meditations.',
 

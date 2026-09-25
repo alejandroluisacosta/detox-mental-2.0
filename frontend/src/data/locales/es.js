@@ -124,7 +124,9 @@ export const es = {
   'meditations.login': 'Iniciar sesión',
   'meditations.noEntries': 'Todavía no hay entradas etiquetadas como Meditaciones.',
   'meditations.goToHistory': 'Etiqueta entradas en Historial',
+  'meditations.write': 'Escribir',
   'meditations.history': 'Historial',
+  'meditations.writeFooter': 'ESCRIBIR',
   'meditations.unknownDate': 'Fecha desconocida',
   'meditations.loadFailed': 'No se pudieron cargar tus meditaciones.',
 

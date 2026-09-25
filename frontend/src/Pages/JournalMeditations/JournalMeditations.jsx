@@ -93,9 +93,20 @@ const JournalMeditations = () => {
             <h1 className="journal-meditations__title">{t('meditations.title')}</h1>
             <DemoModeToggle />
           </div>
-          <Link to="/journal/history" className="journal-meditations__history-link">
-            {t('meditations.history')}
-          </Link>
+          <div className="journal-meditations__header-actions">
+            <Link
+              to="/journal"
+              className="journal-meditations__write-button journal-meditations__write-button--header"
+            >
+              {t('meditations.write')}
+            </Link>
+            <Link
+              to="/journal/history"
+              className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
+            >
+              {t('meditations.history')}
+            </Link>
+          </div>
         </header>
 
         {!demoMode && status === 'loading' && (
@@ -137,6 +148,15 @@ const JournalMeditations = () => {
               </section>
             ))}
           </article>
+        )}
+
+        {(demoMode || status !== 'loading') && (
+          <Link
+            to="/journal"
+            className="journal-meditations__write-button journal-meditations__write-button--footer"
+          >
+            {t('meditations.writeFooter')}
+          </Link>
         )}
       </main>
     </div>

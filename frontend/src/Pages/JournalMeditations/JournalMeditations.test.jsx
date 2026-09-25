@@ -63,6 +63,9 @@ describe('JournalMeditations page states', () => {
     expect(
       screen.getByText(/Maybe I don't need a better plan/i),
     ).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Write' })).toHaveAttribute('href', '/journal');
+    expect(screen.getByRole('link', { name: 'History' })).toHaveAttribute('href', '/journal/history');
+    expect(screen.getByRole('link', { name: 'WRITE' })).toHaveAttribute('href', '/journal');
     expect(
       screen.queryByText(/Every time something stays ambiguous/i),
     ).toBeNull();
