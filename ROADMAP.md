@@ -51,11 +51,17 @@ State: ✅ V1 released.
 
 Turns stored journal entries into an on-demand AI reflection (two generations per week): weekly topic summary, a “best quote” from the user’s own writing, and a Socratic prompt. Generated on click; persisted once per week.
 
+### v4.5 — Journaling V2
+
+State: ✅ Current release (September 2026).
+
+The second generation of the journaling module. Entries support editable, user-defined topics—so writing can be organized and revisited by theme. Weekly summaries now pair a Socratic question with a Machiavellian challenge, and users can leave feedback on the reflection and regenerate it within their weekly quota.
+
+A new **Meditations** section surfaces every entry tagged as a meditation, presented as a read-only compilation in chronological order. The long-term vision is the same as Marcus Aurelius’s *Meditations*: a personal book written gradually through daily practice, assembled from the user’s own journal rather than imposed from outside.
+
 ### Future Product Directions
 
-- Full translation of the app into English, opening Detox Mental to broader English-speaking markets.
-- Topic classification for journal entries, as a foundation for later insight extraction from recurring themes.
-- AI character chats for reflecting on one’s thoughts—e.g. a Socrates that answers only with Socratic questions, and a Machiavelli that pushes toward clear-eyed, practical self-interest.
+- **Meditations as a publishable book** — Complete the Meditations workflow: export the full compilation as a PDF, then convert it to eBook format (e.g. EPUB/MOBI) so it can be uploaded to Amazon and made available for print-on-demand.
 
 ### Vision:
 Detox Mental is not just a mental health tool. It’s an ongoing experiment in self-observation and human–machine dialogue — how technology can mirror our thinking rather than distract from it.
