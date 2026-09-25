@@ -4,11 +4,12 @@
 
 Never commit, push, merge, rebase, reset, or otherwise modify Git history
 without explicit user approval. You may inspect Git state and modify
-working-tree files, but committing or pushing requires explicit authorization
-from the user.
+working-tree files. Do not commit unless the user explicitly asks; propose a
+commit message instead.
 
-After any working-tree change, propose a commit message in the reply. Do not
-commit unless the user explicitly asks.
+The only push exception: explicit invocation of the `pr-creation` skill is
+approval to push the current feature branch and create or update its GitHub PR.
+It is not approval to commit, merge, rebase, force-push, or edit files.
 
 ## Testing
 
