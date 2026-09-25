@@ -19,6 +19,7 @@ import PromoGate from './Pages/Promo/PromoGate.jsx';
 import Tests from './Pages/Tests/Tests.jsx';
 import Journal from './Pages/Journal/Journal.jsx';
 import JournalHistory from './Pages/JournalHistory/JournalHistory.jsx';
+import JournalMeditations from './Pages/JournalMeditations/JournalMeditations.jsx';
 import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
 import Home from './Pages/Home/Home.jsx';
 import AlejandroLuis from './Pages/AlejandroLuis/AlejandroLuis.jsx';
@@ -58,6 +59,7 @@ const App = () => {
                                         {/* Journaling module — independent of onboarding */}
                                         <Route path='/journal' element={<Journal />} />
                                         <Route path='/journal/history' element={<JournalHistory />} />
+                                        <Route path='/journal/meditations' element={<JournalMeditations />} />
                                         <Route path='/journal/summary' element={<JournalSummary />} />
 
                                         {/* Educational module */}

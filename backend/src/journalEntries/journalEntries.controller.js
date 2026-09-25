@@ -4,6 +4,7 @@ import {
   deleteJournalEntryForUser,
   updateJournalEntryTopicsForUser,
 } from './journalEntries.service.js';
+import pool from '../db/db.js';
 import { listCustomTopicsForUser } from '../journalTopics/journalTopics.service.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
@@ -58,8 +59,20 @@ const parseTopics = async (raw, locale, userId) => {
 
 export const getJournalEntries = async (req, res) => {
   const locale = localeFromRequest(req);
+  const rawTopic = req.query?.topic;
+  let filter = null;
+
+  if (rawTopic !== undefined) {
+    if (typeof rawTopic !== 'string' || rawTopic !== 'meditations') {
+      return res.status(400).json({ message: journalMessage(locale, 'invalidTopic') });
+    }
+    filter = { topic: 'meditations' };
+  }
+
   try {
-    const entries = await listJournalEntriesForUser(req.user.id);
+    const entries = filter
+      ? await listJournalEntriesForUser(req.user.id, pool, filter)
+      : await listJournalEntriesForUser(req.user.id);
     return res.status(200).json({ entries });
   } catch (err) {
     console.error('[journal-entries GET]', err);

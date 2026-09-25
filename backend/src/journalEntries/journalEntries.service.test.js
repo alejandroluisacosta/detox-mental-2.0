@@ -58,12 +58,17 @@ const memoryDb = (clock = () => new Date('2026-09-13T12:00:00.000Z')) => {
 
       if (/SELECT/.test(text)) {
         const filtersByUser = /user_id/.test(text);
+        const filtersByTopic = /\$2 = ANY\(topics\)/.test(text);
         const matched = rows.filter((row) => {
           if (filtersByUser && row.user_id !== params[0]) return false;
+          if (filtersByTopic && !row.topics.includes(params[1])) return false;
           return true;
         });
         if (/ORDER BY created_at DESC/.test(text)) {
           matched.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        }
+        if (/ORDER BY created_at ASC/.test(text)) {
+          matched.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         }
         return { rows: matched };
       }
@@ -117,5 +122,40 @@ test('list returns the caller\'s entries newest first', async () => {
   assert.deepEqual(
     listed.map((entry) => entry.id),
     [newer.id, older.id],
+  );
+});
+
+test("user B's meditation entry is absent from user A's filtered list", async () => {
+  const db = memoryDb();
+  await createJournalEntry('user-b', 'other user meditation', ['meditations'], db);
+
+  const listed = await listJournalEntriesForUser('user-a', db, { topic: 'meditations' });
+  assert.equal(listed.length, 0);
+});
+
+test('topic filter excludes entries without meditations and includes private-tagged ones', async () => {
+  const db = memoryDb();
+  await createJournalEntry('user-a', 'not a meditation', ['work'], db);
+  const tagged = await createJournalEntry('user-a', 'meditation note', ['meditations', 'private'], db);
+
+  const listed = await listJournalEntriesForUser('user-a', db, { topic: 'meditations' });
+  assert.equal(listed.length, 1);
+  assert.equal(listed[0].id, tagged.id);
+});
+
+test('topic filter returns meditation entries oldest first', async () => {
+  const createdAt = [
+    new Date('2026-09-13T12:00:00.000Z'),
+    new Date('2026-09-13T12:01:00.000Z'),
+  ];
+  const db = memoryDb(() => createdAt.shift());
+  const older = await createJournalEntry('user-a', 'first meditation', ['meditations'], db);
+  await createJournalEntry('user-a', 'not included', ['work'], db);
+  const newer = await createJournalEntry('user-a', 'second meditation', ['meditations'], db);
+
+  const listed = await listJournalEntriesForUser('user-a', db, { topic: 'meditations' });
+  assert.deepEqual(
+    listed.map((entry) => entry.id),
+    [older.id, newer.id],
   );
 });

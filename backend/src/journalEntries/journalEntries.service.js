@@ -17,7 +17,18 @@ export const createJournalEntry = async (userId, content, topics = [], db = pool
   return mapRow(rows[0]);
 };
 
-export const listJournalEntriesForUser = async (userId, db = pool) => {
+export const listJournalEntriesForUser = async (userId, db = pool, filter = null) => {
+  if (filter?.topic === 'meditations') {
+    const { rows } = await db.query(
+      `SELECT id, content, topics, created_at
+       FROM journal_entries
+       WHERE user_id = $1 AND $2 = ANY(topics)
+       ORDER BY created_at ASC`,
+      [userId, 'meditations'],
+    );
+    return rows.map(mapRow);
+  }
+
   const { rows } = await db.query(
     `SELECT id, content, topics, created_at
      FROM journal_entries

@@ -35,6 +35,11 @@ export const JOURNALING_LINKS = [
         isActive: (pathname) => pathname.startsWith('/journal/history'),
     },
     {
+        labelKey: 'nav.meditations',
+        path: '/journal/meditations',
+        isActive: (pathname) => pathname.startsWith('/journal/meditations'),
+    },
+    {
         labelKey: 'nav.summary',
         path: '/journal/summary',
         isActive: (pathname) => pathname.startsWith('/journal/summary'),
