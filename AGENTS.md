@@ -7,7 +7,7 @@ without explicit user approval. You may inspect Git state and modify
 working-tree files. Do not commit unless the user explicitly asks; propose a
 commit message instead.
 
-The only push exception: explicit invocation of the `pr-description` skill is
+The only push exception: explicit invocation of the `pr-creation` skill is
 approval to push the current feature branch and create or update its GitHub PR.
 It is not approval to commit, merge, rebase, force-push, or edit files.
 
