@@ -9,6 +9,7 @@ describe('resolveNavModule', () => {
     test('maps journal paths to the journaling module', () => {
         expect(resolveNavModule('/journal')).toBe('journaling');
         expect(resolveNavModule('/journal/history')).toBe('journaling');
+        expect(resolveNavModule('/journal/meditations')).toBe('journaling');
         expect(resolveNavModule('/journal/summary')).toBe('journaling');
     });
 
@@ -39,6 +40,14 @@ describe('module link active matching', () => {
         expect(isActive(JOURNALING_LINKS, '/journal', '/journal')).toBe(true);
         expect(isActive(JOURNALING_LINKS, '/journal', '/journal/history')).toBe(false);
         expect(isActive(JOURNALING_LINKS, '/journal/history', '/journal/history')).toBe(true);
+        expect(isActive(JOURNALING_LINKS, '/journal/history', '/journal/meditations')).toBe(false);
+    });
+
+    test('marks Meditations only on the meditations path', () => {
+        expect(isActive(JOURNALING_LINKS, '/journal/meditations', '/journal/meditations')).toBe(
+            true,
+        );
+        expect(isActive(JOURNALING_LINKS, '/journal/meditations', '/journal/history')).toBe(false);
     });
 
     test('marks Curso for both the course grid and session player', () => {

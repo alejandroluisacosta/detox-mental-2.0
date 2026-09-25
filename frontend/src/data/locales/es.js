@@ -14,6 +14,7 @@ export const es = {
   'nav.instructions': 'INSTRUCCIONES',
   'nav.journal': 'DIARIO',
   'nav.history': 'HISTORIAL',
+  'nav.meditations': 'MEDITACIONES',
   'nav.summary': 'RESUMEN SEMANAL',
 
   'home.education': 'EDUCACIÓN',
@@ -115,6 +116,19 @@ export const es = {
   'history.topicsSaving': 'GUARDANDO...',
   'history.topicsUpdateSuccess': 'Temas actualizados.',
   'history.topicsUpdateFailed': 'No se pudieron actualizar los temas.',
+
+  'meditations.title': 'Meditaciones',
+  'meditations.loading': 'Cargando…',
+  'meditations.loadingEntries': 'Cargando entradas…',
+  'meditations.guestEmpty': 'Inicia sesión para leer tus entradas de meditación.',
+  'meditations.login': 'Iniciar sesión',
+  'meditations.noEntries': 'Todavía no hay entradas etiquetadas como Meditaciones.',
+  'meditations.goToHistory': 'Etiqueta entradas en Historial',
+  'meditations.write': 'Escribir',
+  'meditations.history': 'Historial',
+  'meditations.writeFooter': 'ESCRIBIR',
+  'meditations.unknownDate': 'Fecha desconocida',
+  'meditations.loadFailed': 'No se pudieron cargar tus meditaciones.',
 
   'summary.title': 'Resumen semanal',
   'summary.write': 'Escribir',

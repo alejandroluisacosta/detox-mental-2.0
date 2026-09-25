@@ -14,6 +14,7 @@ export const en = {
   'nav.instructions': 'INSTRUCTIONS',
   'nav.journal': 'JOURNAL',
   'nav.history': 'HISTORY',
+  'nav.meditations': 'MEDITATIONS',
   'nav.summary': 'WEEKLY SUMMARY',
 
   'home.education': 'EDUCATION',
@@ -113,6 +114,19 @@ export const en = {
   'history.topicsSaving': 'SAVING...',
   'history.topicsUpdateSuccess': 'Topics updated.',
   'history.topicsUpdateFailed': 'Could not update the topics.',
+
+  'meditations.title': 'Meditations',
+  'meditations.loading': 'Loading…',
+  'meditations.loadingEntries': 'Loading entries…',
+  'meditations.guestEmpty': 'Sign in to read your meditation entries.',
+  'meditations.login': 'Log in',
+  'meditations.noEntries': 'No entries are tagged as Meditations yet.',
+  'meditations.goToHistory': 'Tag entries in History',
+  'meditations.write': 'Write',
+  'meditations.history': 'History',
+  'meditations.writeFooter': 'WRITE',
+  'meditations.unknownDate': 'Unknown date',
+  'meditations.loadFailed': 'Could not load your meditations.',
 
   'summary.title': 'Weekly summary',
   'summary.write': 'Write',

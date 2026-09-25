@@ -55,7 +55,7 @@ The Vite development server is configured on port `3001` in
 `/` is the module chooser (`Home`). Successful `GET /auth/verify` redirects
 to `/?auth=success`. Shared account and auth routes (`/login`, `/auth/error`,
 `/account`) and the journaling module (`/journal`, `/journal/history`,
-`/journal/summary`) are reachable without onboarding.
+`/journal/meditations`, `/journal/summary`) are reachable without onboarding.
 
 The personal site (`/alejandroluis`, `/alejandroluis/blog`,
 `/alejandroluis/blog/:slug`, plus unlisted admin compose routes) is also
@@ -157,7 +157,10 @@ src/blogPosts/
 ```
 
 Journal entries are listed, created, and deleted under `/auth/me/journal-entries`.
-Topics on an existing entry are updated with `PATCH /auth/me/journal-entries/:id`
+The unfiltered list returns all of the user's entries newest first (`created_at DESC`).
+`GET /auth/me/journal-entries?topic=meditations` returns only entries whose
+`topics` include the built-in `meditations` slug, oldest first (`created_at ASC`).
+Any other `topic` value returns **400**. Topics on an existing entry are updated with `PATCH /auth/me/journal-entries/:id`
 (`{ topics }`); `content` is immutable after create.
 
 Custom topics are listed, created, and renamed under `/auth/me/journal-topics`.
