@@ -131,7 +131,7 @@ export const en = {
   'meditations.removeFromMeditations': 'Remove from meditations',
   'meditations.removeTitle': 'Remove from meditations?',
   'meditations.removeText':
-    'Removing this from meditations will remove the meditations topic from this entry. Are you sure you want to proceed?',
+    'Removing this from meditations will remove the "Meditations" topic from this entry. Are you sure you want to proceed?',
   'meditations.removeConfirm': 'Yes, proceed',
   'meditations.removeCancel': 'Cancel',
   'meditations.removeFailed': 'Could not remove this from meditations.',

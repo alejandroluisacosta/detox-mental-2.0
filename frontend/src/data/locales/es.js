@@ -133,7 +133,7 @@ export const es = {
   'meditations.removeFromMeditations': 'Quitar de meditaciones',
   'meditations.removeTitle': '¿Quitar de meditaciones?',
   'meditations.removeText':
-    'Quitar esto de meditaciones eliminará el tema meditaciones de esta entrada. ¿Seguro que quieres continuar?',
+    'Quitar esto de meditaciones eliminará el tema "Meditaciones" de esta entrada. ¿Seguro que quieres continuar?',
   'meditations.removeConfirm': 'Sí, continuar',
   'meditations.removeCancel': 'Cancelar',
   'meditations.removeFailed': 'No se pudo quitar de meditaciones.',
