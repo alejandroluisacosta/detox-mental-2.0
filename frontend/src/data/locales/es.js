@@ -129,6 +129,7 @@ export const es = {
   'meditations.writeFooter': 'ESCRIBIR',
   'meditations.unknownDate': 'Fecha desconocida',
   'meditations.loadFailed': 'No se pudieron cargar tus meditaciones.',
+  'meditations.pagesLeft': 'en {pages} páginas',
 
   'summary.title': 'Resumen semanal',
   'summary.write': 'Escribir',
