@@ -132,11 +132,52 @@
   gap: 12px;
 }
 
+.journal-meditations__date-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .journal-meditations__date {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--accent);
+}
+
+.journal-meditations__delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.journal-meditations__delete:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.journal-meditations__delete:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journal-meditations__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.journal-meditations__delete-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .journal-meditations__text {

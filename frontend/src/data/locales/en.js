@@ -128,6 +128,15 @@ export const en = {
   'meditations.unknownDate': 'Unknown date',
   'meditations.loadFailed': 'Could not load your meditations.',
   'meditations.pagesLeft': 'in {pages} pages',
+  'meditations.deleteEntry': 'Delete entry',
+  'meditations.deleteFailed': 'Could not delete the entry.',
+  'meditations.deleteSuccess': 'Entry deleted.',
+  'meditations.deleteTitle': 'Delete this entry?',
+  'meditations.deleteText':
+    'This action cannot be undone. The entry will be permanently removed from your journal.',
+  'meditations.deleting': 'DELETING...',
+  'meditations.delete': 'DELETE',
+  'meditations.cancel': 'CANCEL',
 
   'summary.title': 'Weekly summary',
   'summary.write': 'Write',

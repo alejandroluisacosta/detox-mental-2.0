@@ -130,6 +130,15 @@ export const es = {
   'meditations.unknownDate': 'Fecha desconocida',
   'meditations.loadFailed': 'No se pudieron cargar tus meditaciones.',
   'meditations.pagesLeft': 'en {pages} páginas',
+  'meditations.deleteEntry': 'Eliminar entrada',
+  'meditations.deleteFailed': 'No se pudo eliminar la entrada.',
+  'meditations.deleteSuccess': 'Entrada eliminada.',
+  'meditations.deleteTitle': '¿Eliminar esta entrada?',
+  'meditations.deleteText':
+    'Esta acción no se puede deshacer. La entrada se borrará de tu diario de forma permanente.',
+  'meditations.deleting': 'ELIMINANDO...',
+  'meditations.delete': 'ELIMINAR',
+  'meditations.cancel': 'CANCELAR',
 
   'summary.title': 'Resumen semanal',
   'summary.write': 'Escribir',

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
+import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useDemoMode } from '../../Context/DemoModeContext.jsx';
@@ -35,6 +36,8 @@ const JournalMeditations = () => {
   const { locale, t } = useLocale();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [entryPendingDelete, setEntryPendingDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const demoEntries = useMemo(
     () => (demoMode ? filterMeditationEntries(getDemoEntries(locale)) : []),
     [demoMode, locale],
@@ -51,12 +54,14 @@ const JournalMeditations = () => {
     if (demoMode) {
       setEntries([]);
       setLoading(false);
+      setEntryPendingDelete(null);
       return undefined;
     }
 
     if (status !== 'ready' || !user) {
       setEntries([]);
       setLoading(false);
+      setEntryPendingDelete(null);
       return undefined;
     }
 
@@ -90,6 +95,37 @@ const JournalMeditations = () => {
       cancelled = true;
     };
   }, [demoMode, status, t, user]);
+
+  const closeDeleteModal = () => {
+    if (deleting) return;
+    setEntryPendingDelete(null);
+  };
+
+  const confirmDeleteEntry = async () => {
+    if (!entryPendingDelete || deleting) return;
+
+    const entryId = entryPendingDelete.id;
+    setDeleting(true);
+    try {
+      const res = await apiFetch(`/auth/me/journal-entries/${entryId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || t('meditations.deleteFailed'));
+      }
+
+      setEntries((prev) => prev.filter((entry) => entry.id !== entryId));
+      setEntryPendingDelete(null);
+      emitToast(t('meditations.deleteSuccess'));
+    } catch (err) {
+      console.error('[journal meditations DELETE]', err);
+      setEntryPendingDelete(null);
+      emitToast(err.message || t('meditations.deleteFailed'));
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="journal-page journal-page--meditations">
@@ -155,16 +191,38 @@ const JournalMeditations = () => {
 
         {(demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0)) && (
           <article className="journal-meditations__compilation">
-            {visibleEntries.map((entry) => (
-              <section key={entry.id} className="journal-meditations__section">
-                <h2 className="journal-meditations__date">
-                  <time dateTime={entry.createdAt}>
-                    {formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate'))}
-                  </time>
-                </h2>
-                <p className="journal-meditations__text">{entry.content}</p>
-              </section>
-            ))}
+            {visibleEntries.map((entry) => {
+              const deleteDisabled = deleting && entryPendingDelete?.id === entry.id;
+
+              return (
+                <section key={entry.id} className="journal-meditations__section">
+                  <div className="journal-meditations__date-row">
+                    <h2 className="journal-meditations__date">
+                      <time dateTime={entry.createdAt}>
+                        {formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate'))}
+                      </time>
+                    </h2>
+                    {!demoMode && status === 'ready' && user && (
+                      <button
+                        type="button"
+                        className="journal-meditations__delete"
+                        onClick={() => setEntryPendingDelete(entry)}
+                        disabled={deleteDisabled}
+                        aria-label={t('meditations.deleteEntry')}
+                      >
+                        <img
+                          src="/icons/trash.svg"
+                          alt=""
+                          className="journal-meditations__delete-icon"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    )}
+                  </div>
+                  <p className="journal-meditations__text">{entry.content}</p>
+                </section>
+              );
+            })}
           </article>
         )}
 
@@ -177,6 +235,25 @@ const JournalMeditations = () => {
           </Link>
         )}
       </main>
+
+      {entryPendingDelete && (
+        <JournalConfirmModal
+          labelledById="journal-meditations-delete-modal-title"
+          title={t('meditations.deleteTitle')}
+          text={t('meditations.deleteText')}
+          onClose={closeDeleteModal}
+          primary={{
+            label: deleting ? t('meditations.deleting') : t('meditations.delete'),
+            onClick: confirmDeleteEntry,
+            disabled: deleting,
+          }}
+          secondary={{
+            label: t('meditations.cancel'),
+            onClick: closeDeleteModal,
+            disabled: deleting,
+          }}
+        />
+      )}
     </div>
   );
 };
