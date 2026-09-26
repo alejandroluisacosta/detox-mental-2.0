@@ -68,9 +68,15 @@ const newerMeditationEntry = meditationEntry({
   createdAt: '2026-08-02T12:00:00.000Z',
 });
 
-const deleteButtonInSection = (contentText) => {
+const removeButtonInSection = (contentText) => {
   const section = screen.getByText(contentText).closest('section');
-  return within(section).getByRole('button', { name: 'Delete entry' });
+  return within(section).getByRole('button', { name: 'Remove from meditations' });
+};
+
+const assertNoDeleteCalls = () => {
+  expect(
+    apiFetch.mock.calls.some(([, options]) => options?.method === 'DELETE'),
+  ).toBe(false);
 };
 
 describe('JournalMeditations page states', () => {
@@ -170,7 +176,7 @@ describe('JournalMeditations page states', () => {
   });
 });
 
-describe('JournalMeditations delete entry', () => {
+describe('JournalMeditations remove from meditations', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
     mockUseDemoMode.mockReset();
@@ -187,7 +193,7 @@ describe('JournalMeditations delete entry', () => {
     cleanup();
   });
 
-  test('deletes the older entry after confirm and keeps the newer one', async () => {
+  test('removes the meditations topic and keeps other topics via PATCH', async () => {
     apiFetch.mockImplementation(async (url, options = {}) => {
       if (url === '/auth/me/journal-entries?topic=meditations') {
         return {
@@ -195,8 +201,14 @@ describe('JournalMeditations delete entry', () => {
           json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
         };
       }
-      if (url === '/auth/me/journal-entries/e-old' && options.method === 'DELETE') {
-        return { ok: true, json: async () => ({}) };
+      if (url === '/auth/me/journal-entries/e-new' && options.method === 'PATCH') {
+        expect(options.body).toEqual({ topics: ['private'] });
+        return {
+          ok: true,
+          json: async () => ({
+            entry: { ...newerMeditationEntry, topics: ['private'] },
+          }),
+        };
       }
       throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
     });
@@ -204,23 +216,68 @@ describe('JournalMeditations delete entry', () => {
     renderMeditations();
 
     await waitFor(() => {
-      expect(screen.getByText('Older meditation text.')).toBeTruthy();
+      expect(screen.getByText('Newer meditation text.')).toBeTruthy();
     });
 
-    fireEvent.click(deleteButtonInSection('Older meditation text.'));
-    fireEvent.click(screen.getByRole('button', { name: 'DELETE' }));
+    fireEvent.click(removeButtonInSection('Newer meditation text.'));
+    fireEvent.click(screen.getByRole('button', { name: 'Yes, proceed' }));
 
     await waitFor(() => {
-      expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries/e-old', {
-        method: 'DELETE',
+      expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries/e-new', {
+        method: 'PATCH',
+        body: { topics: ['private'] },
       });
     });
 
-    expect(screen.queryByText('Older meditation text.')).toBeNull();
-    expect(screen.getByText('Newer meditation text.')).toBeTruthy();
+    assertNoDeleteCalls();
+    expect(screen.queryByText('Newer meditation text.')).toBeNull();
+    expect(screen.getByText('Older meditation text.')).toBeTruthy();
   });
 
-  test('cancel closes the modal without deleting and only loads entries once', async () => {
+  test('PATCHes an empty topics list for meditations-only entries and shows empty state', async () => {
+    const onlyEntry = meditationEntry({
+      id: 'e-only',
+      content: 'Only meditation text.',
+    });
+
+    apiFetch.mockImplementation(async (url, options = {}) => {
+      if (url === '/auth/me/journal-entries?topic=meditations') {
+        return { ok: true, json: async () => ({ entries: [onlyEntry] }) };
+      }
+      if (url === '/auth/me/journal-entries/e-only' && options.method === 'PATCH') {
+        expect(options.body).toEqual({ topics: [] });
+        return {
+          ok: true,
+          json: async () => ({ entry: { ...onlyEntry, topics: [] } }),
+        };
+      }
+      throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
+    });
+
+    renderMeditations();
+
+    await waitFor(() => {
+      expect(screen.getByText('Only meditation text.')).toBeTruthy();
+    });
+
+    fireEvent.click(removeButtonInSection('Only meditation text.'));
+    fireEvent.click(screen.getByRole('button', { name: 'Yes, proceed' }));
+
+    await waitFor(() => {
+      expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries/e-only', {
+        method: 'PATCH',
+        body: { topics: [] },
+      });
+    });
+
+    assertNoDeleteCalls();
+    expect(
+      await screen.findByText(/No entries are tagged as Meditations yet/i),
+    ).toBeTruthy();
+    expect(screen.queryByText('Only meditation text.')).toBeNull();
+  });
+
+  test('cancel closes the modal without PATCH and only loads entries once', async () => {
     apiFetch.mockResolvedValue({
       ok: true,
       json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
@@ -232,16 +289,17 @@ describe('JournalMeditations delete entry', () => {
       expect(screen.getByText('Older meditation text.')).toBeTruthy();
     });
 
-    fireEvent.click(deleteButtonInSection('Older meditation text.'));
-    fireEvent.click(screen.getByRole('button', { name: 'CANCEL' }));
+    fireEvent.click(removeButtonInSection('Older meditation text.'));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(screen.getByText('Older meditation text.')).toBeTruthy();
     expect(screen.getByText('Newer meditation text.')).toBeTruthy();
     expect(apiFetch).toHaveBeenCalledTimes(1);
     expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries?topic=meditations');
+    assertNoDeleteCalls();
   });
 
-  test('shows a toast and keeps the entry when delete fails', async () => {
+  test('shows a toast and keeps the entry when PATCH fails', async () => {
     apiFetch.mockImplementation(async (url, options = {}) => {
       if (url === '/auth/me/journal-entries?topic=meditations') {
         return {
@@ -249,10 +307,10 @@ describe('JournalMeditations delete entry', () => {
           json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
         };
       }
-      if (url === '/auth/me/journal-entries/e-old' && options.method === 'DELETE') {
+      if (url === '/auth/me/journal-entries/e-old' && options.method === 'PATCH') {
         return {
           ok: false,
-          json: async () => ({ message: 'Delete blocked by server.' }),
+          json: async () => ({ message: 'Could not update topics.' }),
         };
       }
       throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
@@ -264,48 +322,18 @@ describe('JournalMeditations delete entry', () => {
       expect(screen.getByText('Older meditation text.')).toBeTruthy();
     });
 
-    fireEvent.click(deleteButtonInSection('Older meditation text.'));
-    fireEvent.click(screen.getByRole('button', { name: 'DELETE' }));
+    fireEvent.click(removeButtonInSection('Older meditation text.'));
+    fireEvent.click(screen.getByRole('button', { name: 'Yes, proceed' }));
 
     await waitFor(() => {
-      expect(emitToast).toHaveBeenCalledWith('Delete blocked by server.');
+      expect(emitToast).toHaveBeenCalledWith('Could not update topics.');
     });
 
+    assertNoDeleteCalls();
     expect(screen.getByText('Older meditation text.')).toBeTruthy();
   });
 
-  test('shows the empty state after deleting the last entry', async () => {
-    const onlyEntry = meditationEntry({
-      id: 'e-only',
-      content: 'Only meditation text.',
-    });
-
-    apiFetch.mockImplementation(async (url, options = {}) => {
-      if (url === '/auth/me/journal-entries?topic=meditations') {
-        return { ok: true, json: async () => ({ entries: [onlyEntry] }) };
-      }
-      if (url === '/auth/me/journal-entries/e-only' && options.method === 'DELETE') {
-        return { ok: true, json: async () => ({}) };
-      }
-      throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
-    });
-
-    renderMeditations();
-
-    await waitFor(() => {
-      expect(screen.getByText('Only meditation text.')).toBeTruthy();
-    });
-
-    fireEvent.click(deleteButtonInSection('Only meditation text.'));
-    fireEvent.click(screen.getByRole('button', { name: 'DELETE' }));
-
-    expect(
-      await screen.findByText(/No entries are tagged as Meditations yet/i),
-    ).toBeTruthy();
-    expect(screen.queryByText('Only meditation text.')).toBeNull();
-  });
-
-  test('does not show delete controls or call the API in demo mode', () => {
+  test('does not show remove controls or call the API in demo mode', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     mockUseDemoMode.mockReturnValue({
       demoMode: true,
@@ -314,16 +342,16 @@ describe('JournalMeditations delete entry', () => {
 
     renderMeditations();
 
-    expect(screen.queryByRole('button', { name: 'Delete entry' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Remove from meditations' })).toBeNull();
     expect(apiFetch).not.toHaveBeenCalled();
   });
 
-  test('does not show delete controls or call the API for guests', () => {
+  test('does not show remove controls or call the API for guests', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
 
     renderMeditations();
 
-    expect(screen.queryByRole('button', { name: 'Delete entry' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Remove from meditations' })).toBeNull();
     expect(apiFetch).not.toHaveBeenCalled();
   });
 });

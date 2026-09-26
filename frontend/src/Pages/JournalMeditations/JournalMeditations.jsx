@@ -30,14 +30,17 @@ const filterMeditationEntries = (entries) =>
     .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+const topicsWithoutMeditations = (topics) =>
+  (Array.isArray(topics) ? topics : []).filter((topic) => topic !== MEDITATIONS_TOPIC);
+
 const JournalMeditations = () => {
   const { user, status } = useAuth();
   const { demoMode } = useDemoMode();
   const { locale, t } = useLocale();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [entryPendingDelete, setEntryPendingDelete] = useState(null);
-  const [deleting, setDeleting] = useState(false);
+  const [entryPendingRemove, setEntryPendingRemove] = useState(null);
+  const [removing, setRemoving] = useState(false);
   const demoEntries = useMemo(
     () => (demoMode ? filterMeditationEntries(getDemoEntries(locale)) : []),
     [demoMode, locale],
@@ -54,14 +57,14 @@ const JournalMeditations = () => {
     if (demoMode) {
       setEntries([]);
       setLoading(false);
-      setEntryPendingDelete(null);
+      setEntryPendingRemove(null);
       return undefined;
     }
 
     if (status !== 'ready' || !user) {
       setEntries([]);
       setLoading(false);
-      setEntryPendingDelete(null);
+      setEntryPendingRemove(null);
       return undefined;
     }
 
@@ -96,34 +99,36 @@ const JournalMeditations = () => {
     };
   }, [demoMode, status, t, user]);
 
-  const closeDeleteModal = () => {
-    if (deleting) return;
-    setEntryPendingDelete(null);
+  const closeRemoveModal = () => {
+    if (removing) return;
+    setEntryPendingRemove(null);
   };
 
-  const confirmDeleteEntry = async () => {
-    if (!entryPendingDelete || deleting) return;
+  const confirmRemoveFromMeditations = async () => {
+    if (!entryPendingRemove || removing) return;
 
-    const entryId = entryPendingDelete.id;
-    setDeleting(true);
+    const entryId = entryPendingRemove.id;
+    const topics = topicsWithoutMeditations(entryPendingRemove.topics);
+    setRemoving(true);
     try {
       const res = await apiFetch(`/auth/me/journal-entries/${entryId}`, {
-        method: 'DELETE',
+        method: 'PATCH',
+        body: { topics },
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || t('meditations.deleteFailed'));
+        throw new Error(data.message || t('meditations.removeFailed'));
       }
 
       setEntries((prev) => prev.filter((entry) => entry.id !== entryId));
-      setEntryPendingDelete(null);
-      emitToast(t('meditations.deleteSuccess'));
+      setEntryPendingRemove(null);
+      emitToast(t('meditations.removeSuccess'));
     } catch (err) {
-      console.error('[journal meditations DELETE]', err);
-      setEntryPendingDelete(null);
-      emitToast(err.message || t('meditations.deleteFailed'));
+      console.error('[journal meditations PATCH]', err);
+      setEntryPendingRemove(null);
+      emitToast(err.message || t('meditations.removeFailed'));
     } finally {
-      setDeleting(false);
+      setRemoving(false);
     }
   };
 
@@ -192,7 +197,7 @@ const JournalMeditations = () => {
         {(demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0)) && (
           <article className="journal-meditations__compilation">
             {visibleEntries.map((entry) => {
-              const deleteDisabled = deleting && entryPendingDelete?.id === entry.id;
+              const removeDisabled = removing && entryPendingRemove?.id === entry.id;
 
               return (
                 <section key={entry.id} className="journal-meditations__section">
@@ -206,9 +211,9 @@ const JournalMeditations = () => {
                       <button
                         type="button"
                         className="journal-meditations__delete"
-                        onClick={() => setEntryPendingDelete(entry)}
-                        disabled={deleteDisabled}
-                        aria-label={t('meditations.deleteEntry')}
+                        onClick={() => setEntryPendingRemove(entry)}
+                        disabled={removeDisabled}
+                        aria-label={t('meditations.removeFromMeditations')}
                       >
                         <img
                           src="/icons/trash.svg"
@@ -236,21 +241,21 @@ const JournalMeditations = () => {
         )}
       </main>
 
-      {entryPendingDelete && (
+      {entryPendingRemove && (
         <JournalConfirmModal
-          labelledById="journal-meditations-delete-modal-title"
-          title={t('meditations.deleteTitle')}
-          text={t('meditations.deleteText')}
-          onClose={closeDeleteModal}
+          labelledById="journal-meditations-remove-modal-title"
+          title={t('meditations.removeTitle')}
+          text={t('meditations.removeText')}
+          onClose={closeRemoveModal}
           primary={{
-            label: deleting ? t('meditations.deleting') : t('meditations.delete'),
-            onClick: confirmDeleteEntry,
-            disabled: deleting,
+            label: t('meditations.removeConfirm'),
+            onClick: confirmRemoveFromMeditations,
+            disabled: removing,
           }}
           secondary={{
-            label: t('meditations.cancel'),
-            onClick: closeDeleteModal,
-            disabled: deleting,
+            label: t('meditations.removeCancel'),
+            onClick: closeRemoveModal,
+            disabled: removing,
           }}
         />
       )}

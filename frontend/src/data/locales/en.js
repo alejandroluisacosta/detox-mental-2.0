@@ -128,15 +128,14 @@ export const en = {
   'meditations.unknownDate': 'Unknown date',
   'meditations.loadFailed': 'Could not load your meditations.',
   'meditations.pagesLeft': 'in {pages} pages',
-  'meditations.deleteEntry': 'Delete entry',
-  'meditations.deleteFailed': 'Could not delete the entry.',
-  'meditations.deleteSuccess': 'Entry deleted.',
-  'meditations.deleteTitle': 'Delete this entry?',
-  'meditations.deleteText':
-    'This action cannot be undone. The entry will be permanently removed from your journal.',
-  'meditations.deleting': 'DELETING...',
-  'meditations.delete': 'DELETE',
-  'meditations.cancel': 'CANCEL',
+  'meditations.removeFromMeditations': 'Remove from meditations',
+  'meditations.removeTitle': 'Remove from meditations?',
+  'meditations.removeText':
+    'Removing this from meditations will remove the meditations topic from this entry. Are you sure you want to proceed?',
+  'meditations.removeConfirm': 'Yes, proceed',
+  'meditations.removeCancel': 'Cancel',
+  'meditations.removeFailed': 'Could not remove this from meditations.',
+  'meditations.removeSuccess': 'Removed from meditations.',
 
   'summary.title': 'Weekly summary',
   'summary.write': 'Write',
