@@ -29,6 +29,26 @@
   color: var(--accent);
 }
 
+.journal-meditations__pages-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.journal-meditations__book-icon {
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  flex-shrink: 0;
+}
+
+.journal-meditations__pages-left-text {
+  margin: 0;
+}
+
 .journal-meditations__header-actions {
   display: flex;
   align-items: center;

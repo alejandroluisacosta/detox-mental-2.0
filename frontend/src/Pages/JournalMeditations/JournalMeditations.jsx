@@ -10,6 +10,7 @@ import { apiFetch } from '../../api/client.js';
 import { getDemoEntries } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { formatLocaleDate } from '../../utils/locale.js';
+import { formatPagesRemaining, pagesRemaining } from '../../utils/meditationPages.js';
 import './JournalMeditations.css';
 
 const MEDITATIONS_TOPIC = 'meditations';
@@ -26,7 +27,7 @@ const formatEntryDate = (iso, locale, unknownLabel) => {
 const filterMeditationEntries = (entries) =>
   entries
     .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
-    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 const JournalMeditations = () => {
   const { user, status } = useAuth();
@@ -39,6 +40,12 @@ const JournalMeditations = () => {
     [demoMode, locale],
   );
   const visibleEntries = demoMode ? demoEntries : entries;
+  const showPagesLeft = demoMode || (status === 'ready' && user && !loading);
+  const pagesLeftLabel = useMemo(() => {
+    const pages = pagesRemaining(visibleEntries);
+    const formatted = formatPagesRemaining(pages, locale);
+    return t('meditations.pagesLeft', { pages: formatted });
+  }, [locale, t, visibleEntries]);
 
   useEffect(() => {
     if (demoMode) {
@@ -93,6 +100,17 @@ const JournalMeditations = () => {
             <h1 className="journal-meditations__title">{t('meditations.title')}</h1>
             <DemoModeToggle />
           </div>
+          {showPagesLeft && (
+            <div className="journal-meditations__pages-left">
+              <img
+                src="/icons/book.svg"
+                alt=""
+                aria-hidden="true"
+                className="journal-meditations__book-icon"
+              />
+              <span className="journal-meditations__pages-left-text">{pagesLeftLabel}</span>
+            </div>
+          )}
           <div className="journal-meditations__header-actions">
             <Link
               to="/journal"

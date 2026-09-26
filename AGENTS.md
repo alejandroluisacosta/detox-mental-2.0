@@ -82,7 +82,9 @@ creep, debug leftovers, committed `.env` or generated files, and secrets.
 Smoke-test each acceptance criterion in the running app.
 
 Report what changed, what you verified, what you did NOT verify, and any
-migration or env step. Do not open a PR or deploy without explicit
+migration or env step.
+
+Provide a recommended commit message for the changes you did and do not open a PR or deploy without explicit
 authorization.
 
 ## Preferences

@@ -127,6 +127,7 @@ export const en = {
   'meditations.writeFooter': 'WRITE',
   'meditations.unknownDate': 'Unknown date',
   'meditations.loadFailed': 'Could not load your meditations.',
+  'meditations.pagesLeft': 'in {pages} pages',
 
   'summary.title': 'Weekly summary',
   'summary.write': 'Write',
