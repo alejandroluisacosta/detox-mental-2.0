@@ -101,10 +101,15 @@ const JournalMeditations = () => {
             <DemoModeToggle />
           </div>
           {showPagesLeft && (
-            <p className="journal-meditations__pages-left">
-              <span className="journal-meditations__book-icon" aria-hidden="true" />
-              {pagesLeftLabel}
-            </p>
+            <div className="journal-meditations__pages-left">
+              <img
+                src="/icons/book.svg"
+                alt=""
+                aria-hidden="true"
+                className="journal-meditations__book-icon"
+              />
+              <span className="journal-meditations__pages-left-text">{pagesLeftLabel}</span>
+            </div>
           )}
           <div className="journal-meditations__header-actions">
             <Link

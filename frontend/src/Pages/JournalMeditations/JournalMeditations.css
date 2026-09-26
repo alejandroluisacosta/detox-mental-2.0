@@ -40,12 +40,13 @@
 
 .journal-meditations__book-icon {
   display: block;
-  width: 1.05em;
-  height: 1.05em;
+  width: 1.5em;
+  height: 1.5em;
   flex-shrink: 0;
-  background-color: currentColor;
-  mask: url('/icons/book.svg') no-repeat center / contain;
-  -webkit-mask: url('/icons/book.svg') no-repeat center / contain;
+}
+
+.journal-meditations__pages-left-text {
+  margin: 0;
 }
 
 .journal-meditations__header-actions {
