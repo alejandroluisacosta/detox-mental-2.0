@@ -67,9 +67,6 @@ const memoryDb = (clock = () => new Date('2026-09-13T12:00:00.000Z')) => {
         if (/ORDER BY created_at DESC/.test(text)) {
           matched.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         }
-        if (/ORDER BY created_at ASC/.test(text)) {
-          matched.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-        }
         return { rows: matched };
       }
 
@@ -143,10 +140,11 @@ test('topic filter excludes entries without meditations and includes private-tag
   assert.equal(listed[0].id, tagged.id);
 });
 
-test('topic filter returns meditation entries oldest first', async () => {
+test('topic filter returns meditation entries newest first', async () => {
   const createdAt = [
     new Date('2026-09-13T12:00:00.000Z'),
     new Date('2026-09-13T12:01:00.000Z'),
+    new Date('2026-09-13T12:02:00.000Z'),
   ];
   const db = memoryDb(() => createdAt.shift());
   const older = await createJournalEntry('user-a', 'first meditation', ['meditations'], db);
@@ -156,6 +154,6 @@ test('topic filter returns meditation entries oldest first', async () => {
   const listed = await listJournalEntriesForUser('user-a', db, { topic: 'meditations' });
   assert.deepEqual(
     listed.map((entry) => entry.id),
-    [older.id, newer.id],
+    [newer.id, older.id],
   );
 });

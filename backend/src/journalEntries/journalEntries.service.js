@@ -23,7 +23,7 @@ export const listJournalEntriesForUser = async (userId, db = pool, filter = null
       `SELECT id, content, topics, created_at
        FROM journal_entries
        WHERE user_id = $1 AND $2 = ANY(topics)
-       ORDER BY created_at ASC`,
+       ORDER BY created_at DESC`,
       [userId, 'meditations'],
     );
     return rows.map(mapRow);

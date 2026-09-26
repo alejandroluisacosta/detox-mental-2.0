@@ -13,7 +13,7 @@ const MEDITATIONS_TOPIC = 'meditations';
 const filterMeditationEntries = (entries) =>
   entries
     .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
-    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 const word = (n) => Array.from({ length: n }, () => 'word').join(' ');
 
@@ -95,7 +95,7 @@ describe('JournalMeditations page states', () => {
     expect(apiFetch).not.toHaveBeenCalled();
   });
 
-  test('loads meditation entries oldest first without edit or delete controls', async () => {
+  test('loads meditation entries newest first without edit or delete controls', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     const older = {
       id: 'e-old',
@@ -112,7 +112,7 @@ describe('JournalMeditations page states', () => {
 
     apiFetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ entries: [older, newer] }),
+      json: async () => ({ entries: [newer, older] }),
     });
 
     renderMeditations();
@@ -122,8 +122,8 @@ describe('JournalMeditations page states', () => {
     });
 
     const body = screen.getByRole('article');
-    expect(body.textContent.indexOf('Older meditation text.')).toBeLessThan(
-      body.textContent.indexOf('Newer meditation text.'),
+    expect(body.textContent.indexOf('Newer meditation text.')).toBeLessThan(
+      body.textContent.indexOf('Older meditation text.'),
     );
     expect(screen.queryByLabelText(/Delete entry/i)).toBeNull();
     expect(screen.queryByLabelText(/Edit topics/i)).toBeNull();

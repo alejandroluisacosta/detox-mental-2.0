@@ -27,7 +27,7 @@ const formatEntryDate = (iso, locale, unknownLabel) => {
 const filterMeditationEntries = (entries) =>
   entries
     .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
-    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 const JournalMeditations = () => {
   const { user, status } = useAuth();
