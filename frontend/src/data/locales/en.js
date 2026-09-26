@@ -128,6 +128,14 @@ export const en = {
   'meditations.unknownDate': 'Unknown date',
   'meditations.loadFailed': 'Could not load your meditations.',
   'meditations.pagesLeft': 'in {pages} pages',
+  'meditations.removeFromMeditations': 'Remove from meditations',
+  'meditations.removeTitle': 'Remove from meditations?',
+  'meditations.removeText':
+    'Removing this from meditations will remove the "Meditations" topic from this entry. Are you sure you want to proceed?',
+  'meditations.removeConfirm': 'Yes, proceed',
+  'meditations.removeCancel': 'Cancel',
+  'meditations.removeFailed': 'Could not remove this from meditations.',
+  'meditations.removeSuccess': 'Removed from meditations.',
 
   'summary.title': 'Weekly summary',
   'summary.write': 'Write',

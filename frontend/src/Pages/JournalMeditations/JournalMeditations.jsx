@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
+import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
 import { useDemoMode } from '../../Context/DemoModeContext.jsx';
@@ -29,12 +30,17 @@ const filterMeditationEntries = (entries) =>
     .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+const topicsWithoutMeditations = (topics) =>
+  (Array.isArray(topics) ? topics : []).filter((topic) => topic !== MEDITATIONS_TOPIC);
+
 const JournalMeditations = () => {
   const { user, status } = useAuth();
   const { demoMode } = useDemoMode();
   const { locale, t } = useLocale();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [entryPendingRemove, setEntryPendingRemove] = useState(null);
+  const [removing, setRemoving] = useState(false);
   const demoEntries = useMemo(
     () => (demoMode ? filterMeditationEntries(getDemoEntries(locale)) : []),
     [demoMode, locale],
@@ -51,12 +57,14 @@ const JournalMeditations = () => {
     if (demoMode) {
       setEntries([]);
       setLoading(false);
+      setEntryPendingRemove(null);
       return undefined;
     }
 
     if (status !== 'ready' || !user) {
       setEntries([]);
       setLoading(false);
+      setEntryPendingRemove(null);
       return undefined;
     }
 
@@ -90,6 +98,39 @@ const JournalMeditations = () => {
       cancelled = true;
     };
   }, [demoMode, status, t, user]);
+
+  const closeRemoveModal = () => {
+    if (removing) return;
+    setEntryPendingRemove(null);
+  };
+
+  const confirmRemoveFromMeditations = async () => {
+    if (!entryPendingRemove || removing) return;
+
+    const entryId = entryPendingRemove.id;
+    const topics = topicsWithoutMeditations(entryPendingRemove.topics);
+    setRemoving(true);
+    try {
+      const res = await apiFetch(`/auth/me/journal-entries/${entryId}`, {
+        method: 'PATCH',
+        body: { topics },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || t('meditations.removeFailed'));
+      }
+
+      setEntries((prev) => prev.filter((entry) => entry.id !== entryId));
+      setEntryPendingRemove(null);
+      emitToast(t('meditations.removeSuccess'));
+    } catch (err) {
+      console.error('[journal meditations PATCH]', err);
+      setEntryPendingRemove(null);
+      emitToast(err.message || t('meditations.removeFailed'));
+    } finally {
+      setRemoving(false);
+    }
+  };
 
   return (
     <div className="journal-page journal-page--meditations">
@@ -155,16 +196,38 @@ const JournalMeditations = () => {
 
         {(demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0)) && (
           <article className="journal-meditations__compilation">
-            {visibleEntries.map((entry) => (
-              <section key={entry.id} className="journal-meditations__section">
-                <h2 className="journal-meditations__date">
-                  <time dateTime={entry.createdAt}>
-                    {formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate'))}
-                  </time>
-                </h2>
-                <p className="journal-meditations__text">{entry.content}</p>
-              </section>
-            ))}
+            {visibleEntries.map((entry) => {
+              const removeDisabled = removing && entryPendingRemove?.id === entry.id;
+
+              return (
+                <section key={entry.id} className="journal-meditations__section">
+                  <div className="journal-meditations__date-row">
+                    <h2 className="journal-meditations__date">
+                      <time dateTime={entry.createdAt}>
+                        {formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate'))}
+                      </time>
+                    </h2>
+                    {!demoMode && status === 'ready' && user && (
+                      <button
+                        type="button"
+                        className="journal-meditations__delete"
+                        onClick={() => setEntryPendingRemove(entry)}
+                        disabled={removeDisabled}
+                        aria-label={t('meditations.removeFromMeditations')}
+                      >
+                        <img
+                          src="/icons/trash.svg"
+                          alt=""
+                          className="journal-meditations__delete-icon"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    )}
+                  </div>
+                  <p className="journal-meditations__text">{entry.content}</p>
+                </section>
+              );
+            })}
           </article>
         )}
 
@@ -177,6 +240,25 @@ const JournalMeditations = () => {
           </Link>
         )}
       </main>
+
+      {entryPendingRemove && (
+        <JournalConfirmModal
+          labelledById="journal-meditations-remove-modal-title"
+          title={t('meditations.removeTitle')}
+          text={t('meditations.removeText')}
+          onClose={closeRemoveModal}
+          primary={{
+            label: t('meditations.removeConfirm'),
+            onClick: confirmRemoveFromMeditations,
+            disabled: removing,
+          }}
+          secondary={{
+            label: t('meditations.removeCancel'),
+            onClick: closeRemoveModal,
+            disabled: removing,
+          }}
+        />
+      )}
     </div>
   );
 };
