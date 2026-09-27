@@ -358,11 +358,13 @@ const Journal = () => {
               {!imagePreviewUrl ? (
                 <button
                   type="button"
-                  className="journal-page__scan-button"
+                  className="journal-page__scan-button journal-page__scan-button--picker"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={busy}
+                  aria-label={t('journal.scanAria')}
                 >
-                  {t('journal.scan')}
+                  <span className="journal-page__scan-label">{t('journal.scan')}</span>
+                  <span className="journal-page__scan-icon" aria-hidden="true" />
                 </button>
               ) : (
                 <div className="journal-page__scan-preview">

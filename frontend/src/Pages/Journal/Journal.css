@@ -259,8 +259,25 @@
   color: var(--accent);
   font: inherit;
   font-weight: 700;
-  text-transform: uppercase;
   cursor: pointer;
+}
+
+.journal-page__scan-button--picker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+
+.journal-page__scan-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask: url('/icons/camera.svg') no-repeat center / contain;
+  -webkit-mask: url('/icons/camera.svg') no-repeat center / contain;
 }
 
 .journal-page__scan-button:disabled {

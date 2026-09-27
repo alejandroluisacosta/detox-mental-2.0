@@ -35,6 +35,7 @@ export const en = {
   'journal.placeholder': 'Write here...',
   'journal.textLabel': 'Journal text',
   'journal.scan': 'SCAN HANDWRITING',
+  'journal.scanAria': 'Scan handwriting',
   'journal.scanPreviewAlt': 'Preview of the handwritten page',
   'journal.transcribing': 'Transcribing...',
   'journal.transcribe': 'Transcribe',

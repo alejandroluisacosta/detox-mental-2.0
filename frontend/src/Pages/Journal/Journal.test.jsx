@@ -104,19 +104,34 @@ describe('Journal handwriting capture gating', () => {
   test('hides the scan control for guests', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     renderJournal();
-    expect(screen.queryByRole('button', { name: /SCAN HANDWRITING/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Scan handwriting' })).toBeNull();
   });
 
   test('shows the scan control for signed-in users', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     renderJournal();
-    expect(screen.getByRole('button', { name: /SCAN HANDWRITING/i })).toBeTruthy();
+    const scanButton = screen.getByRole('button', { name: 'Scan handwriting' });
+    expect(scanButton).toBeTruthy();
+    expect(scanButton.querySelector('.journal-page__scan-label')?.textContent).toBe(
+      'SCAN HANDWRITING',
+    );
+    expect(scanButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
   });
 
   test('hides the scan control while auth is still loading', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
     renderJournal();
-    expect(screen.queryByRole('button', { name: /SCAN HANDWRITING/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Scan handwriting' })).toBeNull();
+  });
+
+  test('shows the Spanish scan label with the camera icon', () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    renderJournal('es');
+    const scanButton = screen.getByRole('button', {
+      name: 'Escanear escritura a mano',
+    });
+    expect(screen.getByText('ESCANEAR ESCRITURA')).toBeTruthy();
+    expect(scanButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
   });
 
   test('renders history as an accent icon link', () => {
