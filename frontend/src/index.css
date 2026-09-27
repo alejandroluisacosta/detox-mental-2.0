@@ -13,7 +13,8 @@ html, * {
   --step-bg: #fcfbe3;
   --platinum: #E3E3E3;
   --shadow: 0 2px 16px rgba(44, 62, 80, 0.07);
-  --light-brown:  ;
+  --dark-brown: #2e1f14;
+  --light-brown: #D6BEAE;
   --mid-light-brown: #845d43;
 }
 
