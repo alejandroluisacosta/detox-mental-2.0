@@ -449,7 +449,9 @@ const JournalSummary = () => {
             )}
 
             <section className="journal-summary__section">
-              <h2 className="journal-summary__heading">{t('summary.thisWeek')}</h2>
+              <h2 className="journal-summary__heading journal-summary__heading--this-week">
+                {t('summary.thisWeek')}
+              </h2>
               {Array.isArray(summary.mainTopics) &&
                 summary.mainTopics.length > 0 && (
                   <ul

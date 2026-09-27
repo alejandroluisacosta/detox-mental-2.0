@@ -34,7 +34,7 @@ export const es = {
   'journal.topicsLabel': 'Temas del diario',
   'journal.placeholder': 'Escribe aquí...',
   'journal.textLabel': 'Texto del diario',
-  'journal.scan': 'Escanear escritura a mano',
+  'journal.scan': 'ESCANEAR ESCRITURA A MANO',
   'journal.scanPreviewAlt': 'Vista previa de la página escrita a mano',
   'journal.transcribing': 'Transcribiendo...',
   'journal.transcribe': 'Transcribir',

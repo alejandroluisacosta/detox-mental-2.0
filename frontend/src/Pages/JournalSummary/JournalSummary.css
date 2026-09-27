@@ -73,6 +73,10 @@
   text-transform: uppercase;
 }
 
+.journal-summary__result + .journal-summary__write-button--footer {
+  margin-top: -12px;
+}
+
 .journal-summary__write-button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -108,8 +112,8 @@
 .journal-summary__topic-chip {
   padding: 7px 14px;
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--background);
+  background: var(--light-brown);
+  color: var(--dark-brown);
   font-size: 12px;
   font-weight: 600;
   line-height: 1.3;
@@ -147,7 +151,7 @@
 
 .journal-summary__comment-hint {
   margin: 0;
-  color: var(--muted, #6b7280);
+  color: var(--dark-brown);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -207,7 +211,7 @@
 
 .journal-summary__week {
   margin: -8px 0 0;
-  color: var(--muted, #6b7280);
+  color: var(--accent);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -250,6 +254,10 @@
   color: var(--accent);
 }
 
+.journal-summary__heading--this-week {
+  color: var(--dark-brown);
+}
+
 .journal-summary__heading--socratic,
 .journal-summary__heading--machiavelli {
   display: flex;
@@ -272,7 +280,7 @@
   margin: 0;
   line-height: 1.6;
   white-space: pre-wrap;
-  color: var(--text);
+  color: var(--dark-brown);
 }
 
 .journal-summary__quote {
@@ -282,7 +290,7 @@
   font-size: 1.1rem;
   font-style: italic;
   line-height: 1.55;
-  color: var(--text);
+  color: var(--dark-brown);
 }
 
 @media (min-width: 600px) {

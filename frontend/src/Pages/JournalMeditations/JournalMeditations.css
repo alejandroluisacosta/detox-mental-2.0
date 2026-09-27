@@ -184,4 +184,9 @@
   margin: 0;
   white-space: pre-wrap;
   line-height: 1.6;
+  color: var(--dark-brown);
+}
+
+.journal-meditations__pages-left-text {
+  color: var(--dark-brown);
 }

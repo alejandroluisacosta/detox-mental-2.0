@@ -104,19 +104,19 @@ describe('Journal handwriting capture gating', () => {
   test('hides the scan control for guests', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     renderJournal();
-    expect(screen.queryByRole('button', { name: /Scan handwriting/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /SCAN HANDWRITING/i })).toBeNull();
   });
 
   test('shows the scan control for signed-in users', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     renderJournal();
-    expect(screen.getByRole('button', { name: /Scan handwriting/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /SCAN HANDWRITING/i })).toBeTruthy();
   });
 
   test('hides the scan control while auth is still loading', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
     renderJournal();
-    expect(screen.queryByRole('button', { name: /Scan handwriting/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /SCAN HANDWRITING/i })).toBeNull();
   });
 
   test('renders history as an accent icon link', () => {
