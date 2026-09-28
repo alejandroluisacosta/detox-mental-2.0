@@ -5,6 +5,7 @@ import BlogChrome from '../../Components/BlogChrome/BlogChrome.jsx';
 import LoadingStatus from '../../Components/LoadingStatus/LoadingStatus.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import { apiFetch } from '../../api/client.js';
+import { BLOG_CATEGORIES } from '../../data/blogCategories.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import './BlogPost.css';
 
@@ -106,6 +107,16 @@ const BlogPost = () => {
             <div className="blog-post__body">
               <ReactMarkdown components={markdownComponents}>{post.body}</ReactMarkdown>
             </div>
+            {BLOG_CATEGORIES.includes(post.category) ? (
+              <Link
+                className="blog-post__read-more"
+                to={`/alejandroluis/blog?category=${encodeURIComponent(post.category)}`}
+              >
+                {t('blog.readMoreCategoryPosts', {
+                  category: blogCategoryLabel(post.category),
+                })}
+              </Link>
+            ) : null}
           </article>
         )}
       </main>

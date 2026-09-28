@@ -212,6 +212,7 @@ export const es = {
   'blog.landingButton': 'BLOG',
   'blog.category.personal-development': 'Desarrollo personal',
   'blog.category.technology': 'Tecnología',
+  'blog.readMoreCategoryPosts': 'Ver más artículos de {category}',
   'blog.newTitle': 'Nuevo artículo',
   'blog.editTitle': 'Editar artículo',
   'blog.fieldTitle': 'Título',

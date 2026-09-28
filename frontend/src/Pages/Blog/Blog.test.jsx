@@ -77,7 +77,7 @@ describe('Blog', () => {
 
     expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
     expect(screen.getByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Personal development' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Personal' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Technology' })).toBeTruthy();
   });
 
@@ -115,7 +115,7 @@ describe('Blog', () => {
     expect(screen.getByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
     expect(apiFetch).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Personal development' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Personal' }));
 
     expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /The phone is not the enemy/ })).toBeNull();
