@@ -24,7 +24,7 @@ const publishedFields = {
   title: 'Attention is a vote',
   excerpt: 'A published excerpt.',
   body: 'Published body.',
-  category: 'personal-development',
+  category: 'personal',
   status: 'published',
 };
 

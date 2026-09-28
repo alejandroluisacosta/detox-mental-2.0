@@ -19,7 +19,7 @@ const personalPost = {
   slug: 'attention-is-a-vote',
   title: 'Attention is a vote',
   excerpt: 'What you look at, you become.',
-  category: 'personal-development',
+  category: 'personal',
   publishedAt: '2026-08-12T10:00:00.000Z',
 };
 
@@ -77,7 +77,7 @@ describe('Blog', () => {
 
     expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
     expect(screen.getByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Personal development' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Personal' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Technology' })).toBeTruthy();
   });
 
@@ -115,7 +115,7 @@ describe('Blog', () => {
     expect(screen.getByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
     expect(apiFetch).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Personal development' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Personal' }));
 
     expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /The phone is not the enemy/ })).toBeNull();
@@ -136,6 +136,17 @@ describe('Blog', () => {
     expect(apiFetch).toHaveBeenCalledWith('/blog/posts');
   });
 
+  // Bug: personal filter URL still uses the old personal-development slug, so links miss the topic.
+  test('filters to personal posts from ?category=personal', async () => {
+    renderBlog('/alejandroluis/blog?category=personal');
+
+    expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /The phone is not the enemy/ })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Personal' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+  });
+
   test('treats an unknown category as all', async () => {
     renderBlog('/alejandroluis/blog?category=foo');
 
@@ -143,6 +154,20 @@ describe('Blog', () => {
     expect(apiFetch).toHaveBeenCalledWith('/blog/posts');
     expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe(
       'true',
+    );
+  });
+
+  // Bug: old personal-development query still selects personal posts after the slug rename.
+  test('does not treat the old personal-development slug as the personal filter', async () => {
+    renderBlog('/alejandroluis/blog?category=personal-development');
+
+    expect(await screen.findByRole('link', { name: /Attention is a vote/ })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /The phone is not the enemy/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Personal' }).getAttribute('aria-pressed')).toBe(
+      'false',
     );
   });
 

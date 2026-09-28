@@ -15,7 +15,7 @@ vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 const publishedPost = {
   slug: 'attention-is-a-vote',
   title: 'Attention is a vote',
-  category: 'personal-development',
+  category: 'personal',
   publishedAt: '2026-08-12T10:00:00.000Z',
   body: 'Every time you look, you are voting.',
 };
@@ -53,7 +53,7 @@ describe('BlogPost', () => {
     renderPost('attention-is-a-vote');
 
     expect(await screen.findByRole('heading', { name: 'Attention is a vote' })).toBeTruthy();
-    expect(screen.getByText('Personal development')).toBeTruthy();
+    expect(screen.getByText('Personal')).toBeTruthy();
     expect(screen.getByText(/you are voting/)).toBeTruthy();
   });
 
@@ -90,6 +90,36 @@ describe('BlogPost', () => {
     expect(await screen.findByRole('heading', { name: 'Could not load this article.' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Attention is a vote' })).toBeNull();
     expect(screen.queryByRole('heading', { name: 'Not found' })).toBeNull();
+  });
+
+  // Bug: read-more link still points at the old personal-development filter URL.
+  test('links to the blog feed filtered by the article category', async () => {
+    apiFetch.mockResolvedValue(jsonResponse({ post: publishedPost }));
+    renderPost('attention-is-a-vote');
+
+    await screen.findByRole('heading', { name: 'Attention is a vote' });
+
+    const readMore = screen.getByRole('link', { name: 'Read more Personal posts' });
+    expect(readMore.getAttribute('href')).toBe('/alejandroluis/blog?category=personal');
+  });
+
+  test('links technology articles to the technology feed filter', async () => {
+    apiFetch.mockResolvedValue(
+      jsonResponse({
+        post: {
+          ...publishedPost,
+          slug: 'the-phone-is-not-the-enemy',
+          title: 'The phone is not the enemy',
+          category: 'technology',
+        },
+      }),
+    );
+    renderPost('the-phone-is-not-the-enemy');
+
+    await screen.findByRole('heading', { name: 'The phone is not the enemy' });
+
+    const readMore = screen.getByRole('link', { name: 'Read more Technology posts' });
+    expect(readMore.getAttribute('href')).toBe('/alejandroluis/blog?category=technology');
   });
 
   test('renders markdown bold, italic, and links in the article body', async () => {

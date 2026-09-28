@@ -1,1 +1,1 @@
-export const BLOG_CATEGORIES = ['personal-development', 'technology'];
+export const BLOG_CATEGORIES = ['personal', 'technology'];

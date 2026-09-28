@@ -38,12 +38,13 @@ test('parseBlogPostInput fills a slug from the title when omitted', () => {
     title: 'Personal development',
     excerpt: '',
     body: 'Hello',
-    category: 'personal-development',
+    category: 'personal',
     status: 'draft',
   });
 
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.slug, 'personal-development');
+  assert.equal(parsed.value.category, 'personal');
   assert.equal(parsed.value.excerpt, '');
 });
 
@@ -77,9 +78,11 @@ test('parseBlogPostInput patch mode updates only provided fields', () => {
 
 test('parseBlogCategoryQuery accepts known slugs or an empty filter', () => {
   assert.deepEqual(parseBlogCategoryQuery(undefined), { ok: true, category: null });
-  assert.deepEqual(parseBlogCategoryQuery('personal-development'), {
+  assert.deepEqual(parseBlogCategoryQuery('personal'), {
     ok: true,
-    category: 'personal-development',
+    category: 'personal',
   });
+  // Bug: old personal-development slug still accepted after rename to personal.
+  assert.equal(parseBlogCategoryQuery('personal-development').ok, false);
   assert.equal(parseBlogCategoryQuery('health').ok, false);
 });

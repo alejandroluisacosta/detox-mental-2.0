@@ -1,5 +1,5 @@
 export const BLOG_STATUSES = ['draft', 'published'];
-export const BLOG_CATEGORIES = ['personal-development', 'technology'];
+export const BLOG_CATEGORIES = ['personal', 'technology'];
 
 export const MAX_TITLE_LENGTH = 200;
 export const MAX_SLUG_LENGTH = 120;
