@@ -208,7 +208,7 @@ export const en = {
   'blog.draft': 'Draft',
   'blog.intro': 'Writing on the mind, the craft, and technology.',
   'blog.landingButton': 'BLOG',
-  'blog.category.personal-development': 'Personal',
+  'blog.category.personal': 'Personal',
   'blog.category.technology': 'Technology',
   'blog.readMoreCategoryPosts': 'Read more {category} posts',
   'blog.newTitle': 'New article',

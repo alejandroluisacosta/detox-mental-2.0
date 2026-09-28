@@ -234,7 +234,7 @@ Markdown articles for the unlinked personal site at `/alejandroluis/blog`.
 - `title` (VARCHAR(200))
 - `excerpt` (TEXT): Short index blurb
 - `body` (TEXT): Markdown article
-- `category` (VARCHAR(40)): `personal-development` or `technology`
+- `category` (VARCHAR(40)): `personal` or `technology`
 - `status` (VARCHAR(20)): `draft` or `published`
 - `author_id` (UUID, FK → users.id, ON DELETE SET NULL)
 - `published_at` (TIMESTAMPTZ): Set on first publish

@@ -210,7 +210,7 @@ export const es = {
   'blog.draft': 'Borrador',
   'blog.intro': 'Escritos sobre la mente, el oficio y la tecnología.',
   'blog.landingButton': 'BLOG',
-  'blog.category.personal-development': 'Desarrollo personal',
+  'blog.category.personal': 'Personal',
   'blog.category.technology': 'Tecnología',
   'blog.readMoreCategoryPosts': 'Ver más artículos de {category}',
   'blog.newTitle': 'Nuevo artículo',
