@@ -24,11 +24,11 @@ describe('mergeUnlockedSessions', () => {
     );
   });
 
-  test('uses the same unlock overlay when English still falls back to Spanish', () => {
+  test('unlocks the same ids on the English catalog without borrowing Spanish titles', () => {
     const esSessions = mergeUnlockedSessions([4], 'es');
     const enSessions = mergeUnlockedSessions([4], 'en');
     expect(enSessions.find((session) => session.id === 4).isBlocked).toBe(false);
-    expect(enSessions.find((session) => session.id === 4).title).toBe(
+    expect(enSessions.find((session) => session.id === 4).title).not.toBe(
       esSessions.find((session) => session.id === 4).title,
     );
   });
