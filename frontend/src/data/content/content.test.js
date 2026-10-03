@@ -174,10 +174,26 @@ describe('getTheory', () => {
     expect(typeof theory.Body).toBe('function');
   });
 
-  test('falls back to Spanish theory until English is written', () => {
+  test('serves a complete English theory article instead of falling back to Spanish', () => {
     const esTheory = getTheory('es');
     const enTheory = getTheory('en');
-    expect(enTheory.title).toBe(esTheory.title);
-    expect(enTheory.Body).toBe(esTheory.Body);
+    expect(enTheory.title).toBe('How to cleanse your mind in 5 steps');
+    expect(enTheory.subtitle).toBe(
+      'The strategy for reducing your stress in a simple, safe way',
+    );
+    expect(enTheory.wantMoreTitle).toBe('Want more?');
+    expect(enTheory.writtenBy).toMatch(/Story by: Marco Ferrani/);
+    expect(enTheory.Body).not.toBe(esTheory.Body);
+    expect(enTheory.WantMore).not.toBe(esTheory.WantMore);
+    expect(typeof enTheory.Body).toBe('function');
+    expect(typeof enTheory.WantMore).toBe('function');
+  });
+
+  test('keeps the Spanish theory article unchanged', () => {
+    const theory = getTheory('es');
+    expect(theory.title).toBe('Cómo limpiar tu mente en 5 pasos');
+    expect(theory.subtitle).toContain('estrategia para reducir tu estrés');
+    expect(theory.writtenBy).toBe('Historia por: Marco Ferrani - Detox Mental');
+    expect(theory.wantMoreTitle).toBe('¿Quieres más?');
   });
 });
