@@ -45,6 +45,10 @@ const messages = {
     summaryReviseFailed: 'Could not revise the summary.',
     summaryTimeout: 'The summary took too long to generate.',
     summaryTryLater: 'Please try later. Wait a few minutes and try again.',
+    frontMatterInvalid: 'Front matter must be text.',
+    frontMatterNothingToSave: 'Nothing to save.',
+    frontMatterLoadFailed: 'Could not load the front matter.',
+    frontMatterSaveFailed: 'Could not save the front matter.',
   },
   es: {
     topicsMustBeList: 'Los temas deben enviarse como una lista.',
@@ -91,6 +95,10 @@ const messages = {
     summaryReviseFailed: 'No se pudo revisar el resumen.',
     summaryTimeout: 'El resumen tardó demasiado en generarse.',
     summaryTryLater: 'Inténtalo más tarde. Espera unos minutos y vuelve a intentarlo.',
+    frontMatterInvalid: 'El texto de portada debe ser texto.',
+    frontMatterNothingToSave: 'No hay nada que guardar.',
+    frontMatterLoadFailed: 'No se pudo cargar el texto de portada.',
+    frontMatterSaveFailed: 'No se pudo guardar el texto de portada.',
   },
 };
 

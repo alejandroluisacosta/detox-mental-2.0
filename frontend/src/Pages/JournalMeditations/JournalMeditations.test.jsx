@@ -15,8 +15,54 @@ import {
   writeMeditationProgressGoal,
 } from '../../utils/meditationPages.js';
 import { filterMeditationEntriesNewestFirst } from '../../utils/meditationEntries.js';
+import { MEDITATION_FRONT_MATTER_STORAGE_KEY } from '../../utils/meditationFrontMatter.js';
 
 const filterMeditationEntries = filterMeditationEntriesNewestFirst;
+
+const EMPTY_FRONT_MATTER = { title: '', authorName: '', introduction: '' };
+
+const meditationsApiHandler = ({
+  entries = [],
+  frontMatter = EMPTY_FRONT_MATTER,
+  patchFrontMatter,
+} = {}) =>
+  async (url, options = {}) => {
+    if (url === '/auth/me/journal-entries?topic=meditations') {
+      return { ok: true, json: async () => ({ entries }) };
+    }
+    if (url === '/auth/me/journal-meditation-front-matter') {
+      if (options.method === 'PATCH') {
+        if (patchFrontMatter) return patchFrontMatter(options);
+        const next = {
+          title:
+            options.body?.title !== undefined ? options.body.title : frontMatter.title,
+          authorName:
+            options.body?.authorName !== undefined
+              ? options.body.authorName
+              : frontMatter.authorName,
+          introduction:
+            options.body?.introduction !== undefined
+              ? options.body.introduction
+              : frontMatter.introduction,
+        };
+        return { ok: true, json: async () => ({ frontMatter: next }) };
+      }
+      return { ok: true, json: async () => ({ frontMatter }) };
+    }
+    return undefined;
+  };
+
+const installMeditationsApiMock = (config, extraHandler) => {
+  apiFetch.mockImplementation(async (url, options = {}) => {
+    if (extraHandler) {
+      const extra = await extraHandler(url, options);
+      if (extra !== undefined) return extra;
+    }
+    const base = await meditationsApiHandler(config)(url, options);
+    if (base !== undefined) return base;
+    throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
+  });
+};
 
 const word = (n) => Array.from({ length: n }, () => 'word').join(' ');
 
@@ -49,6 +95,14 @@ const renderMeditations = (locale = 'en') => {
       <JournalMeditations />
     </LocaleProvider>,
   );
+};
+
+const bookButtonName = 'Book';
+
+const openBookModal = async () => {
+  const bookButton = await screen.findByRole('button', { name: bookButtonName });
+  fireEvent.click(bookButton);
+  return screen.findByRole('dialog');
 };
 
 const meditationEntry = (overrides) => ({
@@ -146,15 +200,13 @@ describe('JournalMeditations page states', () => {
       createdAt: '2026-08-02T12:00:00.000Z',
     };
 
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [newer, older] }),
-    });
+    installMeditationsApiMock({ entries: [newer, older] });
 
     renderMeditations();
 
     await waitFor(() => {
       expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries?topic=meditations');
+      expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-meditation-front-matter');
     });
 
     const body = screenFeed();
@@ -166,10 +218,7 @@ describe('JournalMeditations page states', () => {
 
   test('shows the empty state when there are no meditation entries', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [] }),
-    });
+    installMeditationsApiMock({ entries: [] });
 
     renderMeditations();
 
@@ -200,24 +249,21 @@ describe('JournalMeditations remove from meditations', () => {
   });
 
   test('removes the meditations topic and keeps other topics via PATCH', async () => {
-    apiFetch.mockImplementation(async (url, options = {}) => {
-      if (url === '/auth/me/journal-entries?topic=meditations') {
-        return {
-          ok: true,
-          json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
-        };
-      }
-      if (url === '/auth/me/journal-entries/e-new' && options.method === 'PATCH') {
-        expect(options.body).toEqual({ topics: ['private'] });
-        return {
-          ok: true,
-          json: async () => ({
-            entry: { ...newerMeditationEntry, topics: ['private'] },
-          }),
-        };
-      }
-      throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
-    });
+    installMeditationsApiMock(
+      { entries: [newerMeditationEntry, olderMeditationEntry] },
+      async (url, options = {}) => {
+        if (url === '/auth/me/journal-entries/e-new' && options.method === 'PATCH') {
+          expect(options.body).toEqual({ topics: ['private'] });
+          return {
+            ok: true,
+            json: async () => ({
+              entry: { ...newerMeditationEntry, topics: ['private'] },
+            }),
+          };
+        }
+        return undefined;
+      },
+    );
 
     renderMeditations();
 
@@ -246,10 +292,7 @@ describe('JournalMeditations remove from meditations', () => {
       content: 'Only meditation text.',
     });
 
-    apiFetch.mockImplementation(async (url, options = {}) => {
-      if (url === '/auth/me/journal-entries?topic=meditations') {
-        return { ok: true, json: async () => ({ entries: [onlyEntry] }) };
-      }
+    installMeditationsApiMock({ entries: [onlyEntry] }, async (url, options = {}) => {
       if (url === '/auth/me/journal-entries/e-only' && options.method === 'PATCH') {
         expect(options.body).toEqual({ topics: [] });
         return {
@@ -257,7 +300,7 @@ describe('JournalMeditations remove from meditations', () => {
           json: async () => ({ entry: { ...onlyEntry, topics: [] } }),
         };
       }
-      throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
+      return undefined;
     });
 
     renderMeditations();
@@ -285,10 +328,7 @@ describe('JournalMeditations remove from meditations', () => {
   });
 
   test('cancel closes the modal without PATCH and only loads entries once', async () => {
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
-    });
+    installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
 
     renderMeditations();
 
@@ -301,27 +341,25 @@ describe('JournalMeditations remove from meditations', () => {
 
     expect(within(screenFeed()).getByText('Older meditation text.')).toBeTruthy();
     expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
-    expect(apiFetch).toHaveBeenCalledTimes(1);
+    expect(apiFetch).toHaveBeenCalledTimes(2);
     expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries?topic=meditations');
+    expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-meditation-front-matter');
     assertNoDeleteCalls();
   });
 
   test('shows a toast and keeps the entry when PATCH fails', async () => {
-    apiFetch.mockImplementation(async (url, options = {}) => {
-      if (url === '/auth/me/journal-entries?topic=meditations') {
-        return {
-          ok: true,
-          json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
-        };
-      }
-      if (url === '/auth/me/journal-entries/e-old' && options.method === 'PATCH') {
-        return {
-          ok: false,
-          json: async () => ({ message: 'Could not update topics.' }),
-        };
-      }
-      throw new Error(`Unexpected apiFetch: ${url} ${options.method || 'GET'}`);
-    });
+    installMeditationsApiMock(
+      { entries: [newerMeditationEntry, olderMeditationEntry] },
+      async (url, options = {}) => {
+        if (url === '/auth/me/journal-entries/e-old' && options.method === 'PATCH') {
+          return {
+            ok: false,
+            json: async () => ({ message: 'Could not update topics.' }),
+          };
+        }
+        return undefined;
+      },
+    );
 
     renderMeditations();
 
@@ -381,18 +419,15 @@ describe('JournalMeditations pages-left countdown', () => {
 
   test('shows pages left for a signed-in reader with 250 words of entries', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        entries: [
-          {
-            id: 'e-250',
-            content: word(250),
-            topics: ['meditations'],
-            createdAt: '2026-08-01T12:00:00.000Z',
-          },
-        ],
-      }),
+    installMeditationsApiMock({
+      entries: [
+        {
+          id: 'e-250',
+          content: word(250),
+          topics: ['meditations'],
+          createdAt: '2026-08-01T12:00:00.000Z',
+        },
+      ],
     });
 
     renderMeditations();
@@ -412,12 +447,17 @@ describe('JournalMeditations pages-left countdown', () => {
   test('hides the countdown until the entries request resolves', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     let resolveFetch;
-    apiFetch.mockImplementation(
-      () =>
-        new Promise((resolve) => {
+    apiFetch.mockImplementation((url) => {
+      if (url === '/auth/me/journal-entries?topic=meditations') {
+        return new Promise((resolve) => {
           resolveFetch = resolve;
-        }),
-    );
+        });
+      }
+      return meditationsApiHandler()(
+        url,
+        {},
+      );
+    });
 
     renderMeditations();
 
@@ -435,18 +475,15 @@ describe('JournalMeditations pages-left countdown', () => {
 
   test('formats pages left in Spanish', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        entries: [
-          {
-            id: 'e-250',
-            content: word(250),
-            topics: ['meditations'],
-            createdAt: '2026-08-01T12:00:00.000Z',
-          },
-        ],
-      }),
+    installMeditationsApiMock({
+      entries: [
+        {
+          id: 'e-250',
+          content: word(250),
+          topics: ['meditations'],
+          createdAt: '2026-08-01T12:00:00.000Z',
+        },
+      ],
     });
 
     renderMeditations('es');
@@ -474,10 +511,7 @@ describe('JournalMeditations pages-left countdown', () => {
 
   test('opens the goal menu and shows the 25 entries indicator', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [] }),
-    });
+    installMeditationsApiMock({ entries: [] });
 
     renderMeditations();
 
@@ -499,10 +533,7 @@ describe('JournalMeditations pages-left countdown', () => {
   test('restores the selected goal from localStorage', async () => {
     writeMeditationProgressGoal(MEDITATION_GOALS.ENTRIES_50);
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [] }),
-    });
+    installMeditationsApiMock({ entries: [] });
 
     renderMeditations();
 
@@ -514,10 +545,7 @@ describe('JournalMeditations pages-left countdown', () => {
 
   test('hides the dropdown hint while the goal menu is open', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [] }),
-    });
+    installMeditationsApiMock({ entries: [] });
 
     renderMeditations();
     await screen.findByText('in 24.0 pages');
@@ -533,10 +561,7 @@ describe('JournalMeditations pages-left countdown', () => {
 
   test('closes the goal menu on Escape', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [] }),
-    });
+    installMeditationsApiMock({ entries: [] });
 
     renderMeditations();
     await screen.findByText('in 24.0 pages');
@@ -575,10 +600,7 @@ describe('JournalMeditations print export', () => {
 
     cleanup();
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [] }),
-    });
+    installMeditationsApiMock({ entries: [] });
     renderMeditations();
     await screen.findByText(/No entries are tagged as Meditations yet/i);
     expect(screen.queryByRole('button', { name: printButtonName })).toBeNull();
@@ -586,10 +608,7 @@ describe('JournalMeditations print export', () => {
 
   test('shows print when signed-in user has meditation entries and triggers window.print', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
-    });
+    installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
 
     renderMeditations();
     await waitFor(() => {
@@ -603,10 +622,7 @@ describe('JournalMeditations print export', () => {
 
   test('orders print-only content oldest first while screen feed stays newest first', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
-    apiFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
-    });
+    installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
 
     renderMeditations();
     await waitFor(() => {
@@ -635,5 +651,216 @@ describe('JournalMeditations print export', () => {
 
     renderMeditations();
     expect(screen.getByRole('button', { name: printButtonName })).toBeTruthy();
+  });
+});
+
+describe('JournalMeditations introduction', () => {
+  beforeEach(() => {
+    mockUseAuth.mockReset();
+    mockUseDemoMode.mockReset();
+    apiFetch.mockReset();
+    vi.mocked(emitToast).mockReset();
+    window.localStorage.clear();
+    mockUseDemoMode.mockReturnValue({
+      demoMode: false,
+      toggleDemoMode: vi.fn(),
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('loads front matter for signed-in users and shows introduction in the Book modal', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+    expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-meditation-front-matter');
+
+    await openBookModal();
+    expect(screen.getByRole('textbox', { name: 'Introduction' })).toBeTruthy();
+    expect(screen.queryByRole('textbox', { name: 'Introduction' }).closest('article')).toBeNull();
+  });
+
+  test('guests do not see the Book button or call front matter', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderMeditations();
+    expect(screen.queryByRole('button', { name: bookButtonName })).toBeNull();
+    expect(
+      apiFetch.mock.calls.some(([url]) => url.includes('journal-meditation-front-matter')),
+    ).toBe(false);
+  });
+
+  test('signed-in user with no entries does not see the Book button', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({ entries: [] });
+    renderMeditations();
+    await screen.findByText(/No entries are tagged as Meditations yet/i);
+    expect(screen.queryByRole('button', { name: bookButtonName })).toBeNull();
+  });
+
+  test('demo mode shows Book modal without calling the front-matter API', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+    renderMeditations();
+    await openBookModal();
+    expect(screen.getByRole('textbox', { name: 'Introduction' })).toBeTruthy();
+    expect(
+      apiFetch.mock.calls.some(([url]) => url.includes('journal-meditation-front-matter')),
+    ).toBe(false);
+  });
+
+  test('prints saved introduction before entries in oldest-first order', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [newerMeditationEntry, olderMeditationEntry],
+      frontMatter: { ...EMPTY_FRONT_MATTER, introduction: 'One.\n\nTwo.' },
+    });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
+    });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    await waitFor(() => {
+      expect(printRoot.querySelectorAll('.meditation-front-matter__paragraph')).toHaveLength(2);
+    });
+    expect(printRoot.textContent.indexOf('Introduction')).toBeLessThan(
+      printRoot.textContent.indexOf('Older meditation text.'),
+    );
+
+    const feed = screenFeed();
+    expect(feed.textContent.indexOf('Newer meditation text.')).toBeLessThan(
+      feed.textContent.indexOf('Older meditation text.'),
+    );
+  });
+
+  test('omits print introduction when saved text is blank', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [newerMeditationEntry, olderMeditationEntry],
+      frontMatter: { ...EMPTY_FRONT_MATTER, introduction: '   ' },
+    });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
+    });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.querySelector('.meditation-front-matter--print')).toBeNull();
+    const printSections = printRoot.querySelectorAll('.journal-meditations__section');
+    expect(printSections[0].textContent).toContain('Older meditation text.');
+  });
+
+  test('Save introduction PATCHes only introduction', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({ entries: [newerMeditationEntry] });
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+    await openBookModal();
+    const textarea = screen.getByRole('textbox', { name: 'Introduction' });
+    fireEvent.change(textarea, { target: { value: 'Fresh intro' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+
+    await waitFor(() => {
+      expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-meditation-front-matter', {
+        method: 'PATCH',
+        body: { introduction: 'Fresh intro' },
+      });
+    });
+
+    fireEvent.blur(textarea);
+    const patchCalls = apiFetch.mock.calls.filter(
+      ([, options]) => options?.method === 'PATCH',
+    );
+    expect(patchCalls).toHaveLength(1);
+  });
+
+  test('failed PATCH keeps draft and toasts save failure', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock(
+      { entries: [newerMeditationEntry] },
+      async (url, options = {}) => {
+        if (url === '/auth/me/journal-meditation-front-matter' && options.method === 'PATCH') {
+          return {
+            ok: false,
+            json: async () => ({ message: 'Server said no.' }),
+          };
+        }
+        return undefined;
+      },
+    );
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+    await openBookModal();
+    const textarea = screen.getByRole('textbox', { name: 'Introduction' });
+    fireEvent.change(textarea, { target: { value: 'Draft stays' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalledWith('Server said no.');
+    });
+    expect(textarea).toHaveValue('Draft stays');
+  });
+
+  test('demo mode saves introduction to localStorage without apiFetch', async () => {
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+
+    renderMeditations();
+    await openBookModal();
+    const textarea = screen.getByRole('textbox', { name: 'Introduction' });
+    fireEvent.change(textarea, { target: { value: 'Demo prose' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalledWith('Introduction saved.');
+    });
+    expect(apiFetch).not.toHaveBeenCalled();
+    expect(JSON.parse(window.localStorage.getItem(MEDITATION_FRONT_MATTER_STORAGE_KEY))).toEqual({
+      title: '',
+      authorName: '',
+      introduction: 'Demo prose',
+    });
+
+    cleanup();
+    renderMeditations();
+    await openBookModal();
+    expect(screen.getByRole('textbox', { name: 'Introduction' })).toHaveValue('Demo prose');
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.textContent).toContain('Demo prose');
+  });
+
+  test('Spanish locale prints Introducción heading when introduction is saved', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [olderMeditationEntry],
+      frontMatter: { ...EMPTY_FRONT_MATTER, introduction: 'Hola.' },
+    });
+
+    renderMeditations('es');
+    await waitFor(() => {
+      expect(
+        screen.getByRole('article', { name: 'Feed de meditaciones' }).textContent,
+      ).toContain('Older meditation text.');
+    });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    await waitFor(() => {
+      expect(printRoot.textContent).toContain('Introducción');
+      expect(printRoot.textContent).toContain('Hola.');
+    });
   });
 });

@@ -389,6 +389,14 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/014_blog_posts.sql
 ```
 
+### Journal Meditation Front Matter
+```sql
+-- Run after 015_blog_category_personal.sql
+\i backend/src/db/migrations/016_journal_meditation_front_matter.sql
+```
+
+The schema for `journal_meditation_front_matter` still needs this manual `\i` apply on each database that has not run `016` yet.
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created

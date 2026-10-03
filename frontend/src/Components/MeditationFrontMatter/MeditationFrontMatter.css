@@ -1,0 +1,33 @@
+.meditation-front-matter--print {
+  display: none;
+}
+
+@media print {
+  .meditation-front-matter--print {
+    display: block !important;
+    break-before: page;
+    page-break-before: always;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .meditation-front-matter__print-heading {
+    break-after: avoid;
+    page-break-after: avoid;
+    margin: 0 0 1.5rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: #000;
+  }
+
+  .meditation-front-matter__paragraph {
+    margin: 0 0 1rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #111;
+    white-space: pre-wrap;
+  }
+}

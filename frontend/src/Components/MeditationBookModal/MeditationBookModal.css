@@ -1,0 +1,70 @@
+.meditation-book-modal {
+  position: fixed;
+  width: 80%;
+  max-width: 32rem;
+  margin: auto;
+  background-color: white;
+  border-radius: 16px;
+  padding: 40px 8%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.meditation-book-modal__title {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.meditation-book-modal__field {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.meditation-book-modal__label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.meditation-book-modal__input {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  line-height: 1.5;
+  color: var(--dark-brown);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0.35rem 0;
+}
+
+.meditation-book-modal__section-heading {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.meditation-book-modal__text {
+  width: 100%;
+  min-height: 8rem;
+  font: inherit;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--dark-brown);
+  background: transparent;
+  resize: vertical;
+  border: none;
+  padding: 0;
+}
+
+.meditation-book-modal__save {
+  display: block;
+  margin-top: 1rem;
+  margin-left: auto;
+}

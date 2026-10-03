@@ -27,6 +27,14 @@ import {
   meditationPrintPageEstimate,
   meditationPrintWordCount,
 } from '../../utils/meditationEntries.js';
+import MeditationBookModal from '../../Components/MeditationBookModal/MeditationBookModal.jsx';
+import MeditationFrontMatter from '../../Components/MeditationFrontMatter/MeditationFrontMatter.jsx';
+import {
+  EMPTY_MEDITATION_FRONT_MATTER,
+  normalizeMeditationFrontMatter,
+  readDemoMeditationFrontMatter,
+  writeDemoMeditationFrontMatter,
+} from '../../utils/meditationFrontMatter.js';
 import './JournalMeditations.css';
 
 const GOAL_MENU_OPTIONS = [
@@ -89,6 +97,10 @@ const JournalMeditations = () => {
   const [selectedProgressGoal, setSelectedProgressGoal] = useState(() => readMeditationProgressGoal());
   const [progressMenuOpen, setProgressMenuOpen] = useState(false);
   const [progressAnnouncement, setProgressAnnouncement] = useState('');
+  const [frontMatter, setFrontMatter] = useState(EMPTY_MEDITATION_FRONT_MATTER);
+  const [frontMatterStatus, setFrontMatterStatus] = useState('idle');
+  const [savingIntroduction, setSavingIntroduction] = useState(false);
+  const [bookModalOpen, setBookModalOpen] = useState(false);
   const demoEntries = useMemo(
     () => (demoMode ? filterMeditationEntriesNewestFirst(getDemoEntries(locale)) : []),
     [demoMode, locale],
@@ -212,6 +224,83 @@ const JournalMeditations = () => {
     };
   }, [demoMode, status, t, user]);
 
+  useEffect(() => {
+    if (!showCompilation) {
+      return undefined;
+    }
+
+    if (demoMode) {
+      setFrontMatter(readDemoMeditationFrontMatter());
+      setFrontMatterStatus('ready');
+      return undefined;
+    }
+
+    if (!user) {
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const loadFrontMatter = async () => {
+      setFrontMatterStatus('loading');
+      try {
+        const res = await apiFetch('/auth/me/journal-meditation-front-matter');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.frontMatter) {
+          throw new Error(data.message || t('meditations.frontMatterLoadFailed'));
+        }
+        if (!cancelled) {
+          setFrontMatter(normalizeMeditationFrontMatter(data.frontMatter));
+          setFrontMatterStatus('ready');
+        }
+      } catch (err) {
+        console.error('[journal meditations front matter GET]', err);
+        if (!cancelled) {
+          setFrontMatterStatus('error');
+          emitToast(err.message || t('meditations.frontMatterLoadFailed'));
+        }
+      }
+    };
+
+    loadFrontMatter();
+    return () => {
+      cancelled = true;
+    };
+  }, [demoMode, showCompilation, t, user]);
+
+  const saveFrontMatter = async (patch) => {
+    if (savingIntroduction || !patch || Object.keys(patch).length === 0) return;
+
+    setSavingIntroduction(true);
+    try {
+      if (demoMode) {
+        const record = writeDemoMeditationFrontMatter(patch);
+        setFrontMatter(record);
+        emitToast(t('meditations.introductionSaved'));
+        return;
+      }
+
+      const res = await apiFetch('/auth/me/journal-meditation-front-matter', {
+        method: 'PATCH',
+        body: patch,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.frontMatter) {
+        throw new Error(data.message || t('meditations.introductionSaveFailed'));
+      }
+      setFrontMatter(normalizeMeditationFrontMatter(data.frontMatter));
+      emitToast(t('meditations.introductionSaved'));
+    } catch (err) {
+      console.error('[journal meditations front matter PATCH]', err);
+      emitToast(err.message || t('meditations.introductionSaveFailed'));
+    } finally {
+      setSavingIntroduction(false);
+    }
+  };
+
+  const savedIntroductionForPrint =
+    frontMatterStatus === 'ready' ? frontMatter.introduction : '';
+
   const closeRemoveModal = () => {
     if (removing) return;
     setEntryPendingRemove(null);
@@ -327,13 +416,22 @@ const JournalMeditations = () => {
               {t('meditations.write')}
             </Link>
             {showPrintControl && (
-              <button
-                type="button"
-                className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary journal-meditations__print-button"
-                onClick={handlePrint}
-              >
-                {t('meditations.printButton')}
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
+                  onClick={() => setBookModalOpen(true)}
+                >
+                  {t('meditations.bookButton')}
+                </button>
+                <button
+                  type="button"
+                  className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary journal-meditations__print-button"
+                  onClick={handlePrint}
+                >
+                  {t('meditations.printButton')}
+                </button>
+              </>
             )}
           </div>
         </header>
@@ -415,6 +513,7 @@ const JournalMeditations = () => {
                   <p className="journal-meditations__print-subtitle">{printSubtitle}</p>
                 )}
               </header>
+              <MeditationFrontMatter introduction={savedIntroductionForPrint} />
               <article className="journal-meditations__compilation journal-meditations__compilation--print">
                 {printEntries.map((entry) => (
                   <section key={`print-${entry.id}`} className="journal-meditations__section">
@@ -440,6 +539,18 @@ const JournalMeditations = () => {
           </Link>
         )}
       </main>
+
+      {bookModalOpen && showCompilation && (
+        <MeditationBookModal
+          title={frontMatter.title}
+          authorName={frontMatter.authorName}
+          introduction={frontMatter.introduction}
+          status={frontMatterStatus === 'idle' ? 'loading' : frontMatterStatus}
+          saving={savingIntroduction}
+          onClose={() => setBookModalOpen(false)}
+          onSave={saveFrontMatter}
+        />
+      )}
 
       {entryPendingRemove && (
         <JournalConfirmModal
