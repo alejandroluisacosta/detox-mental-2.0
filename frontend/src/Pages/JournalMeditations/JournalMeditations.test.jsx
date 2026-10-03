@@ -7,7 +7,13 @@ import { apiFetch } from '../../api/client.js';
 import { getDemoEntries } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { translate } from '../../utils/translate.js';
-import { formatPagesRemaining, pagesRemaining } from '../../utils/meditationPages.js';
+import {
+  MEDITATION_GOAL_STORAGE_KEY,
+  MEDITATION_GOALS,
+  formatPagesRemaining,
+  pagesRemaining,
+  writeMeditationProgressGoal,
+} from '../../utils/meditationPages.js';
 
 const MEDITATIONS_TOPIC = 'meditations';
 
@@ -173,6 +179,7 @@ describe('JournalMeditations page states', () => {
     ).toBeTruthy();
     expect(screen.getByText('in 24.0 pages')).toBeTruthy();
     expect(document.querySelector('.journal-meditations__book-icon')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
   });
 });
 
@@ -361,6 +368,7 @@ describe('JournalMeditations pages-left countdown', () => {
     mockUseAuth.mockReset();
     mockUseDemoMode.mockReset();
     apiFetch.mockReset();
+    window.localStorage.clear();
     mockUseDemoMode.mockReturnValue({
       demoMode: false,
       toggleDemoMode: vi.fn(),
@@ -462,5 +470,81 @@ describe('JournalMeditations pages-left countdown', () => {
     renderMeditations(locale);
 
     expect(screen.getByText(expected)).toBeTruthy();
+  });
+
+  test('opens the goal menu and shows the 25 entries indicator', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [] }),
+    });
+
+    renderMeditations();
+
+    expect(await screen.findByText('in 24.0 pages')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Meditation progress goal' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: '25 entries' }));
+
+    expect(screen.getByRole('button', { name: 'Meditation progress goal' })).toHaveTextContent(
+      '25 entries left toward 25',
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('25 entries left toward 25');
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(window.localStorage.getItem(MEDITATION_GOAL_STORAGE_KEY)).toBe(MEDITATION_GOALS.ENTRIES_25);
+    expect(document.querySelector('.journal-meditations__target-icon')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
+  });
+
+  test('restores the selected goal from localStorage', async () => {
+    writeMeditationProgressGoal(MEDITATION_GOALS.ENTRIES_50);
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [] }),
+    });
+
+    renderMeditations();
+
+    expect(await screen.findByText('50 entries left toward 50')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__book-icon')).toBeNull();
+    expect(document.querySelector('.journal-meditations__target-icon')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
+  });
+
+  test('hides the dropdown hint while the goal menu is open', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [] }),
+    });
+
+    renderMeditations();
+    await screen.findByText('in 24.0 pages');
+
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Meditation progress goal' }));
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeNull();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
+  });
+
+  test('closes the goal menu on Escape', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [] }),
+    });
+
+    renderMeditations();
+    await screen.findByText('in 24.0 pages');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Meditation progress goal' }));
+    expect(screen.getByRole('menu')).toBeTruthy();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('menu')).toBeNull();
   });
 });

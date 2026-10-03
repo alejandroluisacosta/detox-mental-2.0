@@ -33,3 +33,44 @@ export const formatPagesRemaining = (pages, locale) =>
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   }).format(pages);
+
+export const MEDITATION_GOAL_STORAGE_KEY = 'journalMeditations:progressGoal';
+
+export const MEDITATION_GOALS = {
+  BOOK: 'book',
+  ENTRIES_25: 'entries25',
+  ENTRIES_50: 'entries50',
+};
+
+const VALID_MEDITATION_GOALS = new Set(Object.values(MEDITATION_GOALS));
+
+export const ENTRY_GOAL_TARGETS = {
+  [MEDITATION_GOALS.ENTRIES_25]: 25,
+  [MEDITATION_GOALS.ENTRIES_50]: 50,
+};
+
+export const entriesRemaining = (entries, target) => {
+  const count = Array.isArray(entries) ? entries.length : 0;
+  const goal = Number(target);
+  if (!Number.isFinite(goal) || goal <= 0) return 0;
+  return Math.max(0, goal - count);
+};
+
+export const readMeditationProgressGoal = () => {
+  try {
+    const stored = window.localStorage.getItem(MEDITATION_GOAL_STORAGE_KEY);
+    if (stored && VALID_MEDITATION_GOALS.has(stored)) return stored;
+  } catch {
+    // ignore storage errors
+  }
+  return MEDITATION_GOALS.BOOK;
+};
+
+export const writeMeditationProgressGoal = (goal) => {
+  if (!VALID_MEDITATION_GOALS.has(goal)) return;
+  try {
+    window.localStorage.setItem(MEDITATION_GOAL_STORAGE_KEY, goal);
+  } catch {
+    // ignore storage errors
+  }
+};
