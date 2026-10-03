@@ -114,3 +114,27 @@ strength. Examples already in the source:
 - Theory notes that meditation is not therapy and that professional help is
   the main recommendation
 - Instructions closing line about seeing a professional at least once a month
+
+## Theory article
+
+Recurring terms from the long-form theory text. Use these in the English article
+and in later education copy that refers back to it.
+
+| Spanish | English | Notes |
+| --- | --- | --- |
+| preguntas constructivas | constructive questions | Inner-dialogue technique in step 3. |
+| círculo vicioso | vicious cycle | Emotion–thought loop in step 1. |
+| diálogo interno | inner dialogue | Roommate example in step 3. |
+| piloto automático | autopilot | *The Power of Now* recommendation. |
+| pensamiento compulsivo / pensamientos compulsivos | compulsive thinking / compulsive thoughts | Distinct from tormenting thoughts. |
+| aquí y ahora | here and now | |
+| matar de hambre (un pensamiento) | starve (a thought) / die of neglect | Same force as step 5, Kill. |
+| PQA valioso | valuable tormenting thought | One that points to safety, happiness, or growth. |
+| PQA motivado por el ego | ego-driven tormenting thought | No real value unless the goal is appearances. |
+| audiocurso | audio course | Want-more close: 15 sessions + 15 writing activities. |
+| actividades de escritura | writing activities | Want-more close. Keep "exercise" for the session UI. |
+| Una Nueva Tierra | *A New Earth* | Eckhart Tolle. |
+| El Poder del Ahora | *The Power of Now* | Eckhart Tolle. |
+| Deja de ser tú | *Breaking the Habit of Being Yourself* | Joe Dispenza. |
+| El sutil arte de que (casi todo) te importe una mi*rda | *The Subtle Art of Not Giving a F\*ck* | Mark Manson. Keep the censored force. |
+| bolívar | bolívar | Keep the Venezuelan currency joke; the parenthetical already means "nothing". |
