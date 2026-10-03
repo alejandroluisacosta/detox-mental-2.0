@@ -270,6 +270,12 @@
   text-transform: uppercase;
 }
 
+.journal-page__scan-pickers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .journal-page__scan-icon {
   display: block;
   width: 22px;
@@ -278,6 +284,16 @@
   background-color: currentColor;
   mask: url('/icons/camera.svg') no-repeat center / contain;
   -webkit-mask: url('/icons/camera.svg') no-repeat center / contain;
+}
+
+.journal-page__library-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask: url('/icons/gallery.svg') no-repeat center / contain;
+  -webkit-mask: url('/icons/gallery.svg') no-repeat center / contain;
 }
 
 .journal-page__scan-button:disabled {

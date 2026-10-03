@@ -27,7 +27,8 @@ const Journal = () => {
   const { customTopics, allTopics, createTopic, renameTopic } = useJournalTopics();
   const { t, topicLabel } = useLocale();
   const textareaRef = useRef(null);
-  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const libraryInputRef = useRef(null);
   const topicsRef = useRef(null);
   const topicHoldRef = useRef(null);
   const chipPressRef = useRef(new Map());
@@ -168,7 +169,8 @@ const Journal = () => {
   const clearImage = () => {
     setImageFile(null);
     setImagePreviewUrl('');
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    if (libraryInputRef.current) libraryInputRef.current.value = '';
   };
 
   const handleImageSelected = (e) => {
@@ -178,7 +180,7 @@ const Journal = () => {
     const validation = validateImageFile(file);
     if (!validation.valid) {
       emitToast(t(validation.messageKey));
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      e.target.value = '';
       return;
     }
 
@@ -346,26 +348,47 @@ const Journal = () => {
           {canUseImages && (
             <div className="journal-page__scan">
               <input
-                ref={fileInputRef}
+                ref={cameraInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 capture="environment"
                 className="journal-page__file-input"
-                id="journal-image-input"
+                id="journal-image-camera-input"
+                onChange={handleImageSelected}
+                disabled={busy}
+              />
+              <input
+                ref={libraryInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="journal-page__file-input"
+                id="journal-image-library-input"
                 onChange={handleImageSelected}
                 disabled={busy}
               />
               {!imagePreviewUrl ? (
-                <button
-                  type="button"
-                  className="journal-page__scan-button journal-page__scan-button--picker"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={busy}
-                  aria-label={t('journal.scanAria')}
-                >
-                  <span className="journal-page__scan-label">{t('journal.scan')}</span>
-                  <span className="journal-page__scan-icon" aria-hidden="true" />
-                </button>
+                <div className="journal-page__scan-pickers">
+                  <button
+                    type="button"
+                    className="journal-page__scan-button journal-page__scan-button--picker"
+                    onClick={() => cameraInputRef.current?.click()}
+                    disabled={busy}
+                    aria-label={t('journal.scanAria')}
+                  >
+                    <span className="journal-page__scan-label">{t('journal.scan')}</span>
+                    <span className="journal-page__scan-icon" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="journal-page__scan-button journal-page__scan-button--picker"
+                    onClick={() => libraryInputRef.current?.click()}
+                    disabled={busy}
+                    aria-label={t('journal.libraryAria')}
+                  >
+                    <span className="journal-page__library-label">{t('journal.library')}</span>
+                    <span className="journal-page__library-icon" aria-hidden="true" />
+                  </button>
+                </div>
               ) : (
                 <div className="journal-page__scan-preview">
                   <img
