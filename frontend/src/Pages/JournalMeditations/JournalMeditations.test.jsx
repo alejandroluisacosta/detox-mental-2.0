@@ -14,13 +14,9 @@ import {
   pagesRemaining,
   writeMeditationProgressGoal,
 } from '../../utils/meditationPages.js';
+import { filterMeditationEntriesNewestFirst } from '../../utils/meditationEntries.js';
 
-const MEDITATIONS_TOPIC = 'meditations';
-
-const filterMeditationEntries = (entries) =>
-  entries
-    .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+const filterMeditationEntries = filterMeditationEntriesNewestFirst;
 
 const word = (n) => Array.from({ length: n }, () => 'word').join(' ');
 
@@ -74,8 +70,10 @@ const newerMeditationEntry = meditationEntry({
   createdAt: '2026-08-02T12:00:00.000Z',
 });
 
+const screenFeed = () => screen.getByRole('article', { name: 'Meditations feed' });
+
 const removeButtonInSection = (contentText) => {
-  const section = screen.getByText(contentText).closest('section');
+  const section = within(screenFeed()).getByText(contentText).closest('section');
   return within(section).getByRole('button', { name: 'Remove from meditations' });
 };
 
@@ -110,10 +108,11 @@ describe('JournalMeditations page states', () => {
     renderMeditations();
 
     expect(
-      screen.getByText(/Maybe I don't need a better plan/i),
+      within(screenFeed()).getByText(/Maybe I don't need a better plan/i),
     ).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Write' })).toHaveAttribute('href', '/journal');
-    expect(screen.getByRole('link', { name: 'History' })).toHaveAttribute('href', '/journal/history');
+    expect(screen.queryByRole('link', { name: 'History' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Print / PDF' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'WRITE' })).toHaveAttribute('href', '/journal');
     expect(
       screen.queryByText(/Every time something stays ambiguous/i),
@@ -158,7 +157,7 @@ describe('JournalMeditations page states', () => {
       expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries?topic=meditations');
     });
 
-    const body = screen.getByRole('article');
+    const body = screenFeed();
     expect(body.textContent.indexOf('Newer meditation text.')).toBeLessThan(
       body.textContent.indexOf('Older meditation text.'),
     );
@@ -223,7 +222,7 @@ describe('JournalMeditations remove from meditations', () => {
     renderMeditations();
 
     await waitFor(() => {
-      expect(screen.getByText('Newer meditation text.')).toBeTruthy();
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
     });
 
     fireEvent.click(removeButtonInSection('Newer meditation text.'));
@@ -237,8 +236,8 @@ describe('JournalMeditations remove from meditations', () => {
     });
 
     assertNoDeleteCalls();
-    expect(screen.queryByText('Newer meditation text.')).toBeNull();
-    expect(screen.getByText('Older meditation text.')).toBeTruthy();
+    expect(within(screenFeed()).queryByText('Newer meditation text.')).toBeNull();
+    expect(within(screenFeed()).getByText('Older meditation text.')).toBeTruthy();
   });
 
   test('PATCHes an empty topics list for meditations-only entries and shows empty state', async () => {
@@ -264,7 +263,7 @@ describe('JournalMeditations remove from meditations', () => {
     renderMeditations();
 
     await waitFor(() => {
-      expect(screen.getByText('Only meditation text.')).toBeTruthy();
+      expect(within(screenFeed()).getByText('Only meditation text.')).toBeTruthy();
     });
 
     fireEvent.click(removeButtonInSection('Only meditation text.'));
@@ -282,6 +281,7 @@ describe('JournalMeditations remove from meditations', () => {
       await screen.findByText(/No entries are tagged as Meditations yet/i),
     ).toBeTruthy();
     expect(screen.queryByText('Only meditation text.')).toBeNull();
+    expect(screen.queryByRole('article', { name: 'Meditations feed' })).toBeNull();
   });
 
   test('cancel closes the modal without PATCH and only loads entries once', async () => {
@@ -293,14 +293,14 @@ describe('JournalMeditations remove from meditations', () => {
     renderMeditations();
 
     await waitFor(() => {
-      expect(screen.getByText('Older meditation text.')).toBeTruthy();
+      expect(within(screenFeed()).getByText('Older meditation text.')).toBeTruthy();
     });
 
     fireEvent.click(removeButtonInSection('Older meditation text.'));
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(screen.getByText('Older meditation text.')).toBeTruthy();
-    expect(screen.getByText('Newer meditation text.')).toBeTruthy();
+    expect(within(screenFeed()).getByText('Older meditation text.')).toBeTruthy();
+    expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
     expect(apiFetch).toHaveBeenCalledTimes(1);
     expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-entries?topic=meditations');
     assertNoDeleteCalls();
@@ -326,7 +326,7 @@ describe('JournalMeditations remove from meditations', () => {
     renderMeditations();
 
     await waitFor(() => {
-      expect(screen.getByText('Older meditation text.')).toBeTruthy();
+      expect(within(screenFeed()).getByText('Older meditation text.')).toBeTruthy();
     });
 
     fireEvent.click(removeButtonInSection('Older meditation text.'));
@@ -337,7 +337,7 @@ describe('JournalMeditations remove from meditations', () => {
     });
 
     assertNoDeleteCalls();
-    expect(screen.getByText('Older meditation text.')).toBeTruthy();
+    expect(within(screenFeed()).getByText('Older meditation text.')).toBeTruthy();
   });
 
   test('does not show remove controls or call the API in demo mode', () => {
@@ -546,5 +546,94 @@ describe('JournalMeditations pages-left countdown', () => {
 
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('menu')).toBeNull();
+  });
+});
+
+describe('JournalMeditations print export', () => {
+  const printButtonName = 'Print / PDF';
+
+  beforeEach(() => {
+    mockUseAuth.mockReset();
+    mockUseDemoMode.mockReset();
+    apiFetch.mockReset();
+    mockUseDemoMode.mockReturnValue({
+      demoMode: false,
+      toggleDemoMode: vi.fn(),
+    });
+    vi.spyOn(window, 'print').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.mocked(window.print).mockRestore();
+  });
+
+  test('hides print for guests and empty signed-in states', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderMeditations();
+    expect(screen.queryByRole('button', { name: printButtonName })).toBeNull();
+
+    cleanup();
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [] }),
+    });
+    renderMeditations();
+    await screen.findByText(/No entries are tagged as Meditations yet/i);
+    expect(screen.queryByRole('button', { name: printButtonName })).toBeNull();
+  });
+
+  test('shows print when signed-in user has meditation entries and triggers window.print', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
+    });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
+    });
+
+    const printButton = screen.getByRole('button', { name: printButtonName });
+    fireEvent.click(printButton);
+    expect(window.print).toHaveBeenCalledTimes(1);
+  });
+
+  test('orders print-only content oldest first while screen feed stays newest first', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [newerMeditationEntry, olderMeditationEntry] }),
+    });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
+    });
+
+    const feed = screenFeed();
+    expect(feed.textContent.indexOf('Newer meditation text.')).toBeLessThan(
+      feed.textContent.indexOf('Older meditation text.'),
+    );
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot).toBeTruthy();
+    expect(printRoot.style.display).toBe('none');
+    const printSections = printRoot.querySelectorAll('.journal-meditations__section');
+    expect(printSections[0].textContent).toContain('Older meditation text.');
+    expect(printSections[printSections.length - 1].textContent).toContain('Newer meditation text.');
+  });
+
+  test('shows print in demo mode when demo meditations are visible', () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+
+    renderMeditations();
+    expect(screen.getByRole('button', { name: printButtonName })).toBeTruthy();
   });
 });

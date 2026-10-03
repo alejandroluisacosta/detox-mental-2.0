@@ -153,6 +153,11 @@ export const es = {
   'meditations.removeCancel': 'Cancelar',
   'meditations.removeFailed': 'No se pudo quitar de meditaciones.',
   'meditations.removeSuccess': 'Se quitó de meditaciones.',
+  'meditations.printButton': 'Imprimir / PDF',
+  'meditations.feedLabel': 'Feed de meditaciones',
+  'meditations.printDateRange': '{start} – {end}',
+  'meditations.printStats': '{words} palabras · ~{pages} páginas',
+  'meditations.printStatsWordsOnly': '{words} palabras',
 
   'summary.title': 'Resumen semanal',
   'summary.write': 'Escribir',

@@ -20,9 +20,14 @@ import {
   readMeditationProgressGoal,
   writeMeditationProgressGoal,
 } from '../../utils/meditationPages.js';
+import {
+  MEDITATIONS_TOPIC,
+  filterMeditationEntriesNewestFirst,
+  meditationEntriesForPrint,
+  meditationPrintPageEstimate,
+  meditationPrintWordCount,
+} from '../../utils/meditationEntries.js';
 import './JournalMeditations.css';
-
-const MEDITATIONS_TOPIC = 'meditations';
 
 const GOAL_MENU_OPTIONS = [
   MEDITATION_GOALS.BOOK,
@@ -68,11 +73,6 @@ const formatEntryDate = (iso, locale, unknownLabel) => {
   return formatted || unknownLabel;
 };
 
-const filterMeditationEntries = (entries) =>
-  entries
-    .filter((entry) => Array.isArray(entry.topics) && entry.topics.includes(MEDITATIONS_TOPIC))
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
 const topicsWithoutMeditations = (topics) =>
   (Array.isArray(topics) ? topics : []).filter((topic) => topic !== MEDITATIONS_TOPIC);
 
@@ -90,11 +90,47 @@ const JournalMeditations = () => {
   const [progressMenuOpen, setProgressMenuOpen] = useState(false);
   const [progressAnnouncement, setProgressAnnouncement] = useState('');
   const demoEntries = useMemo(
-    () => (demoMode ? filterMeditationEntries(getDemoEntries(locale)) : []),
+    () => (demoMode ? filterMeditationEntriesNewestFirst(getDemoEntries(locale)) : []),
     [demoMode, locale],
   );
   const visibleEntries = demoMode ? demoEntries : entries;
+  const printableSourceEntries = demoMode ? demoEntries : entries;
+  const printEntries = useMemo(
+    () => meditationEntriesForPrint(printableSourceEntries),
+    [printableSourceEntries],
+  );
+  const showCompilation =
+    demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0);
+  const showPrintControl = showCompilation;
   const showProgressGoal = demoMode || (status === 'ready' && user && !loading);
+
+  const printSubtitle = useMemo(() => {
+    if (printEntries.length === 0) return '';
+
+    const dates = printEntries
+      .map((entry) => formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate')))
+      .filter(Boolean);
+    const range =
+      dates.length > 0
+        ? t('meditations.printDateRange', {
+            start: dates[0],
+            end: dates[dates.length - 1],
+          })
+        : '';
+
+    const words = meditationPrintWordCount(printableSourceEntries);
+    const pages = meditationPrintPageEstimate(printableSourceEntries);
+    const stats =
+      pages > 0
+        ? t('meditations.printStats', { words, pages })
+        : t('meditations.printStatsWordsOnly', { words });
+
+    return [range, stats].filter(Boolean).join(' · ');
+  }, [locale, printEntries, printableSourceEntries, t]);
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   const progressLabel = useMemo(
     () => progressLabelForGoal(selectedProgressGoal, visibleEntries, locale, t),
@@ -290,12 +326,15 @@ const JournalMeditations = () => {
             >
               {t('meditations.write')}
             </Link>
-            <Link
-              to="/journal/history"
-              className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
-            >
-              {t('meditations.history')}
-            </Link>
+            {showPrintControl && (
+              <button
+                type="button"
+                className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary journal-meditations__print-button"
+                onClick={handlePrint}
+              >
+                {t('meditations.printButton')}
+              </button>
+            )}
           </div>
         </header>
 
@@ -325,41 +364,71 @@ const JournalMeditations = () => {
           </div>
         )}
 
-        {(demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0)) && (
-          <article className="journal-meditations__compilation">
-            {visibleEntries.map((entry) => {
-              const removeDisabled = removing && entryPendingRemove?.id === entry.id;
+        {showCompilation && (
+          <>
+            <article
+              className="journal-meditations__compilation journal-meditations__compilation--screen"
+              aria-label={t('meditations.feedLabel')}
+            >
+              {visibleEntries.map((entry) => {
+                const removeDisabled = removing && entryPendingRemove?.id === entry.id;
 
-              return (
-                <section key={entry.id} className="journal-meditations__section">
-                  <div className="journal-meditations__date-row">
+                return (
+                  <section key={entry.id} className="journal-meditations__section">
+                    <div className="journal-meditations__date-row">
+                      <h2 className="journal-meditations__date">
+                        <time dateTime={entry.createdAt}>
+                          {formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate'))}
+                        </time>
+                      </h2>
+                      {!demoMode && status === 'ready' && user && (
+                        <button
+                          type="button"
+                          className="journal-meditations__delete"
+                          onClick={() => setEntryPendingRemove(entry)}
+                          disabled={removeDisabled}
+                          aria-label={t('meditations.removeFromMeditations')}
+                        >
+                          <img
+                            src="/icons/trash.svg"
+                            alt=""
+                            className="journal-meditations__delete-icon"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      )}
+                    </div>
+                    <p className="journal-meditations__text">{entry.content}</p>
+                  </section>
+                );
+              })}
+            </article>
+
+            <div
+              className="journal-meditations__print-root"
+              aria-hidden="true"
+              style={{ display: 'none' }}
+            >
+              <header className="journal-meditations__print-title-block">
+                <h1 className="journal-meditations__print-title">{t('meditations.title')}</h1>
+                {printSubtitle && (
+                  <p className="journal-meditations__print-subtitle">{printSubtitle}</p>
+                )}
+              </header>
+              <article className="journal-meditations__compilation journal-meditations__compilation--print">
+                {printEntries.map((entry) => (
+                  <section key={`print-${entry.id}`} className="journal-meditations__section">
                     <h2 className="journal-meditations__date">
                       <time dateTime={entry.createdAt}>
                         {formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate'))}
                       </time>
                     </h2>
-                    {!demoMode && status === 'ready' && user && (
-                      <button
-                        type="button"
-                        className="journal-meditations__delete"
-                        onClick={() => setEntryPendingRemove(entry)}
-                        disabled={removeDisabled}
-                        aria-label={t('meditations.removeFromMeditations')}
-                      >
-                        <img
-                          src="/icons/trash.svg"
-                          alt=""
-                          className="journal-meditations__delete-icon"
-                          aria-hidden="true"
-                        />
-                      </button>
-                    )}
-                  </div>
-                  <p className="journal-meditations__text">{entry.content}</p>
-                </section>
-              );
-            })}
-          </article>
+                    <p className="journal-meditations__text">{entry.content}</p>
+                  </section>
+                ))}
+              </article>
+            </div>
+          </>
         )}
 
         {(demoMode || status !== 'loading') && (
