@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
@@ -11,10 +11,53 @@ import { apiFetch } from '../../api/client.js';
 import { getDemoEntries } from '../../data/demoJournal.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { formatLocaleDate } from '../../utils/locale.js';
-import MeditationProgressControl from './MeditationProgressControl.jsx';
+import {
+  ENTRY_GOAL_TARGETS,
+  MEDITATION_GOALS,
+  entriesRemaining,
+  formatPagesRemaining,
+  pagesRemaining,
+  readMeditationProgressGoal,
+  writeMeditationProgressGoal,
+} from '../../utils/meditationPages.js';
 import './JournalMeditations.css';
 
 const MEDITATIONS_TOPIC = 'meditations';
+
+const GOAL_MENU_OPTIONS = [
+  MEDITATION_GOALS.BOOK,
+  MEDITATION_GOALS.ENTRIES_25,
+  MEDITATION_GOALS.ENTRIES_50,
+];
+
+const goalMenuLabelKey = {
+  [MEDITATION_GOALS.BOOK]: 'meditations.goalBook',
+  [MEDITATION_GOALS.ENTRIES_25]: 'meditations.goalEntries25',
+  [MEDITATION_GOALS.ENTRIES_50]: 'meditations.goalEntries50',
+};
+
+const progressLabelForGoal = (goal, meditationEntries, locale, translate) => {
+  if (goal === MEDITATION_GOALS.BOOK) {
+    const pages = pagesRemaining(meditationEntries);
+    const formatted = formatPagesRemaining(pages, locale);
+    return translate('meditations.pagesLeft', { pages: formatted });
+  }
+
+  const target = ENTRY_GOAL_TARGETS[goal];
+  const remaining = entriesRemaining(meditationEntries, target);
+
+  if (remaining === 0) {
+    if (goal === MEDITATION_GOALS.ENTRIES_25) {
+      return translate('meditations.entriesGoalReached25');
+    }
+    return translate('meditations.entriesGoalReached50');
+  }
+
+  if (goal === MEDITATION_GOALS.ENTRIES_25) {
+    return translate('meditations.entriesLeftToward25', { count: remaining });
+  }
+  return translate('meditations.entriesLeftToward50', { count: remaining });
+};
 
 const formatEntryDate = (iso, locale, unknownLabel) => {
   const formatted = formatLocaleDate(iso, locale, {
@@ -37,16 +80,55 @@ const JournalMeditations = () => {
   const { user, status } = useAuth();
   const { demoMode } = useDemoMode();
   const { locale, t } = useLocale();
+  const progressMenuId = useId();
+  const progressRootRef = useRef(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [entryPendingRemove, setEntryPendingRemove] = useState(null);
   const [removing, setRemoving] = useState(false);
+  const [selectedProgressGoal, setSelectedProgressGoal] = useState(() => readMeditationProgressGoal());
+  const [progressMenuOpen, setProgressMenuOpen] = useState(false);
+  const [progressAnnouncement, setProgressAnnouncement] = useState('');
   const demoEntries = useMemo(
     () => (demoMode ? filterMeditationEntries(getDemoEntries(locale)) : []),
     [demoMode, locale],
   );
   const visibleEntries = demoMode ? demoEntries : entries;
   const showProgressGoal = demoMode || (status === 'ready' && user && !loading);
+
+  const progressLabel = useMemo(
+    () => progressLabelForGoal(selectedProgressGoal, visibleEntries, locale, t),
+    [locale, selectedProgressGoal, t, visibleEntries],
+  );
+
+  useEffect(() => {
+    if (!progressMenuOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (progressRootRef.current?.contains(event.target)) return;
+      setProgressMenuOpen(false);
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setProgressMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [progressMenuOpen]);
+
+  const selectProgressGoal = (goal) => {
+    setSelectedProgressGoal(goal);
+    writeMeditationProgressGoal(goal);
+    setProgressMenuOpen(false);
+    setProgressAnnouncement(progressLabelForGoal(goal, visibleEntries, locale, t));
+  };
 
   useEffect(() => {
     if (demoMode) {
@@ -136,12 +218,71 @@ const JournalMeditations = () => {
             <h1 className="journal-meditations__title">{t('meditations.title')}</h1>
             <DemoModeToggle />
           </div>
-          <MeditationProgressControl
-            entries={visibleEntries}
-            locale={locale}
-            t={t}
-            visible={showProgressGoal}
-          />
+          {showProgressGoal && (
+            <div
+              className="journal-meditations__pages-left journal-meditations__progress"
+              ref={progressRootRef}
+            >
+              <button
+                type="button"
+                className="journal-meditations__progress-trigger"
+                aria-haspopup="menu"
+                aria-expanded={progressMenuOpen}
+                aria-controls={progressMenuId}
+                aria-label={t('meditations.progressGoalButton')}
+                onClick={() => setProgressMenuOpen((open) => !open)}
+              >
+                {selectedProgressGoal === MEDITATION_GOALS.BOOK ? (
+                  <img
+                    src="/icons/book.svg"
+                    alt=""
+                    aria-hidden="true"
+                    className="journal-meditations__progress-goal-icon journal-meditations__book-icon"
+                  />
+                ) : (
+                  <img
+                    src="/icons/target.svg"
+                    alt=""
+                    aria-hidden="true"
+                    className="journal-meditations__progress-goal-icon journal-meditations__target-icon"
+                  />
+                )}
+                <span className="journal-meditations__pages-left-text">{progressLabel}</span>
+                {!progressMenuOpen && (
+                  <img
+                    src="/icons/arrow_down.svg"
+                    alt=""
+                    aria-hidden="true"
+                    className="journal-meditations__progress-dropdown-icon"
+                  />
+                )}
+              </button>
+              {progressMenuOpen && (
+                <ul id={progressMenuId} role="menu" className="journal-meditations__progress-menu">
+                  {GOAL_MENU_OPTIONS.map((goal) => (
+                    <li key={goal} role="none">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="journal-meditations__progress-menu-item"
+                        aria-current={selectedProgressGoal === goal ? 'true' : undefined}
+                        onClick={() => selectProgressGoal(goal)}
+                      >
+                        {t(goalMenuLabelKey[goal])}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p
+                className="journal-meditations__progress-announcement"
+                role="status"
+                aria-live="polite"
+              >
+                {progressAnnouncement}
+              </p>
+            </div>
+          )}
           <div className="journal-meditations__header-actions">
             <Link
               to="/journal"
