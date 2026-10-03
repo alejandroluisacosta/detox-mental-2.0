@@ -8,7 +8,7 @@ const renderModal = (props = {}) => {
   writeStoredLocale('en');
   return render(
     <LocaleProvider>
-      <MeditationBookModal onClose={vi.fn()} onSave={vi.fn()} {...props} />
+      <MeditationBookModal onClose={vi.fn()} onPdfAction={vi.fn()} {...props} />
     </LocaleProvider>,
   );
 };
@@ -18,54 +18,61 @@ describe('MeditationBookModal', () => {
     cleanup();
   });
 
-  test('shows title, author, introduction fields and save button', () => {
+  test('shows the default Meditations title as the field value', () => {
     renderModal({ introduction: '' });
-
-    expect(screen.getByRole('heading', { name: 'Book', level: 2 })).toBeTruthy();
-    expect(screen.getByRole('textbox', { name: 'Introduction' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Save introduction' })).toBeTruthy();
-    expect(screen.getAllByRole('textbox')).toHaveLength(3);
+    expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue('Meditations');
+    expect(screen.getByRole('button', { name: 'PDF' })).toBeTruthy();
   });
 
-  test('save is disabled until draft changes and calls onSave with changed fields only', () => {
-    const onSave = vi.fn();
+  test('PDF prints without saving when the draft matches saved values', () => {
+    const onPdfAction = vi.fn();
     renderModal({
-      title: 'My book',
+      title: '',
+      titleUsesDefault: true,
+      introduction: 'Saved prose',
+      onPdfAction,
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'PDF' }));
+    expect(onPdfAction).toHaveBeenCalledWith(null);
+  });
+
+  test('Save and PDF sends only changed fields', () => {
+    const onPdfAction = vi.fn();
+    renderModal({
+      title: '',
+      titleUsesDefault: true,
       authorName: 'Ada',
       introduction: 'Saved prose',
-      onSave,
+      onPdfAction,
     });
-
-    const saveButton = screen.getByRole('button', { name: 'Save introduction' });
-    expect(saveButton).toBeDisabled();
-
-    const introField = screen.getByRole('textbox', { name: 'Introduction' });
-    fireEvent.change(introField, { target: { value: 'Saved prose edited' } });
-    expect(saveButton).not.toBeDisabled();
-
-    fireEvent.click(saveButton);
-    expect(onSave).toHaveBeenCalledWith({ introduction: 'Saved prose edited' });
-  });
-
-  test('clearing the introduction enables save and sends empty string', () => {
-    const onSave = vi.fn();
-    renderModal({ introduction: 'Saved prose', onSave });
 
     fireEvent.change(screen.getByRole('textbox', { name: 'Introduction' }), {
-      target: { value: '' },
+      target: { value: 'Saved prose edited' },
     });
-    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
-    expect(onSave).toHaveBeenCalledWith({ introduction: '' });
+    expect(screen.getByRole('button', { name: 'Save and PDF' })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save and PDF' }));
+    expect(onPdfAction).toHaveBeenCalledWith({ introduction: 'Saved prose edited' });
   });
 
-  test('blurring the introduction does not call onSave', () => {
-    const onSave = vi.fn();
-    renderModal({ introduction: '', onSave });
+  test('clearing the default title enables Save and PDF with an empty title patch', () => {
+    const onPdfAction = vi.fn();
+    renderModal({ onPdfAction });
+
+    fireEvent.change(screen.getByRole('textbox', { name: 'Title' }), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save and PDF' }));
+    expect(onPdfAction).toHaveBeenCalledWith({ title: '' });
+  });
+
+  test('blurring fields does not call onPdfAction', () => {
+    const onPdfAction = vi.fn();
+    renderModal({ onPdfAction });
 
     const textarea = screen.getByRole('textbox', { name: 'Introduction' });
     fireEvent.change(textarea, { target: { value: 'Draft' } });
     fireEvent.blur(textarea);
-    expect(onSave).not.toHaveBeenCalled();
+    expect(onPdfAction).not.toHaveBeenCalled();
   });
 
   test('loading and error states hide the form fields', () => {
@@ -79,12 +86,9 @@ describe('MeditationBookModal', () => {
     expect(screen.queryByRole('textbox', { name: 'Introduction' })).toBeNull();
   });
 
-  test('title change is included in save patch', () => {
-    const onSave = vi.fn();
-    renderModal({ title: '', authorName: '', introduction: '', onSave });
-    const inputs = screen.getAllByRole('textbox');
-    fireEvent.change(inputs[0], { target: { value: 'New title' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
-    expect(onSave).toHaveBeenCalledWith({ title: 'New title' });
+  test('shows a saved empty title in the field instead of the default label', () => {
+    renderModal({ title: '', titleUsesDefault: false, introduction: '' });
+    expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'PDF' })).toBeTruthy();
   });
 });

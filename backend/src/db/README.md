@@ -397,6 +397,12 @@ users (1) ──────< (N) magic_link_tokens
 
 The schema for `journal_meditation_front_matter` still needs this manual `\i` apply on each database that has not run `016` yet.
 
+### Journal Meditation Title Default Flag
+```sql
+-- Run after 016_journal_meditation_front_matter.sql
+\i backend/src/db/migrations/017_journal_meditation_title_uses_default.sql
+```
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created

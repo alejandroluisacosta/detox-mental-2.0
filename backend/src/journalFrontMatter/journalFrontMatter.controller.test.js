@@ -62,11 +62,13 @@ const memoryDb = () => {
               title: setTitle ? title : existing.title,
               author_name: setAuthorName ? authorName : existing.author_name,
               introduction: setIntroduction ? introduction : existing.introduction,
+              title_uses_default: setTitle ? false : existing.title_uses_default ?? true,
             }
           : {
               title: setTitle ? title : '',
               author_name: setAuthorName ? authorName : '',
               introduction: setIntroduction ? introduction : '',
+              title_uses_default: setTitle ? false : true,
             };
         rows.set(userId, next);
         return { rows: [{ ...next }] };
@@ -91,7 +93,7 @@ test('GET with no row returns empty front matter without INSERT', async () => {
 
   assert.equal(res.statusCode, 200);
   assert.deepEqual(res.body, {
-    frontMatter: { title: '', authorName: '', introduction: '' },
+    frontMatter: { title: '', authorName: '', introduction: '', titleUsesDefault: true },
   });
   assert.equal(db.insertCount(), 0);
 });
@@ -143,6 +145,7 @@ test('introduction PATCH keeps title and author from a prior cover PATCH', async
     title: 'Book',
     authorName: 'Ada',
     introduction: 'Prose',
+    titleUsesDefault: false,
   });
 });
 
@@ -162,6 +165,7 @@ test('title PATCH keeps introduction from a prior introduction PATCH', async () 
     title: 'Book',
     authorName: '',
     introduction: 'Prose',
+    titleUsesDefault: false,
   });
 });
 
@@ -183,6 +187,7 @@ test('users cannot read or overwrite each other front matter', async () => {
     title: 'A title',
     authorName: '',
     introduction: 'A prose',
+    titleUsesDefault: false,
   });
 
   const resB = mockRes();
@@ -191,6 +196,7 @@ test('users cannot read or overwrite each other front matter', async () => {
     title: '',
     authorName: '',
     introduction: 'B prose',
+    titleUsesDefault: true,
   });
 });
 
@@ -209,8 +215,22 @@ test('PATCH non-string introduction is 400 and leaves empty record', async () =>
     title: '',
     authorName: '',
     introduction: '',
+    titleUsesDefault: true,
   });
   assert.equal(db.insertCount(), 0);
+});
+
+test('PATCH empty title clears the cover title and turns off the default flag', async () => {
+  const db = memoryDb();
+  const res = mockRes();
+  await patchMeditationFrontMatter(reqFor('user-a', db, { title: '' }), res);
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(res.body.frontMatter, {
+    title: '',
+    authorName: '',
+    introduction: '',
+    titleUsesDefault: false,
+  });
 });
 
 test('PATCH empty body object is 400 and inserts nothing', async () => {

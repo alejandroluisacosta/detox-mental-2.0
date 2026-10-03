@@ -117,7 +117,6 @@ const JournalMeditations = () => {
   );
   const showCompilation =
     demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0);
-  const showPrintControl = showCompilation;
   const showProgressGoal = demoMode || (status === 'ready' && user && !loading);
 
   const savedBookForPrint =
@@ -268,7 +267,7 @@ const JournalMeditations = () => {
   }, [demoMode, showCompilation, t, user]);
 
   const saveFrontMatter = async (patch) => {
-    if (savingIntroduction || !patch || Object.keys(patch).length === 0) return;
+    if (savingIntroduction || !patch || Object.keys(patch).length === 0) return true;
 
     setSavingIntroduction(true);
     try {
@@ -276,7 +275,7 @@ const JournalMeditations = () => {
         const record = writeDemoMeditationFrontMatter(patch);
         setFrontMatter(record);
         emitToast(t('meditations.introductionSaved'));
-        return;
+        return true;
       }
 
       const res = await apiFetch('/auth/me/journal-meditation-front-matter', {
@@ -289,12 +288,22 @@ const JournalMeditations = () => {
       }
       setFrontMatter(normalizeMeditationFrontMatter(data.frontMatter));
       emitToast(t('meditations.introductionSaved'));
+      return true;
     } catch (err) {
       console.error('[journal meditations front matter PATCH]', err);
       emitToast(err.message || t('meditations.introductionSaveFailed'));
+      return false;
     } finally {
       setSavingIntroduction(false);
     }
+  };
+
+  const handleBookPdf = async (patch) => {
+    if (patch) {
+      const saved = await saveFrontMatter(patch);
+      if (!saved) return;
+    }
+    handlePrint();
   };
 
   const savedIntroductionForPrint =
@@ -414,23 +423,14 @@ const JournalMeditations = () => {
             >
               {t('meditations.write')}
             </Link>
-            {showPrintControl && (
-              <>
-                <button
-                  type="button"
-                  className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
-                  onClick={() => setBookModalOpen(true)}
-                >
-                  {t('meditations.bookButton')}
-                </button>
-                <button
-                  type="button"
-                  className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary journal-meditations__print-button"
-                  onClick={handlePrint}
-                >
-                  {t('meditations.printButton')}
-                </button>
-              </>
+            {showCompilation && (
+              <button
+                type="button"
+                className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
+                onClick={() => setBookModalOpen(true)}
+              >
+                {t('meditations.bookButton')}
+              </button>
             )}
           </div>
         </header>
@@ -507,7 +507,11 @@ const JournalMeditations = () => {
               style={{ display: 'none' }}
             >
               <MeditationPrintCover
-                title={meditationCoverTitle(savedBookForPrint.title, t('meditations.title'))}
+                title={meditationCoverTitle(
+                  savedBookForPrint.title,
+                  t('meditations.title'),
+                  savedBookForPrint.titleUsesDefault,
+                )}
                 author={meditationCoverAuthor(savedBookForPrint.authorName)}
                 years={yearsText}
               >
@@ -546,8 +550,9 @@ const JournalMeditations = () => {
           introduction={frontMatter.introduction}
           status={frontMatterStatus === 'idle' ? 'loading' : frontMatterStatus}
           saving={savingIntroduction}
+          titleUsesDefault={frontMatter.titleUsesDefault}
           onClose={() => setBookModalOpen(false)}
-          onSave={saveFrontMatter}
+          onPdfAction={handleBookPdf}
         />
       )}
 

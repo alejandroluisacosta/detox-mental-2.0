@@ -19,7 +19,12 @@ import { MEDITATION_FRONT_MATTER_STORAGE_KEY } from '../../utils/meditationFront
 
 const filterMeditationEntries = filterMeditationEntriesNewestFirst;
 
-const EMPTY_FRONT_MATTER = { title: '', authorName: '', introduction: '' };
+const EMPTY_FRONT_MATTER = {
+  title: '',
+  authorName: '',
+  introduction: '',
+  titleUsesDefault: true,
+};
 
 const meditationsApiHandler = ({
   entries = [],
@@ -44,6 +49,8 @@ const meditationsApiHandler = ({
             options.body?.introduction !== undefined
               ? options.body.introduction
               : frontMatter.introduction,
+          titleUsesDefault:
+            options.body?.title !== undefined ? false : frontMatter.titleUsesDefault ?? true,
         };
         return { ok: true, json: async () => ({ frontMatter: next }) };
       }
@@ -166,7 +173,8 @@ describe('JournalMeditations page states', () => {
     ).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Write' })).toHaveAttribute('href', '/journal');
     expect(screen.queryByRole('link', { name: 'History' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Print / PDF' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: bookButtonName })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Print / PDF' })).toBeNull();
     expect(screen.getByRole('link', { name: 'WRITE' })).toHaveAttribute('href', '/journal');
     expect(
       screen.queryByText(/Every time something stays ambiguous/i),
@@ -575,7 +583,7 @@ describe('JournalMeditations pages-left countdown', () => {
 });
 
 describe('JournalMeditations print export', () => {
-  const printButtonName = 'Print / PDF';
+  const pdfButtonName = 'PDF';
 
   beforeEach(() => {
     mockUseAuth.mockReset();
@@ -593,20 +601,21 @@ describe('JournalMeditations print export', () => {
     vi.mocked(window.print).mockRestore();
   });
 
-  test('hides print for guests and empty signed-in states', async () => {
+  test('hides Book for guests and empty signed-in states', async () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     renderMeditations();
-    expect(screen.queryByRole('button', { name: printButtonName })).toBeNull();
+    expect(screen.queryByRole('button', { name: bookButtonName })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Print / PDF' })).toBeNull();
 
     cleanup();
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     installMeditationsApiMock({ entries: [] });
     renderMeditations();
     await screen.findByText(/No entries are tagged as Meditations yet/i);
-    expect(screen.queryByRole('button', { name: printButtonName })).toBeNull();
+    expect(screen.queryByRole('button', { name: bookButtonName })).toBeNull();
   });
 
-  test('shows print when signed-in user has meditation entries and triggers window.print', async () => {
+  test('PDF in the Book modal triggers window.print without saving', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
 
@@ -615,9 +624,12 @@ describe('JournalMeditations print export', () => {
       expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
     });
 
-    const printButton = screen.getByRole('button', { name: printButtonName });
-    fireEvent.click(printButton);
+    await openBookModal();
+    fireEvent.click(screen.getByRole('button', { name: pdfButtonName }));
     expect(window.print).toHaveBeenCalledTimes(1);
+    expect(apiFetch.mock.calls.filter(([, options]) => options?.method === 'PATCH')).toHaveLength(
+      0,
+    );
   });
 
   test('orders print-only content oldest first while screen feed stays newest first', async () => {
@@ -642,7 +654,7 @@ describe('JournalMeditations print export', () => {
     expect(printSections[printSections.length - 1].textContent).toContain('Newer meditation text.');
   });
 
-  test('shows print in demo mode when demo meditations are visible', () => {
+  test('shows Book in demo mode when demo meditations are visible', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     mockUseDemoMode.mockReturnValue({
       demoMode: true,
@@ -650,7 +662,8 @@ describe('JournalMeditations print export', () => {
     });
 
     renderMeditations();
-    expect(screen.getByRole('button', { name: printButtonName })).toBeTruthy();
+    expect(screen.getByRole('button', { name: bookButtonName })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Print / PDF' })).toBeNull();
   });
 
   test('prints a cover with localized title, saved author, and year span', async () => {
@@ -671,7 +684,12 @@ describe('JournalMeditations print export', () => {
           createdAt: '2024-06-15T12:00:00.000Z',
         }),
       ],
-      frontMatter: { title: '', authorName: 'Ada Lovelace', introduction: '' },
+      frontMatter: {
+        title: '',
+        authorName: 'Ada Lovelace',
+        introduction: '',
+        titleUsesDefault: true,
+      },
     });
 
     renderMeditations();
@@ -724,7 +742,7 @@ describe('JournalMeditations print export', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Meditaciones' })).toBeTruthy();
   });
 
-  test('updates the print cover only after Book modal save', async () => {
+  test('updates the print cover after Save and PDF in the Book modal', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     installMeditationsApiMock({ entries: [newerMeditationEntry] });
 
@@ -748,7 +766,7 @@ describe('JournalMeditations print export', () => {
       'Meditations',
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save and PDF' }));
     await waitFor(() => {
       expect(printRoot.querySelector('.meditation-print-cover__title').textContent).toBe(
         'Quiet Book',
@@ -757,6 +775,7 @@ describe('JournalMeditations print export', () => {
         'Writer',
       );
     });
+    expect(window.print).toHaveBeenCalled();
   });
 
   test('demo mode prints cover year without calling front-matter API', async () => {
@@ -767,9 +786,7 @@ describe('JournalMeditations print export', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
 
     renderMeditations();
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: printButtonName })).toBeTruthy();
-    });
+    expect(screen.getByRole('button', { name: bookButtonName })).toBeTruthy();
 
     const printRoot = document.querySelector('.journal-meditations__print-root');
     expect(printRoot.querySelector('.meditation-print-cover__years').textContent).toBe('2026');
@@ -779,11 +796,11 @@ describe('JournalMeditations print export', () => {
     ).toBe(false);
   });
 
-  test('prints localized title when saved title is whitespace only', async () => {
+  test('prints localized title while titleUsesDefault is true', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     installMeditationsApiMock({
       entries: [newerMeditationEntry],
-      frontMatter: { title: '   ', authorName: '', introduction: '' },
+      frontMatter: { ...EMPTY_FRONT_MATTER },
     });
 
     renderMeditations();
@@ -816,6 +833,21 @@ describe('JournalMeditations print export', () => {
     const printRoot = document.querySelector('.journal-meditations__print-root');
     expect(printRoot.querySelector('.meditation-print-cover__years').textContent).toBe('2026');
     expect(printRoot.textContent).not.toContain('2026 – 2026');
+  });
+
+  test('omits the cover title after the user saves an empty title', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [newerMeditationEntry],
+      frontMatter: { title: '', authorName: '', introduction: '', titleUsesDefault: false },
+    });
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    await waitFor(() => {
+      expect(printRoot.querySelector('.meditation-print-cover__title')).toBeNull();
+    });
   });
 });
 
@@ -933,7 +965,7 @@ describe('JournalMeditations introduction', () => {
     await openBookModal();
     const textarea = screen.getByRole('textbox', { name: 'Introduction' });
     fireEvent.change(textarea, { target: { value: 'Fresh intro' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save and PDF' }));
 
     await waitFor(() => {
       expect(apiFetch).toHaveBeenCalledWith('/auth/me/journal-meditation-front-matter', {
@@ -969,7 +1001,7 @@ describe('JournalMeditations introduction', () => {
     await openBookModal();
     const textarea = screen.getByRole('textbox', { name: 'Introduction' });
     fireEvent.change(textarea, { target: { value: 'Draft stays' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save and PDF' }));
 
     await waitFor(() => {
       expect(emitToast).toHaveBeenCalledWith('Server said no.');
@@ -988,7 +1020,7 @@ describe('JournalMeditations introduction', () => {
     await openBookModal();
     const textarea = screen.getByRole('textbox', { name: 'Introduction' });
     fireEvent.change(textarea, { target: { value: 'Demo prose' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save and PDF' }));
 
     await waitFor(() => {
       expect(emitToast).toHaveBeenCalledWith('Introduction saved.');
@@ -998,6 +1030,7 @@ describe('JournalMeditations introduction', () => {
       title: '',
       authorName: '',
       introduction: 'Demo prose',
+      titleUsesDefault: true,
     });
 
     cleanup();

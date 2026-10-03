@@ -4,7 +4,7 @@ const MeditationPrintCover = ({ title, author, years, children }) => (
   <>
     <section className="meditation-print-cover">
       <div className="meditation-print-cover__center">
-        <h1 className="meditation-print-cover__title">{title}</h1>
+        {title ? <h1 className="meditation-print-cover__title">{title}</h1> : null}
         {author != null ? (
           <p className="meditation-print-cover__author">{author}</p>
         ) : null}

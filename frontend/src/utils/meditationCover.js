@@ -1,9 +1,11 @@
 import { formatLocaleDate } from './locale.js';
 import { meditationEntriesForPrint } from './meditationEntries.js';
 
-export const meditationCoverTitle = (savedTitle, fallback) => {
-  const trimmed = typeof savedTitle === 'string' ? savedTitle.trim() : '';
-  return trimmed || fallback;
+export const meditationCoverTitle = (savedTitle, fallback, titleUsesDefault = true) => {
+  if (titleUsesDefault !== false) {
+    return fallback;
+  }
+  return typeof savedTitle === 'string' ? savedTitle.trim() : '';
 };
 
 export const meditationCoverAuthor = (savedAuthor) => {

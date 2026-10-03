@@ -9,6 +9,7 @@ describe('MeditationPrintCover', () => {
     );
 
     expect(screen.getByRole('heading', { level: 1, name: 'My Book' })).toBeTruthy();
+    expect(container.querySelector('.meditation-print-cover__title')).toBeTruthy();
     expect(container.querySelector('.meditation-print-cover__author')?.textContent).toBe('Ada');
     expect(container.querySelector('.meditation-print-cover__years')?.textContent).toBe(
       '2024 – 2026',
@@ -36,5 +37,13 @@ describe('MeditationPrintCover', () => {
       <MeditationPrintCover title="Quiet" author={null} years="2026" />,
     );
     expect(container.querySelector('.meditation-print-cover')?.textContent).toBe('Quiet2026');
+  });
+
+  test('omits the title heading when the title is empty', () => {
+    const { container } = render(
+      <MeditationPrintCover title="" author={null} years="2026" />,
+    );
+    expect(container.querySelector('.meditation-print-cover__title')).toBeNull();
+    expect(container.querySelector('.meditation-print-cover__years')?.textContent).toBe('2026');
   });
 });

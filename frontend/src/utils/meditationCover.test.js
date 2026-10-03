@@ -13,14 +13,15 @@ const meditationEntry = (overrides) => ({
 });
 
 describe('meditationCoverTitle', () => {
-  test('uses fallback for blank and non-string values', () => {
-    expect(meditationCoverTitle('', 'Meditations')).toBe('Meditations');
-    expect(meditationCoverTitle('   ', 'Meditations')).toBe('Meditations');
-    expect(meditationCoverTitle(null, 'Meditations')).toBe('Meditations');
+  test('uses fallback while the title still uses the default flag', () => {
+    expect(meditationCoverTitle('', 'Meditations', true)).toBe('Meditations');
+    expect(meditationCoverTitle('   ', 'Meditations', true)).toBe('Meditations');
   });
 
-  test('returns trimmed custom title', () => {
-    expect(meditationCoverTitle('  My Book  ', 'Meditations')).toBe('My Book');
+  test('returns trimmed custom title or empty when the default flag is off', () => {
+    expect(meditationCoverTitle('  My Book  ', 'Meditations', false)).toBe('My Book');
+    expect(meditationCoverTitle('', 'Meditations', false)).toBe('');
+    expect(meditationCoverTitle('   ', 'Meditations', false)).toBe('');
   });
 });
 

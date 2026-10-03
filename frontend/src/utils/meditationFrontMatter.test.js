@@ -37,6 +37,7 @@ describe('meditationFrontMatter helpers', () => {
       title: 'Book',
       authorName: 'Ada',
       introduction: 'Prose',
+      titleUsesDefault: false,
     });
   });
 
