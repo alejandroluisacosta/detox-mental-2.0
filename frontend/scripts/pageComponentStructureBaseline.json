@@ -1,0 +1,20 @@
+{
+  "policy": "Grandfather list for legacy layout violations only — not an inventory of pages or folders. Never add paths here to excuse new debt; fix the layout instead. When legacy is repaired, remove the path from this list (CI fails while stale entries remain).",
+  "grandfatheredPaths": [
+    "src/Pages/Article/ArticleWrapper.jsx",
+    "src/Pages/Auth/AuthError.jsx",
+    "src/Pages/Auth/AuthPages.css",
+    "src/Pages/Auth/Login.jsx",
+    "src/Pages/Course/CourseWrapper.jsx",
+    "src/Pages/Onboarding/OnboardingGate.jsx",
+    "src/Pages/Onboarding/OnboardingGate.test.jsx",
+    "src/Pages/Onboarding/OnboardingWrapper.jsx",
+    "src/Pages/Payment/PaymentCancel.jsx",
+    "src/Pages/Payment/PaymentPages.css",
+    "src/Pages/Payment/PaymentSuccess.jsx",
+    "src/Pages/Promo/PromoGate.jsx",
+    "src/Pages/ThoughtsTest/TestLoadingScreen.css",
+    "src/Pages/ThoughtsTest/TestLoadingScreen.jsx",
+    "src/Pages/ThoughtsTest/loadingQuotes.js"
+  ]
+}

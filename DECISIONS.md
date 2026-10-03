@@ -204,3 +204,19 @@ The goal of this update was to make the development of the project **tool-agnost
 **Why obvious alternatives were rejected:**  
 - **Keep conventions only in `.cursor/rules`:** Ties instructions to Cursor; other agents would miss them or need a separate copy.  
 - **Symlinks or per-tool files (`CLAUDE.md`, etc.):** More surface area to keep in sync; one canonical file per scope is enough.
+
+### 2026-10-03 — Frontend structure lint scripts for Firstmate
+
+**Decision:**  
+Add `frontend/scripts/checkPageComponentStructure.js` (wired into `npm run lint`) plus a small test suite and a **grandfather baseline** for pre-existing page-folder layout debt. Document in-repo that the baseline is **legacy violations only**—it must **never** grow to excuse new debt and should **shrink** when legacy folders are fixed.
+
+**Why this option was chosen:**  
+**Firstmate** (an orchestration tool from an engineer with Meta, Microsoft, and Atlassian background) runs autonomous agents against this repo. Agents had shipped extra page-level `.jsx` files beside named pages despite `frontend/AGENTS.md`. A mechanical gate fails CI on new violations while Firstmate and other agents keep layout rules honest without relying on prompt memory alone.
+
+**Why obvious alternatives were rejected:**  
+- **Prompt-only enforcement:** Already failed once (`MeditationProgressControl.jsx`-style drift).  
+- **Mass refactor of legacy folders in the same change:** Out of scope; the baseline holds known debt until those pages are migrated.  
+- **Eslint custom rule only:** A small Node script is easier to test in isolation and matches how this repo runs lint today.
+
+**Downsides (accepted):**  
+Extra scripts and JSON in the frontend package add a little **project bloat**. The trade-off is accepted because **Firstmate is highly beneficial** for the workflow—supervised agent lanes, PR delivery, and repeatable checks—and this gate reduces bad merges that cost more time to unwind than the tooling costs to maintain.
