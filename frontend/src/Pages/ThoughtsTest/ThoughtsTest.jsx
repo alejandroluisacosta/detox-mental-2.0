@@ -1,19 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams, Navigate, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import { thoughtsTests } from "../../data";
 import { saveThoughtsTestAnswer } from "../../utils/thoughtsTestStorage";
 import Navigation from "../../Components/Navigation/Navigation";
+import { useLocale } from "../../Context/LocaleContext.jsx";
+import { useTestExtras, useTestsCatalog } from "../../utils/localizedContent.js";
 import TestLoadingScreen from "./TestLoadingScreen";
-import { getRandomJournalAcknowledgment } from "./loadingQuotes";
 import "./ThoughtsTest.css";
-
-const ROLE_LABELS = {
-  user: "Tú",
-  assistant: "Tales",
-};
-
-const getRoleLabel = (role) => ROLE_LABELS[role] ?? "Tales";
 
 const markdownComponents = {
   a: ({ href, children, ...props }) => (
@@ -41,7 +34,11 @@ const formatCountdown = (totalSeconds) => {
 // Counts down from 05:00 to 00:00. It resets on remount, which happens every
 // time the user re-enters the writing state (the write box is unmounted on
 // CANCELAR and mounted again on ESCRIBIR).
+const pickAcknowledgment = (acknowledgments) =>
+  acknowledgments[Math.floor(Math.random() * acknowledgments.length)] ?? "";
+
 const JournalTimer = () => {
+  const { t } = useLocale();
   const [secondsLeft, setSecondsLeft] = useState(JOURNAL_DURATION_SECONDS);
 
   useEffect(() => {
@@ -58,21 +55,23 @@ const JournalTimer = () => {
   }, []);
 
   return (
-    <div className="thoughts-test__journal-timer" role="timer" aria-label="Tiempo de escritura restante">
+    <div className="thoughts-test__journal-timer" role="timer" aria-label={t('tests.timerAria')}>
       {formatCountdown(secondsLeft)}
     </div>
   );
 };
 
 function ChatMessage({ role, content }) {
+  const { t } = useLocale();
   const isUser = role === "user";
+  const roleLabel = isUser ? t('tests.you') : t('tests.host');
   return (
     <div className={"test-chat__message-wrapper" + (isUser ? " test-chat__message-wrapper--user" : "")}>
       {!isUser && (
-        <img src="/images/thales.webp" alt="Tales" className="test-chat__message__avatar" />
+        <img src="/images/thales.webp" alt={t('tests.host')} className="test-chat__message__avatar" />
       )}
       <div className={"test-chat__message" + (isUser ? " test-chat__message--user" : "")}>
-        <strong className="test-chat__message__role">{getRoleLabel(role)}:</strong>
+        <strong className="test-chat__message__role">{roleLabel}:</strong>
         <div className="test-chat__message__content">
           {isUser ? (
             <span>{content}</span>
@@ -86,11 +85,12 @@ function ChatMessage({ role, content }) {
 }
 
 function TypingBubble() {
+  const { t } = useLocale();
   return (
     <div className="test-chat__message-wrapper">
-      <img src="/images/thales.webp" alt="Tales" className="test-chat__message__avatar" />
+      <img src="/images/thales.webp" alt={t('tests.host')} className="test-chat__message__avatar" />
       <div className="test-chat__message test-chat__message--loading">
-        <strong className="test-chat__message__role">{getRoleLabel("assistant")}:</strong>
+        <strong className="test-chat__message__role">{t('tests.host')}:</strong>
         <div className="test-chat__message__content">
           <div className="test-chat__loading-indicator">
             <span></span>
@@ -113,6 +113,7 @@ export default function ThoughtsTest() {
 
 function ThoughtsTestFlow() {
   const { testId } = useParams();
+  const thoughtsTests = useTestsCatalog();
   const [loading, setLoading] = useState(true);
 
   // Unknown tests are redirected by the chat; skip the loader for them.
@@ -130,6 +131,9 @@ function ThoughtsTestFlow() {
 function ThoughtsTestChat() {
   const { testId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLocale();
+  const thoughtsTests = useTestsCatalog();
+  const { journalAcknowledgments } = useTestExtras();
   const test = thoughtsTests[testId];
 
   const [messages, setMessages] = useState([]);
@@ -262,7 +266,7 @@ function ThoughtsTestChat() {
     if (didWrite) {
       setWriteState("idle");
       setJournalText("");
-      await talesSay(getRandomJournalAcknowledgment());
+      await talesSay(pickAcknowledgment(journalAcknowledgments));
       if (!mountedRef.current) return;
     }
     const recId = test.recommendation?.byOption[keyOptionRef.current] ?? null;
@@ -328,7 +332,7 @@ function ThoughtsTestChat() {
 
   return (
     <div className="test-chat thoughts-test">
-      <h1 className="thoughts-test__title">Test: {test.title}</h1>
+      <h1 className="thoughts-test__title">{t('tests.testTitle', { title: test.title })}</h1>
       <div className="test-chat__message-container">
         {messages.map((m, i) => (
           <ChatMessage key={i} role={m.role} content={m.content} />
@@ -338,7 +342,7 @@ function ThoughtsTestChat() {
       </div>
 
       {showChips && (
-        <div className="test-chat__chips" aria-label="Opciones de respuesta">
+        <div className="test-chat__chips" aria-label={t('tests.optionsAria')}>
           {currentQuestion.options.map((option) => (
             <button
               key={option.id}
@@ -361,11 +365,11 @@ function ThoughtsTestChat() {
               className="test-chat__input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Escribe tu respuesta"
+              placeholder={t('tests.answerPlaceholder')}
               disabled={loading}
             />
             <button className="test-chat__button" type="submit" disabled={loading}>
-              ENVIAR
+              {t('tests.send')}
             </button>
           </form>
         </div>
@@ -381,11 +385,10 @@ function ThoughtsTestChat() {
                 className="test-chat__button thoughts-test__promo-button"
                 onClick={() => setWriteState("writing")}
               >
-                ESCRIBIR
+                {t('tests.write')}
               </button>
               <p className="thoughts-test__write-disclaimer">
-                Lo que escribas en esta aplicación es privado y no será visto por
-                nadie más.
+                {t('tests.privacy')}
               </p>
             </div>
           )}
@@ -397,14 +400,14 @@ function ThoughtsTestChat() {
                 className="thoughts-test__journal-textarea"
                 value={journalText}
                 onChange={handleJournalChange}
-                placeholder="Escribe aquí..."
+                placeholder={t('tests.writePlaceholder')}
               />
               <button
                 type="button"
                 className="test-chat__button thoughts-test__promo-button thoughts-test__journal-finish-button"
                 onClick={handleContinue}
               >
-                TERMINAR
+                {t('tests.finish')}
               </button>
               <button
                 type="button"
@@ -414,7 +417,7 @@ function ThoughtsTestChat() {
                   setJournalText("");
                 }}
               >
-                CANCELAR
+                {t('tests.cancel')}
               </button>
             </div>
           )}
@@ -426,10 +429,10 @@ function ThoughtsTestChat() {
                 className="test-chat__button thoughts-test__promo-button thoughts-test__continue-button"
                 onClick={handleContinue}
               >
-                CONTINUAR
+                {t('tests.continue')}
               </button>
               <Link to="/tests" className="thoughts-test__home-link">
-                Ver más tests
+                {t('tests.seeMore')}
               </Link>
             </>
           )}
@@ -471,7 +474,7 @@ function ThoughtsTestChat() {
 
       {(showRecommendation || showPromo) && (
         <Link to="/tests" className="thoughts-test__home-link">
-          Ver más tests
+          {t('tests.seeMore')}
         </Link>
       )}
 

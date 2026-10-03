@@ -220,3 +220,20 @@ Add `frontend/scripts/checkPageComponentStructure.js` (wired into `npm run lint`
 
 **Downsides (accepted):**  
 Extra scripts and JSON in the frontend package add a little **project bloat**. The trade-off is accepted because **Firstmate is highly beneficial** for the workflow—supervised agent lanes, PR delivery, and repeatable checks—and this gate reduces bad merges that cost more time to unwind than the tooling costs to maintain.
+
+### 2026-10-03 — Education content architecture for bilingual long-form
+
+**Decision:**  
+Keep the existing in-house `t()` catalogs for short UI chrome, and move long-form education copy into locale-keyed files under `frontend/src/data/content/{es,en}/` with selectors `getSessions(locale)`, `getTests(locale)`, and `getTheory(locale)`. Language-neutral fields (ids, images, lock flags, test routing) live in `content/shared/`. English files start as empty scaffolds and fall back to Spanish field-by-field so the app stays usable until each translation lands. A glossary lives at `docs/i18n-glossary.md`. English remains the default UI language; there are no `/en` or `/es` routes, no account-level language, and no magic-link language change.
+
+**Why this option was chosen:**  
+Follow-up agents will translate the theory article, the 15 sessions, the thought tests, and the onboarding chat backend in parallel. Separate files per domain avoid merge conflicts. The custom catalog already matches how we would migrate to a library later; long-form JSX/markdown does not belong in `en.js` / `es.js`.
+
+**How later agents should add translations:**  
+Edit only the English file for that domain (`en/theory.jsx`, `en/sessions.js`, `en/tests.js`, or the backend onboarding content). Fill keys; do not delete the Spanish source. Missing keys keep serving Spanish. Use `docs/i18n-glossary.md` for PQA → "tormenting thoughts", the five steps, and disclaimer tone. Exercise answers are arrays and are compared with case- and accent-insensitive matching.
+
+**Why this revisits 2026-08-26:**  
+That decision left educational screens in Spanish except shared navigation. The catalog now covers education/auth/payment/onboarding chrome. Long-form education still falls back to Spanish until the dedicated translation agents fill the English content files.
+
+**Out of scope here:**  
+Promo page and `promoConfig.js`, blog content, English audio, SEO/hreflang, and persisting language on the user account.

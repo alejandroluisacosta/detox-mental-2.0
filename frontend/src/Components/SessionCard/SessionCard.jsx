@@ -1,8 +1,10 @@
 import './SessionCard.css'
 import { useSessions } from '../../Context/SessionsContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 
 const SessionCard = ({ session, index, handleGoToSession }) => {
     const { sessionsLoading } = useSessions();
+    const { t } = useLocale();
 
     const showLoading =
         sessionsLoading && session.id >= 4;
@@ -15,11 +17,11 @@ const SessionCard = ({ session, index, handleGoToSession }) => {
                 </div>
             )}
             {session.isBlocked && !showLoading && <div className='session-card__blocked-layer'></div>}
-            <img src={session.img} className='session-card__image' alt={`Imagen de sesión ${session.id}`}/>
-            <h2 className='session-card__header'>{`Sesión ${session.id}:`}</h2>
+            <img src={session.img} className='session-card__image' alt={t('session.cardImageAlt', { id: session.id })}/>
+            <h2 className='session-card__header'>{t('session.cardHeader', { id: session.id })}</h2>
             <h2 className='session-card__title'>{session.title}</h2>
             <p className='session-card__description'>{session.description}</p>
-            <button className={`session-card__button${session.isBlocked ? ' session-card__button--blocked' : ''}`}>{session.isBlocked ? 'DESBLOQUEAR' : 'ESCUCHAR'}</button>
+            <button className={`session-card__button${session.isBlocked ? ' session-card__button--blocked' : ''}`}>{session.isBlocked ? t('session.unlock') : t('session.listen')}</button>
         </div>
     )
 }

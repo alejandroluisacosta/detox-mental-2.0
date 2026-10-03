@@ -7,10 +7,12 @@ import { codes } from '../../data';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 
 const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked, selectedSession, setSessions }) => {
     const navigate = useNavigate();
     const { user, status } = useAuth();
+    const { t } = useLocale();
     const [openEnterCodeModal, setOpenEnterCodeModal] = useState(false);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
 
@@ -39,7 +41,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
                 if (!res.ok) throw new Error('save failed');
             } catch (err) {
                 console.error('[unblock-session]', err);
-                emitToast('No se pudo guardar el desbloqueo. Inténtalo de nuevo.');
+                emitToast(t('session.unlockSaveFailed'));
             }
         }
         return true;
@@ -51,7 +53,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
         }
 
         if (!user) {
-            emitToast('Inicia sesión para comprar y desbloquear el curso completo.');
+            emitToast(t('session.loginToBuy'));
             setOpenBlockedSessionModal(false);
             navigate('/login');
             return;
@@ -70,7 +72,7 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
             window.location.assign(data.url);
         } catch (err) {
             console.error('[stripe/checkout]', err);
-            emitToast('No se pudo iniciar el pago. Inténtalo de nuevo.');
+            emitToast(t('session.checkoutFailed'));
             setCheckoutLoading(false);
         }
     };
@@ -87,22 +89,22 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
             >
                 <div className="blocked-session-modal modal-fade-in">
                     <CloseIcon handleCloseModal={handleCloseBlockedSessionModal} />
-                    <h3 className="blocked-session-modal__title">Desbloquear sesión #{selectedSession ? selectedSession.id : 0}</h3>
-                    <p className="blocked-session-modal__text"><strong>Compra el curso completo</strong> (15 sesiones + 15 ejercicios) por 15€</p>
+                    <h3 className="blocked-session-modal__title">{t('session.unlockTitle', { id: selectedSession ? selectedSession.id : 0 })}</h3>
+                    <p className="blocked-session-modal__text"><strong>{t('session.buyFullCourseLead')}</strong> {t('session.buyFullCourseRest')}</p>
                     <button
                         className="blocked-session-modal__button"
                         onClick={handlePurchase}
                         disabled={status === 'loading' || checkoutLoading}
                     >
-                        {checkoutLoading ? 'Cargando pago...' : 'COMPRAR'}
+                        {checkoutLoading ? t('session.checkoutLoading') : t('session.buy')}
                     </button>
                     <hr className="blocked-session-modal__line"/>
-                    <p className="blocked-session-modal__text">Alternativa gratis:</p>
-                    <p className="blocked-session-modal__text">Escríbenos a <strong>detoxmental4@gmail.com</strong> respondiéndo a la siguiente pregunta:</p>
+                    <p className="blocked-session-modal__text">{t('session.freeAlternative')}</p>
+                    <p className="blocked-session-modal__text">{t('session.emailQuestionBefore')} <strong>detoxmental4@gmail.com</strong> {t('session.emailQuestionAfter')}</p>
                     <p className="blocked-session-modal__text blocked-session-modal__text--question">{selectedSession ? selectedSession.unblockQuestion : 0}</p>
-                    <p className="blocked-session-modal__text">Nuestro equipo te dará un código para desbloquear esta sesión.</p>
-                    <button className="blocked-session-modal__button blocked-session-modal__button--buy" onClick={() => setOpenEnterCodeModal(true)}>YA TENGO EL CÓDIGO</button>
-                    <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>Cerrar</span>
+                    <p className="blocked-session-modal__text">{t('session.teamSendsCode')}</p>
+                    <button className="blocked-session-modal__button blocked-session-modal__button--buy" onClick={() => setOpenEnterCodeModal(true)}>{t('session.haveCode')}</button>
+                    <span className="blocked-session-modal__close-text" onClick={handleCloseBlockedSessionModal}>{t('session.close')}</span>
                 </div>
             </div>
         </>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './Course.css';
 import BlockedSessionModal from '../../Components/BlockedSessionModal/BlockedSessionModal';
 import { SessionsContext } from '../../Context/SessionsContext';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import SessionCard from '../../Components/SessionCard/SessionCard';
 import Navigation from '../../Components/Navigation/Navigation';
 import Lottie from 'lottie-react';
@@ -15,6 +16,7 @@ const Course = () => {
     const selectedSession = useRef(null);
     const navigate = useNavigate();
     const { sessions, setSessions, sessionsLoading } = useContext(SessionsContext)
+    const { t } = useLocale();
 
     const handleGoToSession = (id) => {
         if (sessionsLoading && id >= 4) return;
@@ -45,8 +47,8 @@ const Course = () => {
               </div>
             }
             <Navigation />
-            <h1 className='sessions-title'>Detox Mental</h1>
-            <p className='sessions-subtitle'>Limpia tu mente escribiendo</p>
+            <h1 className='sessions-title'>{t('course.title')}</h1>
+            <p className='sessions-subtitle'>{t('course.subtitle')}</p>
             <button type='button' className='sessions-instructions-button' onClick={handleGoToInstructions}>
                 <img
                     className='sessions-instructions-button__icon'
@@ -54,14 +56,14 @@ const Course = () => {
                     alt=''
                     aria-hidden='true'
                 />
-                INSTRUCCIONES
+                {t('course.instructions')}
             </button>
             <div className="sessions-container">
                 {sessions.map((session, index) => (
                     <SessionCard session={session} key={index} handleGoToSession={handleGoToSession}/>
                 ))}
             </div>
-            <p className="course-credits">Creado con compromiso por Detox Mental™ • 2025</p>
+            <p className="course-credits">{t('course.credits')}</p>
         </div>
     )
 }

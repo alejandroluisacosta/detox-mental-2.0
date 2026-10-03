@@ -1,18 +1,20 @@
 import { useNavigate } from 'react-router-dom';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import './BlockedSession.css'
 
 const BlockedSession = () => {
     const navigate = useNavigate();
+    const { t } = useLocale();
 
     return (
         <div className="blocked-session">
-            <h2 className="blocked-session__title">Sesión bloqueada</h2>
-            <p className="blocked-session__text">¿Intentando hacer trampas para escuchar la sesión?</p>
-            <img className="blocked-session__image" src='/images/skeptical.webp' alt='Imagen de niño con cara escéptica'/>
-            <p className="blocked-session__text">Como dijo un sabio, &quot;hacer trampa no es necesariamente malo, pues demuestra interés e ímpetu a la hora de superar un bloqueo&quot;.</p>
-            <p className="blocked-session__text">Digamos que hay otras formas de hacer trampa para ganar acceso a las sesiones bloquedadas...</p>
-            <p className="blocked-session__text">Pero tendrás que esforzarte un poco más.</p>
-            <button className="blocked-session__button" onClick={() => navigate('/course')}>VOLVER AL CURSO</button>
+            <h2 className="blocked-session__title">{t('session.blockedTitle')}</h2>
+            <p className="blocked-session__text">{t('session.blockedCheat')}</p>
+            <img className="blocked-session__image" src='/images/skeptical.webp' alt={t('session.blockedImageAlt')}/>
+            <p className="blocked-session__text">{t('session.blockedQuote')}</p>
+            <p className="blocked-session__text">{t('session.blockedOtherWays')}</p>
+            <p className="blocked-session__text">{t('session.blockedTryHarder')}</p>
+            <button className="blocked-session__button" onClick={() => navigate('/course')}>{t('session.backToCourse')}</button>
         </div>
     )
 }

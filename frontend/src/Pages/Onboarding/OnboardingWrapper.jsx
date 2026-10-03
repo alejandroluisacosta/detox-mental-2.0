@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocale } from "../../Context/LocaleContext.jsx";
 import Onboarding from "./Onboarding";
 
 // Intro-revealed: we set to "true"; OnboardingGate checks getItem(key) === "true".
@@ -9,6 +10,7 @@ export default function OnboardingWrapper() {
   const [fadeIn, setFadeIn] = useState(false);
   const [showWelcomeSecondLine, setShowWelcomeSecondLine] = useState(false);
   const timeoutsRef = useRef({});
+  const { t } = useLocale();
 
   useEffect(() => {
     // If already revealed, skip intro animations
@@ -53,7 +55,7 @@ export default function OnboardingWrapper() {
   if (introState === 'initial') {
     return (
       <div className="intro-screen--onboarding-initial">
-        <h1 className="intro-screen__intro-image">Detox Mental</h1>
+        <h1 className="intro-screen__intro-image">{t('course.title')}</h1>
       </div>
     );
   }
@@ -63,12 +65,12 @@ export default function OnboardingWrapper() {
       <div className="intro-screen--welcome">
         <div className="intro-screen__welcome">
           <p className="intro-screen__welcome-line1">
-            Bienvenido/a a Detox Mental, tu gimnasio mental virtual.
+            {t('onboarding.welcomeLine1')}
           </p>
           <p
             className={`intro-screen__welcome-line2${showWelcomeSecondLine ? ' intro-screen__welcome-line2--visible' : ''}`}
           >
-            Te presentamos a nuestro <strong>anfitrión</strong>:
+            {t('onboarding.welcomeLine2Before')} <strong>{t('onboarding.hostRole')}</strong>{t('onboarding.welcomeLine2After')}
           </p>
         </div>
       </div>

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../../api/client.js";
+import { useLocale } from "../../Context/LocaleContext.jsx";
 import "./AuthPages.css";
 
 export default function Login() {
+  const { t } = useLocale();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -14,7 +16,7 @@ export default function Login() {
     setError(null);
     const trimmed = email.trim().toLowerCase();
     if (!trimmed) {
-      setError("Introduce un email válido.");
+      setError(t('auth.invalidEmail'));
       return;
     }
 
@@ -30,12 +32,12 @@ export default function Login() {
         setSuccess(true);
         setEmail("");
       } else if (res.status === 400) {
-        setError(data.message || "Revisa el email e inténtalo de nuevo.");
+        setError(data.message || t('auth.checkEmail'));
       } else {
-        setError("No se pudo enviar el enlace. Inténtalo más tarde.");
+        setError(t('auth.sendFailed'));
       }
     } catch {
-      setError("No se pudo enviar el enlace. Inténtalo más tarde.");
+      setError(t('auth.sendFailed'));
     } finally {
       setLoading(false);
     }
@@ -44,26 +46,24 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1 className="auth-page__title">Iniciar sesión</h1>
+        <h1 className="auth-page__title">{t('auth.loginTitle')}</h1>
         <p className="auth-page__subtitle">
-          Te enviaremos un enlace seguro a tu correo. Válido 15 minutos y de un
-          solo uso.
+          {t('auth.loginSubtitle')}
         </p>
 
         {success ? (
           <>
             <p className="auth-page__message auth-page__message--success">
-              Si existe un usuario con ese email, se ha enviado un enlace de
-              login. Revisa tu bandeja de entrada.
+              {t('auth.loginSuccess')}
             </p>
             <Link className="auth-page__footer-link" to="/">
-              Ir al inicio
+              {t('auth.goHome')}
             </Link>
           </>
         ) : (
           <form onSubmit={handleSubmit} noValidate>
             <label className="auth-form__label" htmlFor="login-email">
-              Email
+              {t('auth.email')}
             </label>
             <input
               id="login-email"
@@ -85,10 +85,10 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Enviando…" : "Enviar enlace"}
+              {loading ? t('auth.sending') : t('auth.sendLink')}
             </button>
             <Link className="auth-page__footer-link" to="/">
-              Ir al inicio
+              {t('auth.goHome')}
             </Link>
           </form>
         )}

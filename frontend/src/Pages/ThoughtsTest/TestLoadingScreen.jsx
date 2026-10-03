@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
-import { getRandomLoadingQuote } from "./loadingQuotes";
+import { useLocale } from "../../Context/LocaleContext.jsx";
+import { useTestExtras } from "../../utils/localizedContent.js";
 import "./TestLoadingScreen.css";
 
-// Duration of the simulated fill. Shared between the CSS transition (below)
-// and the timeout that reveals the test, so unmount aligns with reaching 100%.
 const FILL_DURATION_MS = 5000;
 
+const pickQuote = (quotes) =>
+  quotes[Math.floor(Math.random() * quotes.length)] ?? "";
+
 export default function TestLoadingScreen({ onDone }) {
+  const { t } = useLocale();
+  const { loadingQuotes } = useTestExtras();
   const [full, setFull] = useState(false);
   const [percent, setPercent] = useState(0);
-  // Pick a quote once per mount (each appearance of the loading screen).
-  const [quote] = useState(getRandomLoadingQuote);
+  const [quote] = useState(() => pickQuote(loadingQuotes));
 
   useEffect(() => {
     const start = performance.now();
-    // Start the bar fill on the next frame so the transition animates from 0.
     const frame = requestAnimationFrame(() => setFull(true));
 
-    // Drive the numeric percentage in step with the bar's elapsed time.
     const tick = () => {
       const elapsed = performance.now() - start;
       const value = Math.min(100, Math.round((elapsed / FILL_DURATION_MS) * 100));
@@ -39,12 +40,12 @@ export default function TestLoadingScreen({ onDone }) {
   return (
     <div className="test-loading-screen">
       <p className="test-loading-screen__text">
-        Cargando test... [{percent}%]
+        {t('tests.loading', { percent })}
       </p>
       <div
         className="test-loading-screen__bar"
         role="progressbar"
-        aria-label="Cargando test"
+        aria-label={t('tests.loadingAria')}
         aria-valuenow={percent}
         aria-valuemin={0}
         aria-valuemax={100}

@@ -4,25 +4,33 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useState,
 } from "react";
-import { sessionsData } from "../data";
-import { mergeUnlockedSessions } from "../utils/mergeUnlockedSessions.js";
+import { getSessions } from "../data/content/index.js";
+import { mergeUnlockedSessions, overlaySessionState } from "../utils/mergeUnlockedSessions.js";
 import { apiFetch } from "../api/client.js";
 import { useAuth } from "./AuthContext.jsx";
+import { useLocale } from "./LocaleContext.jsx";
 
 export const SessionsContext = createContext(null);
 
 const SessionsProvider = ({ children }) => {
   const { user, status } = useAuth();
-  const [sessions, setSessions] = useState(sessionsData);
+  const { locale } = useLocale();
+  const catalog = useMemo(() => getSessions(locale), [locale]);
+  const [sessions, setSessions] = useState(catalog);
   const [sessionsLoading, setSessionsLoading] = useState(false);
+
+  useEffect(() => {
+    setSessions((prev) => overlaySessionState(catalog, prev));
+  }, [catalog]);
   
   const reloadSessions = useCallback(async () => {
     if (status === "loading") return;
 
     if (!user) {
-      setSessions(sessionsData);
+      setSessions(getSessions(locale));
       setSessionsLoading(false);
       return;
     }
@@ -32,14 +40,14 @@ const SessionsProvider = ({ children }) => {
       if (!res.ok) throw new Error("unblocked fetch failed");
       const data = await res.json();
       const ids = Array.isArray(data.sessionIds) ? data.sessionIds : [];
-      setSessions(mergeUnlockedSessions(ids));
+      setSessions(mergeUnlockedSessions(ids, locale));
     } catch (e) {
       console.error("[sessions]", e);
-      setSessions(sessionsData);
+      setSessions(getSessions(locale));
     } finally {
       setSessionsLoading(false);
     }
-  }, [user, status]);
+  }, [user, status, locale]);
 
   useLayoutEffect(() => {
     if (status === "loading" || !user) return;

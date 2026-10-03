@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RewardOfferModal from '../../Components/RewardOfferModal/RewardOfferModal';
 import { isPromoEnabled } from '../../data/promoConfig.js';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import Course from './Course';
 import './Course.css';
 
@@ -11,6 +12,7 @@ const COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY = 'courseFirstSessionRedirected'
 
 export default function CourseWithIntro() {
   const navigate = useNavigate();
+  const { t } = useLocale();
   const [showIntro, setShowIntro] = useState(localStorage.getItem(COURSE_REVEALED_STORAGE_KEY) === null);
   const [fadeIn, setFadeIn] = useState(false);
   const [showRewardOfferModal, setShowRewardOfferModal] = useState(false);
@@ -60,11 +62,11 @@ export default function CourseWithIntro() {
   return showIntro ? (
     <div className="intro-screen">
       <div>
-        <h1 className="intro-screen__intro-image">Detox Mental</h1>
-        <p className="intro-screen__subtitle">en 15 días</p>
+        <h1 className="intro-screen__intro-image">{t('course.title')}</h1>
+        <p className="intro-screen__subtitle">{t('course.introInDays')}</p>
         <img
           src="/icons/course.webp"
-          alt="Ícono de curso decorativo"
+          alt={t('course.introIconAlt')}
           className="intro-screen__course-icon"
         />
       </div>
