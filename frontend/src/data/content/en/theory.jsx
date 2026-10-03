@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-refresh/only-export-components, react/no-unescaped-entities */
 export const theory = {
   title: 'How to cleanse your mind in 5 steps',
   subtitle: 'The strategy for reducing your stress in a simple, safe way',
