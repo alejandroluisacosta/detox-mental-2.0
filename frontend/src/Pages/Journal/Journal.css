@@ -246,6 +246,11 @@
   gap: 8px;
 }
 
+.journal-page__scan-trigger {
+  position: relative;
+  width: 100%;
+}
+
 .journal-page__file-input {
   display: none;
 }

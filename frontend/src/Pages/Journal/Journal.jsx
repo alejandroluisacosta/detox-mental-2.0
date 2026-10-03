@@ -18,6 +18,7 @@ import {
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import { createLongPressHandlers } from '../../utils/longPress.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
+import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
 import './Journal.css';
 
@@ -27,7 +28,9 @@ const Journal = () => {
   const { customTopics, allTopics, createTopic, renameTopic } = useJournalTopics();
   const { t, topicLabel } = useLocale();
   const textareaRef = useRef(null);
-  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const libraryInputRef = useRef(null);
+  const scanTriggerRef = useRef(null);
   const topicsRef = useRef(null);
   const topicHoldRef = useRef(null);
   const chipPressRef = useRef(new Map());
@@ -41,6 +44,7 @@ const Journal = () => {
   const [fadeEdges, setFadeEdges] = useState({ left: false, right: false });
   const [topicModal, setTopicModal] = useState(null);
   const [topicNameSaving, setTopicNameSaving] = useState(false);
+  const [showImageSourceSheet, setShowImageSourceSheet] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
   const canManageTopics = status === 'ready' && !!user;
@@ -168,7 +172,8 @@ const Journal = () => {
   const clearImage = () => {
     setImageFile(null);
     setImagePreviewUrl('');
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    if (libraryInputRef.current) libraryInputRef.current.value = '';
   };
 
   const handleImageSelected = (e) => {
@@ -178,7 +183,7 @@ const Journal = () => {
     const validation = validateImageFile(file);
     if (!validation.valid) {
       emitToast(t(validation.messageKey));
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      e.target.value = '';
       return;
     }
 
@@ -187,6 +192,7 @@ const Journal = () => {
       return URL.createObjectURL(file);
     });
     setImageFile(file);
+    setShowImageSourceSheet(false);
   };
 
   const transcribeImage = async () => {
@@ -346,26 +352,48 @@ const Journal = () => {
           {canUseImages && (
             <div className="journal-page__scan">
               <input
-                ref={fileInputRef}
+                ref={cameraInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 capture="environment"
                 className="journal-page__file-input"
-                id="journal-image-input"
+                id="journal-image-camera-input"
+                onChange={handleImageSelected}
+                disabled={busy}
+              />
+              <input
+                ref={libraryInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="journal-page__file-input"
+                id="journal-image-library-input"
                 onChange={handleImageSelected}
                 disabled={busy}
               />
               {!imagePreviewUrl ? (
-                <button
-                  type="button"
-                  className="journal-page__scan-button journal-page__scan-button--picker"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={busy}
-                  aria-label={t('journal.scanAria')}
-                >
-                  <span className="journal-page__scan-label">{t('journal.scan')}</span>
-                  <span className="journal-page__scan-icon" aria-hidden="true" />
-                </button>
+                <div ref={scanTriggerRef} className="journal-page__scan-trigger">
+                  {showImageSourceSheet && (
+                    <JournalImageSourceSheet
+                      anchorRef={scanTriggerRef}
+                      onClose={() => setShowImageSourceSheet(false)}
+                      onChooseCamera={() => cameraInputRef.current?.click()}
+                      onChooseLibrary={() => libraryInputRef.current?.click()}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    className="journal-page__scan-button journal-page__scan-button--picker"
+                    onClick={() => setShowImageSourceSheet((open) => !open)}
+                    disabled={busy}
+                    aria-label={t('journal.scanAria')}
+                    aria-haspopup="menu"
+                    aria-expanded={showImageSourceSheet}
+                    aria-controls="journal-image-source-menu"
+                  >
+                    <span className="journal-page__scan-label">{t('journal.scan')}</span>
+                    <span className="journal-page__scan-icon" aria-hidden="true" />
+                  </button>
+                </div>
               ) : (
                 <div className="journal-page__scan-preview">
                   <img
