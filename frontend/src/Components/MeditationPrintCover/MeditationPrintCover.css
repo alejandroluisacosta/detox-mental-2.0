@@ -1,0 +1,53 @@
+.meditation-print-cover,
+.meditation-print-cover__introduction-slot:empty {
+  display: none;
+}
+
+@media print {
+  .meditation-print-cover {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: calc(100vh - 4cm);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #000;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    break-after: page;
+    page-break-after: always;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .meditation-print-cover__center {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .meditation-print-cover__title {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .meditation-print-cover__author,
+  .meditation-print-cover__years {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.95rem;
+    color: #333;
+  }
+
+  .meditation-print-cover__author {
+    margin-top: 0.75rem;
+  }
+
+  .meditation-print-cover__introduction-slot:empty {
+    display: none !important;
+  }
+}

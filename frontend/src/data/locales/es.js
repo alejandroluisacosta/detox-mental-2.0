@@ -159,9 +159,8 @@ export const es = {
   'meditations.bookTitleLabel': 'Título',
   'meditations.bookAuthorLabel': 'Autor',
   'meditations.feedLabel': 'Feed de meditaciones',
-  'meditations.printDateRange': '{start} – {end}',
-  'meditations.printStats': '{words} palabras · ~{pages} páginas',
-  'meditations.printStatsWordsOnly': '{words} palabras',
+  'meditations.coverYear': '{year}',
+  'meditations.coverYearRange': '{start} – {end}',
   'meditations.introductionHeading': 'Introducción',
   'meditations.introductionLabel': 'Introducción',
   'meditations.introductionPlaceholder':

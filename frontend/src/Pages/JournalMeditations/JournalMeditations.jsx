@@ -24,11 +24,15 @@ import {
   MEDITATIONS_TOPIC,
   filterMeditationEntriesNewestFirst,
   meditationEntriesForPrint,
-  meditationPrintPageEstimate,
-  meditationPrintWordCount,
 } from '../../utils/meditationEntries.js';
+import {
+  meditationCoverAuthor,
+  meditationCoverTitle,
+  meditationCoverYearSpan,
+} from '../../utils/meditationCover.js';
 import MeditationBookModal from '../../Components/MeditationBookModal/MeditationBookModal.jsx';
 import MeditationFrontMatter from '../../Components/MeditationFrontMatter/MeditationFrontMatter.jsx';
+import MeditationPrintCover from '../../Components/MeditationPrintCover/MeditationPrintCover.jsx';
 import {
   EMPTY_MEDITATION_FRONT_MATTER,
   normalizeMeditationFrontMatter,
@@ -116,29 +120,24 @@ const JournalMeditations = () => {
   const showPrintControl = showCompilation;
   const showProgressGoal = demoMode || (status === 'ready' && user && !loading);
 
-  const printSubtitle = useMemo(() => {
-    if (printEntries.length === 0) return '';
+  const savedBookForPrint =
+    frontMatterStatus === 'ready' ? frontMatter : EMPTY_MEDITATION_FRONT_MATTER;
 
-    const dates = printEntries
-      .map((entry) => formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate')))
-      .filter(Boolean);
-    const range =
-      dates.length > 0
-        ? t('meditations.printDateRange', {
-            start: dates[0],
-            end: dates[dates.length - 1],
-          })
-        : '';
+  const yearSpan = useMemo(
+    () => meditationCoverYearSpan(printableSourceEntries, locale),
+    [locale, printableSourceEntries],
+  );
 
-    const words = meditationPrintWordCount(printableSourceEntries);
-    const pages = meditationPrintPageEstimate(printableSourceEntries);
-    const stats =
-      pages > 0
-        ? t('meditations.printStats', { words, pages })
-        : t('meditations.printStatsWordsOnly', { words });
-
-    return [range, stats].filter(Boolean).join(' · ');
-  }, [locale, printEntries, printableSourceEntries, t]);
+  const yearsText = useMemo(() => {
+    if (yearSpan == null) return null;
+    if (yearSpan.start === yearSpan.end) {
+      return t('meditations.coverYear', { year: yearSpan.start });
+    }
+    return t('meditations.coverYearRange', {
+      start: yearSpan.start,
+      end: yearSpan.end,
+    });
+  }, [t, yearSpan]);
 
   const handlePrint = () => {
     window.print();
@@ -507,13 +506,13 @@ const JournalMeditations = () => {
               aria-hidden="true"
               style={{ display: 'none' }}
             >
-              <header className="journal-meditations__print-title-block">
-                <h1 className="journal-meditations__print-title">{t('meditations.title')}</h1>
-                {printSubtitle && (
-                  <p className="journal-meditations__print-subtitle">{printSubtitle}</p>
-                )}
-              </header>
-              <MeditationFrontMatter introduction={savedIntroductionForPrint} />
+              <MeditationPrintCover
+                title={meditationCoverTitle(savedBookForPrint.title, t('meditations.title'))}
+                author={meditationCoverAuthor(savedBookForPrint.authorName)}
+                years={yearsText}
+              >
+                <MeditationFrontMatter introduction={savedIntroductionForPrint} />
+              </MeditationPrintCover>
               <article className="journal-meditations__compilation journal-meditations__compilation--print">
                 {printEntries.map((entry) => (
                   <section key={`print-${entry.id}`} className="journal-meditations__section">

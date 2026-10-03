@@ -652,6 +652,171 @@ describe('JournalMeditations print export', () => {
     renderMeditations();
     expect(screen.getByRole('button', { name: printButtonName })).toBeTruthy();
   });
+
+  test('prints a cover with localized title, saved author, and year span', async () => {
+    mockUseAuth.mockReturnValue({
+      user: { id: 'u1', email: 'writer@example.com' },
+      status: 'ready',
+    });
+    installMeditationsApiMock({
+      entries: [
+        meditationEntry({
+          id: 'e-new',
+          content: 'Newer meditation text.',
+          createdAt: '2026-06-15T12:00:00.000Z',
+        }),
+        meditationEntry({
+          id: 'e-old',
+          content: 'Older meditation text.',
+          createdAt: '2024-06-15T12:00:00.000Z',
+        }),
+      ],
+      frontMatter: { title: '', authorName: 'Ada Lovelace', introduction: '' },
+    });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
+    });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    await waitFor(() => {
+      expect(printRoot.querySelector('.meditation-print-cover__author')?.textContent).toBe(
+        'Ada Lovelace',
+      );
+    });
+    const coverTitle = printRoot.querySelector('.meditation-print-cover__title');
+    expect(coverTitle.textContent).toBe('Meditations');
+    expect(printRoot.querySelector('.meditation-print-cover__years').textContent).toBe(
+      '2024 – 2026',
+    );
+    expect(printRoot.textContent).not.toContain('writer@example.com');
+    expect(printRoot.querySelector('.journal-meditations__print-subtitle')).toBeNull();
+    expect(printRoot.textContent).not.toMatch(/\bwords\b ·/i);
+    expect(printRoot.textContent).not.toContain('palabras ·');
+
+    const children = Array.from(printRoot.children);
+    expect(children[0].classList.contains('meditation-print-cover')).toBe(true);
+    expect(children[1].getAttribute('data-slot')).toBe('meditation-print-introduction');
+    expect(children[2].classList.contains('journal-meditations__compilation--print')).toBe(
+      true,
+    );
+  });
+
+  test('uses Meditaciones on the print cover in Spanish when title is blank', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [olderMeditationEntry],
+      frontMatter: EMPTY_FRONT_MATTER,
+    });
+
+    renderMeditations('es');
+    await waitFor(() => {
+      expect(
+        screen.getByRole('article', { name: 'Feed de meditaciones' }).textContent,
+      ).toContain('Older meditation text.');
+    });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.querySelector('.meditation-print-cover__title').textContent).toBe(
+      'Meditaciones',
+    );
+    expect(screen.getByRole('heading', { level: 1, name: 'Meditaciones' })).toBeTruthy();
+  });
+
+  test('updates the print cover only after Book modal save', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({ entries: [newerMeditationEntry] });
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.querySelector('.meditation-print-cover__title').textContent).toBe(
+      'Meditations',
+    );
+
+    await openBookModal();
+    fireEvent.change(screen.getByRole('textbox', { name: 'Title' }), {
+      target: { value: 'Quiet Book' },
+    });
+    fireEvent.change(screen.getByRole('textbox', { name: 'Author' }), {
+      target: { value: 'Writer' },
+    });
+    fireEvent.blur(screen.getByRole('textbox', { name: 'Title' }));
+    expect(printRoot.querySelector('.meditation-print-cover__title').textContent).toBe(
+      'Meditations',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save introduction' }));
+    await waitFor(() => {
+      expect(printRoot.querySelector('.meditation-print-cover__title').textContent).toBe(
+        'Quiet Book',
+      );
+      expect(printRoot.querySelector('.meditation-print-cover__author').textContent).toBe(
+        'Writer',
+      );
+    });
+  });
+
+  test('demo mode prints cover year without calling front-matter API', async () => {
+    mockUseDemoMode.mockReturnValue({
+      demoMode: true,
+      toggleDemoMode: vi.fn(),
+    });
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: printButtonName })).toBeTruthy();
+    });
+
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.querySelector('.meditation-print-cover__years').textContent).toBe('2026');
+    expect(printRoot.querySelector('.meditation-print-cover__author')).toBeNull();
+    expect(
+      apiFetch.mock.calls.some(([url]) => url.includes('journal-meditation-front-matter')),
+    ).toBe(false);
+  });
+
+  test('prints localized title when saved title is whitespace only', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [newerMeditationEntry],
+      frontMatter: { title: '   ', authorName: '', introduction: '' },
+    });
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.querySelector('.meditation-print-cover__title').textContent).toBe(
+      'Meditations',
+    );
+  });
+
+  test('collapses cover years to a single year', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({
+      entries: [
+        meditationEntry({
+          id: 'a',
+          content: 'A',
+          createdAt: '2026-08-01T12:00:00.000Z',
+        }),
+        meditationEntry({
+          id: 'b',
+          content: 'B',
+          createdAt: '2026-06-15T12:00:00.000Z',
+        }),
+      ],
+    });
+
+    renderMeditations();
+    await screen.findByRole('article', { name: 'Meditations feed' });
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.querySelector('.meditation-print-cover__years').textContent).toBe('2026');
+    expect(printRoot.textContent).not.toContain('2026 – 2026');
+  });
 });
 
 describe('JournalMeditations introduction', () => {
