@@ -28,6 +28,12 @@ Product names stay as written in both languages unless this table says otherwise
 | sesión | session | |
 | ejercicio | exercise | Writing exercise attached to a session. |
 | test / tests de pensamientos | thought test(s) | |
+| pensamientos estresantes | stressful thoughts | First thought-test title. Prefer "stressful" over the id's "stressing". |
+| la voz de tu mente | the voice of your mind | Thought-test title. |
+| pensamientos del futuro | thoughts about the future | Thought-test title. |
+| pensamientos del pasado | thoughts about the past | Thought-test title. |
+| pensamientos sobre ti | thoughts about you | Thought-test title. |
+| pensamientos sobre otros | thoughts about others | Thought-test title. |
 | desbloquear | unlock | Sessions and exercises. |
 | código | code | Unlock code. |
 | diario | journal | Already used in the journaling module. |
