@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { localeFromRequest, parseLocale } from './locale.js';
+import { localeFromRequest, parseLocale, pickLocalized } from './locale.js';
 
 test('parseLocale accepts en and es and falls back to English', () => {
   assert.equal(parseLocale('en'), 'en');
@@ -25,4 +25,50 @@ test('localeFromRequest reads Accept-Language', () => {
     }),
     'en',
   );
+});
+
+test('localeFromRequest prefers body.locale over Accept-Language', () => {
+  assert.equal(
+    localeFromRequest({
+      body: { locale: 'es' },
+      get: () => 'en',
+      headers: { 'accept-language': 'en' },
+    }),
+    'es',
+  );
+  assert.equal(
+    localeFromRequest({
+      body: { locale: 'en-US' },
+      headers: { 'accept-language': 'es' },
+    }),
+    'en',
+  );
+});
+
+test('localeFromRequest falls back to Accept-Language when body locale is missing', () => {
+  assert.equal(
+    localeFromRequest({
+      body: { message: 'hola' },
+      headers: { 'accept-language': 'es-ES' },
+    }),
+    'es',
+  );
+});
+
+test('localeFromRequest treats unsupported body locale as English', () => {
+  assert.equal(
+    localeFromRequest({
+      body: { locale: 'fr' },
+      headers: { 'accept-language': 'es' },
+    }),
+    'en',
+  );
+});
+
+test('pickLocalized returns the requested locale and falls back to Spanish', () => {
+  const copy = { es: 'Hola', en: 'Hello' };
+  assert.equal(pickLocalized(copy, 'es'), 'Hola');
+  assert.equal(pickLocalized(copy, 'en'), 'Hello');
+  assert.equal(pickLocalized({ es: 'Hola' }, 'en'), 'Hola');
+  assert.equal(pickLocalized('already a string', 'en'), 'already a string');
 });
