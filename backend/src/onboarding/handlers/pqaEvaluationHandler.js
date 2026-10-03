@@ -1,10 +1,10 @@
 import { buildPqaEvaluationPrompt } from "../prompts/buildPqaEvaluationPrompt.js";
 import { STATES } from "../conversationFlow.js";
 
-export async function pqaEvaluationHandler({ client, session }) {
+export async function pqaEvaluationHandler({ client, session, locale }) {
   const pqaSentence = session.data.pqaSentence;
 
-  const prompt = buildPqaEvaluationPrompt(pqaSentence);
+  const prompt = buildPqaEvaluationPrompt(pqaSentence, locale);
 
   const modelResponse = await client.chatCompletion({
     model: "meta-llama/Llama-3.1-8B-Instruct:novita",
