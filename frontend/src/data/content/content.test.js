@@ -23,21 +23,25 @@ describe('getSessions', () => {
     expect(first.exercise.question).toContain('Pienso, luego existo');
   });
 
-  test('falls back to Spanish copy when English is still a scaffold', () => {
+  test('uses English session copy when the overlay is filled', () => {
     const [esFirst] = getSessions('es');
     const [enFirst] = getSessions('en');
-    expect(enFirst.title).toBe(esFirst.title);
-    expect(enFirst.exercise.text).toBe(esFirst.exercise.text);
-    expect(enFirst.exercise.answers).toEqual(esFirst.exercise.answers);
+    expect(enFirst.title).toBe('You Are Not Your Mind');
+    expect(enFirst.title).not.toBe(esFirst.title);
+    expect(enFirst.description).not.toBe(esFirst.description);
+    expect(enFirst.exercise.question).toMatch(/I think, therefore I am/i);
+    expect(enFirst.exercise.answers).not.toEqual(esFirst.exercise.answers);
     SHARED_SESSION_FIELDS.forEach((field) => {
       expect(enFirst[field]).toBe(esFirst[field]);
     });
   });
 
   test('exposes exercise answers as an array so English can accept different forms', () => {
-    getSessions('es').forEach((session) => {
-      expect(Array.isArray(session.exercise.answers)).toBe(true);
-      expect(session.exercise.answers.length).toBeGreaterThan(0);
+    ['es', 'en'].forEach((locale) => {
+      getSessions(locale).forEach((session) => {
+        expect(Array.isArray(session.exercise.answers)).toBe(true);
+        expect(session.exercise.answers.length).toBeGreaterThan(0);
+      });
     });
   });
 });

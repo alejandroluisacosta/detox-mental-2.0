@@ -98,6 +98,22 @@ Exercise answers may accept more than one form per locale (for example
 `ARISTÓTELES` and `ARISTOTELES`, or `THALES OF MILETUS` and `THALES`).
 Normalize case and accents when checking.
 
+Language-dependent exercise answers (Spanish source → English accepted forms):
+
+| Spanish answer | English answer(s) | Session |
+| --- | --- | --- |
+| ESCRIBIR | WRITING, WRITE | 4 |
+| ALEMANIA | GERMANY | 5 |
+| TALES DE MILETO | THALES OF MILETUS, THALES | 6 |
+| SUICIDIO FORZADO | FORCED SUICIDE, SUICIDE | 7 |
+| AUTOCONOCIMIENTO | SELF-KNOWLEDGE, SELF-AWARENESS (hyphen optional) | 8 |
+| ESTOICISMO | STOICISM | 10 |
+| HEDONISMO | HEDONISM | 13 |
+| ARISTÓTELES | ARISTOTLE, ARISTOTELES | 14, 15 |
+
+The exercise unlock input is limited to 18 characters, so English variants
+must fit that cap (for example `CSIKSZENTMIHALYI`, not the full first name).
+
 ## Style for English long-form
 
 - Address the reader as **you**.
