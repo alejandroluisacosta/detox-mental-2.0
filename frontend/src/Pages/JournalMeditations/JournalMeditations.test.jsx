@@ -111,7 +111,8 @@ describe('JournalMeditations page states', () => {
       within(screenFeed()).getByText(/Maybe I don't need a better plan/i),
     ).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Write' })).toHaveAttribute('href', '/journal');
-    expect(screen.getByRole('link', { name: 'History' })).toHaveAttribute('href', '/journal/history');
+    expect(screen.queryByRole('link', { name: 'History' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Print / PDF' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'WRITE' })).toHaveAttribute('href', '/journal');
     expect(
       screen.queryByText(/Every time something stays ambiguous/i),
@@ -549,7 +550,7 @@ describe('JournalMeditations pages-left countdown', () => {
 });
 
 describe('JournalMeditations print export', () => {
-  const printButtonName = 'Print / Save as PDF';
+  const printButtonName = 'Print / PDF';
 
   beforeEach(() => {
     mockUseAuth.mockReset();

@@ -320,6 +320,12 @@ const JournalMeditations = () => {
             </div>
           )}
           <div className="journal-meditations__header-actions">
+            <Link
+              to="/journal"
+              className="journal-meditations__write-button journal-meditations__write-button--header"
+            >
+              {t('meditations.write')}
+            </Link>
             {showPrintControl && (
               <button
                 type="button"
@@ -329,18 +335,6 @@ const JournalMeditations = () => {
                 {t('meditations.printButton')}
               </button>
             )}
-            <Link
-              to="/journal"
-              className="journal-meditations__write-button journal-meditations__write-button--header"
-            >
-              {t('meditations.write')}
-            </Link>
-            <Link
-              to="/journal/history"
-              className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
-            >
-              {t('meditations.history')}
-            </Link>
           </div>
         </header>
 
