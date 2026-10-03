@@ -10,6 +10,7 @@
  */
 
 import dotenv from "dotenv";
+import { localeFromRequest } from "../src/i18n/locale.js";
 import { chatController } from "../src/onboarding/onboarding.controller.js";
 
 dotenv.config();
@@ -38,6 +39,7 @@ export default async function handler(req, res) {
 
   try {
     const { message, sessionState, chipId } = req.body;
+    const locale = localeFromRequest(req);
 
     if (message != null && typeof message !== "string") {
       return res.status(400).json({ error: "Message must be a string" });
@@ -47,7 +49,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "chipId must be a string when provided" });
     }
 
-    const result = await chatController({ message, sessionState, chipId });
+    const result = await chatController({ message, sessionState, chipId, locale });
 
     return res.status(200).json({
       reply: result.reply,

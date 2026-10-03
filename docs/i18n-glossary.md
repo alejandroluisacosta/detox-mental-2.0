@@ -28,6 +28,12 @@ Product names stay as written in both languages unless this table says otherwise
 | sesión | session | |
 | ejercicio | exercise | Writing exercise attached to a session. |
 | test / tests de pensamientos | thought test(s) | |
+| pensamientos estresantes | stressful thoughts | First thought-test title. Prefer "stressful" over the id's "stressing". |
+| la voz de tu mente | the voice of your mind | Thought-test title. |
+| pensamientos del futuro | thoughts about the future | Thought-test title. |
+| pensamientos del pasado | thoughts about the past | Thought-test title. |
+| pensamientos sobre ti | thoughts about you | Thought-test title. |
+| pensamientos sobre otros | thoughts about others | Thought-test title. |
 | desbloquear | unlock | Sessions and exercises. |
 | código | code | Unlock code. |
 | diario | journal | Already used in the journaling module. |
@@ -92,6 +98,22 @@ Exercise answers may accept more than one form per locale (for example
 `ARISTÓTELES` and `ARISTOTELES`, or `THALES OF MILETUS` and `THALES`).
 Normalize case and accents when checking.
 
+Language-dependent exercise answers (Spanish source → English accepted forms):
+
+| Spanish answer | English answer(s) | Session |
+| --- | --- | --- |
+| ESCRIBIR | WRITING, WRITE | 4 |
+| ALEMANIA | GERMANY | 5 |
+| TALES DE MILETO | THALES OF MILETUS, THALES | 6 |
+| SUICIDIO FORZADO | FORCED SUICIDE, SUICIDE | 7 |
+| AUTOCONOCIMIENTO | SELF-KNOWLEDGE, SELF-AWARENESS (hyphen optional) | 8 |
+| ESTOICISMO | STOICISM | 10 |
+| HEDONISMO | HEDONISM | 13 |
+| ARISTÓTELES | ARISTOTLE, ARISTOTELES | 14, 15 |
+
+The exercise unlock input is limited to 18 characters, so English variants
+must fit that cap (for example `CSIKSZENTMIHALYI`, not the full first name).
+
 ## Style for English long-form
 
 - Address the reader as **you**.
@@ -114,3 +136,27 @@ strength. Examples already in the source:
 - Theory notes that meditation is not therapy and that professional help is
   the main recommendation
 - Instructions closing line about seeing a professional at least once a month
+
+## Theory article
+
+Recurring terms from the long-form theory text. Use these in the English article
+and in later education copy that refers back to it.
+
+| Spanish | English | Notes |
+| --- | --- | --- |
+| preguntas constructivas | constructive questions | Inner-dialogue technique in step 3. |
+| círculo vicioso | vicious cycle | Emotion–thought loop in step 1. |
+| diálogo interno | inner dialogue | Roommate example in step 3. |
+| piloto automático | autopilot | *The Power of Now* recommendation. |
+| pensamiento compulsivo / pensamientos compulsivos | compulsive thinking / compulsive thoughts | Distinct from tormenting thoughts. |
+| aquí y ahora | here and now | |
+| matar de hambre (un pensamiento) | starve (a thought) / die of neglect | Same force as step 5, Kill. |
+| PQA valioso | valuable tormenting thought | One that points to safety, happiness, or growth. |
+| PQA motivado por el ego | ego-driven tormenting thought | No real value unless the goal is appearances. |
+| audiocurso | audio course | Want-more close: 15 sessions + 15 writing activities. |
+| actividades de escritura | writing activities | Want-more close. Keep "exercise" for the session UI. |
+| Una Nueva Tierra | *A New Earth* | Eckhart Tolle. |
+| El Poder del Ahora | *The Power of Now* | Eckhart Tolle. |
+| Deja de ser tú | *Breaking the Habit of Being Yourself* | Joe Dispenza. |
+| El sutil arte de que (casi todo) te importe una mi*rda | *The Subtle Art of Not Giving a F\*ck* | Mark Manson. Keep the censored force. |
+| bolívar | bolívar | Keep the Venezuelan currency joke; the parenthetical already means "nothing". |

@@ -1,4 +1,6 @@
 import { InferenceClient } from "@huggingface/inference";
+import { localeFromRequest, parseLocale } from "../i18n/locale.js";
+import { onboardingMessage } from "../i18n/onboardingMessages.js";
 import { STATES } from "./conversationFlow.js";
 import { faqHubHandler } from "./handlers/faqHubHandler.js";
 import { timeSelectionHandler } from "./handlers/timeSelectionHandler.js";
@@ -16,8 +18,8 @@ const handlers = {
   [STATES.PQA_CHALLENGE]: pqaChallengeHandler,
   [STATES.PQA_EVALUATION]: pqaEvaluationHandler,
   [STATES.RECOMMENDATION]: recommendationHandler,
-  [STATES.EXIT]: async ({ session }) => ({
-    reply: "Ya tienes orientación para seguir. Usa los botones de arriba para ir a la teoría o al test.",
+  [STATES.EXIT]: async ({ session, locale }) => ({
+    reply: onboardingMessage("exitReply", locale),
     state: session.state,
   }),
 };
@@ -25,13 +27,20 @@ const handlers = {
 /**
  * Serverless-compatible chat handler.
  *
- * Input: { message, sessionState: { state, data }, chipId? }
+ * Input: { message, sessionState: { state, data }, chipId?, locale? }
  * Output: { reply, state, data, ctaPrompt?, replyFull?, faqChips?, challengeChip?, challengePromptLabel? }
  *
  * sessionState is passed in/out explicitly (no in-memory storage).
  */
-export const chatController = async ({ message, sessionState, chipId }) => {
-  const client = new InferenceClient(process.env.HF_TOKEN);
+export const chatController = async ({
+  message,
+  sessionState,
+  chipId,
+  locale,
+  client,
+}) => {
+  const resolvedLocale = parseLocale(locale);
+  const hfClient = client ?? new InferenceClient(process.env.HF_TOKEN);
 
   const session = {
     state: sessionState?.state ?? STATES.FAQ_HUB,
@@ -47,10 +56,11 @@ export const chatController = async ({ message, sessionState, chipId }) => {
     if (!handler) throw new Error(`No handler for state ${session.state}`);
 
     lastResult = await handler({
-      client,
+      client: hfClient,
       session,
       message,
       chipId,
+      locale: resolvedLocale,
     });
     reply = lastResult.reply;
     safety++;
@@ -84,7 +94,12 @@ export const chatControllerExpressMiddleware = async (req, res) => {
       return res.status(400).json({ error: "chipId must be a string when provided." });
     }
 
-    const result = await chatController({ message, sessionState, chipId });
+    const result = await chatController({
+      message,
+      sessionState,
+      chipId,
+      locale: localeFromRequest(req),
+    });
 
     return res.json(result);
   } catch (err) {

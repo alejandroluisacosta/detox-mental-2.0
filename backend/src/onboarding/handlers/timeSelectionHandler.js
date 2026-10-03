@@ -1,20 +1,12 @@
+import { onboardingMessage } from "../../i18n/onboardingMessages.js";
 import { STATES } from "../conversationFlow.js";
 import { parseTimeSelection } from "../parsers/parseTimeSelection.js";
 
-export async function timeSelectionHandler({ session, message }) {
+export async function timeSelectionHandler({ session, message, locale }) {
   // No user input yet → open the conversation
   if (!message) {
     return {
-      reply: `
-  Bien, directo a la acción.
-  
-  Antes de hacer el ejercicio, te voy a resumir la filosofía de Detox Mental. ¿Quieres la versión de 2 o 5 minutos?
-
-  Responde con una sola opción:
-  
-  - 2 minutos
-  - 5 minutos
-  `,
+      reply: onboardingMessage("timeSelectionPrompt", locale),
       state: session.state,
     };
   }
@@ -26,19 +18,11 @@ export async function timeSelectionHandler({ session, message }) {
     const attempts = session.data.timeSelectionAttempts ?? 0;
     session.data.timeSelectionAttempts = attempts + 1;
 
-    const invalidReplies = [
-      "Por favor, responde con 2 o 5 minutos.",
-      "Por favor, dos o cinco minutos.",
-      "POR FAVOR, dos o cinco minutos.",
-      "¿Es en serio? 2 o 5.",
-      "2 o 5.",
-      "2 o 5.",
-      "2 o 5 por favor.",
-      "2 o 5, POR FAVOR.",
-      "Por Zeus. ¿Prefieres dos o cinco minutos? Ya habrías terminado.",
-      "Ya sabes lo que ofrezco. A partir de aquí te ignoro hasta que aclares si prefieres 2 o 5 minutos.",
-    ];
-    const reply = attempts >= invalidReplies.length ? "Ignorándote." : invalidReplies[attempts];
+    const invalidReplies = onboardingMessage("timeSelectionInvalid", locale);
+    const reply =
+      attempts >= invalidReplies.length
+        ? onboardingMessage("ignoring", locale)
+        : invalidReplies[attempts];
 
     return {
       reply,

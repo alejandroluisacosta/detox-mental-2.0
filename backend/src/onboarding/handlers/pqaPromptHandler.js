@@ -1,10 +1,11 @@
+import { onboardingMessage } from "../../i18n/onboardingMessages.js";
 import { isSingleSentence } from "../parsers/isSingleSentence.js";
 import { STATES } from "../conversationFlow.js";
 
-export async function pqaPromptHandler({ session, message }) {
+export async function pqaPromptHandler({ session, message, locale }) {
   if (!isSingleSentence(message)) {
     return {
-      reply: `Recuerda: una sola frase. Inténtalo de nuevo.`,
+      reply: onboardingMessage("pqaSingleSentence", locale),
       state: session.state,
     };
   }
