@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import './JournalImageSourceSheet.css';
 
-const JournalImageSourceSheet = ({ onClose, onChooseCamera, onChooseLibrary }) => {
+const JournalImageSourceSheet = ({ anchorRef, onClose, onChooseCamera, onChooseLibrary }) => {
   const { t } = useLocale();
-  const titleId = 'journal-image-source-sheet-title';
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -13,6 +13,18 @@ const JournalImageSourceSheet = ({ onClose, onChooseCamera, onChooseLibrary }) =
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
+
+  useEffect(() => {
+    const onPointerDown = (e) => {
+      const target = e.target;
+      if (!(target instanceof Node)) return;
+      if (anchorRef?.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      onClose();
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [anchorRef, onClose]);
 
   const chooseCamera = () => {
     onChooseCamera();
@@ -26,58 +38,42 @@ const JournalImageSourceSheet = ({ onClose, onChooseCamera, onChooseLibrary }) =
 
   return (
     <div
-      className="modal-overlay journal-image-source-sheet__overlay"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      ref={menuRef}
+      id="journal-image-source-menu"
+      className="journal-image-source-sheet"
+      role="menu"
+      aria-label={t('journal.imageSourceTitle')}
     >
-      <div
-        className="journal-image-source-sheet modal-fade-in"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
+      <button
+        type="button"
+        className="journal-image-source-sheet__option"
+        role="menuitem"
+        onClick={chooseCamera}
+        aria-label={t('journal.imageSourceCameraAria')}
       >
-        <p id={titleId} className="journal-image-source-sheet__title">
-          {t('journal.imageSourceTitle')}
-        </p>
-        <div className="journal-image-source-sheet__actions">
-          <button
-            type="button"
-            className="journal-image-source-sheet__option"
-            onClick={chooseCamera}
-            aria-label={t('journal.imageSourceCameraAria')}
-          >
-            <span
-              className="journal-image-source-sheet__option-icon journal-image-source-sheet__option-icon--camera"
-              aria-hidden="true"
-            />
-            <span className="journal-image-source-sheet__option-label">
-              {t('journal.imageSourceCamera')}
-            </span>
-          </button>
-          <button
-            type="button"
-            className="journal-image-source-sheet__option"
-            onClick={chooseLibrary}
-            aria-label={t('journal.imageSourceLibraryAria')}
-          >
-            <span
-              className="journal-image-source-sheet__option-icon journal-image-source-sheet__option-icon--library"
-              aria-hidden="true"
-            />
-            <span className="journal-image-source-sheet__option-label">
-              {t('journal.imageSourceLibrary')}
-            </span>
-          </button>
-        </div>
-        <button
-          type="button"
-          className="journal-image-source-sheet__cancel"
-          onClick={onClose}
-        >
-          {t('journal.imageSourceCancel')}
-        </button>
-      </div>
+        <span
+          className="journal-image-source-sheet__option-icon journal-image-source-sheet__option-icon--camera"
+          aria-hidden="true"
+        />
+        <span className="journal-image-source-sheet__option-label">
+          {t('journal.imageSourceCamera')}
+        </span>
+      </button>
+      <button
+        type="button"
+        className="journal-image-source-sheet__option"
+        role="menuitem"
+        onClick={chooseLibrary}
+        aria-label={t('journal.imageSourceLibraryAria')}
+      >
+        <span
+          className="journal-image-source-sheet__option-icon journal-image-source-sheet__option-icon--library"
+          aria-hidden="true"
+        />
+        <span className="journal-image-source-sheet__option-label">
+          {t('journal.imageSourceLibrary')}
+        </span>
+      </button>
     </div>
   );
 };

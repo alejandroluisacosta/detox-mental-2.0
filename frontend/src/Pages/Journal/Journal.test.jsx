@@ -115,16 +115,20 @@ describe('Journal handwriting capture gating', () => {
       'SCAN HANDWRITING',
     );
     expect(scanButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Open camera' })).toBeNull();
+    expect(screen.queryByRole('menuitem', { name: 'Open camera' })).toBeNull();
   });
 
-  test('opens an upload sheet with camera and library options', () => {
+  test('opens a compact chooser above the scan button', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     renderJournal();
-    fireEvent.click(screen.getByRole('button', { name: 'Scan handwriting' }));
-    expect(screen.getByRole('dialog', { name: 'Add handwriting image' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Open camera' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Choose from photo library' })).toBeTruthy();
+    const scanButton = screen.getByRole('button', { name: 'Scan handwriting' });
+    fireEvent.click(scanButton);
+    expect(document.querySelector('.modal-overlay')).toBeNull();
+    const trigger = document.querySelector('.journal-page__scan-trigger');
+    expect(trigger?.querySelector('[role="menu"]')).toBeTruthy();
+    expect(screen.getByRole('menuitem', { name: 'Open camera' })).toBeTruthy();
+    expect(screen.getByRole('menuitem', { name: 'Choose from photo library' })).toBeTruthy();
+    expect(scanButton.getAttribute('aria-expanded')).toBe('true');
   });
 
   test('uses camera capture on the camera input only', () => {
@@ -142,16 +146,16 @@ describe('Journal handwriting capture gating', () => {
     expect(screen.queryByRole('button', { name: 'Scan handwriting' })).toBeNull();
   });
 
-  test('shows the Spanish scan label and localized upload sheet', () => {
+  test('shows the Spanish scan label and localized chooser menu', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     renderJournal('es');
     const scanButton = screen.getByRole('button', { name: 'Escanear escritura a mano' });
     expect(screen.getByText('ESCANEAR ESCRITURA')).toBeTruthy();
     expect(scanButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
     fireEvent.click(scanButton);
-    expect(screen.getByRole('dialog', { name: 'Añadir imagen de escritura' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Abrir cámara' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Elegir de la galería' })).toBeTruthy();
+    expect(screen.getByRole('menu', { name: 'Añadir imagen de escritura' })).toBeTruthy();
+    expect(screen.getByRole('menuitem', { name: 'Abrir cámara' })).toBeTruthy();
+    expect(screen.getByRole('menuitem', { name: 'Elegir de la galería' })).toBeTruthy();
   });
 
   test('renders history as an accent icon link', () => {

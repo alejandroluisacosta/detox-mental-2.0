@@ -30,6 +30,7 @@ const Journal = () => {
   const textareaRef = useRef(null);
   const cameraInputRef = useRef(null);
   const libraryInputRef = useRef(null);
+  const scanTriggerRef = useRef(null);
   const topicsRef = useRef(null);
   const topicHoldRef = useRef(null);
   const chipPressRef = useRef(new Map());
@@ -191,6 +192,7 @@ const Journal = () => {
       return URL.createObjectURL(file);
     });
     setImageFile(file);
+    setShowImageSourceSheet(false);
   };
 
   const transcribeImage = async () => {
@@ -369,16 +371,29 @@ const Journal = () => {
                 disabled={busy}
               />
               {!imagePreviewUrl ? (
-                <button
-                  type="button"
-                  className="journal-page__scan-button journal-page__scan-button--picker"
-                  onClick={() => setShowImageSourceSheet(true)}
-                  disabled={busy}
-                  aria-label={t('journal.scanAria')}
-                >
-                  <span className="journal-page__scan-label">{t('journal.scan')}</span>
-                  <span className="journal-page__scan-icon" aria-hidden="true" />
-                </button>
+                <div ref={scanTriggerRef} className="journal-page__scan-trigger">
+                  {showImageSourceSheet && (
+                    <JournalImageSourceSheet
+                      anchorRef={scanTriggerRef}
+                      onClose={() => setShowImageSourceSheet(false)}
+                      onChooseCamera={() => cameraInputRef.current?.click()}
+                      onChooseLibrary={() => libraryInputRef.current?.click()}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    className="journal-page__scan-button journal-page__scan-button--picker"
+                    onClick={() => setShowImageSourceSheet((open) => !open)}
+                    disabled={busy}
+                    aria-label={t('journal.scanAria')}
+                    aria-haspopup="menu"
+                    aria-expanded={showImageSourceSheet}
+                    aria-controls="journal-image-source-menu"
+                  >
+                    <span className="journal-page__scan-label">{t('journal.scan')}</span>
+                    <span className="journal-page__scan-icon" aria-hidden="true" />
+                  </button>
+                </div>
               ) : (
                 <div className="journal-page__scan-preview">
                   <img
@@ -456,14 +471,6 @@ const Journal = () => {
           }}
           onSave={handleSaveTopicName}
           saving={topicNameSaving}
-        />
-      )}
-
-      {showImageSourceSheet && (
-        <JournalImageSourceSheet
-          onClose={() => setShowImageSourceSheet(false)}
-          onChooseCamera={() => cameraInputRef.current?.click()}
-          onChooseLibrary={() => libraryInputRef.current?.click()}
         />
       )}
 
