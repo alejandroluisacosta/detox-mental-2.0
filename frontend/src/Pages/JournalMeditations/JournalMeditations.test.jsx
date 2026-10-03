@@ -179,6 +179,7 @@ describe('JournalMeditations page states', () => {
     ).toBeTruthy();
     expect(screen.getByText('in 24.0 pages')).toBeTruthy();
     expect(document.querySelector('.journal-meditations__book-icon')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
   });
 });
 
@@ -491,6 +492,8 @@ describe('JournalMeditations pages-left countdown', () => {
     expect(screen.getByRole('status')).toHaveTextContent('25 entries left toward 25');
     expect(screen.queryByRole('menu')).toBeNull();
     expect(window.localStorage.getItem(MEDITATION_GOAL_STORAGE_KEY)).toBe(MEDITATION_GOALS.ENTRIES_25);
+    expect(document.querySelector('.journal-meditations__target-icon')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
   });
 
   test('restores the selected goal from localStorage', async () => {
@@ -505,6 +508,27 @@ describe('JournalMeditations pages-left countdown', () => {
 
     expect(await screen.findByText('50 entries left toward 50')).toBeTruthy();
     expect(document.querySelector('.journal-meditations__book-icon')).toBeNull();
+    expect(document.querySelector('.journal-meditations__target-icon')).toBeTruthy();
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
+  });
+
+  test('hides the dropdown hint while the goal menu is open', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    apiFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ entries: [] }),
+    });
+
+    renderMeditations();
+    await screen.findByText('in 24.0 pages');
+
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Meditation progress goal' }));
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeNull();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(document.querySelector('.journal-meditations__progress-dropdown-icon')).toBeTruthy();
   });
 
   test('closes the goal menu on Escape', async () => {

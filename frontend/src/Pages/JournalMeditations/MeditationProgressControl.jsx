@@ -93,15 +93,30 @@ const MeditationProgressControl = ({ entries, locale, t, visible }) => {
         aria-label={t('meditations.progressGoalButton')}
         onClick={() => setMenuOpen((open) => !open)}
       >
-        {selectedGoal === MEDITATION_GOALS.BOOK && (
+        {selectedGoal === MEDITATION_GOALS.BOOK ? (
           <img
             src="/icons/book.svg"
             alt=""
             aria-hidden="true"
-            className="journal-meditations__book-icon"
+            className="journal-meditations__progress-goal-icon journal-meditations__book-icon"
+          />
+        ) : (
+          <img
+            src="/icons/target.svg"
+            alt=""
+            aria-hidden="true"
+            className="journal-meditations__progress-goal-icon journal-meditations__target-icon"
           />
         )}
         <span className="journal-meditations__pages-left-text">{progressLabel}</span>
+        {!menuOpen && (
+          <img
+            src="/icons/arrow_down.svg"
+            alt=""
+            aria-hidden="true"
+            className="journal-meditations__progress-dropdown-icon"
+          />
+        )}
       </button>
       {menuOpen && (
         <ul id={menuId} role="menu" className="journal-meditations__progress-menu">
