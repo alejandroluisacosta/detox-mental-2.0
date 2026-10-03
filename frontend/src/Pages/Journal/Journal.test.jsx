@@ -101,29 +101,30 @@ describe('Journal handwriting capture gating', () => {
     cleanup();
   });
 
-  test('hides image intake controls for guests', () => {
+  test('hides the scan control for guests', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
     renderJournal();
-    expect(screen.queryByRole('button', { name: 'Scan handwriting with camera' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Choose image from photo library' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Scan handwriting' })).toBeNull();
   });
 
-  test('shows camera and library controls for signed-in users', () => {
+  test('shows one scan control for signed-in users', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     renderJournal();
-    const cameraButton = screen.getByRole('button', { name: 'Scan handwriting with camera' });
-    expect(cameraButton).toBeTruthy();
-    expect(cameraButton.querySelector('.journal-page__scan-label')?.textContent).toBe(
+    const scanButton = screen.getByRole('button', { name: 'Scan handwriting' });
+    expect(scanButton.querySelector('.journal-page__scan-label')?.textContent).toBe(
       'SCAN HANDWRITING',
     );
-    expect(cameraButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
+    expect(scanButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Open camera' })).toBeNull();
+  });
 
-    const libraryButton = screen.getByRole('button', { name: 'Choose image from photo library' });
-    expect(libraryButton).toBeTruthy();
-    expect(libraryButton.querySelector('.journal-page__library-label')?.textContent).toBe(
-      'CHOOSE FROM LIBRARY',
-    );
-    expect(libraryButton.querySelector('.journal-page__library-icon')).toBeTruthy();
+  test('opens an upload sheet with camera and library options', () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    renderJournal();
+    fireEvent.click(screen.getByRole('button', { name: 'Scan handwriting' }));
+    expect(screen.getByRole('dialog', { name: 'Add handwriting image' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Open camera' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Choose from photo library' })).toBeTruthy();
   });
 
   test('uses camera capture on the camera input only', () => {
@@ -135,26 +136,22 @@ describe('Journal handwriting capture gating', () => {
     expect(libraryInput?.hasAttribute('capture')).toBe(false);
   });
 
-  test('hides image intake controls while auth is still loading', () => {
+  test('hides the scan control while auth is still loading', () => {
     mockUseAuth.mockReturnValue({ user: null, status: 'loading' });
     renderJournal();
-    expect(screen.queryByRole('button', { name: 'Scan handwriting with camera' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Choose image from photo library' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Scan handwriting' })).toBeNull();
   });
 
-  test('shows localized camera and library labels', () => {
+  test('shows the Spanish scan label and localized upload sheet', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     renderJournal('es');
-    const cameraButton = screen.getByRole('button', {
-      name: 'Escanear escritura a mano con la cámara',
-    });
+    const scanButton = screen.getByRole('button', { name: 'Escanear escritura a mano' });
     expect(screen.getByText('ESCANEAR ESCRITURA')).toBeTruthy();
-    expect(cameraButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
-    const libraryButton = screen.getByRole('button', {
-      name: 'Elegir imagen de la galería',
-    });
-    expect(screen.getByText('ELEGIR DE LA GALERÍA')).toBeTruthy();
-    expect(libraryButton.querySelector('.journal-page__library-icon')).toBeTruthy();
+    expect(scanButton.querySelector('.journal-page__scan-icon')).toBeTruthy();
+    fireEvent.click(scanButton);
+    expect(screen.getByRole('dialog', { name: 'Añadir imagen de escritura' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Abrir cámara' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Elegir de la galería' })).toBeTruthy();
   });
 
   test('renders history as an accent icon link', () => {

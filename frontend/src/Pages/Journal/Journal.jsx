@@ -18,6 +18,7 @@ import {
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
 import { createLongPressHandlers } from '../../utils/longPress.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
+import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
 import './Journal.css';
 
@@ -42,6 +43,7 @@ const Journal = () => {
   const [fadeEdges, setFadeEdges] = useState({ left: false, right: false });
   const [topicModal, setTopicModal] = useState(null);
   const [topicNameSaving, setTopicNameSaving] = useState(false);
+  const [showImageSourceSheet, setShowImageSourceSheet] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
   const canManageTopics = status === 'ready' && !!user;
@@ -367,28 +369,16 @@ const Journal = () => {
                 disabled={busy}
               />
               {!imagePreviewUrl ? (
-                <div className="journal-page__scan-pickers">
-                  <button
-                    type="button"
-                    className="journal-page__scan-button journal-page__scan-button--picker"
-                    onClick={() => cameraInputRef.current?.click()}
-                    disabled={busy}
-                    aria-label={t('journal.scanAria')}
-                  >
-                    <span className="journal-page__scan-label">{t('journal.scan')}</span>
-                    <span className="journal-page__scan-icon" aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    className="journal-page__scan-button journal-page__scan-button--picker"
-                    onClick={() => libraryInputRef.current?.click()}
-                    disabled={busy}
-                    aria-label={t('journal.libraryAria')}
-                  >
-                    <span className="journal-page__library-label">{t('journal.library')}</span>
-                    <span className="journal-page__library-icon" aria-hidden="true" />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="journal-page__scan-button journal-page__scan-button--picker"
+                  onClick={() => setShowImageSourceSheet(true)}
+                  disabled={busy}
+                  aria-label={t('journal.scanAria')}
+                >
+                  <span className="journal-page__scan-label">{t('journal.scan')}</span>
+                  <span className="journal-page__scan-icon" aria-hidden="true" />
+                </button>
               ) : (
                 <div className="journal-page__scan-preview">
                   <img
@@ -466,6 +456,14 @@ const Journal = () => {
           }}
           onSave={handleSaveTopicName}
           saving={topicNameSaving}
+        />
+      )}
+
+      {showImageSourceSheet && (
+        <JournalImageSourceSheet
+          onClose={() => setShowImageSourceSheet(false)}
+          onChooseCamera={() => cameraInputRef.current?.click()}
+          onChooseLibrary={() => libraryInputRef.current?.click()}
         />
       )}
 
