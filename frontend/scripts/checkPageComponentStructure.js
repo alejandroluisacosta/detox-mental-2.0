@@ -56,6 +56,28 @@ export function findNewViolations(violations, baselineGrandfathered, repoPrefix)
     .filter((fullPath) => !baselineGrandfathered.has(fullPath));
 }
 
+/**
+ * @param {string[]} pageViolations Relative to src/Pages
+ * @param {string[]} componentViolations Relative to src/Components
+ * @param {Set<string>} baselineGrandfathered
+ */
+export function findStaleGrandfatheredPaths(
+  pageViolations,
+  componentViolations,
+  baselineGrandfathered,
+) {
+  const currentViolations = new Set([
+    ...pageViolations.map((relativePath) => `src/Pages/${relativePath}`),
+    ...componentViolations.map(
+      (relativePath) => `src/Components/${relativePath}`,
+    ),
+  ]);
+
+  return [...baselineGrandfathered]
+    .filter((fullPath) => !currentViolations.has(fullPath))
+    .sort();
+}
+
 function loadBaseline() {
   const baselinePath = path.join(__dirname, 'pageComponentStructureBaseline.json');
   const raw = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
@@ -66,39 +88,54 @@ export function runStructureCheck({ frontendRoot = path.resolve(__dirname, '..')
   const baseline = loadBaseline();
   const pagesRoot = path.join(frontendRoot, 'src/Pages');
   const componentsRoot = path.join(frontendRoot, 'src/Components');
+  const pageViolations = collectStructureViolations(pagesRoot);
+  const componentViolations = collectStructureViolations(componentsRoot);
 
   const newViolations = [
-    ...findNewViolations(
-      collectStructureViolations(pagesRoot),
-      baseline,
-      'src/Pages',
-    ),
-    ...findNewViolations(
-      collectStructureViolations(componentsRoot),
-      baseline,
-      'src/Components',
-    ),
+    ...findNewViolations(pageViolations, baseline, 'src/Pages'),
+    ...findNewViolations(componentViolations, baseline, 'src/Components'),
   ].sort();
 
-  return newViolations;
+  const staleGrandfathered = findStaleGrandfatheredPaths(
+    pageViolations,
+    componentViolations,
+    baseline,
+  );
+
+  return { newViolations, staleGrandfathered };
 }
 
 function main() {
-  const newViolations = runStructureCheck();
+  const { newViolations, staleGrandfathered } = runStructureCheck();
 
-  if (newViolations.length === 0) {
+  if (newViolations.length === 0 && staleGrandfathered.length === 0) {
     return;
   }
 
   const lines = [
-    'frontend/AGENTS.md page and component folder structure violated:',
-    ...newViolations.map((v) => `  - ${v}`),
-    '',
-    'Each folder under src/Pages/<Name>/ or src/Components/<Name>/ may contain only',
-    '<Name>.jsx, <Name>.css, and optional <Name>.test.jsx (plus asset subfolders).',
-    'Move extra UI into its own Components/<Name>/ folder instead of adding another .jsx',
-    'beside the page. If this is intentional legacy debt, do not expand the baseline.',
+    'frontend/AGENTS.md page and component folder structure check failed:',
   ];
+
+  if (newViolations.length > 0) {
+    lines.push(
+      '',
+      'New violations (fix layout; do not add to pageComponentStructureBaseline.json):',
+      ...newViolations.map((v) => `  - ${v}`),
+      '',
+      'Each folder under src/Pages/<Name>/ or src/Components/<Name>/ may contain only',
+      '<Name>.jsx, <Name>.css, and optional <Name>.test.jsx (plus asset subfolders).',
+      'Move extra UI into its own Components/<Name>/ folder instead of adding another .jsx',
+      'beside the page.',
+    );
+  }
+
+  if (staleGrandfathered.length > 0) {
+    lines.push(
+      '',
+      'Stale grandfather entries (legacy fixed — remove from baseline):',
+      ...staleGrandfathered.map((v) => `  - ${v}`),
+    );
+  }
 
   console.error(lines.join('\n'));
   process.exit(1);

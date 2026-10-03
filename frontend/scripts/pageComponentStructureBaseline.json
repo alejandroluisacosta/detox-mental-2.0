@@ -1,4 +1,5 @@
 {
+  "policy": "Grandfather list for legacy layout violations only — not an inventory of pages or folders. Never add paths here to excuse new debt; fix the layout instead. When legacy is repaired, remove the path from this list (CI fails while stale entries remain).",
   "grandfatheredPaths": [
     "src/Pages/Article/ArticleWrapper.jsx",
     "src/Pages/Auth/AuthError.jsx",

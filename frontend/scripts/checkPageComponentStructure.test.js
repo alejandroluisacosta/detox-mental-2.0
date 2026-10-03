@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   collectStructureViolations,
   findNewViolations,
+  findStaleGrandfatheredPaths,
 } from './checkPageComponentStructure.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -75,6 +76,19 @@ describe('findNewViolations', () => {
   });
 });
 
+describe('findStaleGrandfatheredPaths', () => {
+  it('requires shrinking the baseline when legacy layout is fixed', () => {
+    const baseline = new Set([
+      'src/Pages/Course/CourseWrapper.jsx',
+      'src/Pages/Promo/PromoGate.jsx',
+    ]);
+
+    expect(
+      findStaleGrandfatheredPaths(['Course/CourseWrapper.jsx'], [], baseline),
+    ).toEqual(['src/Pages/Promo/PromoGate.jsx']);
+  });
+});
+
 describe('repo baseline', () => {
   it('matches the committed grandfather list for current Pages/Components', () => {
     const frontendRoot = path.resolve(__dirname, '..');
@@ -97,5 +111,26 @@ describe('repo baseline', () => {
     expect(
       findNewViolations(componentViolations, baseline, 'src/Components'),
     ).toEqual([]);
+    expect(
+      findStaleGrandfatheredPaths(
+        pageViolations,
+        componentViolations,
+        baseline,
+      ),
+    ).toEqual([]);
+  });
+
+  it('documents that the baseline is legacy violations only, not a page list', () => {
+    const baselinePath = path.join(
+      __dirname,
+      'pageComponentStructureBaseline.json',
+    );
+    const { policy, grandfatheredPaths } = JSON.parse(
+      fs.readFileSync(baselinePath, 'utf8'),
+    );
+
+    expect(policy).toMatch(/not an inventory/i);
+    expect(policy).toMatch(/never add/i);
+    expect(grandfatheredPaths).not.toContain('src/Pages/Journal/Journal.jsx');
   });
 });
