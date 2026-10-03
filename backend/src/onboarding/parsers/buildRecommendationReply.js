@@ -58,7 +58,7 @@ Antes de hacer nuestro test para entender mejor tus pensamientos estresantes act
 ${CLOSING_PARAGRAPH.es}
 `,
     en: `
-Your answer does not show much clarity yet about your potential thought problem... Still.
+Your answer does not show much clarity about your potential thought problem... Yet.
 
 Before taking our test to better understand your current stressful thoughts, we recommend starting with our introductory theory, where we refine how you observe and phrase your thoughts with more precision.
 

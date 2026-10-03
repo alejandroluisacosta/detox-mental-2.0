@@ -126,7 +126,7 @@ export const testsCopy = {
           },
           {
             "id": "catastrophe_1",
-            "label": "\"They're going to think less of you now\""
+            "label": "\"They're definitely going to think less of you now\""
           },
           {
             "id": "catastrophe_2",
@@ -134,7 +134,7 @@ export const testsCopy = {
           },
           {
             "id": "learn",
-            "label": "\"At least you can probably learn from this\""
+            "label": "\"I'm sure you can at least learn from this\""
           },
           {
             "id": "critical_parent",
@@ -246,7 +246,7 @@ export const testsCopy = {
           },
           {
             "id": "aggressive",
-            "label": "Aggressive and impatient with me"
+            "label": "Aggressive and impatient with myself"
           },
           {
             "id": "relaxed",

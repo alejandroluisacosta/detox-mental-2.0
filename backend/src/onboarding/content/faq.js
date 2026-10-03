@@ -297,7 +297,7 @@ Si tienes dudas sobre si este tipo de herramienta es adecuada para ti, te recome
 
 In particular, it is **not recommended** if you frequently experience suicidal thoughts, intense anxiety or panic episodes, paranoia, compulsions that affect your daily life, episodes of disconnection from reality, or any other condition that significantly interferes with your everyday functioning.
 
-It is also not a suitable tool if you are currently in intensive psychological or psychiatric treatment, unless your referring professional explicitly considers that it may be useful as a complement.
+It is also not a suitable tool if you are currently in intensive psychological or psychiatric treatment, unless the clinician overseeing your care explicitly considers that it may be useful as a complement.
 
 Detox Mental is **not designed** to treat or replace clinical care of any kind. It is a personal-use tool oriented toward **writing** and the **organization of thoughts** in contexts of general well-being and mild or moderate distress.
 

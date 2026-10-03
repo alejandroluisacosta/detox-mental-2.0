@@ -79,7 +79,7 @@ export const sessionsCopy = {
   },
   "7": {
     "title": "The Usefulness of Tormenting Thoughts",
-    "description": "And make no mistake: they have it",
+    "description": "And do not doubt it: they have it",
     "unblockQuestion": "Tell us how you found Detox Mental.",
     "exercise": {
       "question": "How did the philosopher Seneca die?",
@@ -107,7 +107,7 @@ export const sessionsCopy = {
   },
   "9": {
     "title": "How to Kill a Thought",
-    "description": "Learn to murder them without mercy",
+    "description": "Learn to kill them without mercy",
     "unblockQuestion": "Did you know that the famous book 'Meditations' is a kind of journal where Emperor Marcus Aurelius wrote down his tormenting thoughts during his war campaigns? What is your current war?",
     "exercise": {
       "question": "Modern synonym of meditation.",

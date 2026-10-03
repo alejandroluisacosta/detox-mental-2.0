@@ -100,7 +100,7 @@ If you also withdraw your attention from it, it disappears.
 That is how it works. No drama.
 
 Now, the goal of the full program is not that you "stop thinking".  
-That is **unreal.**
+That is **unrealistic.**
 
 The goal is that in **15 days** you have built **two solid habits:**
 

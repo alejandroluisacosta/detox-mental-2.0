@@ -64,7 +64,7 @@ In **15 days** we want you to develop two habits:
 *Nothing more. Nothing less.*
 
 If you continue, I will not promise mental silence.  
-I promise you **judgment, distance, and less unnecessary suffering**.
+I promise you **discernment, distance, and less unnecessary suffering**.
 
 If that is useful to you, we continue.`,
 };
