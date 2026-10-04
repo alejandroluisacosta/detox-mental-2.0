@@ -11,6 +11,10 @@ import {
   patchJournalEntryTopics,
 } from '../journalEntries/journalEntries.controller.js';
 import {
+  getMeditationFrontMatter,
+  patchMeditationFrontMatter,
+} from '../journalFrontMatter/journalFrontMatter.controller.js';
+import {
   getCustomTopics,
   postCustomTopic,
   patchCustomTopic,
@@ -37,6 +41,16 @@ router.get('/me/journal-entries', requireAuth, getJournalEntries);
 router.post('/me/journal-entries', requireAuth, postJournalEntry);
 router.delete('/me/journal-entries/:id', requireAuth, deleteJournalEntry);
 router.patch('/me/journal-entries/:id', requireAuth, patchJournalEntryTopics);
+router.get(
+  '/me/journal-meditation-front-matter',
+  requireAuth,
+  getMeditationFrontMatter,
+);
+router.patch(
+  '/me/journal-meditation-front-matter',
+  requireAuth,
+  patchMeditationFrontMatter,
+);
 router.get('/me/journal-topics', requireAuth, getCustomTopics);
 router.post('/me/journal-topics', requireAuth, postCustomTopic);
 router.patch('/me/journal-topics/:id', requireAuth, patchCustomTopic);

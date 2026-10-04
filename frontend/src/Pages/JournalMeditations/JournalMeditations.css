@@ -276,10 +276,6 @@
   display: none;
 }
 
-.journal-meditations__print-title-block {
-  display: none;
-}
-
 .journal-meditations__print-button {
   cursor: pointer;
 }
@@ -290,6 +286,7 @@
   .journal-meditations__write-button,
   .journal-meditations__empty,
   .journal-meditations__compilation--screen,
+  .journal-page--meditations .modal-overlay,
   .demo-mode-toggle {
     display: none !important;
   }
@@ -301,29 +298,6 @@
 
   .journal-meditations__print-root {
     display: block !important;
-  }
-
-  .journal-meditations__print-title-block {
-    display: block;
-    margin-bottom: 2rem;
-    page-break-after: avoid;
-    break-after: avoid-page;
-    text-align: center;
-  }
-
-  .journal-meditations__print-title {
-    margin: 0 0 0.5rem;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #000;
-  }
-
-  .journal-meditations__print-subtitle {
-    margin: 0;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 0.95rem;
-    color: #333;
   }
 
   .journal-meditations__compilation--print {

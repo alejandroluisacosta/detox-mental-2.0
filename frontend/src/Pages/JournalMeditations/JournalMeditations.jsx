@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
@@ -24,9 +25,21 @@ import {
   MEDITATIONS_TOPIC,
   filterMeditationEntriesNewestFirst,
   meditationEntriesForPrint,
-  meditationPrintPageEstimate,
-  meditationPrintWordCount,
 } from '../../utils/meditationEntries.js';
+import {
+  meditationCoverAuthor,
+  meditationCoverTitle,
+  meditationCoverYearSpan,
+} from '../../utils/meditationCover.js';
+import MeditationBookModal from '../../Components/MeditationBookModal/MeditationBookModal.jsx';
+import MeditationFrontMatter from '../../Components/MeditationFrontMatter/MeditationFrontMatter.jsx';
+import MeditationPrintCover from '../../Components/MeditationPrintCover/MeditationPrintCover.jsx';
+import {
+  EMPTY_MEDITATION_FRONT_MATTER,
+  normalizeMeditationFrontMatter,
+  readDemoMeditationFrontMatter,
+  writeDemoMeditationFrontMatter,
+} from '../../utils/meditationFrontMatter.js';
 import './JournalMeditations.css';
 
 const GOAL_MENU_OPTIONS = [
@@ -89,6 +102,10 @@ const JournalMeditations = () => {
   const [selectedProgressGoal, setSelectedProgressGoal] = useState(() => readMeditationProgressGoal());
   const [progressMenuOpen, setProgressMenuOpen] = useState(false);
   const [progressAnnouncement, setProgressAnnouncement] = useState('');
+  const [frontMatter, setFrontMatter] = useState(EMPTY_MEDITATION_FRONT_MATTER);
+  const [frontMatterStatus, setFrontMatterStatus] = useState('idle');
+  const [savingIntroduction, setSavingIntroduction] = useState(false);
+  const [bookModalOpen, setBookModalOpen] = useState(false);
   const demoEntries = useMemo(
     () => (demoMode ? filterMeditationEntriesNewestFirst(getDemoEntries(locale)) : []),
     [demoMode, locale],
@@ -101,32 +118,26 @@ const JournalMeditations = () => {
   );
   const showCompilation =
     demoMode || (status === 'ready' && user && !loading && visibleEntries.length > 0);
-  const showPrintControl = showCompilation;
   const showProgressGoal = demoMode || (status === 'ready' && user && !loading);
 
-  const printSubtitle = useMemo(() => {
-    if (printEntries.length === 0) return '';
+  const savedBookForPrint =
+    frontMatterStatus === 'ready' ? frontMatter : EMPTY_MEDITATION_FRONT_MATTER;
 
-    const dates = printEntries
-      .map((entry) => formatEntryDate(entry.createdAt, locale, t('meditations.unknownDate')))
-      .filter(Boolean);
-    const range =
-      dates.length > 0
-        ? t('meditations.printDateRange', {
-            start: dates[0],
-            end: dates[dates.length - 1],
-          })
-        : '';
+  const yearSpan = useMemo(
+    () => meditationCoverYearSpan(printableSourceEntries, locale),
+    [locale, printableSourceEntries],
+  );
 
-    const words = meditationPrintWordCount(printableSourceEntries);
-    const pages = meditationPrintPageEstimate(printableSourceEntries);
-    const stats =
-      pages > 0
-        ? t('meditations.printStats', { words, pages })
-        : t('meditations.printStatsWordsOnly', { words });
-
-    return [range, stats].filter(Boolean).join(' · ');
-  }, [locale, printEntries, printableSourceEntries, t]);
+  const yearsText = useMemo(() => {
+    if (yearSpan == null) return null;
+    if (yearSpan.start === yearSpan.end) {
+      return t('meditations.coverYear', { year: yearSpan.start });
+    }
+    return t('meditations.coverYearRange', {
+      start: yearSpan.start,
+      end: yearSpan.end,
+    });
+  }, [t, yearSpan]);
 
   const handlePrint = () => {
     window.print();
@@ -211,6 +222,96 @@ const JournalMeditations = () => {
       cancelled = true;
     };
   }, [demoMode, status, t, user]);
+
+  useEffect(() => {
+    if (!showCompilation) {
+      return undefined;
+    }
+
+    if (demoMode) {
+      setFrontMatter(readDemoMeditationFrontMatter());
+      setFrontMatterStatus('ready');
+      return undefined;
+    }
+
+    if (!user) {
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const loadFrontMatter = async () => {
+      setFrontMatterStatus('loading');
+      try {
+        const res = await apiFetch('/auth/me/journal-meditation-front-matter');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.frontMatter) {
+          throw new Error(data.message || t('meditations.frontMatterLoadFailed'));
+        }
+        if (!cancelled) {
+          setFrontMatter(normalizeMeditationFrontMatter(data.frontMatter));
+          setFrontMatterStatus('ready');
+        }
+      } catch (err) {
+        console.error('[journal meditations front matter GET]', err);
+        if (!cancelled) {
+          setFrontMatterStatus('error');
+          emitToast(err.message || t('meditations.frontMatterLoadFailed'));
+        }
+      }
+    };
+
+    loadFrontMatter();
+    return () => {
+      cancelled = true;
+    };
+  }, [demoMode, showCompilation, t, user]);
+
+  const saveFrontMatter = async (patch) => {
+    if (savingIntroduction || !patch || Object.keys(patch).length === 0) return true;
+
+    setSavingIntroduction(true);
+    try {
+      if (demoMode) {
+        const record = writeDemoMeditationFrontMatter(patch);
+        setFrontMatter(record);
+        emitToast(t('meditations.introductionSaved'));
+        return true;
+      }
+
+      const res = await apiFetch('/auth/me/journal-meditation-front-matter', {
+        method: 'PATCH',
+        body: patch,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.frontMatter) {
+        throw new Error(data.message || t('meditations.introductionSaveFailed'));
+      }
+      setFrontMatter(normalizeMeditationFrontMatter(data.frontMatter));
+      emitToast(t('meditations.introductionSaved'));
+      return true;
+    } catch (err) {
+      console.error('[journal meditations front matter PATCH]', err);
+      emitToast(err.message || t('meditations.introductionSaveFailed'));
+      return false;
+    } finally {
+      setSavingIntroduction(false);
+    }
+  };
+
+  const handleBookPdf = async (patch) => {
+    if (patch) {
+      const saved = await saveFrontMatter(patch);
+      if (!saved) return;
+    }
+    flushSync(() => {
+      setBookModalOpen(false);
+    });
+    handlePrint();
+  };
+
+  const savedIntroductionForPrint =
+    frontMatterStatus === 'ready' ? frontMatter.introduction : '';
 
   const closeRemoveModal = () => {
     if (removing) return;
@@ -326,13 +427,13 @@ const JournalMeditations = () => {
             >
               {t('meditations.write')}
             </Link>
-            {showPrintControl && (
+            {showCompilation && (
               <button
                 type="button"
-                className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary journal-meditations__print-button"
-                onClick={handlePrint}
+                className="journal-meditations__write-button journal-meditations__write-button--header journal-meditations__write-button--secondary"
+                onClick={() => setBookModalOpen(true)}
               >
-                {t('meditations.printButton')}
+                {t('meditations.bookButton')}
               </button>
             )}
           </div>
@@ -409,12 +510,17 @@ const JournalMeditations = () => {
               aria-hidden="true"
               style={{ display: 'none' }}
             >
-              <header className="journal-meditations__print-title-block">
-                <h1 className="journal-meditations__print-title">{t('meditations.title')}</h1>
-                {printSubtitle && (
-                  <p className="journal-meditations__print-subtitle">{printSubtitle}</p>
+              <MeditationPrintCover
+                title={meditationCoverTitle(
+                  savedBookForPrint.title,
+                  t('meditations.title'),
+                  savedBookForPrint.titleUsesDefault,
                 )}
-              </header>
+                author={meditationCoverAuthor(savedBookForPrint.authorName)}
+                years={yearsText}
+              >
+                <MeditationFrontMatter introduction={savedIntroductionForPrint} />
+              </MeditationPrintCover>
               <article className="journal-meditations__compilation journal-meditations__compilation--print">
                 {printEntries.map((entry) => (
                   <section key={`print-${entry.id}`} className="journal-meditations__section">
@@ -440,6 +546,19 @@ const JournalMeditations = () => {
           </Link>
         )}
       </main>
+
+      {bookModalOpen && showCompilation && (
+        <MeditationBookModal
+          title={frontMatter.title}
+          authorName={frontMatter.authorName}
+          introduction={frontMatter.introduction}
+          status={frontMatterStatus === 'idle' ? 'loading' : frontMatterStatus}
+          saving={savingIntroduction}
+          titleUsesDefault={frontMatter.titleUsesDefault}
+          onClose={() => setBookModalOpen(false)}
+          onPdfAction={handleBookPdf}
+        />
+      )}
 
       {entryPendingRemove && (
         <JournalConfirmModal
