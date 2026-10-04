@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
@@ -303,6 +304,9 @@ const JournalMeditations = () => {
       const saved = await saveFrontMatter(patch);
       if (!saved) return;
     }
+    flushSync(() => {
+      setBookModalOpen(false);
+    });
     handlePrint();
   };
 

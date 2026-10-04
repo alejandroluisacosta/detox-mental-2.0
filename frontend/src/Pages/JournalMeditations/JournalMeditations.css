@@ -286,6 +286,7 @@
   .journal-meditations__write-button,
   .journal-meditations__empty,
   .journal-meditations__compilation--screen,
+  .journal-page--meditations .modal-overlay,
   .demo-mode-toggle {
     display: none !important;
   }

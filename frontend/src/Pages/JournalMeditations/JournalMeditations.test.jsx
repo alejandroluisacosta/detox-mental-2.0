@@ -632,6 +632,29 @@ describe('JournalMeditations print export', () => {
     );
   });
 
+  test('PDF prints the entries without the Book dialog in the document', async () => {
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
+
+    renderMeditations();
+    await waitFor(() => {
+      expect(within(screenFeed()).getByText('Newer meditation text.')).toBeTruthy();
+    });
+
+    await openBookModal();
+    let bookDialogDuringPrint = 'print-not-called';
+    vi.mocked(window.print).mockImplementation(() => {
+      bookDialogDuringPrint = screen.queryByRole('dialog', { name: 'Book' });
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: pdfButtonName }));
+    expect(window.print).toHaveBeenCalledTimes(1);
+    expect(bookDialogDuringPrint).toBeNull();
+    const printRoot = document.querySelector('.journal-meditations__print-root');
+    expect(printRoot.textContent).toContain('Older meditation text.');
+    expect(printRoot.textContent).toContain('Newer meditation text.');
+  });
+
   test('orders print-only content oldest first while screen feed stays newest first', async () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
     installMeditationsApiMock({ entries: [newerMeditationEntry, olderMeditationEntry] });
