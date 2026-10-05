@@ -98,13 +98,81 @@ describe('Navigation', () => {
         renderNav();
         openMenu();
 
-        const menu = document.querySelector('.navigation__menu-links');
-        const controls = [...menu.querySelectorAll('button')];
-        const homeIndex = controls.findIndex((button) => button.getAttribute('aria-label') === 'Home');
+        const controls = [...screen.getByRole('dialog', { name: 'Menu' }).querySelectorAll('button')];
+        const homeIndex = controls.findIndex((button) => button.textContent === 'Home');
         const journalIndex = controls.findIndex((button) => button.textContent === 'JOURNAL');
 
-        expect(homeIndex).toBe(0);
+        expect(homeIndex).toBeGreaterThanOrEqual(0);
         expect(journalIndex).toBeGreaterThan(homeIndex);
+    });
+
+    test('opens the drawer from the floating button and hides that button meanwhile', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/theory' });
+        renderNav();
+
+        expect(screen.queryByRole('dialog')).toBeNull();
+        openMenu();
+
+        expect(screen.getByRole('dialog', { name: 'Menu' })).toBeTruthy();
+        expect(screen.queryByRole('button', { name: 'Open menu' })).toBeNull();
+    });
+
+    test.each([
+        ['the close button', () => fireEvent.click(screen.getByRole('button', { name: 'Close' }))],
+        ['the Escape key', () => fireEvent.keyDown(document, { key: 'Escape' })],
+        ['a click on the scrim', () => fireEvent.click(document.querySelector('.navigation__scrim'))],
+    ])('closes the drawer with %s and brings the floating button back', (_label, close) => {
+        mockUseLocation.mockReturnValue({ pathname: '/theory' });
+        renderNav();
+        openMenu();
+
+        close();
+        fireEvent.animationEnd(screen.getByRole('dialog', { name: 'Menu' }));
+
+        expect(screen.queryByRole('dialog')).toBeNull();
+        expect(screen.getByRole('button', { name: 'Open menu' })).toBeTruthy();
+    });
+
+    test('marks only the current route as the current page', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/session/3' });
+        renderNav();
+        openMenu();
+
+        expect(screen.getByRole('button', { name: 'COURSE' })).toHaveAttribute('aria-current', 'page');
+        expect(screen.getByRole('button', { name: 'TESTS' })).not.toHaveAttribute('aria-current');
+    });
+
+    test('navigates to the chosen link and closes the drawer', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/theory' });
+        renderNav();
+        openMenu();
+
+        fireEvent.click(screen.getByRole('button', { name: 'TESTS' }));
+        fireEvent.animationEnd(screen.getByRole('dialog', { name: 'Menu' }));
+
+        expect(mockNavigate).toHaveBeenCalledWith('/tests');
+        expect(screen.queryByRole('dialog')).toBeNull();
+    });
+
+    test('lets the user switch between the education and journaling modules', () => {
+        mockUseLocation.mockReturnValue({ pathname: '/theory' });
+        renderNav();
+        openMenu();
+
+        expect(screen.getByRole('button', { name: 'Education' })).toHaveAttribute('aria-pressed', 'true');
+        expect(screen.getByRole('button', { name: 'Journaling' })).toHaveAttribute('aria-pressed', 'false');
+
+        fireEvent.click(screen.getByRole('button', { name: 'Journaling' }));
+        expect(mockNavigate).toHaveBeenCalledWith('/journal');
+        cleanup();
+
+        mockUseLocation.mockReturnValue({ pathname: '/journal/history' });
+        renderNav();
+        openMenu();
+
+        expect(screen.getByRole('button', { name: 'Journaling' })).toHaveAttribute('aria-pressed', 'true');
+        fireEvent.click(screen.getByRole('button', { name: 'Education' }));
+        expect(mockNavigate).toHaveBeenCalledWith('/theory');
     });
 
     test('switches journaling labels from English to Spanish with the flag controls', () => {
