@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LocaleProvider } from '../../Context/LocaleContext.jsx';
@@ -188,4 +190,21 @@ describe('Navigation', () => {
             'true',
         );
     });
+
+    test.each(['/theory', '/journal'])(
+        'every icon shown on %s points to an SVG file that exists in public',
+        (pathname) => {
+            mockUseLocation.mockReturnValue({ pathname });
+            renderNav();
+            openMenu();
+
+            const icons = [...screen.getByRole('dialog', { name: 'Menu' }).querySelectorAll('.navigation__icon')];
+            expect(icons.length).toBe(7);
+            icons.forEach((icon) => {
+                const url = icon.getAttribute('style').match(/url\((\/[^)]+\.svg)\)/)?.[1];
+                expect(url, icon.outerHTML).toBeTruthy();
+                expect(existsSync(join(process.cwd(), 'public', url)), url).toBe(true);
+            });
+        },
+    );
 });

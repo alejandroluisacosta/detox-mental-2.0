@@ -20,34 +20,12 @@ const MODULE_OPTIONS = [
     { module: 'journaling', labelKey: 'nav.moduleJournaling', path: '/journal' },
 ];
 
-const ICON_PATHS = {
-    home: ['M3 11l9-8 9 8', 'M5 10v10h14V10'],
-    '/theory': ['M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z', 'M4 21a2 2 0 0 1 2-2h13'],
-    '/course': ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M10 8.5l5 3.5-5 3.5z'],
-    '/tests': ['M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z', 'M8.5 12.5l2.5 2.5 4.5-5'],
-    '/instructions': ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M12 11v5', 'M12 8h.01'],
-    '/journal': ['M4 20h4L19 9l-4-4L4 16z', 'M13.5 6.5l4 4'],
-    '/journal/history': ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M12 7v5l3 2'],
-    '/journal/meditations': ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z'],
-    '/journal/summary': ['M5 20V10', 'M12 20V4', 'M19 20v-7'],
-    account: ['M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', 'M4 21a8 8 0 0 1 16 0'],
-};
-
 const NavIcon = ({ name }) => (
-    <svg
+    <span
         className='navigation__icon'
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='1.8'
-        strokeLinecap='round'
-        strokeLinejoin='round'
+        style={{ '--navigation-icon': `url(/images/nav/${name}.svg)` }}
         aria-hidden='true'
-    >
-        {(ICON_PATHS[name] ?? []).map((d) => (
-            <path key={d} d={d} />
-        ))}
-    </svg>
+    />
 );
 
 const Navigation = () => {
@@ -60,7 +38,6 @@ const Navigation = () => {
     const moduleLinks = navModule === 'journaling' ? JOURNALING_LINKS : EDUCATIONAL_LINKS;
     const mainLinks = moduleLinks.map((link) => ({
         ...link,
-        icon: link.path,
         label: t(link.labelKey),
         isActive: link.isActive(location.pathname),
     }));
@@ -144,18 +121,7 @@ const Navigation = () => {
                                 onClick={closeMenu}
                                 aria-label={t('nav.close')}
                             >
-                                <svg
-                                    className='navigation__icon'
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    stroke='currentColor'
-                                    strokeWidth='2'
-                                    strokeLinecap='round'
-                                    aria-hidden='true'
-                                >
-                                    <path d='M6 6l12 12' />
-                                    <path d='M18 6L6 18' />
-                                </svg>
+                                <NavIcon name='close' />
                             </button>
                         </div>
                         <div className='navigation__segmented'>
