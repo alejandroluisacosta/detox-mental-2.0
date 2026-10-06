@@ -1,5 +1,7 @@
-import sessionsData from "./sessions";
 import codes from "./codes.json";
-import { thoughtsTests } from "./thoughtsTests";
+import { getSessions, getTests, getTheory } from "./content/index.js";
 
-export { sessionsData, codes, thoughtsTests };
+const sessionsData = getSessions();
+const thoughtsTests = getTests();
+
+export { sessionsData, codes, thoughtsTests, getSessions, getTests, getTheory };

@@ -1,19 +1,21 @@
 import { useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
-import { thoughtsTests } from '../../data';
+import { useLocale } from '../../Context/LocaleContext.jsx';
+import { useTestsCatalog } from '../../utils/localizedContent.js';
 import './Tests.css';
 
 const Tests = () => {
   const navigate = useNavigate();
-  const tests = Object.values(thoughtsTests);
+  const { t } = useLocale();
+  const tests = Object.values(useTestsCatalog());
 
   return (
     <div className='tests-page'>
       <Navigation />
       <main className='tests-page__content'>
         <header className='tests-page__header'>
-          <h1 className='tests-page__title'>Tests de pensamientos</h1>
-          <p className='tests-page__subtitle'>Aprende sobre tu mente</p>
+          <h1 className='tests-page__title'>{t('tests.title')}</h1>
+          <p className='tests-page__subtitle'>{t('tests.subtitle')}</p>
         </header>
 
         <div className='tests-page__grid'>

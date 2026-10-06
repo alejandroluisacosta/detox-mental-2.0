@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext.jsx";
+import { useLocale } from "../../Context/LocaleContext.jsx";
 import { subscribeToast } from "../../lib/toastBus.js";
 import "./AuthSessionToast.css";
 
@@ -14,19 +15,14 @@ const FADE_IN_MS = 750;
 const HOLD_MS = 1250;
 const FADE_OUT_MS = 750;
 
-const DEBUG_PLACEHOLDER = (
-  <>
-    Sesión iniciada como <strong>ejemplo@correo.com</strong>
-  </>
-);
+const DEBUG_PLACEHOLDER_EMAIL = "ejemplo@correo.com";
 
 /** Avoid duplicate toast in React Strict Mode (effects run twice in dev). */
 let lastAuthSuccessUrlKey = null;
 
 export default function AuthSessionToast() {
-  const [content, setContent] = useState(
-    DEBUG_TOAST_PINNED ? DEBUG_PLACEHOLDER : null,
-  );
+  const { t } = useLocale();
+  const [content, setContent] = useState(null);
   const [visible, setVisible] = useState(DEBUG_TOAST_PINNED);
   const timersRef = useRef([]);
   const [searchParams] = useSearchParams();
@@ -54,6 +50,15 @@ export default function AuthSessionToast() {
     timersRef.current = [t1, t2];
   }, []);
 
+  useEffect(() => {
+    if (!DEBUG_TOAST_PINNED) return;
+    showToast(
+      <>
+        {t('auth.signedInAs')} <strong>{DEBUG_PLACEHOLDER_EMAIL}</strong>
+      </>,
+    );
+  }, [showToast, t]);
+
   useEffect(() => () => clearTimers(), []);
 
   useEffect(() => {
@@ -74,7 +79,7 @@ export default function AuthSessionToast() {
 
     showToast(
       <>
-        Sesión iniciada como <strong>{user.email}</strong>
+        {t('auth.signedInAs')} <strong>{user.email}</strong>
       </>,
     );
     const next = new URLSearchParams(searchParams);
@@ -84,7 +89,7 @@ export default function AuthSessionToast() {
       { pathname: location.pathname, search: search ? `?${search}` : "" },
       { replace: true },
     );
-  }, [searchParams, location.pathname, user, status, navigate, showToast]);
+  }, [searchParams, location.pathname, user, status, navigate, showToast, t]);
 
   if (content == null) return null;
 

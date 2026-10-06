@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
+import { useLocale } from "../../Context/LocaleContext.jsx";
 import "../Auth/AuthPages.css";
 import "./PaymentPages.css";
 
 export default function PaymentSuccess() {
+  const { t } = useLocale();
+
   return (
     <div className="payment-page auth-page">
       <div className="payment-card auth-card">
@@ -14,22 +17,20 @@ export default function PaymentSuccess() {
           <span className="payment-success__spark payment-success__spark--5" />
         </div>
 
-        <h1 className="payment-page__title auth-page__title">Pago completado</h1>
+        <h1 className="payment-page__title auth-page__title">{t('payment.successTitle')}</h1>
         <p className="payment-page__subtitle auth-page__subtitle">
-          Gracias por confiar en Detox Mental. Tu compra se ha procesado correctamente y ya
-          tienes acceso al curso completo.
+          {t('payment.successSubtitle')}
         </p>
         <p className="payment-page__status">
-          Si no ves todas las sesiones desbloqueadas al instante cuando vuelvas al curso, por
-          favor recarga la página.
+          {t('payment.successStatus')}
         </p>
 
         <div className="payment-page__actions">
           <Link className="payment-page__button payment-page__button--course" to="/course">
-            Ir al curso
+            {t('payment.goToCourse')}
           </Link>
         </div>
-        <p className="payment-page__hint">Te enviaremos recibo desde Stripe a tu correo.</p>
+        <p className="payment-page__hint">{t('payment.receiptHint')}</p>
       </div>
     </div>
   );

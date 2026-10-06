@@ -38,6 +38,15 @@ describe('translateBlogCategory', () => {
 
 describe('catalogs', () => {
   test('English and Spanish catalogs share the same keys', () => {
-    expect(Object.keys(catalogs.en).sort()).toEqual(Object.keys(catalogs.es).sort());
+    const enKeys = Object.keys(catalogs.en).sort();
+    const esKeys = Object.keys(catalogs.es).sort();
+    const missingInEs = enKeys.filter((key) => !Object.hasOwn(catalogs.es, key));
+    const missingInEn = esKeys.filter((key) => !Object.hasOwn(catalogs.en, key));
+
+    expect({ missingInEs, missingInEn }).toEqual({
+      missingInEs: [],
+      missingInEn: [],
+    });
+    expect(enKeys).toEqual(esKeys);
   });
 });

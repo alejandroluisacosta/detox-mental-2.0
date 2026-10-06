@@ -1,3 +1,6 @@
-export const THEORY_TITLE = 'Cómo limpiar tu mente en 5 pasos';
-export const THEORY_SUBTITLE =
-  'La estrategia para reducir tu estrés de forma sencilla y segura';
+import { getTheory } from './content/index.js';
+
+const theory = getTheory('es');
+
+export const THEORY_TITLE = theory.title;
+export const THEORY_SUBTITLE = theory.subtitle;

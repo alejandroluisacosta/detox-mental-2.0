@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import CloseIcon from '../CloseIcon/CloseIcon';
+import { useLocale } from '../../Context/LocaleContext.jsx';
 import './ExerciseModal.css';
 
 const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheckAnswer }) => {
@@ -8,6 +9,7 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheck
     const [isExerciseBlocked, setIsExerciseBlocked] = useState(exercise.isBlocked);
     const [userInput, setUserInput] = useState('');
     const [errorCount, setErrorCount] = useState(0);
+    const { t } = useLocale();
 
     const handleInputChange = ({ target }) => {
         setUserInput(target.value.toUpperCase());
@@ -36,7 +38,7 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheck
         <div className='modal-overlay'>
             <form className={formClass} key={errorCount} onSubmit={handleUnblockSession}>
                 <CloseIcon handleCloseModal={handleCloseModal}/>
-                <h2 className="exercise-modal__title">{`Ejercicio #${exerciseId}`}</h2>
+                <h2 className="exercise-modal__title">{t('session.exerciseTitle', { id: exerciseId })}</h2>
                 {isExerciseBlocked ? 
                 <div className="exercise-modal__unblock-container">
                     <p className="exercise-modal__question">{exercise.question}</p>
@@ -47,14 +49,14 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheck
                             role="alert"
                             aria-live="assertive"
                         >
-                            Respuesta incorrecta
+                            {t('session.wrongAnswer')}
                         </p>
                     )}
                     <input
                         type="text"
                         id="exercise-answer-input"
                         className="exercise-modal__input"
-                        placeholder="Tu respuesta"
+                        placeholder={t('session.answerPlaceholder')}
                         value={userInput}
                         onChange={handleInputChange}
                         maxLength={18}
@@ -63,14 +65,14 @@ const ExerciseModal = ({ setOpenExerciseModal, exercise, exerciseId, handleCheck
                         aria-invalid={errorCount > 0}
                         aria-describedby={errorCount > 0 ? 'exercise-answer-error' : undefined}
                     />
-                    <button className="exercise-modal__button" type="submit">DESBLOQUEAR</button>
+                    <button className="exercise-modal__button" type="submit">{t('session.unlock')}</button>
                 </div>
                 :
                 <div className='exercise-modal__exercise-text'>
                     <ReactMarkdown>{exercise.text}</ReactMarkdown>
                 </div>
                 }
-                <span className="exercise-modal__close-text" onClick={handleCloseModal}>Cerrar</span>
+                <span className="exercise-modal__close-text" onClick={handleCloseModal}>{t('session.close')}</span>
             </form>
         </div>
     )

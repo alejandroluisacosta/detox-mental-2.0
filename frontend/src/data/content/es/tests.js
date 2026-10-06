@@ -1,0 +1,709 @@
+// Spanish source copy. Do not change wording here unless the Spanish product copy changes.
+export const testsCopy = {
+  "stressing-thoughts-1": {
+    "id": "stressing-thoughts-1",
+    "title": "Pensamientos estresantes",
+    "intro": "Hola de nuevo. Bienvenido/a al primer test sobre pensamientos estresantes. No hay respuestas correctas ni incorrectas: solo elige lo que más se parezca a tu experiencia.",
+    "questions": [
+      {
+        "id": "frequency",
+        "type": "chips",
+        "prompt": "Para empezar, ¿con qué frecuencia aparecen estos pensamientos?",
+        "options": [
+          {
+            "id": "constantly",
+            "label": "Casi todo el día"
+          },
+          {
+            "id": "daily",
+            "label": "Varias veces al día"
+          },
+          {
+            "id": "sometimes",
+            "label": "Algunas veces por semana"
+          },
+          {
+            "id": "rarely",
+            "label": "De vez en cuando"
+          }
+        ]
+      },
+      {
+        "id": "moment",
+        "type": "chips",
+        "prompt": "¿En qué momento suelen aparecer con más fuerza?",
+        "options": [
+          {
+            "id": "morning",
+            "label": "Al despertar"
+          },
+          {
+            "id": "work",
+            "label": "Mientras trabajo o estudio"
+          },
+          {
+            "id": "night",
+            "label": "Por la noche, antes de dormir"
+          },
+          {
+            "id": "alone",
+            "label": "Cuando estoy a solas"
+          }
+        ]
+      },
+      {
+        "id": "theme",
+        "type": "chips",
+        "prompt": "¿Sobre qué tratan principalmente?",
+        "options": [
+          {
+            "id": "future",
+            "label": "El futuro y lo que podría salir mal"
+          },
+          {
+            "id": "past",
+            "label": "Cosas del pasado que repaso una y otra vez"
+          },
+          {
+            "id": "self",
+            "label": "Lo que pienso sobre mí mismo/a"
+          },
+          {
+            "id": "others",
+            "label": "Mi relación con otras personas"
+          }
+        ]
+      },
+      {
+        "id": "impact",
+        "type": "chips",
+        "prompt": "¿Cómo afectan tu día a día?",
+        "options": [
+          {
+            "id": "sleep",
+            "label": "Me cuesta dormir o descansar"
+          },
+          {
+            "id": "focus",
+            "label": "Me cuesta concentrarme"
+          },
+          {
+            "id": "mood",
+            "label": "Afectan mi estado de ánimo"
+          },
+          {
+            "id": "manage",
+            "label": "Los noto, pero logro seguir adelante"
+          }
+        ]
+      }
+    ],
+    "coursePromo": {
+      "title": "El curso Detox Mental",
+      "paragraph": "Estos pensamientos no tienen por qué controlarte. En el curso aprenderás, paso a paso, a tomar distancia de tu mente y a recuperar la calma.",
+      "buttonLabel": "Ir al curso"
+    },
+    "journalingPrompt": "Gracias por tu sinceridad. Te propongo escribir sobre lo siguiente: escribe durante 5 minutos sobre ese pensamiento que más estrés te genera, como si se lo contaras a alguien de total confianza. No lo juzgues, solo descríbelo. Al terminar, pregúntate: ¿qué parte de esto depende realmente de mí?",
+    "recommendationMessage": "Basado en tus respuestas, te recomiendo el siguiente test:"
+  },
+  "mind-voice": {
+    "id": "mind-voice",
+    "title": "La voz de tu mente",
+    "intro": "Nuestra mente puede hablarnos de muchas maneras: a veces nos anima, otras nos protege y, en ocasiones, se convierte en nuestra mayor crítica. En las siguientes situaciones, elige la opción que más se parezca a lo que suele ocurrir en tu cabeza. No hay respuestas correctas o incorrectas.",
+    "questions": [
+      {
+        "id": "mistake",
+        "type": "chips",
+        "prompt": "Cometes un error delante de otras personas. Antes de que nadie diga nada, ¿qué suele decirte tu mente?",
+        "options": [
+          {
+            "id": "critic_1",
+            "label": "\"¿Cómo has podido hacer esto?\""
+          },
+          {
+            "id": "critic_2",
+            "label": "\"Qué raro tú cometiendo errores...\""
+          },
+          {
+            "id": "catastrophe_1",
+            "label": "\"Seguro que ahora pensarán peor de ti\""
+          },
+          {
+            "id": "catastrophe_2",
+            "label": "\"Qué vergüenza, estoy quedando mal frente a estas personas\""
+          },
+          {
+            "id": "learn",
+            "label": "\"Seguro que al menos puedes aprender de esto\""
+          },
+          {
+            "id": "critical_parent",
+            "label": "Escucho la voz de mi padre/madre criticándome"
+          },
+          {
+            "id": "minimize",
+            "label": "\"No pasa nada. Todo el mundo comete errores\""
+          }
+        ]
+      },
+      {
+        "id": "waiting",
+        "type": "chips",
+        "prompt": "Envías un mensaje importante y pasan varias horas sin respuesta. ¿Cuál es el primer discurso que suele aparecer en tu mente?",
+        "options": [
+          {
+            "id": "blame_self",
+            "label": "\"Seguro que he dicho algo mal\""
+          },
+          {
+            "id": "assume_problem",
+            "label": "\"Algo pasa. Esto no es buena señal\""
+          },
+          {
+            "id": "neutral",
+            "label": "\"Ya responderá cuando pueda\""
+          },
+          {
+            "id": "loop",
+            "label": "Le doy vueltas a lo que tuve que haber dicho y a los errores que pude haber cometido"
+          }
+        ]
+      },
+      {
+        "id": "success",
+        "type": "chips",
+        "prompt": "Consigues algo que llevabas tiempo intentando. ¿Qué suele decirte tu mente poco después?",
+        "options": [
+          {
+            "id": "enjoy",
+            "label": "No pienso en ello demasiado. Disfruto el momento si puedo y poco más."
+          },
+          {
+            "id": "not_enough",
+            "label": "\"Tampoco es para tanto. Cualquiera podría haberlo conseguido\""
+          },
+          {
+            "id": "next_goal",
+            "label": "\"Bien... ¿y ahora qué sigue?\""
+          },
+          {
+            "id": "luck",
+            "label": "\"Fue suerte...\""
+          }
+        ]
+      },
+      {
+        "id": "future",
+        "type": "chips",
+        "prompt": "Tienes por delante una conversación importante. Mientras se acerca el momento, ¿qué suele hacer tu mente?",
+        "options": [
+          {
+            "id": "prepare",
+            "label": "Repasa con calma lo que quiero decir"
+          },
+          {
+            "id": "rehearse",
+            "label": "Ensaya la conversación una y otra vez en mi cabeza"
+          },
+          {
+            "id": "worst_case",
+            "label": "Empieza a imaginar lo que podría salir mal"
+          },
+          {
+            "id": "avoid_1",
+            "label": "Intenta no pensar en ello"
+          },
+          {
+            "id": "avoid_2",
+            "label": "Me distraigo con mi teléfono"
+          },
+          {
+            "id": "past_failures",
+            "label": "Recuerda situaciones similares del pasado donde las cosas han salido mal"
+          }
+        ]
+      },
+      {
+        "id": "identity",
+        "type": "chips",
+        "prompt": "Si tuvieras que resumir el tono con el que tu mente suele hablarte la mayor parte del tiempo, ¿cuál elegirías?",
+        "options": [
+          {
+            "id": "judge",
+            "label": "Exigente y crítica"
+          },
+          {
+            "id": "coach",
+            "label": "Me apoyo a mí mismo/a y busco avanzar"
+          },
+          {
+            "id": "alarm",
+            "label": "Preocupada y siempre pendiente de lo que podría salir mal"
+          },
+          {
+            "id": "chaotic",
+            "label": "Cambia constantemente de una preocupación a otra"
+          },
+          {
+            "id": "aggressive",
+            "label": "Agresiva y poco paciente conmigo mismo/a"
+          },
+          {
+            "id": "relaxed",
+            "label": "Tranquila y comprensiva. No me exijo demasiado"
+          },
+          {
+            "id": "demanding",
+            "label": "Insatisfecha con todo lo que hago y siempre pidiendo más"
+          }
+        ]
+      }
+    ],
+    "coursePromo": {
+      "title": "El curso Detox Mental",
+      "paragraph": "Estos pensamientos no tienen por qué controlarte. En el curso aprenderás, paso a paso, a tomar distancia de tu mente y a recuperar la calma.",
+      "buttonLabel": "Ir al curso"
+    },
+    "journalingPrompt": "Bien. Te propongo lo siguiente: durante los próximos 5 minutos, escribe acerca de algunas frases que recuerdes haber pensado y responde a las siguientes preguntas: «Si estas palabras vinieran de otra persona, ¿cómo me harían sentir? ¿Le hablaría yo así a alguien a quien quiero?»",
+    "recommendationMessage": null
+  },
+  "future-thoughts-1": {
+    "id": "future-thoughts-1",
+    "title": "Pensamientos del futuro",
+    "intro": "Vamos a explorar esos pensamientos sobre el futuro que te generan estrés. Responde con sinceridad: solo elige lo que más se parezca a tu experiencia.",
+    "questions": [
+      {
+        "id": "scenario",
+        "type": "chips",
+        "prompt": "Cuando piensas en el futuro, ¿qué tipo de escenario sueles imaginar?",
+        "options": [
+          {
+            "id": "catastrophe",
+            "label": "Lo peor que podría pasar"
+          },
+          {
+            "id": "uncertainty",
+            "label": "No sé qué va a pasar y eso me inquieta"
+          },
+          {
+            "id": "losing",
+            "label": "Perder algo o a alguien importante"
+          },
+          {
+            "id": "failing",
+            "label": "No estar a la altura o fracasar"
+          }
+        ]
+      },
+      {
+        "id": "area",
+        "type": "chips",
+        "prompt": "¿En qué área se concentran más esas preocupaciones?",
+        "options": [
+          {
+            "id": "money",
+            "label": "Dinero y trabajo"
+          },
+          {
+            "id": "health",
+            "label": "Salud, mía o de los míos"
+          },
+          {
+            "id": "relationships",
+            "label": "Mis relaciones"
+          },
+          {
+            "id": "purpose",
+            "label": "Mi rumbo o propósito en la vida"
+          }
+        ]
+      },
+      {
+        "id": "likelihood",
+        "type": "chips",
+        "prompt": "Cuando imaginas ese escenario, ¿qué tan probable sientes que es?",
+        "options": [
+          {
+            "id": "certain",
+            "label": "Siento que va a pasar seguro"
+          },
+          {
+            "id": "likely",
+            "label": "Muy probable"
+          },
+          {
+            "id": "maybe",
+            "label": "Tal vez, pero no estoy seguro/a"
+          },
+          {
+            "id": "unlikely",
+            "label": "Sé que es poco probable, pero igual lo pienso"
+          }
+        ]
+      },
+      {
+        "id": "reaction",
+        "type": "chips",
+        "prompt": "¿Qué sueles hacer cuando aparece esa preocupación?",
+        "options": [
+          {
+            "id": "overplan",
+            "label": "Planifico todo en exceso"
+          },
+          {
+            "id": "avoid",
+            "label": "La evito o me distraigo"
+          },
+          {
+            "id": "spiral",
+            "label": "Le doy vueltas sin parar"
+          },
+          {
+            "id": "freeze",
+            "label": "Me bloqueo y no hago nada"
+          }
+        ]
+      }
+    ],
+    "coursePromo": {
+      "title": "El curso Detox Mental",
+      "paragraph": "Estos pensamientos no tienen por qué controlarte. En el curso aprenderás, paso a paso, a tomar distancia de tu mente y a recuperar la calma.",
+      "buttonLabel": "Ir al curso"
+    },
+    "journalingPrompt": "Te propongo escribir sobre lo siguiente: escribe con todo detalle el escenario futuro que más temes. Cuando termines, léelo y pregúntate: ¿qué partes dependen de mí y qué pequeño paso podría dar hoy respecto a ellas?",
+    "recommendationMessage": null
+  },
+  "past-thoughts-1": {
+    "id": "past-thoughts-1",
+    "title": "Pensamientos del pasado",
+    "intro": "Vamos a mirar esos pensamientos sobre el pasado que vuelven una y otra vez. No hay respuestas correctas: solo elige lo que más se parezca a tu experiencia.",
+    "questions": [
+      {
+        "id": "kind",
+        "type": "chips",
+        "prompt": "Cuando piensas en el pasado, ¿qué es lo que más se repite?",
+        "options": [
+          {
+            "id": "regret",
+            "label": "Algo que hice y de lo que me arrepiento"
+          },
+          {
+            "id": "omission",
+            "label": "Algo que no hice y debí hacer"
+          },
+          {
+            "id": "replay",
+            "label": "Una escena que reproduzco una y otra vez"
+          },
+          {
+            "id": "hurt",
+            "label": "Algo que alguien me hizo"
+          }
+        ]
+      },
+      {
+        "id": "emotion",
+        "type": "chips",
+        "prompt": "¿Qué emoción acompaña a esos recuerdos?",
+        "options": [
+          {
+            "id": "guilt",
+            "label": "Culpa"
+          },
+          {
+            "id": "shame",
+            "label": "Vergüenza"
+          },
+          {
+            "id": "anger",
+            "label": "Rabia o resentimiento"
+          },
+          {
+            "id": "sadness",
+            "label": "Tristeza o nostalgia"
+          }
+        ]
+      },
+      {
+        "id": "trigger",
+        "type": "chips",
+        "prompt": "¿Qué suele traer esos recuerdos de vuelta?",
+        "options": [
+          {
+            "id": "places",
+            "label": "Lugares o fechas concretas"
+          },
+          {
+            "id": "people",
+            "label": "Ciertas personas"
+          },
+          {
+            "id": "quiet",
+            "label": "Los momentos de silencio"
+          },
+          {
+            "id": "nothing",
+            "label": "Aparecen sin un motivo claro"
+          }
+        ]
+      },
+      {
+        "id": "selftalk",
+        "type": "chips",
+        "prompt": "Cuando recuerdas eso, ¿cómo te hablas a ti mismo/a?",
+        "options": [
+          {
+            "id": "harsh",
+            "label": "Me critico con dureza"
+          },
+          {
+            "id": "whatif",
+            "label": "Pienso en lo que hubiera pasado si..."
+          },
+          {
+            "id": "stuck",
+            "label": "Siento que no puedo pasar página"
+          },
+          {
+            "id": "kind",
+            "label": "Intento entenderme, aunque me cuesta"
+          }
+        ]
+      }
+    ],
+    "coursePromo": {
+      "title": "El curso Detox Mental",
+      "paragraph": "Estos pensamientos no tienen por qué controlarte. En el curso aprenderás, paso a paso, a tomar distancia de tu mente y a recuperar la calma.",
+      "buttonLabel": "Ir al curso"
+    },
+    "journalingPrompt": "Te propongo escribir sobre lo siguiente: escribe esa historia del pasado como si se la contaras a un buen amigo, sin juzgarte. Al terminar, pregúntate: ¿qué aprendí de aquello y qué me gustaría poder soltar?",
+    "recommendationMessage": null
+  },
+  "personal-thoughts-1": {
+    "id": "personal-thoughts-1",
+    "title": "Pensamientos sobre ti",
+    "intro": "Vamos a explorar esos pensamientos sobre ti mismo/a que te generan estrés. Responde con sinceridad: solo elige lo que más se parezca a tu experiencia.",
+    "questions": [
+      {
+        "id": "area",
+        "type": "chips",
+        "prompt": "¿Sobre qué aspecto de ti suelen tratar estos pensamientos?",
+        "options": [
+          {
+            "id": "worth",
+            "label": "Mi valía: si soy suficiente"
+          },
+          {
+            "id": "body",
+            "label": "Mi cuerpo o mi aspecto"
+          },
+          {
+            "id": "capability",
+            "label": "Mis capacidades y logros"
+          },
+          {
+            "id": "identity",
+            "label": "Quién soy o quién debería ser"
+          }
+        ]
+      },
+      {
+        "id": "voice",
+        "type": "chips",
+        "prompt": "¿Cómo suena esa voz interior cuando aparece?",
+        "options": [
+          {
+            "id": "critic",
+            "label": "Como un crítico que no perdona"
+          },
+          {
+            "id": "compare",
+            "label": "Comparándome con los demás"
+          },
+          {
+            "id": "fraud",
+            "label": "Diciéndome que soy un fraude"
+          },
+          {
+            "id": "demanding",
+            "label": "Exigiéndome cada vez más"
+          }
+        ]
+      },
+      {
+        "id": "frequency",
+        "type": "chips",
+        "prompt": "¿Con qué frecuencia escuchas esa voz?",
+        "options": [
+          {
+            "id": "constant",
+            "label": "Casi siempre está ahí"
+          },
+          {
+            "id": "daily",
+            "label": "Varias veces al día"
+          },
+          {
+            "id": "triggers",
+            "label": "Solo ante ciertas situaciones"
+          },
+          {
+            "id": "rarely",
+            "label": "De vez en cuando"
+          }
+        ]
+      },
+      {
+        "id": "effect",
+        "type": "chips",
+        "prompt": "¿Qué efecto tiene en cómo actúas?",
+        "options": [
+          {
+            "id": "avoid",
+            "label": "Evito retos por miedo a fallar"
+          },
+          {
+            "id": "overwork",
+            "label": "Me exijo demasiado para demostrar mi valía"
+          },
+          {
+            "id": "withdraw",
+            "label": "Me aíslo o me escondo"
+          },
+          {
+            "id": "manage",
+            "label": "La noto, pero sigo adelante"
+          }
+        ]
+      }
+    ],
+    "coursePromo": {
+      "title": "El curso Detox Mental",
+      "paragraph": "Estos pensamientos no tienen por qué controlarte. En el curso aprenderás, paso a paso, a tomar distancia de tu mente y a recuperar la calma.",
+      "buttonLabel": "Ir al curso"
+    },
+    "journalingPrompt": "Te propongo escribir sobre lo siguiente: escribe lo que esa voz interior te repite y, debajo, responde como le responderías a alguien a quien quieres. Al terminar, pregúntate: ¿le hablaría así a un buen amigo?",
+    "recommendationMessage": null
+  },
+  "relationship-thoughts-1": {
+    "id": "relationship-thoughts-1",
+    "title": "Pensamientos sobre otros",
+    "intro": "Vamos a mirar esos pensamientos sobre tu relación con otras personas que te generan estrés. No hay respuestas correctas: solo elige lo que más se parezca a tu experiencia.",
+    "questions": [
+      {
+        "id": "who",
+        "type": "chips",
+        "prompt": "¿Con quién tienen que ver principalmente estos pensamientos?",
+        "options": [
+          {
+            "id": "partner",
+            "label": "Mi pareja"
+          },
+          {
+            "id": "family",
+            "label": "Mi familia"
+          },
+          {
+            "id": "friends",
+            "label": "Amistades"
+          },
+          {
+            "id": "work",
+            "label": "Personas del trabajo o estudio"
+          }
+        ]
+      },
+      {
+        "id": "worry",
+        "type": "chips",
+        "prompt": "¿Qué es lo que más te preocupa en esas relaciones?",
+        "options": [
+          {
+            "id": "judgement",
+            "label": "Que me juzguen o piensen mal de mí"
+          },
+          {
+            "id": "conflict",
+            "label": "Los conflictos o las discusiones"
+          },
+          {
+            "id": "rejection",
+            "label": "Que me dejen de lado o me rechacen"
+          },
+          {
+            "id": "comparison",
+            "label": "Compararme con los demás"
+          }
+        ]
+      },
+      {
+        "id": "pattern",
+        "type": "chips",
+        "prompt": "¿Qué sueles hacer cuando aparece esa preocupación?",
+        "options": [
+          {
+            "id": "please",
+            "label": "Intento complacer a todos"
+          },
+          {
+            "id": "overthink",
+            "label": "Analizo cada palabra o gesto"
+          },
+          {
+            "id": "avoid",
+            "label": "Evito a la persona o la situación"
+          },
+          {
+            "id": "react",
+            "label": "Reacciono y luego me arrepiento"
+          }
+        ]
+      },
+      {
+        "id": "aftermath",
+        "type": "chips",
+        "prompt": "Después de una interacción difícil, ¿cómo te quedas?",
+        "options": [
+          {
+            "id": "replay",
+            "label": "Repaso la conversación una y otra vez"
+          },
+          {
+            "id": "guilt",
+            "label": "Con culpa por lo que dije o no dije"
+          },
+          {
+            "id": "resentment",
+            "label": "Con rabia o resentimiento"
+          },
+          {
+            "id": "calm",
+            "label": "Algo incómodo/a, pero lo dejo ir"
+          }
+        ]
+      }
+    ],
+    "coursePromo": {
+      "title": "El curso Detox Mental",
+      "paragraph": "Estos pensamientos no tienen por qué controlarte. En el curso aprenderás, paso a paso, a tomar distancia de tu mente y a recuperar la calma.",
+      "buttonLabel": "Ir al curso"
+    },
+    "journalingPrompt": "Te propongo escribir sobre lo siguiente: escribe sobre esa relación que te genera estrés, describiendo lo que sientes sin culpar a nadie. Al terminar, pregúntate: ¿qué necesito de verdad en este vínculo y cómo podría expresarlo?",
+    "recommendationMessage": null
+  }
+};
+
+export const loadingQuotes = [
+  "Una vida sin examinar no merece ser vivida.\n\n- Sócrates.",
+  "Pienso, luego existo.\n\n- René Descartes.",
+  "¿Ya escribiste hoy?",
+  "Escribir lo que te pasa por la mente te alivia momentáneamente.",
+  "La perfección se alcanza no cuando no hay nada más que añadir, sino cuando no hay nada más que quitar. \n\n- Antoine de Saint-Exupéry.",
+];
+
+export const journalAcknowledgments = [
+  "Me alegra que hayas podido escribir sobre esto. Espero que te haya ayudado.",
+  "Bien, espero que escribir sobre el tema te haya ayudado a liberar un poco de estrés.",
+  "Escribir es mágico. Espero que te haya ayudado.",
+  "Qué bueno que te animaste a escribir. Un paso al frente para tu salud mental.",
+];

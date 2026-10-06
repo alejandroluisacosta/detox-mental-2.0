@@ -1,16 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import { useLocale } from "../../Context/LocaleContext.jsx";
 import "./Onboarding.css";
 
 const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || "http://localhost:3000/chat";
-
-const ROLE_LABLES = {
-  user: "Tú",
-  assistant: "Tales",
-};
-
-const getRoleLabel = (role) => ROLE_LABLES[role] ?? "Tales";
 
 const onboardingMarkdownComponents = {
   a: ({ href, children, ...props }) => (
@@ -21,6 +15,7 @@ const onboardingMarkdownComponents = {
 };
 
 export default function Onboarding() {
+  const { locale, t } = useLocale();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,7 +61,7 @@ export default function Onboarding() {
       const res = await fetch(CHAT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: "", sessionState, chipId: chip.id }),
+        body: JSON.stringify({ message: "", sessionState, chipId: chip.id, locale }),
       });
 
       if (!res.ok) {
@@ -117,7 +112,7 @@ export default function Onboarding() {
       const res = await fetch(CHAT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userContent, sessionState }),
+        body: JSON.stringify({ message: userContent, sessionState, locale }),
       });
 
       if (!res.ok) {
@@ -154,7 +149,7 @@ export default function Onboarding() {
         const res = await fetch(CHAT_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: "", sessionState: null }),
+          body: JSON.stringify({ message: "", sessionState: null, locale }),
         });
 
         if (!res.ok) {
@@ -236,7 +231,7 @@ export default function Onboarding() {
     isFaqHub && challengeChip ? (
       <div className="onboarding__faq-hub-actions">
         {faqChips.length > 0 ? (
-          <div className="onboarding__chips onboarding__chips--faq" aria-label="Preguntas frecuentes">
+          <div className="onboarding__chips onboarding__chips--faq" aria-label={t('onboarding.faqAria')}>
             {faqChips.map((chip) => (
               <button
                 key={chip.id}
@@ -253,7 +248,7 @@ export default function Onboarding() {
         {challengePromptLabel ? (
           <p className="onboarding__challenge-prompt">{challengePromptLabel}</p>
         ) : null}
-        <div className="onboarding__challenge-chip-wrap" aria-label="Ir al desafío">
+        <div className="onboarding__challenge-chip-wrap" aria-label={t('onboarding.challengeAria')}>
           <button
             type="button"
             className="onboarding__chip onboarding__chip--challenge"
@@ -272,10 +267,10 @@ export default function Onboarding() {
         {messages.map((m, i) => (
           <div className={"onboarding__message-wrapper" + (m.role === "user" ? " user-message-wrapper" : "")} key={i}>
             {m.role === "assistant" && (
-              <img src="/images/thales.webp" alt="Tales" className="onboarding__message__avatar" />
+              <img src="/images/thales.webp" alt={t('onboarding.host')} className="onboarding__message__avatar" />
             )}
             <div className={"onboarding__message" + (m.role === "user" ? " user-message" : "")}>
-              <strong className="onboarding__message__role">{getRoleLabel(m.role)}:</strong>
+              <strong className="onboarding__message__role">{m.role === "user" ? t('onboarding.you') : t('onboarding.host')}:</strong>
               <div className={"onboarding__message__content"}>
                 {m.role === "assistant" ? (
                   <ReactMarkdown components={onboardingMarkdownComponents}>{m.content}</ReactMarkdown>
@@ -288,9 +283,9 @@ export default function Onboarding() {
         ))}
         {loading && (
           <div className="onboarding__message-wrapper">
-            <img src="/images/thales.webp" alt="Tales" className="onboarding__message__avatar" />
+            <img src="/images/thales.webp" alt={t('onboarding.host')} className="onboarding__message__avatar" />
             <div className="onboarding__message onboarding__message--loading">
-              <strong className="onboarding__message__role">{getRoleLabel("assistant")}:</strong>
+              <strong className="onboarding__message__role">{t('onboarding.host')}:</strong>
               <div className="onboarding__message__content">
                 <div className="onboarding__loading-indicator">
                   <span></span>
@@ -326,10 +321,10 @@ export default function Onboarding() {
             >
               <img
                 src="/icons/article.webp"
-                alt="Teoría"
+                alt={t('onboarding.theory')}
                 className="onboarding__exit-button__icon onboarding__exit-button__icon--article"
               />
-              <span className="onboarding__exit-button__label">TEORÍA</span>
+              <span className="onboarding__exit-button__label">{t('onboarding.theory')}</span>
             </div>
             <div
               className="onboarding__exit-button"
@@ -343,8 +338,8 @@ export default function Onboarding() {
                 }
               }}
             >
-              <img src="/icons/course.webp" alt="Test" className="onboarding__exit-button__icon" />
-              <span className="onboarding__exit-button__label">TEST</span>
+              <img src="/icons/course.webp" alt={t('onboarding.test')} className="onboarding__exit-button__icon" />
+              <span className="onboarding__exit-button__label">{t('onboarding.test')}</span>
             </div>
           </div>
         </div>
@@ -358,11 +353,11 @@ export default function Onboarding() {
               className="onboarding__input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Escribe tu respuesta"
+              placeholder={t('onboarding.answerPlaceholder')}
               disabled={loading}
             />
             <button className="onboarding__button" type="submit" disabled={loading}>
-              Enviar
+              {t('onboarding.send')}
             </button>
           </form>
         </div>
@@ -373,11 +368,11 @@ export default function Onboarding() {
             className="onboarding__input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Escribe tu respuesta"
+            placeholder={t('onboarding.answerPlaceholder')}
             disabled={loading}
           />
           <button className="onboarding__button" type="submit" disabled={loading}>
-            ENVIAR
+            {t('onboarding.sendUpper')}
           </button>
         </form>
       )}
