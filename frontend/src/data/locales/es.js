@@ -1,6 +1,9 @@
 export const es = {
   'nav.close': 'Cerrar',
   'nav.openMenu': 'Abrir menú',
+  'nav.menu': 'Menú',
+  'nav.moduleEducation': 'Educación',
+  'nav.moduleJournaling': 'Diario',
   'nav.home': 'Inicio',
   'nav.account': 'CUENTA',
   'nav.login': 'LOGIN',

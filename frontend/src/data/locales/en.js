@@ -1,6 +1,9 @@
 export const en = {
   'nav.close': 'Close',
   'nav.openMenu': 'Open menu',
+  'nav.menu': 'Menu',
+  'nav.moduleEducation': 'Education',
+  'nav.moduleJournaling': 'Journaling',
   'nav.home': 'Home',
   'nav.account': 'ACCOUNT',
   'nav.login': 'LOGIN',
