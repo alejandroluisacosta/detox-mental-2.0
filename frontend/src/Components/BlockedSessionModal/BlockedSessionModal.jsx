@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import './BlockedSessionModal.css';
 import EnterCodeModal from '../EnterCodeModal/EnterCodeModal';
 import CloseIcon from '../CloseIcon/CloseIcon';
-import { codes } from '../../data';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { useAuth } from '../../Context/AuthContext.jsx';
@@ -17,9 +16,28 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
     const handleCloseBlockedSessionModal = () => { setOpenBlockedSessionModal(false) }
 
     const handleUnblockSession = async (id, code) => {
-        if (codes[selectedSession.id] !== code) {
+        if (!user) {
+            emitToast('Inicia sesión para desbloquear sesiones con código.');
+            setOpenBlockedSessionModal(false);
+            navigate('/login');
+            return true;
+        }
+
+        try {
+            const res = await apiFetch('/auth/me/unblocked-sessions', {
+                method: 'POST',
+                body: { sessionId: id, code },
+            });
+            if (res.status === 403) {
+                return false;
+            }
+            if (!res.ok) throw new Error('save failed');
+        } catch (err) {
+            console.error('[unblock-session]', err);
+            emitToast('No se pudo guardar el desbloqueo. Inténtalo de nuevo.');
             return false;
         }
+
         setSessions((prev) =>
             prev.map((session) => {
                 if (session.id === id) {
@@ -30,18 +48,6 @@ const BlockedSessionModal = ({ setOpenBlockedSessionModal, setIsSessionUnblocked
         );
         setOpenBlockedSessionModal(false);
         setIsSessionUnblocked(true);
-        if (user) {
-            try {
-                const res = await apiFetch('/auth/me/unblocked-sessions', {
-                    method: 'POST',
-                    body: { sessionId: id },
-                });
-                if (!res.ok) throw new Error('save failed');
-            } catch (err) {
-                console.error('[unblock-session]', err);
-                emitToast('No se pudo guardar el desbloqueo. Inténtalo de nuevo.');
-            }
-        }
         return true;
     };
 

@@ -220,3 +220,28 @@ Add `frontend/scripts/checkPageComponentStructure.js` (wired into `npm run lint`
 
 **Downsides (accepted):**  
 Extra scripts and JSON in the frontend package add a little **project bloat**. The trade-off is accepted because **Firstmate is highly beneficial** for the workflow—supervised agent lanes, PR delivery, and repeatable checks—and this gate reduces bad merges that cost more time to unwind than the tooling costs to maintain.
+
+### 2026-10-11 — Session unlock codes verified server-side, not client-side
+
+**Decision:**  
+This is a **broken access control** fix (OWASP A01). Unlock codes used to ship in `frontend/src/data/codes.json` and were compared in the browser (`BlockedSessionModal.jsx`); the backend accepted `POST /auth/me/unblocked-sessions` for any `sessionId` 1–15 from any authenticated user with no code check at all. Any logged-in user could unlock the full paid course with one request, no code needed. Moved verification to the backend: a new `session_unlock_codes` table (migration `018_session_unlock_codes.sql`) stores `HMAC-SHA256(code, MAGIC_LINK_SECRET)` per session, keyed the same way as `magic_link_tokens` so a DB leak alone can't be brute-forced into working codes (these are 6-character codes — a bare hash would be crackable offline in seconds). `postSessionUnblock` now requires `{ sessionId, code }` and compares with `crypto.timingSafeEqual`. Anonymous (logged-out) code entry was removed — it never persisted anything, and reintroducing an unauthenticated "verify code" endpoint for it would just add a new guessable, unrated-limited target for no real benefit.
+
+**Why this option was chosen:**  
+Server-side verification is the only version of this feature that actually controls access; a client-side check is equivalent to no check, since the client is fully under the user's control. A DB table (over 14 env vars) matches the existing `user_unblocked_sessions` / migration pattern already in this schema and lets codes be rotated or revoked without a redeploy.
+
+**Why obvious alternatives were rejected:**  
+- **Plain `SHA256(code)` instead of HMAC:** Not enough on its own — these codes have low entropy (~3×10⁸ possibilities) and a fast hash is brute-forceable offline from a DB dump alone. HMAC with a secret not stored in the DB raises the bar to "DB leak + secret leak."
+- **14 env vars (one per session):** Works but is harder to rotate or extend than a table, and doesn't match how the rest of this schema manages per-row data.
+- **Hardcoding the seed hashes into a `.sql` migration:** The HMAC value depends on `MAGIC_LINK_SECRET`, which differs between local and production. A hash baked in for one secret would be wrong for the other, so seeding is a small script (`backend/scripts/seedSessionUnlockCodes.js`) run once per environment instead.
+
+### 2026-10-11 — Course audio files stay unauthenticated for now
+
+**Decision:**  
+`frontend/public/session_*.mp3` remain publicly fetchable by direct URL (no auth, no signed URL) even after session-unlock codes were moved server-side above. This is the same class of problem (broken access control) and is **not fixed yet**, intentionally.
+
+**Why this option was chosen:**  
+There is currently no real demand for the course, so the cost of someone finding and downloading an unreleased session's audio is low, while fixing it properly (authenticated streaming or signed, expiring URLs instead of static files in `public/`) adds real backend complexity for no current payoff. This is a deliberate, written scope cut, not an oversight.
+
+**Why obvious alternatives were rejected:**  
+- **Fix it now alongside the unlock-code change:** Rejected to keep that change scoped to one access-control bug at a time (TDD-friendly, reviewable diff) and because the infra cost isn't justified yet.
+- **Leave it undocumented:** Rejected — an unprotected, unauthenticated resource should never be silently "fine," even when the current risk is low. Revisit this before monetizing the course further or once it has real paying users.
