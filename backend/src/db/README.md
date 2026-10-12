@@ -127,7 +127,25 @@ Tracks which course sessions users have unblocked via unblocking codes.
 - `idx_user_unblocked_sessions_unblocked_at`: Timeline queries
 
 **Usage:**
-When a user enters a valid unblocking code, a record is inserted here to grant access to a specific course session.
+When a user submits a valid unblocking code, the backend verifies it against `session_unlock_codes` and then inserts a record here to grant access to that session.
+
+---
+
+### 4b. `session_unlock_codes`
+
+Stores the server-side verification data for session unblocking codes (migration `018`). Sessions without a row (session 1) are unblocked by default.
+
+**Security Note**: Codes are never stored. `code_hash` is `HMAC-SHA256(code, MAGIC_LINK_SECRET)`. The codes are short (6 uppercase letters), so a plain hash could be brute-forced offline from a DB leak; the secret is not in the database.
+
+**Columns:**
+- `session_id` (INTEGER, PK, FK → course_sessions.session_id): Session the code unlocks
+- `code_hash` (VARCHAR(255)): HMAC of the code
+
+**Constraints:**
+- `session_id` references `course_sessions(session_id)` with CASCADE delete
+
+**Seeding:**
+Populated by `backend/scripts/seedSessionUnlockCodes.js`, not by SQL. See [Seeding Unlock Codes](#seeding-unlock-codes).
 
 ---
 
@@ -244,7 +262,21 @@ Markdown articles for the unlinked personal site at `/alejandroluis/blog`.
 - `idx_blog_posts_published_at`: Public index order
 - `idx_blog_posts_category`: Published posts by category
 
-Migration `014` also seeds two published mock posts, one per category.
+Migration `014` also seeds two published mock posts, one per category. Migration `015` renamed the `personal-development` category to `personal`.
+
+---
+
+### 10. `journal_meditation_front_matter`
+
+Per-user front matter (title, author, introduction) for the meditations export.
+
+**Columns:**
+- `user_id` (UUID, PK, FK → users.id, ON DELETE CASCADE)
+- `title` (TEXT, default `''`)
+- `author_name` (TEXT, default `''`)
+- `introduction` (TEXT, default `''`)
+- `title_uses_default` (BOOLEAN, default `true`): Whether the title still follows the default instead of a user-chosen one (added in `017`)
+- `updated_at` (TIMESTAMPTZ)
 
 ---
 
@@ -253,11 +285,13 @@ Migration `014` also seeds two published mock posts, one per category.
 ```
 users (1) ──────< (N) magic_link_tokens
   │
-  ├──────< (N) user_unblocked_sessions >────── (1) course_sessions
+  ├──────< (N) user_unblocked_sessions >────── (1) course_sessions (1) ────── (0..1) session_unlock_codes
   │
   ├──────< (N) journal_entries
   │
   ├──────< (N) journal_custom_topics
+  │
+  ├────── (0..1) journal_meditation_front_matter
   │
   ├──────< (N) journal_weekly_summaries
   │
@@ -389,6 +423,12 @@ users (1) ──────< (N) magic_link_tokens
 \i backend/src/db/migrations/014_blog_posts.sql
 ```
 
+### Blog Category Rename
+```sql
+-- Run after the blog posts migration
+\i backend/src/db/migrations/015_blog_category_personal.sql
+```
+
 ### Journal Meditation Front Matter
 ```sql
 -- Run after 015_blog_category_personal.sql
@@ -403,6 +443,37 @@ The schema for `journal_meditation_front_matter` still needs this manual `\i` ap
 \i backend/src/db/migrations/017_journal_meditation_title_uses_default.sql
 ```
 
+### Session Unlock Codes
+```sql
+-- Run after 002_seed_course_sessions.sql (references course_sessions)
+\i backend/src/db/migrations/018_session_unlock_codes.sql
+```
+
+This creates an empty table. Run the seed script below before unblocking will work.
+
+### Seeding Unlock Codes
+
+`session_unlock_codes` is seeded with a Node script, not SQL, because each stored value is an HMAC keyed with `MAGIC_LINK_SECRET`. A hash generated in one environment is invalid in another that uses a different secret.
+
+Run it once per environment (local, preprod, prod), after migration `018`:
+
+```bash
+cd backend
+node scripts/seedSessionUnlockCodes.js
+```
+
+The script uses that environment's `DATABASE_URL` and `MAGIC_LINK_SECRET`, loaded from `backend/.env` or from variables set inline:
+
+```bash
+DATABASE_URL='<target db url>' MAGIC_LINK_SECRET='<target secret>' node scripts/seedSessionUnlockCodes.js
+```
+
+Notes:
+- `MAGIC_LINK_SECRET` must be the same value the deployed backend uses for that environment (e.g. the one configured in Vercel). Otherwise every code is rejected.
+- The script connects directly to the database; it does not go through the deployed backend.
+- It upserts, so it is safe to re-run. Re-run it after rotating `MAGIC_LINK_SECRET` or changing a code in the script.
+- Double-check which database `DATABASE_URL` points at before running; the script writes to it.
+
 ### Verify Migration Success
 ```sql
 -- Check all tables created
@@ -413,6 +484,9 @@ ORDER BY table_name;
 
 -- Verify course sessions seeded
 SELECT COUNT(*) FROM course_sessions; -- Should return 15
+
+-- Verify unlock codes seeded (after running the seed script)
+SELECT COUNT(*) FROM session_unlock_codes; -- Should return 14 (session 1 has no code)
 
 -- Check all indexes
 SELECT indexname, tablename
@@ -478,10 +552,9 @@ WHERE expires_at < NOW() - INTERVAL '1 day';
 Potential schema additions (not yet implemented):
 
 1. **Session Management Table**: Track active JWT sessions for revocation
-2. **Unlock Codes Table**: Store and manage unlock codes in database
-3. **Audit Log Table**: Track sensitive operations for compliance
-4. **User Preferences Table**: Store UI/UX preferences
-5. **Session Progress Table**: Track completion status of course sessions
+2. **Audit Log Table**: Track sensitive operations for compliance
+3. **User Preferences Table**: Store UI/UX preferences
+4. **Session Progress Table**: Track completion status of course sessions
 
 ---
 
@@ -518,7 +591,7 @@ For questions or issues related to the database schema, please refer to:
 ---
 
 **Last Updated**: September 2026
-**Schema Version**: 014
+**Schema Version**: 018
 **Seed Version**: 002
 
-Course sessions are seeded by `002_seed_course_sessions.sql`. The two initial blog articles are inserted by migration `014_blog_posts.sql`, not by a seed file.
+Course sessions are seeded by `002_seed_course_sessions.sql`. The two initial blog articles are inserted by migration `014_blog_posts.sql`, not by a seed file. Unlock codes are seeded by `backend/scripts/seedSessionUnlockCodes.js` (see above).

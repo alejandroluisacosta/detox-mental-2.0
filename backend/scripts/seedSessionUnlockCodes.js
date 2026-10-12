@@ -15,11 +15,11 @@
  * Safe to re-run: it upserts, so re-running after rotating a code's value
  * below (or after rotating MAGIC_LINK_SECRET) just updates the stored hash.
  */
-import dotenv from 'dotenv';
+// Must load before db.js: ES imports are hoisted, and the pool reads
+// DATABASE_URL when it is constructed.
+import 'dotenv/config';
 import pool from '../src/db/db.js';
 import { hashToken } from '../src/auth/token.js';
-
-dotenv.config();
 
 // The codes that used to ship in frontend/src/data/codes.json. Session 1
 // has no code (it's unblocked by default), matching sessions.js.
