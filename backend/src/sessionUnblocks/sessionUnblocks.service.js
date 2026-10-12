@@ -19,11 +19,23 @@ export async function listSessionUnblockIdsForUser(userId) {
   return rows.map((r) => r.session_id);
 }
 
-export async function recordSessionUnblock(userId, sessionId) {
-  await pool.query(
+export async function recordSessionUnblock(userId, sessionId, db = pool) {
+  await db.query(
     `INSERT INTO user_unblocked_sessions (user_id, session_id)
      VALUES ($1, $2)
      ON CONFLICT DO NOTHING`,
     [userId, sessionId],
   );
+}
+
+/**
+ * Returns the stored HMAC hash for a session's unlock code, or null if the
+ * session has no code configured (in which case no code can ever match it).
+ */
+export async function findUnlockCodeHash(sessionId, db = pool) {
+  const { rows } = await db.query(
+    `SELECT code_hash FROM session_unlock_codes WHERE session_id = $1`,
+    [sessionId],
+  );
+  return rows[0]?.code_hash ?? null;
 }
