@@ -20,8 +20,15 @@ export const en = {
   'nav.meditations': 'MEDITATIONS',
   'nav.summary': 'WEEKLY SUMMARY',
 
-  'home.education': 'EDUCATION',
-  'home.journal': 'JOURNAL',
+  'home.titleLead': 'The app',
+  'home.titleAccent': 'to reflect.',
+  'home.modulesLabel': 'Modules',
+  'home.education.tag': '01 · EDUCATION',
+  'home.education.title': 'Understand your mind',
+  'home.education.description': 'Theory, a 15-session course, tests and instructions (only in Spanish).',
+  'home.journal.tag': '02 · JOURNAL',
+  'home.journal.title': 'Clear your mind',
+  'home.journal.description': 'Journal, history, meditations and weekly summary.',
 
   'account.title': 'My Account',
   'account.memberSince': 'Member since: {month} {year}.',
