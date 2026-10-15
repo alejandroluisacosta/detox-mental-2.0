@@ -20,8 +20,15 @@ export const es = {
   'nav.meditations': 'MEDITACIONES',
   'nav.summary': 'RESUMEN SEMANAL',
 
-  'home.education': 'EDUCACIÓN',
-  'home.journal': 'DIARIO',
+  'home.titleLead': 'La aplicación',
+  'home.titleAccent': 'para la reflexión.',
+  'home.modulesLabel': 'Módulos',
+  'home.education.tag': '01 · EDUCACIÓN',
+  'home.education.title': 'Entiende tu mente',
+  'home.education.description': 'Teoría, curso de 15 sesiones, tests e instrucciones.',
+  'home.journal.tag': '02 · DIARIO',
+  'home.journal.title': 'Vacía tu mente',
+  'home.journal.description': 'Diario, historial, meditaciones y resumen semanal.',
 
   'account.title': 'Mi Cuenta',
   'account.memberSince': 'Miembro desde: {month} de {year}.',

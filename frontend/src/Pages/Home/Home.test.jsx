@@ -22,33 +22,54 @@ const renderHome = (locale = 'en') => {
 describe('Home', () => {
     beforeEach(() => {
         mockNavigate.mockReset();
+        localStorage.clear();
     });
 
     afterEach(() => {
         cleanup();
     });
 
-    test('shows the brand on the module chooser', () => {
+    test('sends the Education card to the theory route', () => {
         renderHome();
-        expect(screen.getByRole('heading', { name: 'DETOX MENTAL' })).toBeTruthy();
-    });
-
-    test('sends EDUCATION to the theory route', () => {
-        renderHome();
-        fireEvent.click(screen.getByRole('button', { name: 'EDUCATION' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Understand your mind' }));
         expect(mockNavigate).toHaveBeenCalledWith('/theory');
     });
 
-    test('sends JOURNAL to the journal route', () => {
+    test('sends the Journal card to the journal route', () => {
         renderHome();
-        fireEvent.click(screen.getByRole('button', { name: 'JOURNAL' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Clear your mind' }));
         expect(mockNavigate).toHaveBeenCalledWith('/journal');
     });
 
-    test('shows Spanish module labels when the locale is Spanish', () => {
+    test('is English by default', () => {
+        render(
+            <LocaleProvider>
+                <Home />
+            </LocaleProvider>,
+        );
+        expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('The app to reflect.');
+        expect(
+            screen.getByRole('button', { name: 'Understand your mind' }).getAttribute('aria-describedby'),
+        ).toBeTruthy();
+        expect(screen.getByText(/\(only in Spanish\)/)).toBeTruthy();
+    });
+
+    test('switches to Spanish and remembers the choice', () => {
+        renderHome();
+        fireEvent.click(screen.getByRole('button', { name: 'Spanish' }));
+        expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
+            'La aplicación para la reflexión.',
+        );
+        expect(screen.getByRole('button', { name: 'Entiende tu mente' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Inglés' }).getAttribute('aria-pressed')).toBe('false');
+        expect(screen.getByRole('button', { name: 'Español' }).getAttribute('aria-pressed')).toBe('true');
+        expect(localStorage.getItem('appLocale')).toBe('es');
+    });
+
+    test('keeps routing from the Spanish cards', () => {
         renderHome('es');
-        expect(screen.getByRole('button', { name: 'EDUCACIÓN' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'DIARIO' })).toBeTruthy();
+        fireEvent.click(screen.getByRole('button', { name: 'Vacía tu mente' }));
+        expect(mockNavigate).toHaveBeenCalledWith('/journal');
     });
 
     test('does not offer a control to the personal site', () => {
