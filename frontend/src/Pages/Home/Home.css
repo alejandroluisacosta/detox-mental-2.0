@@ -1,6 +1,5 @@
 .home-page {
-    height: 100svh;
-    min-height: 560px;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -33,15 +32,15 @@
 }
 
 .home-page__language-option {
-    width: 48px;
-    min-height: 40px;
+    width: 38px;
+    min-height: 32px;
     padding: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
     color: var(--accent);
     font: inherit;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.06em;
     cursor: pointer;
@@ -76,7 +75,6 @@
 
 .home-page__modules {
     flex: 1;
-    min-height: 0;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -84,7 +82,6 @@
 
 .home-page__module {
     flex: 1;
-    min-height: 0;
     display: flex;
     flex-direction: column;
     width: auto;
@@ -117,7 +114,7 @@
 .home-page__module-media {
     position: relative;
     flex: 1;
-    min-height: 90px;
+    min-height: 180px;
     overflow: hidden;
 }
 
@@ -193,6 +190,14 @@
     border-radius: 50%;
 }
 
+.home-page__module-arrow-icon {
+    width: 20px;
+    height: 20px;
+    background-color: currentColor;
+    mask: url('/icons/arrow_right.svg') no-repeat center / contain;
+    -webkit-mask: url('/icons/arrow_right.svg') no-repeat center / contain;
+}
+
 .home-page__module--education .home-page__module-arrow {
     background: var(--background);
     color: var(--dark-brown);
@@ -227,7 +232,7 @@
 
     .home-page__language-option {
         width: auto;
-        padding: 0 14px;
+        padding: 0 11px;
     }
 
     .home-page__title {
@@ -240,7 +245,7 @@
     }
 
     .home-page__module-media {
-        min-height: 160px;
+        min-height: 280px;
     }
 
     .home-page__module-tag {

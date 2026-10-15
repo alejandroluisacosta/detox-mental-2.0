@@ -110,6 +110,13 @@ Pages/Journal/Journal.test.jsx
 
 If a change would add a second page-level `.jsx` to an existing page folder, create a new folder instead. Do not "just put it next to the other journal files."
 
+## 9. SVGs are external files
+
+Never inline `<svg>` markup in a `.jsx` file. Put each icon in `public/icons/` and
+reference it with `<img src='/icons/name.svg'>`. For icons that must take the
+surrounding text color, use a CSS `mask` on `background-color: currentColor`
+in the owner's stylesheet.
+
 ## Product invariants
 
 `OnboardingGate` is not an authentication gate. Pages that require an account

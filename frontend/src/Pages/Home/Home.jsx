@@ -7,23 +7,6 @@ const LANGUAGE_OPTIONS = [
     { locale: 'es', label: 'ES', labelKey: 'nav.spanish' },
 ];
 
-const ArrowIcon = () => (
-    <svg
-        width='20'
-        height='20'
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='2'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        aria-hidden='true'
-    >
-        <path d='M5 12h14' />
-        <path d='M13 6l6 6-6 6' />
-    </svg>
-);
-
 const ModuleCard = ({ id, modifier, image, path, t, navigate }) => (
     <button
         type='button'
@@ -42,7 +25,7 @@ const ModuleCard = ({ id, modifier, image, path, t, navigate }) => (
                     {t(`home.${id}.title`)}
                 </span>
                 <span className='home-page__module-arrow' aria-hidden='true'>
-                    <ArrowIcon />
+                    <span className='home-page__module-arrow-icon' />
                 </span>
             </span>
             <span id={`home-${id}-description`} className='home-page__module-description'>
