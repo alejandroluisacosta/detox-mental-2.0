@@ -55,6 +55,25 @@ as before: I'd genuinely be glad to see a technical user "steal" a session
 file — it would mean someone cared enough to look. If that starts happening
 with any regularity, that's the signal to invest in properly securing them.
 
+### ✅ Login email rate limiting (2026-10)
+
+**Issue:** The login endpoint sent a magic-link email on every request with
+no limit. An attacker could email-bomb any address or exhaust the Resend
+quota, blocking real users from logging in and harming the sending domain's
+reputation. This was the **second major vulnerability** identified in the
+project (OWASP API4, unrestricted resource consumption, which includes
+"denial of wallet").
+
+**Fix:** Login is now rate-limited per email, per IP, and globally, with
+counters kept in Postgres (the backend is serverless, so in-memory limits
+wouldn't work) and IPs/emails stored only as hashes. The goal is twofold:
+keep email delivery available to real users during an attack, and make sure
+costs can never run away. See `DECISIONS.md` (2026-10-17) for details.
+
+**Known, accepted gap:** If the global daily cap is reached, legitimate
+users are temporarily blocked too. That is a deliberate trade for a hard
+cost ceiling.
+
 ---
 
 ## In progress
