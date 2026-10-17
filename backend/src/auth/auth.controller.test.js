@@ -132,10 +132,25 @@ test('after 90 emails globally in 24h, the next request is 429', async () => {
   assert.equal(outbox.length, 90);
 });
 
-test('a request blocked by IP or email does not spend the global budget', async () => {
+test('a request blocked by the IP limit does not spend the email or global budget', async () => {
   for (let i = 0; i < 12; i += 1) await request({ email: `u${i}@example.com` });
   const globalRows = db.rows.filter((r) => r.bucket === 'login_global');
   assert.equal(globalRows.length, 10);
+});
+
+test('requests blocked by the email limit spend the IP budget but not the global one', async () => {
+  // Accepted trade-off: the IP check runs first, so retries of a blocked email
+  // still count against that IP's hourly allowance.
+  for (let i = 0; i < 3; i += 1) await request({ email: 'a@example.com' });
+  for (let i = 0; i < 7; i += 1) {
+    const res = await request({ email: 'a@example.com' });
+    assert.equal(res.statusCode, 429);
+  }
+  assert.equal(db.rows.filter((r) => r.bucket === 'login_global').length, 3);
+
+  const fresh = await request({ email: 'fresh@example.com' });
+  assert.equal(fresh.statusCode, 429);
+  assert.equal(outbox.length, 3);
 });
 
 test('database error during the check: no email is sent, response is the generic 200', async () => {
