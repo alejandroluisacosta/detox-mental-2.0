@@ -1,6 +1,6 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { memoryRateLimitDb } from '../rateLimit/memoryRateLimitDb.js';
+import { memoryRateLimitDb } from '../rateLimit/rateLimit.testDb.js';
 
 process.env.MAGIC_LINK_SECRET = 'test-secret';
 // email.service constructs its Resend client at import time.

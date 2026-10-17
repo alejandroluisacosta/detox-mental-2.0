@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../../api/client.js";
-import "./AuthPages.css";
+import "./Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");

@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import "./AuthPages.css";
+import "./AuthError.css";
 
 const REASON_COPY = {
   invalid_token:

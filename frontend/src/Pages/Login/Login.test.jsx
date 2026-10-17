@@ -1,10 +1,10 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import Login from './Pages/Auth/Login.jsx';
-import { apiFetch } from './api/client.js';
+import Login from './Login.jsx';
+import { apiFetch } from '../../api/client.js';
 
-vi.mock('./api/client.js', () => ({ apiFetch: vi.fn() }));
+vi.mock('../../api/client.js', () => ({ apiFetch: vi.fn() }));
 
 const submit = async (email) => {
   render(

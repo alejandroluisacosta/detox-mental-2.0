@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { consumeRateLimit } from './rateLimit.service.js';
-import { memoryRateLimitDb } from './memoryRateLimitDb.js';
+import { memoryRateLimitDb } from './rateLimit.testDb.js';
 
 const MIN = 60 * 1000;
 const HOUR = 60 * MIN;
