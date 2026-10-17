@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "../Auth/AuthPages.css";
+import "../Login/Login.css";
 import "./PaymentPages.css";
 
 export default function PaymentSuccess() {

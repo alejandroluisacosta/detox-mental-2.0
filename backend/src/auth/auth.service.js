@@ -1,7 +1,7 @@
 import pool from '../db/db.js';
 
-export async function storeLoginToken(tokenHash, expiresAt) {
-  await pool.query(
+export async function storeLoginToken(tokenHash, expiresAt, db = pool) {
+  await db.query(
     `INSERT INTO magic_link_tokens (token_hash, expires_at)
      VALUES ($1, $2)`,
     [tokenHash, expiresAt],

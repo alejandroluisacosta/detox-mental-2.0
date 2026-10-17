@@ -1,6 +1,9 @@
 import { generateLoginToken, hashToken, extractEmailFromToken } from './token.js';
 import { signJwt, COOKIE_NAME, COOKIE_OPTIONS } from './jwt.js';
 import { sendMagicLinkEmail } from './email.service.js';
+import pool from '../db/db.js';
+import { allowLoginEmail } from '../rateLimit/limits.js';
+import { clientIp } from '../rateLimit/clientIp.js';
 import {
   storeLoginToken,
   findValidToken,
@@ -23,13 +26,29 @@ export async function login(req, res) {
   const email = rawEmail.trim().toLowerCase();
 
   try {
+    const db = req.db ?? pool;
+    const sendEmail = req.sendMagicLinkEmail ?? sendMagicLinkEmail;
+
+    const allowed = await allowLoginEmail({
+      email,
+      ip: clientIp(req),
+      now: req.now,
+      db,
+    });
+    if (!allowed) {
+      return res.status(429).json({
+        code: 'login_rate_limited',
+        message: 'Too many login links requested. Try again later.',
+      });
+    }
+
     const rawToken = generateLoginToken(email);
     const tokenHash = hashToken(rawToken);
     const expiresAt = new Date(Date.now() + FIFTEEN_MINUTES_MS);
 
-    await storeLoginToken(tokenHash, expiresAt);
+    await storeLoginToken(tokenHash, expiresAt, db);
 
-    await sendMagicLinkEmail(email, rawToken);
+    await sendEmail(email, rawToken);
   } catch (err) {
     console.error('[auth/login]', err);
     // Intentional fall-through: always return generic response to prevent email enumeration

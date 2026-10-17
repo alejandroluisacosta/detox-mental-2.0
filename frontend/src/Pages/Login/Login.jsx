@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../../api/client.js";
-import "./AuthPages.css";
+import "./Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,6 +31,10 @@ export default function Login() {
         setEmail("");
       } else if (res.status === 400) {
         setError(data.message || "Revisa el email e inténtalo de nuevo.");
+      } else if (res.status === 429) {
+        setError(
+          "Has pedido demasiados enlaces o nuestro servidor está ocupado en estos momentos. Espera unos minutos e inténtalo de nuevo.",
+        );
       } else {
         setError("No se pudo enviar el enlace. Inténtalo más tarde.");
       }
