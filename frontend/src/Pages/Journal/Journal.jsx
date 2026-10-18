@@ -313,7 +313,7 @@ const Journal = () => {
           <button
             ref={helpButtonRef}
             type="button"
-            className={`journal-page__help-button${pulseHelp ? ' journal-page__help-button--pulse' : ''}`}
+            className={`onboarding-help-button${pulseHelp ? ' onboarding-help-button--pulse' : ''}`}
             onClick={openOnboarding}
             aria-label={t('journalOnboarding.open')}
             title={t('journalOnboarding.open')}

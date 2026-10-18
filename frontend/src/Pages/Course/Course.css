@@ -66,9 +66,17 @@
     padding: 40px 10% 35px;
 }
 
+.sessions-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
 .sessions-title {
     font-weight: 400;
-    margin-bottom: 8px;
+    margin: 0;
 }
 
 .sessions-subtitle {

@@ -9,7 +9,7 @@ import Lottie from 'lottie-react';
 import unblockAnimation from './unblockAnimation/unblock_animation_1.json';
 
 
-const Course = () => {
+const Course = ({ helpButtonRef, pulseHelp = false, onOpenOnboarding }) => {
     const [openBlockedSessionModal, setOpenBlockedSessionModal] = useState(false);
     const [isSessionUnblocked, setIsSessionUnblocked] = useState(false);
     const selectedSession = useRef(null);
@@ -45,7 +45,21 @@ const Course = () => {
               </div>
             }
             <Navigation />
-            <h1 className='sessions-title'>Detox Mental</h1>
+            <div className='sessions-title-row'>
+                <h1 className='sessions-title'>Detox Mental</h1>
+                {onOpenOnboarding && (
+                    <button
+                        ref={helpButtonRef}
+                        type='button'
+                        className={`onboarding-help-button${pulseHelp ? ' onboarding-help-button--pulse' : ''}`}
+                        onClick={onOpenOnboarding}
+                        aria-label='Cómo funciona el curso'
+                        title='Cómo funciona el curso'
+                    >
+                        ?
+                    </button>
+                )}
+            </div>
             <p className='sessions-subtitle'>Limpia tu mente escribiendo</p>
             <button type='button' className='sessions-instructions-button' onClick={handleGoToInstructions}>
                 <img

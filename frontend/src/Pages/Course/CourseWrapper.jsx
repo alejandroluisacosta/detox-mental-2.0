@@ -1,49 +1,42 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import RewardOfferModal from '../../Components/RewardOfferModal/RewardOfferModal';
+import CourseOnboarding, {
+  COURSE_ONBOARDING_SEEN_KEY,
+} from '../../Components/CourseOnboarding/CourseOnboarding.jsx';
 import { isPromoEnabled } from '../../data/promoConfig.js';
 import Course from './Course';
 import './Course.css';
 
-const COURSE_REVEALED_STORAGE_KEY = 'courseRevealed';
 const COURSE_REWARD_OFFER_STORAGE_KEY = 'courseRewardOfferSeen';
-const COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY = 'courseFirstSessionRedirected';
+const ONBOARDING_DELAY_MS = 500;
 
 export default function CourseWithIntro() {
-  const navigate = useNavigate();
-  const [showIntro, setShowIntro] = useState(localStorage.getItem(COURSE_REVEALED_STORAGE_KEY) === null);
+  const helpButtonRef = useRef(null);
   const [fadeIn, setFadeIn] = useState(false);
   const [showRewardOfferModal, setShowRewardOfferModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(
+    () => localStorage.getItem(COURSE_ONBOARDING_SEEN_KEY) !== null,
+  );
+  const [pulseHelp, setPulseHelp] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowIntro(false), 4500);
-    localStorage.setItem(COURSE_REVEALED_STORAGE_KEY, '');
-    return () => clearTimeout(t);
+    const id = requestAnimationFrame(() => setFadeIn(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
+  // Let first-time visitors see the sessions before the slideshow fades in over them.
   useEffect(() => {
-    if (!showIntro) {
-      const id = requestAnimationFrame(() => setFadeIn(true));
-      return () => cancelAnimationFrame(id);
-    }
-  }, [showIntro]);
+    if (localStorage.getItem(COURSE_ONBOARDING_SEEN_KEY) !== null) return undefined;
+    const timer = setTimeout(() => setShowOnboarding(true), ONBOARDING_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
-  useEffect(() => {
-    if (
-      showIntro ||
-      localStorage.getItem(COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY) !== null
-    ) {
-      return;
-    }
-
-    localStorage.setItem(COURSE_FIRST_SESSION_REDIRECT_STORAGE_KEY, '');
-    navigate('/session/1', { replace: true });
-  }, [navigate, showIntro]);
-
+  // The reward offer must not stack on top of the first-visit slideshow.
   useEffect(() => {
     if (
       !isPromoEnabled() ||
-      showIntro ||
+      !onboardingDone ||
       localStorage.getItem(COURSE_REWARD_OFFER_STORAGE_KEY) !== null
     ) {
       return undefined;
@@ -55,25 +48,32 @@ export default function CourseWithIntro() {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [showIntro]);
+  }, [onboardingDone]);
 
-  return showIntro ? (
-    <div className="intro-screen">
-      <div>
-        <h1 className="intro-screen__intro-image">Detox Mental</h1>
-        <p className="intro-screen__subtitle">en 15 días</p>
-        <img
-          src="/icons/course.webp"
-          alt="Ícono de curso decorativo"
-          className="intro-screen__course-icon"
-        />
-      </div>
-    </div>
-  ) : (
+  const closeOnboarding = () => {
+    // Point first-time visitors to where the slideshow went; replays stay quiet.
+    if (localStorage.getItem(COURSE_ONBOARDING_SEEN_KEY) === null) setPulseHelp(true);
+    localStorage.setItem(COURSE_ONBOARDING_SEEN_KEY, 'true');
+    setShowOnboarding(false);
+    setOnboardingDone(true);
+    helpButtonRef.current?.focus();
+  };
+
+  const openOnboarding = () => {
+    setPulseHelp(false);
+    setShowOnboarding(true);
+  };
+
+  return (
     <>
       <div className={`course-container ${fadeIn ? 'fade-in' : ''}`}>
-        <Course />
+        <Course
+          helpButtonRef={helpButtonRef}
+          pulseHelp={pulseHelp}
+          onOpenOnboarding={openOnboarding}
+        />
       </div>
+      {showOnboarding && <CourseOnboarding onClose={closeOnboarding} />}
       {isPromoEnabled() && showRewardOfferModal && (
         <RewardOfferModal
           setOpenRewardOfferModal={setShowRewardOfferModal}

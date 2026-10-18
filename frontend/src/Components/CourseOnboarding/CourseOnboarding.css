@@ -1,0 +1,117 @@
+.course-onboarding__characters {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.course-onboarding__silhouette {
+  position: relative;
+  width: clamp(88px, 22%, 128px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--light-brown);
+  overflow: hidden;
+  animation: courseOnboardingFloat 3s ease-in-out infinite;
+}
+
+.course-onboarding__silhouette-shape {
+  position: absolute;
+  inset: 12% 0 0;
+  width: 100%;
+  height: 88%;
+  fill: var(--dark-brown);
+  opacity: 0.85;
+}
+
+.course-onboarding__question {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 700;
+  color: var(--light-brown);
+  animation: courseOnboardingQuestion 2.4s ease-in-out infinite;
+}
+
+.course-onboarding__sessions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.course-onboarding__session {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--light-brown);
+  border-radius: 50%;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  animation: courseOnboardingSession 3.15s ease-in-out infinite both;
+}
+
+.course-onboarding__caption {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b5a4d;
+}
+
+@keyframes courseOnboardingFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes courseOnboardingQuestion {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes courseOnboardingSession {
+  0%,
+  30%,
+  100% {
+    background: #fff;
+    color: var(--accent);
+  }
+  10%,
+  20% {
+    background: var(--accent);
+    color: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-onboarding__silhouette,
+  .course-onboarding__question,
+  .course-onboarding__session {
+    animation: none;
+  }
+}
