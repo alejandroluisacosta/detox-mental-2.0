@@ -60,7 +60,7 @@ const JournalOnboarding = ({ onClose }) => {
     >
       <div
         ref={dialogRef}
-        className={`journal-onboarding journal-onboarding--${variant} modal-fade-in`}
+        className={`journal-onboarding journal-onboarding--${variant}`}
         role="dialog"
         aria-modal="true"
         aria-label={t('journalOnboarding.dialogLabel')}

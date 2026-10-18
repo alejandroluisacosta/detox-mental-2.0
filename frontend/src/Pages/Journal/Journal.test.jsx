@@ -327,45 +327,80 @@ describe('Journal onboarding slideshow', () => {
       disconnect() {}
       unobserve() {}
     };
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     cleanup();
+    vi.useRealTimers();
   });
 
-  test('opens on the first visit to the journal', () => {
+  const introDialog = () => screen.queryByRole('dialog', { name: 'Journal introduction' });
+
+  const renderFirstVisit = () => {
+    const view = renderJournal('en', { onboardingSeen: false });
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    return view;
+  };
+
+  test('opens half a second after the first visit, once the page is visible', () => {
     renderJournal('en', { onboardingSeen: false });
-    expect(screen.getByRole('dialog', { name: 'Journal introduction' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: "What's on your mind?" })).toBeTruthy();
+    expect(introDialog()).toBeNull();
+
+    act(() => {
+      vi.advanceTimersByTime(499);
+    });
+    expect(introDialog()).toBeNull();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(introDialog()).toBeTruthy();
+  });
+
+  test('does not open later if the visitor leaves before the delay ends', () => {
+    const view = renderJournal('en', { onboardingSeen: false });
+    view.unmount();
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    expect(introDialog()).toBeNull();
   });
 
   test('stays closed on later visits once skipped', () => {
-    const first = renderJournal('en', { onboardingSeen: false });
+    const first = renderFirstVisit();
     fireEvent.click(screen.getByRole('button', { name: 'Skip' }));
-    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+    expect(introDialog()).toBeNull();
     first.unmount();
 
-    renderJournal('en', { onboardingSeen: false });
-    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+    renderFirstVisit();
+    expect(introDialog()).toBeNull();
   });
 
   test('stays closed on later visits once finished', () => {
-    const first = renderJournal('en', { onboardingSeen: false });
+    const first = renderFirstVisit();
     for (let i = 0; i < 3; i += 1) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
     fireEvent.click(screen.getByRole('button', { name: 'Start writing' }));
     first.unmount();
 
-    renderJournal('en', { onboardingSeen: false });
-    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+    renderFirstVisit();
+    expect(introDialog()).toBeNull();
   });
 
-  test('the help button reopens the slideshow from the first slide', () => {
+  test('the help button reopens the slideshow immediately from the first slide', () => {
     renderJournal();
-    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    expect(introDialog()).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'How the journal works' }));
-    expect(screen.getByRole('dialog', { name: 'Journal introduction' })).toBeTruthy();
+    expect(introDialog()).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
   });
 });

@@ -25,6 +25,8 @@ import JournalOnboarding, {
 } from '../../Components/JournalOnboarding/JournalOnboarding.jsx';
 import './Journal.css';
 
+const ONBOARDING_DELAY_MS = 500;
+
 const Journal = () => {
   const navigate = useNavigate();
   const { user, status } = useAuth();
@@ -49,9 +51,7 @@ const Journal = () => {
   const [topicModal, setTopicModal] = useState(null);
   const [topicNameSaving, setTopicNameSaving] = useState(false);
   const [showImageSourceSheet, setShowImageSourceSheet] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(
-    () => localStorage.getItem(JOURNAL_ONBOARDING_SEEN_KEY) === null,
-  );
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [pulseHelp, setPulseHelp] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
@@ -80,6 +80,13 @@ const Journal = () => {
   useEffect(() => {
     resizeTextarea();
   }, [text]);
+
+  // Let first-time visitors see the page before the slideshow fades in over it.
+  useEffect(() => {
+    if (localStorage.getItem(JOURNAL_ONBOARDING_SEEN_KEY) !== null) return undefined;
+    const timer = setTimeout(() => setShowOnboarding(true), ONBOARDING_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const el = topicsRef.current;

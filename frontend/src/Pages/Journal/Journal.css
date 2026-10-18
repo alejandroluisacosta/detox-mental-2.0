@@ -340,17 +340,25 @@
 }
 
 .journal-page__help-button {
+  position: relative;
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 1px solid var(--light-brown);
   border-radius: 50%;
   background: #fff;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--accent);
   cursor: pointer;
+}
+
+/* Keeps a 44px tap target around the smaller visible circle. */
+.journal-page__help-button::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
 }
 
 .journal-page__help-button--pulse {
