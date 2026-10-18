@@ -20,7 +20,12 @@ import { createLongPressHandlers } from '../../utils/longPress.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
+import JournalOnboarding, {
+  JOURNAL_ONBOARDING_SEEN_KEY,
+} from '../../Components/JournalOnboarding/JournalOnboarding.jsx';
 import './Journal.css';
+
+const ONBOARDING_DELAY_MS = 500;
 
 const Journal = () => {
   const navigate = useNavigate();
@@ -34,6 +39,7 @@ const Journal = () => {
   const topicsRef = useRef(null);
   const topicHoldRef = useRef(null);
   const chipPressRef = useRef(new Map());
+  const helpButtonRef = useRef(null);
   const [text, setText] = useState('');
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -45,6 +51,8 @@ const Journal = () => {
   const [topicModal, setTopicModal] = useState(null);
   const [topicNameSaving, setTopicNameSaving] = useState(false);
   const [showImageSourceSheet, setShowImageSourceSheet] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [pulseHelp, setPulseHelp] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
   const canManageTopics = status === 'ready' && !!user;
@@ -72,6 +80,13 @@ const Journal = () => {
   useEffect(() => {
     resizeTextarea();
   }, [text]);
+
+  // Let first-time visitors see the page before the slideshow fades in over it.
+  useEffect(() => {
+    if (localStorage.getItem(JOURNAL_ONBOARDING_SEEN_KEY) !== null) return undefined;
+    const timer = setTimeout(() => setShowOnboarding(true), ONBOARDING_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const el = topicsRef.current;
@@ -266,6 +281,19 @@ const Journal = () => {
     saveEntry();
   };
 
+  const closeOnboarding = () => {
+    // Point first-time visitors to where the slideshow went; replays stay quiet.
+    if (localStorage.getItem(JOURNAL_ONBOARDING_SEEN_KEY) === null) setPulseHelp(true);
+    localStorage.setItem(JOURNAL_ONBOARDING_SEEN_KEY, 'true');
+    setShowOnboarding(false);
+    helpButtonRef.current?.focus();
+  };
+
+  const openOnboarding = () => {
+    setPulseHelp(false);
+    setShowOnboarding(true);
+  };
+
   const handleGuestDiscard = () => {
     clearComposer();
     setShowGuestModal(false);
@@ -280,7 +308,19 @@ const Journal = () => {
     <div className="journal-page">
       <Navigation />
       <main className="journal-page__main">
-        <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
+        <div className="journal-page__prompt-row">
+          <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
+          <button
+            ref={helpButtonRef}
+            type="button"
+            className={`journal-page__help-button${pulseHelp ? ' journal-page__help-button--pulse' : ''}`}
+            onClick={openOnboarding}
+            aria-label={t('journalOnboarding.open')}
+            title={t('journalOnboarding.open')}
+          >
+            ?
+          </button>
+        </div>
 
         <div className="journal-page__composer">
           <div className="journal-page__topics-block">
@@ -473,6 +513,8 @@ const Journal = () => {
           saving={topicNameSaving}
         />
       )}
+
+      {showOnboarding && <JournalOnboarding onClose={closeOnboarding} />}
 
       {showGuestModal && (
         <JournalConfirmModal
