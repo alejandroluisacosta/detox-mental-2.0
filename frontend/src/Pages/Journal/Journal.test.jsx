@@ -4,6 +4,7 @@ import { LocaleProvider } from '../../Context/LocaleContext.jsx';
 import { writeStoredLocale } from '../../utils/locale.js';
 import { JOURNAL_TOPIC_IDS } from '../../data/journalTopics.js';
 import { emitToast } from '../../lib/toastBus.js';
+import { JOURNAL_ONBOARDING_SEEN_KEY } from '../../Components/JournalOnboarding/JournalOnboarding.jsx';
 import Journal from './Journal.jsx';
 
 const mockUseAuth = vi.fn();
@@ -58,8 +59,9 @@ const defaultTopicsValue = {
   renameTopic: vi.fn(),
 };
 
-const renderJournal = (locale = 'en') => {
+const renderJournal = (locale = 'en', { onboardingSeen = true } = {}) => {
   writeStoredLocale(locale);
+  if (onboardingSeen) window.localStorage.setItem(JOURNAL_ONBOARDING_SEEN_KEY, 'true');
   return render(
     <LocaleProvider>
       <Journal />
@@ -312,5 +314,58 @@ describe('Journal topic edge fade', () => {
     fireEvent.scroll(topics);
     expect(topics.className).toContain('journal-page__topics--fade-left');
     expect(topics.className).not.toContain('journal-page__topics--fade-right');
+  });
+});
+
+describe('Journal onboarding slideshow', () => {
+  beforeEach(() => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({ demoMode: false, toggleDemoMode: vi.fn() });
+    mockUseJournalTopics.mockReturnValue(defaultTopicsValue);
+    global.ResizeObserver = class {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    };
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('opens on the first visit to the journal', () => {
+    renderJournal('en', { onboardingSeen: false });
+    expect(screen.getByRole('dialog', { name: 'Journal introduction' })).toBeTruthy();
+  });
+
+  test('stays closed on later visits once skipped', () => {
+    const first = renderJournal('en', { onboardingSeen: false });
+    fireEvent.click(screen.getByRole('button', { name: 'Skip' }));
+    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+    first.unmount();
+
+    renderJournal('en', { onboardingSeen: false });
+    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+  });
+
+  test('stays closed on later visits once finished', () => {
+    const first = renderJournal('en', { onboardingSeen: false });
+    for (let i = 0; i < 3; i += 1) {
+      fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Start writing' }));
+    first.unmount();
+
+    renderJournal('en', { onboardingSeen: false });
+    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+  });
+
+  test('the help button reopens the slideshow from the first slide', () => {
+    renderJournal();
+    expect(screen.queryByRole('dialog', { name: 'Journal introduction' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'How the journal works' }));
+    expect(screen.getByRole('dialog', { name: 'Journal introduction' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
   });
 });
