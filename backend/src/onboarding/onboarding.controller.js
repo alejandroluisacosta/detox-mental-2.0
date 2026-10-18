@@ -7,6 +7,11 @@ import { pqaPromptHandler } from "./handlers/pqaPromptHandler.js";
 import { pqaChallengeHandler } from "./handlers/pqaChallengeHandler.js";
 import { pqaEvaluationHandler } from "./handlers/pqaEvaluationHandler.js";
 import { recommendationHandler } from "./handlers/recommendationHandler.js";
+import pool from "../db/db.js";
+import { allowChatLlmCall } from "../rateLimit/limits.js";
+import { clientIp } from "../rateLimit/clientIp.js";
+
+export { FALLBACK_CHALLENGE } from "./handlers/pqaChallengeHandler.js";
 
 const handlers = {
   [STATES.FAQ_HUB]: faqHubHandler,
@@ -30,9 +35,14 @@ const handlers = {
  *
  * sessionState is passed in/out explicitly (no in-memory storage).
  */
-export const chatController = async ({ message, sessionState, chipId }) => {
-  const client = new InferenceClient(process.env.HF_TOKEN);
-
+export const chatController = async ({
+  message,
+  sessionState,
+  chipId,
+  client = new InferenceClient(process.env.HF_TOKEN),
+  // Denies by default so an entrypoint that forgets to wire a limit can't spend money.
+  allowLlmCall = async () => false,
+}) => {
   const session = {
     state: sessionState?.state ?? STATES.FAQ_HUB,
     data: sessionState?.data ?? {},
@@ -51,6 +61,7 @@ export const chatController = async ({ message, sessionState, chipId }) => {
       session,
       message,
       chipId,
+      allowLlmCall,
     });
     reply = lastResult.reply;
     safety++;
@@ -74,6 +85,24 @@ export const chatController = async ({ message, sessionState, chipId }) => {
 };
 
 /**
+ * Builds the per-request LLM budget check shared by both entrypoints. Any
+ * failure (including a database error) counts as "not allowed" so the caller
+ * falls back to canned output instead of calling the LLM.
+ */
+export const buildAllowLlmCall = (req) => async () => {
+  try {
+    return await allowChatLlmCall({
+      ip: clientIp(req),
+      now: req.now,
+      db: req.db ?? pool,
+    });
+  } catch (err) {
+    console.error("[chat/rateLimit]", err);
+    return false;
+  }
+};
+
+/**
  * Express middleware wrapper for backward compatibility.
  */
 export const chatControllerExpressMiddleware = async (req, res) => {
@@ -84,7 +113,13 @@ export const chatControllerExpressMiddleware = async (req, res) => {
       return res.status(400).json({ error: "chipId must be a string when provided." });
     }
 
-    const result = await chatController({ message, sessionState, chipId });
+    const result = await chatController({
+      message,
+      sessionState,
+      chipId,
+      client: req.llmClient,
+      allowLlmCall: buildAllowLlmCall(req),
+    });
 
     return res.json(result);
   } catch (err) {

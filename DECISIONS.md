@@ -246,19 +246,23 @@ There is currently no real demand for the course, so the cost of someone finding
 - **Fix it now alongside the unlock-code change:** Rejected to keep that change scoped to one access-control bug at a time (TDD-friendly, reviewable diff) and because the infra cost isn't justified yet.
 - **Leave it undocumented:** Rejected — an unprotected, unauthenticated resource should never be silently "fine," even when the current risk is low. Revisit this before monetizing the course further or once it has real paying users.
 
-### 2026-10-17 — Postgres-backed rate limiting, starting with login emails
+### 2026-10-17 — Postgres-backed rate limiting for login emails and the onboarding chat
 
 **Decision:**  
-This is the **second major vulnerability** found in the app: **no rate limiting** on any endpoint (OWASP API4, unrestricted resource consumption, which includes "denial of wallet"). `POST /auth/login` sent a Resend email on every request, so anyone could email-bomb an address or burn the whole Resend quota, locking real users out of logging in. Added a shared limiter (`rate_limit_events` table, migration `019_rate_limit_events.sql`; `backend/src/rateLimit/`) and applied it to login first: per email (3 per 15 min, 5 per day), per IP (10 per hour) and globally (90 per day, just under Resend's free tier of 100). IPs and emails are stored only as HMAC hashes (same keyed approach as `magic_link_tokens`). Over the limit returns `429`. If the limit check hits a database error, no email is sent (fail closed) and the usual generic 200 is returned.
+This is the **second major vulnerability** found in the app: **no rate limiting** on any endpoint (OWASP API4, unrestricted resource consumption, which includes "denial of wallet"). `POST /auth/login` sent a Resend email on every request, so anyone could email-bomb an address or burn the whole Resend quota, locking real users out of logging in. Added a shared limiter (`rate_limit_events` table, migration `019_rate_limit_events.sql`; `backend/src/rateLimit/`) and applied it first to login: per email (3 per 15 min, 5 per day), per IP (10 per hour) and globally (90 per day, just under Resend's free tier of 100). IPs and emails are stored only as HMAC hashes (same keyed approach as `magic_link_tokens`). Over the limit returns `429`. If the limit check hits a database error, no email is sent (fail closed) and the usual generic 200 is returned.
+
+The same limiter was then applied to the unauthenticated onboarding chat (`POST /chat`), where each request could trigger up to two Hugging Face calls and the server trusted a client-supplied `sessionState` (a forged state could carry a huge `pqaSentence`). Limits are counted per Hugging Face call: per IP (6 per hour, 10 per day) and globally (100 per day, about 50 onboardings). When a limit is hit, onboarding does **not** break: it degrades silently to a canned challenge question and `"medium"` clarity, so the user still finishes. A database error is treated as "limit hit" (fail closed). The client-supplied sentence must also be a single sentence of at most 300 characters, otherwise the state resets to `PQA_PROMPT` with no model call. `chatController` denies LLM calls by default unless an entrypoint passes `allowLlmCall`, so a forgotten wire can't spend money.
 
 **Why this option was chosen:**  
-Two goals: keep quota-limited services (here, Resend) **available to real users** during an attack, and keep **costs bounded** no matter what an attacker does. The backend runs on Vercel serverless, so in-memory counters would be per-instance and useless. Postgres counters generalize the existing `journal_summary_generate_attempts` pattern and add no dependency.
+Two goals: keep quota-limited services (Resend, Hugging Face) **available to real users** during an attack, and keep **costs bounded** no matter what an attacker does. The backend runs on Vercel serverless, so in-memory counters would be per-instance and useless. Postgres counters generalize the existing `journal_summary_generate_attempts` pattern and add no dependency. For the chat, falling back to canned output (instead of an error) keeps onboarding usable while the global cap stays a hard cost ceiling.
 
 **Why obvious alternatives were rejected:**  
 - **In-memory limiter (e.g. `express-rate-limit` default store):** Each serverless instance keeps its own counters, so the limit is effectively not enforced.  
+- **Return an error when the chat limit is hit:** Would break onboarding for real users during an attack, which is the harm this change is meant to prevent.  
 - **Plain-text IPs/emails in the table:** Unnecessary personal data; hashing keeps the table GDPR-friendly.
 
 **Downsides (accepted):**  
 - Once the 90/day global cap is reached, a legitimate user's first request of the day also gets a `429` (the Login page message mentions the server being busy). This trades availability for a hard cost ceiling.  
 - Count-then-insert is not atomic, so concurrent requests can slightly overshoot a limit.  
-- A request blocked by the email limit still counts against that IP's hourly allowance, because the IP is checked first.
+- A request blocked by the email limit still counts against that IP's hourly allowance, because the IP is checked first.  
+- Chat limits are per IP, not per user (the chat is unauthenticated), so people sharing an IP share the allowance. Once the 100/day global cap is reached, everyone gets the canned fallback until the window passes.

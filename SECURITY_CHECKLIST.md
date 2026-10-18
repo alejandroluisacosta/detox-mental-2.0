@@ -74,6 +74,28 @@ costs can never run away. See `DECISIONS.md` (2026-10-17) for details.
 users are temporarily blocked too. That is a deliberate trade for a hard
 cost ceiling.
 
+### ✅ Onboarding chat rate limiting (2026-10)
+
+**Issue:** The onboarding chat endpoint is public (no login) and each request
+could trigger up to two Hugging Face model calls. Nothing limited how many
+calls a script could make, and the server trusted the conversation state sent
+by the client, including an arbitrarily large "thought" text. An attacker
+could run up model costs or exhaust the quota, and the same unrestricted
+resource consumption (OWASP API4, "denial of wallet") applied here as with
+login.
+
+**Fix:** Model calls are now limited per IP and globally, using the same
+Postgres-backed limiter as login. When a limit is hit, onboarding keeps
+working with canned replies instead of failing, so real users are never
+locked out. The client-supplied text is also validated (one sentence, at most
+300 characters), and the server denies model calls by default unless a limit
+check is wired in. See `DECISIONS.md` (2026-10-17) for details.
+
+**Known, accepted gap:** Limits are per IP, not per user, so people sharing
+an IP share an allowance. If the global daily cap is reached, everyone gets
+the canned replies until it resets. That is a deliberate trade for a hard
+cost ceiling.
+
 ---
 
 ## In progress
