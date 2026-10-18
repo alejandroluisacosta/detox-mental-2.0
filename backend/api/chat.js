@@ -10,7 +10,7 @@
  */
 
 import dotenv from "dotenv";
-import { chatController } from "../src/onboarding/onboarding.controller.js";
+import { chatController, buildAllowLlmCall } from "../src/onboarding/onboarding.controller.js";
 
 dotenv.config();
 
@@ -47,7 +47,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "chipId must be a string when provided" });
     }
 
-    const result = await chatController({ message, sessionState, chipId });
+    const result = await chatController({
+      message,
+      sessionState,
+      chipId,
+      client: req.llmClient,
+      allowLlmCall: buildAllowLlmCall(req),
+    });
 
     return res.status(200).json({
       reply: result.reply,
