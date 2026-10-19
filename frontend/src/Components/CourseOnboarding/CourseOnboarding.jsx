@@ -1,32 +1,42 @@
 import OnboardingSlideshow from '../OnboardingSlideshow/OnboardingSlideshow.jsx';
+import { sessionsData } from '../../data';
 import './CourseOnboarding.css';
 
 export const COURSE_ONBOARDING_SEEN_KEY = 'courseOnboardingSeen';
 
 // Sessions whose audio hides a secret character (see the Instructions page).
-const SECRET_CHARACTER_SESSIONS = [1, 2, 4, 5, 9, 10, 15];
+const SECRET_CHARACTER_SESSIONS = sessionsData.filter((session) =>
+  [1, 2, 4, 5, 9, 10, 15].includes(session.id),
+);
+// Each session stays highlighted, with its character shown, for one step.
+const STEP_SECONDS = 1.5;
 
 const SecretCharacterIllustration = () => (
   <div
     className="course-onboarding__characters"
     role="img"
     aria-label="Siete personajes secretos escondidos en las sesiones 1, 2, 4, 5, 9, 10 y 15"
+    style={{ '--cycle': `${SECRET_CHARACTER_SESSIONS.length * STEP_SECONDS}s` }}
   >
-    <div className="course-onboarding__silhouette" aria-hidden="true">
-      <svg viewBox="0 0 120 120" className="course-onboarding__silhouette-shape">
-        <circle cx="60" cy="44" r="24" />
-        <path d="M18 120c0-26 19-44 42-44s42 18 42 44z" />
-      </svg>
-      <span className="course-onboarding__question">?</span>
+    <div className="course-onboarding__portrait" aria-hidden="true">
+      {SECRET_CHARACTER_SESSIONS.map((session, i) => (
+        <img
+          key={session.id}
+          src={session.img}
+          alt=""
+          className="course-onboarding__character"
+          style={{ animationDelay: `${i * STEP_SECONDS}s` }}
+        />
+      ))}
     </div>
     <ol className="course-onboarding__sessions" aria-hidden="true">
-      {SECRET_CHARACTER_SESSIONS.map((n, i) => (
+      {SECRET_CHARACTER_SESSIONS.map((session, i) => (
         <li
-          key={n}
+          key={session.id}
           className="course-onboarding__session"
-          style={{ animationDelay: `${i * 0.45}s` }}
+          style={{ animationDelay: `${i * STEP_SECONDS}s` }}
         >
-          {n}
+          {session.id}
         </li>
       ))}
     </ol>
