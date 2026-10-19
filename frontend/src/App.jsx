@@ -5,8 +5,7 @@ import SessionsProvider from './Context/SessionsContext.jsx';
 import Article from './Pages/Article/Article.jsx';
 import Session from './Components/Session/Session.jsx';
 import Course from './Pages/Course/Course.jsx';
-import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';
-import OnboardingGate from './Pages/Onboarding/OnboardingGate.jsx';
+import Onboarding from './Pages/Onboarding/Onboarding.jsx';
 import ThoughtsTest from './Pages/ThoughtsTest/ThoughtsTest.jsx';
 import Login from './Pages/Login/Login.jsx';
 import AuthError from './Pages/AuthError/AuthError.jsx';
@@ -63,18 +62,16 @@ const App = () => {
                                         <Route path='/journal/summary' element={<JournalSummary />} />
 
                                         {/* Educational module */}
-                                        <Route path='/onboarding' element={<OnboardingWrapper />} />
+                                        <Route path='/onboarding' element={<Onboarding />} />
                                         <Route path='/payment/success' element={<PaymentSuccess />} />
                                         <Route path='/payment/cancel' element={<PaymentCancel />} />
-                                        <Route element={<OnboardingGate />}>
-                                            <Route path='/theory' element={<Article />} />
-                                            <Route path='/course' element={<Course />} />
-                                            <Route path='/session/:sessionId' element={<Session />} />
-                                            <Route path='/instructions' element={<Instructions />} />
-                                            <Route path='/tests' element={<Tests />} />
-                                            <Route path='/test/:testId' element={<ThoughtsTest />} />
-                                            <Route path='/promo' element={<PromoGate />} />
-                                        </Route>
+                                        <Route path='/theory' element={<Article />} />
+                                        <Route path='/course' element={<Course />} />
+                                        <Route path='/session/:sessionId' element={<Session />} />
+                                        <Route path='/instructions' element={<Instructions />} />
+                                        <Route path='/tests' element={<Tests />} />
+                                        <Route path='/test/:testId' element={<ThoughtsTest />} />
+                                        <Route path='/promo' element={<PromoGate />} />
                                     </Routes>
                                 </SessionsProvider>
                             </DemoModeProvider>

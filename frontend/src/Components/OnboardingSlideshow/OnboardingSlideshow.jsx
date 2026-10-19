@@ -16,36 +16,42 @@ const muteVideo = (el) => {
 /**
  * First-visit walkthrough shared by the modules.
  *
- * `slides`: [{ id, title, body, alt, media? }]. Without `media`, the slide plays
+ * `slides`: [{ id, title, body, alt, media?, clip? }]. By default a slide plays
  * `${clipBase}/${desktop|mobile}/${id}.mp4` (clips are recorded per layout) with
- * a `.jpg` still of the same name. With `media`, that node is shown instead.
- * `welcome`: { title, message, start }: Tales opens the tour with it. It is not
- * counted as a step; the header shows `labels.module` instead.
+ * a `.jpg` still of the same name. `clip` ({ src, poster, fit, background, loop })
+ * plays another video instead; `media` shows its own node.
+ * `welcome`: { title, message, start }: Tales opens the tour with it.
+ * `outro`: { title, body, alt, clip, accept, decline }: a closing choice. `accept`
+ * runs `onAccept`; `decline` closes the tour.
+ * Neither bookend is counted as a step; the header shows `labels.module` instead.
  * `labels`: { dialog, module, step(current, total), skip, back, next, finish, goTo(n) }.
  */
-const OnboardingSlideshow = ({ slides, clipBase, welcome, labels, onClose }) => {
+const OnboardingSlideshow = ({ slides, clipBase, welcome, outro, labels, onClose, onAccept }) => {
   const dialogRef = useRef(null);
   const [index, setIndex] = useState(0);
   const [variant] = useState(() => (mediaMatches(DESKTOP_QUERY) ? 'desktop' : 'mobile'));
   const [reducedMotion] = useState(() => mediaMatches(REDUCED_MOTION_QUERY));
 
-  const allSlides = welcome
-    ? [
-        {
+  const allSlides = [
+    ...(welcome
+      ? [{
           id: 'welcome',
           title: welcome.title,
           media: <TalesWelcome message={welcome.message} />,
-          isWelcome: true,
-        },
-        ...slides,
-      ]
-    : slides;
+          isBookend: true,
+        }]
+      : []),
+    ...slides,
+    ...(outro ? [{ id: 'outro', ...outro, isBookend: true, isOutro: true }] : []),
+  ];
   const offset = welcome ? 1 : 0;
   const slide = allSlides[index];
   const isLast = index === allSlides.length - 1;
   const nextSlide = allSlides[index + 1];
   const stepNumber = index - offset + 1;
   const clipPath = (id, ext) => `${clipBase}/${variant}/${id}.${ext}`;
+  const videoSrc = (s) => s.clip?.src ?? clipPath(s.id, 'mp4');
+  const stillSrc = (s) => s.clip?.poster ?? clipPath(s.id, 'jpg');
 
   useEffect(() => {
     dialogRef.current?.focus();
@@ -69,17 +75,21 @@ const OnboardingSlideshow = ({ slides, clipBase, welcome, labels, onClose }) => 
 
   const renderMedia = () => {
     if (slide.media) return slide.media;
-    if (reducedMotion) return <img src={clipPath(slide.id, 'jpg')} alt={slide.alt} />;
+    const style = slide.clip?.fit
+      ? { objectFit: slide.clip.fit, background: slide.clip.background }
+      : undefined;
+    if (reducedMotion) return <img src={stillSrc(slide)} alt={slide.alt} style={style} />;
     return (
       <video
         key={slide.id}
         ref={muteVideo}
-        src={clipPath(slide.id, 'mp4')}
-        poster={clipPath(slide.id, 'jpg')}
+        src={videoSrc(slide)}
+        poster={stillSrc(slide)}
         aria-label={slide.alt}
+        style={style}
         autoPlay
         muted
-        loop
+        loop={slide.clip?.loop ?? true}
         playsInline
       />
     );
@@ -102,7 +112,7 @@ const OnboardingSlideshow = ({ slides, clipBase, welcome, labels, onClose }) => 
       >
         <div className="onboarding-slideshow__header">
           <p className="onboarding-slideshow__step">
-            {slide.isWelcome ? labels.module : labels.step(stepNumber, slides.length)}
+            {slide.isBookend ? labels.module : labels.step(stepNumber, slides.length)}
           </p>
           <button type="button" className="onboarding-slideshow__skip" onClick={onClose}>
             {labels.skip}
@@ -111,7 +121,7 @@ const OnboardingSlideshow = ({ slides, clipBase, welcome, labels, onClose }) => 
 
         <div className="onboarding-slideshow__media">{renderMedia()}</div>
         {!reducedMotion && nextSlide && !nextSlide.media && (
-          <link rel="prefetch" as="video" href={clipPath(nextSlide.id, 'mp4')} />
+          <link rel="prefetch" as="video" href={videoSrc(nextSlide)} />
         )}
 
         <div className="onboarding-slideshow__copy">
@@ -121,17 +131,31 @@ const OnboardingSlideshow = ({ slides, clipBase, welcome, labels, onClose }) => 
 
         <div className="onboarding-slideshow__controls">
           <div className="onboarding-slideshow__dots">
-            {allSlides.map(({ id, isWelcome, title }, i) => (
+            {allSlides.map(({ id, isBookend, title }, i) => (
               <button
                 key={id}
                 type="button"
                 className={`onboarding-slideshow__dot${i === index ? ' onboarding-slideshow__dot--active' : ''}`}
                 onClick={() => setIndex(i)}
-                aria-label={isWelcome ? title : labels.goTo(i - offset + 1)}
+                aria-label={isBookend ? title : labels.goTo(i - offset + 1)}
                 aria-current={i === index ? 'step' : undefined}
               />
             ))}
           </div>
+          {slide.isOutro ? (
+            <div className="onboarding-slideshow__actions">
+              <button
+                type="button"
+                className="onboarding-slideshow__button onboarding-slideshow__button--secondary"
+                onClick={onClose}
+              >
+                {outro.decline}
+              </button>
+              <button type="button" className="onboarding-slideshow__button" onClick={onAccept}>
+                {outro.accept}
+              </button>
+            </div>
+          ) : (
           <div className="onboarding-slideshow__actions">
             {index > 0 && (
               <button
@@ -143,9 +167,10 @@ const OnboardingSlideshow = ({ slides, clipBase, welcome, labels, onClose }) => 
               </button>
             )}
             <button type="button" className="onboarding-slideshow__button" onClick={goNext}>
-              {slide.isWelcome ? welcome.start : isLast ? labels.finish : labels.next}
+              {slide.id === 'welcome' ? welcome.start : isLast ? labels.finish : labels.next}
             </button>
           </div>
+          )}
         </div>
       </div>
     </div>

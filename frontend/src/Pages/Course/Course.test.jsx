@@ -91,6 +91,29 @@ describe('Course page first visit', () => {
     expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
   });
 
+  test('accepting the guided tour opens the chat and the short tour is not shown again', () => {
+    const first = renderCourse();
+    advance(500);
+    fireEvent.click(screen.getByRole('button', { name: 'Visita guiada con Tales' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Sí, empezar la visita' }));
+    expect(mockNavigate).toHaveBeenCalledWith('/onboarding');
+    first.unmount();
+
+    renderCourse();
+    advance(1000);
+    expect(courseIntro()).toBeNull();
+  });
+
+  test('declining the guided tour keeps the visitor on the course', () => {
+    renderCourse();
+    advance(500);
+    fireEvent.click(screen.getByRole('button', { name: 'Visita guiada con Tales' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ahora no' }));
+    expect(courseIntro()).toBeNull();
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { name: 'Sesión 1:' })).toBeTruthy();
+  });
+
   test('the reward offer waits until the slideshow is closed', () => {
     mockPromoEnabled.mockReturnValue(true);
     renderCourse();

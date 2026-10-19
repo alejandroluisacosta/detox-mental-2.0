@@ -119,6 +119,7 @@ in the owner's stylesheet.
 
 ## Product invariants
 
-`OnboardingGate` is not an authentication gate. Pages that require an account
-must check `useAuth()` or rely on a protected backend endpoint. Authentication
-and authorization for user-owned data must always be enforced by the backend.
+Onboarding never gates access: the slideshows and the guided chat at
+`/onboarding` are optional. Pages that require an account must check
+`useAuth()` or rely on a protected backend endpoint. Authentication and
+authorization for user-owned data must always be enforced by the backend.

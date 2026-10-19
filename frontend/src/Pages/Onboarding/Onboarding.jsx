@@ -12,6 +12,9 @@ const ROLE_LABLES = {
 
 const getRoleLabel = (role) => ROLE_LABLES[role] ?? "Tales";
 
+// The "Detox Mental" title opens the guided tour; the first message loads meanwhile.
+const INTRO_DURATION_MS = 3000;
+
 const onboardingMarkdownComponents = {
   a: ({ href, children, ...props }) => (
     <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
@@ -21,6 +24,7 @@ const onboardingMarkdownComponents = {
 };
 
 export default function Onboarding() {
+  const [showIntro, setShowIntro] = useState(true);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -147,6 +151,11 @@ export default function Onboarding() {
   }, []);
 
   useEffect(() => {
+    const timer = setTimeout(() => setShowIntro(false), INTRO_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     async function initChat() {
       setLoading(true);
@@ -192,6 +201,7 @@ export default function Onboarding() {
   }, [loading, messages.length]);
 
   useEffect(() => {
+    if (showIntro) return;
     if (sessionState?.state === "EXIT") return;
     if (isFaqHub) return;
     if (loading) return;
@@ -200,7 +210,7 @@ export default function Onboarding() {
       inputRef.current?.focus();
     });
     return () => cancelAnimationFrame(id);
-  }, [loading, sessionState?.state, isFaqHub]);
+  }, [showIntro, loading, sessionState?.state, isFaqHub]);
 
   useEffect(() => {
     if (sessionState?.state !== "EXIT") return;
@@ -265,6 +275,14 @@ export default function Onboarding() {
         </div>
       </div>
     ) : null;
+
+  if (showIntro) {
+    return (
+      <div className="onboarding__intro">
+        <h1 className="onboarding__intro-title">Detox Mental</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="onboarding">
