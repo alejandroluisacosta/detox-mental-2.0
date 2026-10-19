@@ -12,18 +12,12 @@ const ONBOARDING_DELAY_MS = 500;
 
 export default function CourseWithIntro() {
   const helpButtonRef = useRef(null);
-  const [fadeIn, setFadeIn] = useState(false);
   const [showRewardOfferModal, setShowRewardOfferModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingDone, setOnboardingDone] = useState(
     () => localStorage.getItem(COURSE_ONBOARDING_SEEN_KEY) !== null,
   );
   const [pulseHelp, setPulseHelp] = useState(false);
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setFadeIn(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
 
   // Let first-time visitors see the sessions before the slideshow fades in over them.
   useEffect(() => {
@@ -66,13 +60,11 @@ export default function CourseWithIntro() {
 
   return (
     <>
-      <div className={`course-container ${fadeIn ? 'fade-in' : ''}`}>
-        <Course
-          helpButtonRef={helpButtonRef}
-          pulseHelp={pulseHelp}
-          onOpenOnboarding={openOnboarding}
-        />
-      </div>
+      <Course
+        helpButtonRef={helpButtonRef}
+        pulseHelp={pulseHelp}
+        onOpenOnboarding={openOnboarding}
+      />
       {showOnboarding && <CourseOnboarding onClose={closeOnboarding} />}
       {isPromoEnabled() && showRewardOfferModal && (
         <RewardOfferModal

@@ -109,15 +109,6 @@
     align-items: center;
 }
 
-.course-container {
-  opacity: 0;
-  transition: opacity 2s ease;
-}
-
-.course-container.fade-in {
-  opacity: 1;
-}
-
 .unblock-session-animation {
   width: 200px;
   height: 200px;

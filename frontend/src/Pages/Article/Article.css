@@ -1,12 +1,3 @@
-.article-container {
-  opacity: 0;
-  transition: opacity 2s ease;
-}
-
-.article-container.fade-in {
-  opacity: 1;
-}
-
 .article {
   min-height: 100svh;
   background: var(--background);
