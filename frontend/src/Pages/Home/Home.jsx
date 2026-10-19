@@ -76,7 +76,7 @@ const Home = () => {
                     id='education'
                     modifier='education'
                     image='/images/education-background.webp'
-                    path='/theory'
+                    path='/course'
                     t={t}
                     navigate={navigate}
                 />

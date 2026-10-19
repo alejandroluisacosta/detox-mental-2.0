@@ -29,10 +29,10 @@ describe('Home', () => {
         cleanup();
     });
 
-    test('sends the Education card to the theory route', () => {
+    test('sends the Education card to the course route', () => {
         renderHome();
         fireEvent.click(screen.getByRole('button', { name: 'Understand your mind' }));
-        expect(mockNavigate).toHaveBeenCalledWith('/theory');
+        expect(mockNavigate).toHaveBeenCalledWith('/course');
     });
 
     test('sends the Journal card to the journal route', () => {
