@@ -41,12 +41,12 @@ describe('Home', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/journal');
     });
 
-    test('lists the Journal card before the Education card', () => {
+    test('lists the Education card before the Journal card', () => {
         renderHome();
         const cards = screen.getAllByRole('button', { name: /Clear your mind|Understand your mind/ });
         expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
-            'home-journal-title',
             'home-education-title',
+            'home-journal-title',
         ]);
     });
 
