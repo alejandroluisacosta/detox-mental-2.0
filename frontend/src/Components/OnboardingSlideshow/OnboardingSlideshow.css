@@ -187,8 +187,15 @@
 
   .onboarding-slideshow__controls {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    row-gap: 12px;
+  }
+
+  /* When the dots and buttons don't fit on one line, the buttons wrap right-aligned. */
+  .onboarding-slideshow__actions {
+    margin-left: auto;
   }
 
   .onboarding-slideshow__dots {

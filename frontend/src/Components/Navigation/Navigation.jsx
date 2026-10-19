@@ -16,7 +16,7 @@ const LANGUAGE_OPTIONS = [
 ];
 
 const MODULE_OPTIONS = [
-    { module: 'educational', labelKey: 'nav.moduleEducation', path: '/theory' },
+    { module: 'educational', labelKey: 'nav.moduleEducation', path: '/course' },
     { module: 'journaling', labelKey: 'nav.moduleJournaling', path: '/journal' },
 ];
 

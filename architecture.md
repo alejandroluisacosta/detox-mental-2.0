@@ -58,19 +58,18 @@ to `/?auth=success`. Shared account and auth routes (`/login`, `/auth/error`,
 `/journal/meditations`, `/journal/summary`) are reachable without onboarding.
 
 The personal site (`/alejandroluis`, `/alejandroluis/blog`,
-`/alejandroluis/blog/:slug`, plus unlisted admin compose routes) is also
-outside `OnboardingGate`. It is not linked from Home, journal, education, or
-product navigation. Visitors reach it by URL.
+`/alejandroluis/blog/:slug`, plus unlisted admin compose routes) is not linked
+from Home, journal, education, or product navigation. Visitors reach it by URL.
 
 The educational module (`/theory`, `/course`, `/session/:sessionId`,
-`/instructions`, `/tests`, `/test/:testId`, `/promo`) is nested under
-`OnboardingGate`, which checks the `onboardingRevealed` local-storage flag.
-`/onboarding` and the payment result pages stay outside the gate to avoid
-redirect loops and to complete Stripe return URLs.
+`/instructions`, `/tests`, `/test/:testId`, `/promo`) is reachable directly.
+Its entry point is `/course`, which opens a short first-visit slideshow; the
+slideshow's last slide offers the guided chat with Tales at `/onboarding`,
+which is optional.
 
-`OnboardingGate` is not an authentication gate. Pages that require an account
-must check `useAuth()` or rely on a protected backend endpoint. Authentication
-and authorization must always be enforced by the backend for user-owned data.
+Pages that require an account must check `useAuth()` or rely on a protected
+backend endpoint. Authentication and authorization must always be enforced by
+the backend for user-owned data.
 
 ### Source organization
 

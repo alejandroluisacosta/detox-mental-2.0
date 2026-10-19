@@ -93,6 +93,23 @@ const WELCOME = {
   start: 'Empezar',
 };
 
+// Invites the user to the guided chat with Tales; its video is the chat's own opening.
+const GUIDED_TOUR = {
+  title: 'Visita guiada con Tales',
+  body: 'Te recomendamos empezar con una breve visita guiada: en pocos minutos, Tales te ayuda a sacarle más partido al curso. ¿Quieres hacerla ahora?',
+  alt: 'Tales, el anfitrión de Detox Mental',
+  clip: {
+    src: '/videos/thales.mp4',
+    // First frame of the video, so the still and the video share one background.
+    poster: '/onboarding/course/guided-tour.jpg',
+    fit: 'contain',
+    background: '#fcf3ec',
+    loop: false,
+  },
+  accept: 'Sí, empezar la visita',
+  decline: 'Ahora no',
+};
+
 const LABELS = {
   dialog: 'Introducción al curso',
   module: 'Curso',
@@ -104,13 +121,15 @@ const LABELS = {
   goTo: (n) => `Ir a la diapositiva ${n}`,
 };
 
-const CourseOnboarding = ({ onClose }) => (
+const CourseOnboarding = ({ onClose, onStartGuidedTour }) => (
   <OnboardingSlideshow
     slides={SLIDES}
     clipBase="/onboarding/course"
     welcome={WELCOME}
+    outro={GUIDED_TOUR}
     labels={LABELS}
     onClose={onClose}
+    onAccept={onStartGuidedTour}
   />
 );
 

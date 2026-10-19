@@ -65,6 +65,11 @@ const Course = () => {
         helpButtonRef.current?.focus();
     };
 
+    const startGuidedTour = () => {
+        localStorage.setItem(COURSE_ONBOARDING_SEEN_KEY, 'true');
+        navigate('/onboarding');
+    };
+
     const openOnboarding = () => {
         setPulseHelp(false);
         setShowOnboarding(true);
@@ -124,7 +129,9 @@ const Course = () => {
                 ))}
             </div>
             <p className="course-credits">Creado con compromiso por Detox Mental™ • 2025</p>
-            {showOnboarding && <CourseOnboarding onClose={closeOnboarding} />}
+            {showOnboarding && (
+                <CourseOnboarding onClose={closeOnboarding} onStartGuidedTour={startGuidedTour} />
+            )}
             {isPromoEnabled() && showRewardOfferModal && (
                 <RewardOfferModal setOpenRewardOfferModal={setShowRewardOfferModal} />
             )}

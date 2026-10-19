@@ -174,7 +174,7 @@ describe('Navigation', () => {
 
         expect(screen.getByRole('button', { name: 'Journaling' })).toHaveAttribute('aria-pressed', 'true');
         fireEvent.click(screen.getByRole('button', { name: 'Education' }));
-        expect(mockNavigate).toHaveBeenCalledWith('/theory');
+        expect(mockNavigate).toHaveBeenCalledWith('/course');
     });
 
     test('switches journaling labels from English to Spanish with the flag controls', () => {

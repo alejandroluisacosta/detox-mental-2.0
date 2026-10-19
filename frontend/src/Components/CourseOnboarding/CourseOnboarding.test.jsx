@@ -13,8 +13,8 @@ const mockMedia = ({ desktop = true, reducedMotion = false } = {}) => {
   }));
 };
 
-const renderOnboarding = (onClose = vi.fn()) => {
-  render(<CourseOnboarding onClose={onClose} />);
+const renderOnboarding = (onClose = vi.fn(), onStartGuidedTour = vi.fn()) => {
+  render(<CourseOnboarding onClose={onClose} onStartGuidedTour={onStartGuidedTour} />);
   return onClose;
 };
 
@@ -71,13 +71,31 @@ describe('CourseOnboarding', () => {
     expect(screen.getByRole('img', { name: /personajes secretos/i })).toBeTruthy();
   });
 
-  test('the last slide starts the course and closes the slideshow', () => {
-    const onClose = renderOnboarding();
+  test('ends on Tales\' guided-tour invitation, which is not counted as a step', () => {
+    renderOnboarding();
     startTour();
     for (let i = 0; i < 5; i += 1) next();
+    expect(document.querySelector('.onboarding-slideshow__step')?.textContent).toBe('Curso · 6 de 6');
+
+    next();
+    expect(document.querySelector('.onboarding-slideshow__step')?.textContent).toBe('Curso');
+    expect(clipSrc()).toBe('/videos/thales.mp4');
     expect(screen.queryByRole('button', { name: 'Siguiente' })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Empezar el curso' }));
-    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('accepting the guided tour and declining it lead to different outcomes', () => {
+    const onStartGuidedTour = vi.fn();
+    const onClose = renderOnboarding(vi.fn(), onStartGuidedTour);
+    fireEvent.click(screen.getByRole('button', { name: 'Visita guiada con Tales' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Sí, empezar la visita' }));
+    expect(onStartGuidedTour).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
+    cleanup();
+
+    const onDecline = renderOnboarding();
+    fireEvent.click(screen.getByRole('button', { name: 'Visita guiada con Tales' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ahora no' }));
+    expect(onDecline).toHaveBeenCalledTimes(1);
   });
 
   test('Saltar closes the slideshow', () => {
