@@ -1,11 +1,11 @@
-.journal-onboarding__overlay {
+.onboarding-slideshow__overlay {
   z-index: 40;
   align-items: flex-end;
   background-color: rgba(46, 31, 20, 0.6);
-  animation: journalOnboardingFadeIn 0.35s ease-out both;
+  animation: onboardingSlideshowFadeIn 0.35s ease-out both;
 }
 
-@keyframes journalOnboardingFadeIn {
+@keyframes onboardingSlideshowFadeIn {
   from {
     opacity: 0;
   }
@@ -14,7 +14,7 @@
   }
 }
 
-.journal-onboarding {
+.onboarding-slideshow {
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
@@ -27,17 +27,17 @@
   color: var(--text);
 }
 
-.journal-onboarding:focus {
+.onboarding-slideshow:focus {
   outline: none;
 }
 
-.journal-onboarding__header {
+.onboarding-slideshow__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.journal-onboarding__step {
+.onboarding-slideshow__step {
   margin: 0;
   font-size: 0.7rem;
   font-weight: 600;
@@ -46,7 +46,7 @@
   color: var(--accent);
 }
 
-.journal-onboarding__skip {
+.onboarding-slideshow__skip {
   width: auto;
   min-height: 44px;
   padding: 0 4px;
@@ -59,38 +59,37 @@
   cursor: pointer;
 }
 
-.journal-onboarding__media {
+.onboarding-slideshow__media {
   overflow: hidden;
   border: 1px solid var(--platinum);
   border-radius: 12px;
   background: var(--background);
 }
 
-.journal-onboarding__media video,
-.journal-onboarding__media img {
+.onboarding-slideshow__media video,
+.onboarding-slideshow__media img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
 }
 
-.journal-onboarding--mobile .journal-onboarding__media video,
-.journal-onboarding--mobile .journal-onboarding__media img {
+/* The box keeps the clip's shape so illustrated slides match recorded ones. */
+.onboarding-slideshow--mobile .onboarding-slideshow__media {
   aspect-ratio: 538 / 580;
   max-height: 45svh;
 }
 
-.journal-onboarding--desktop .journal-onboarding__media video,
-.journal-onboarding--desktop .journal-onboarding__media img {
+.onboarding-slideshow--desktop .onboarding-slideshow__media {
   aspect-ratio: 738 / 462;
 }
 
-.journal-onboarding__copy {
+.onboarding-slideshow__copy {
   min-height: 128px;
   padding: 18px 2px 4px;
 }
 
-.journal-onboarding__title {
+.onboarding-slideshow__title {
   margin: 0 0 8px;
   font-size: 1.3rem;
   font-weight: 600;
@@ -98,25 +97,25 @@
   color: var(--dark-brown);
 }
 
-.journal-onboarding__body {
+.onboarding-slideshow__body {
   margin: 0;
   font-size: 0.9rem;
   line-height: 1.5;
   color: #4a4a5a;
 }
 
-.journal-onboarding__controls {
+.onboarding-slideshow__controls {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.journal-onboarding__dots {
+.onboarding-slideshow__dots {
   display: flex;
   justify-content: center;
 }
 
-.journal-onboarding__dot {
+.onboarding-slideshow__dot {
   position: relative;
   border-radius: 0;
   width: 28px;
@@ -127,7 +126,7 @@
   cursor: pointer;
 }
 
-.journal-onboarding__dot::after {
+.onboarding-slideshow__dot::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -140,17 +139,17 @@
   transition: width 0.2s ease;
 }
 
-.journal-onboarding__dot--active::after {
+.onboarding-slideshow__dot--active::after {
   width: 24px;
   background: var(--accent);
 }
 
-.journal-onboarding__actions {
+.onboarding-slideshow__actions {
   display: flex;
   gap: 8px;
 }
 
-.journal-onboarding__button {
+.onboarding-slideshow__button {
   flex: 1;
   width: auto;
   min-height: 48px;
@@ -165,7 +164,7 @@
   cursor: pointer;
 }
 
-.journal-onboarding__button--secondary {
+.onboarding-slideshow__button--secondary {
   flex: 0 0 auto;
   border-color: var(--light-brown);
   background: none;
@@ -173,11 +172,11 @@
 }
 
 @media (min-width: 1000px) {
-  .journal-onboarding__overlay {
+  .onboarding-slideshow__overlay {
     align-items: center;
   }
 
-  .journal-onboarding {
+  .onboarding-slideshow {
     width: min(540px, calc(100% - 32px));
     max-height: calc(100% - 32px);
     padding: 16px 24px 24px;
@@ -185,33 +184,33 @@
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
   }
 
-  .journal-onboarding__controls {
+  .onboarding-slideshow__controls {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
 
-  .journal-onboarding__dots {
+  .onboarding-slideshow__dots {
     justify-content: flex-start;
     margin-left: -10px;
   }
 
-  .journal-onboarding__button {
+  .onboarding-slideshow__button {
     flex: 0 0 auto;
     min-height: 44px;
   }
 
-  .journal-onboarding__skip:hover {
+  .onboarding-slideshow__skip:hover {
     color: var(--dark-brown);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .journal-onboarding__overlay {
+  .onboarding-slideshow__overlay {
     animation: none;
   }
 
-  .journal-onboarding__dot::after {
+  .onboarding-slideshow__dot::after {
     transition: none;
   }
 }

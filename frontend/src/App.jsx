@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthProvider from './Context/AuthContext.jsx';
 import SessionsProvider from './Context/SessionsContext.jsx';
-import ArticleWrapper from './Pages/Article/ArticleWrapper.jsx';
+import Article from './Pages/Article/Article.jsx';
 import Session from './Components/Session/Session.jsx';
-import CourseWrapper from './Pages/Course/CourseWrapper.jsx';
+import Course from './Pages/Course/Course.jsx';
 import OnboardingWrapper from './Pages/Onboarding/OnboardingWrapper.jsx';
 import OnboardingGate from './Pages/Onboarding/OnboardingGate.jsx';
 import ThoughtsTest from './Pages/ThoughtsTest/ThoughtsTest.jsx';
@@ -67,8 +67,8 @@ const App = () => {
                                         <Route path='/payment/success' element={<PaymentSuccess />} />
                                         <Route path='/payment/cancel' element={<PaymentCancel />} />
                                         <Route element={<OnboardingGate />}>
-                                            <Route path='/theory' element={<ArticleWrapper />} />
-                                            <Route path='/course' element={<CourseWrapper />} />
+                                            <Route path='/theory' element={<Article />} />
+                                            <Route path='/course' element={<Course />} />
                                             <Route path='/session/:sessionId' element={<Session />} />
                                             <Route path='/instructions' element={<Instructions />} />
                                             <Route path='/tests' element={<Tests />} />
