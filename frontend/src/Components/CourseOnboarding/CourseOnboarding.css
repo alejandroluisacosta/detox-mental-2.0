@@ -4,7 +4,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
   padding: 16px;
   box-sizing: border-box;
 }
@@ -17,6 +16,7 @@
   background: #fff;
   border: 1px solid var(--light-brown);
   overflow: hidden;
+  margin-bottom: 25px;
 }
 
 .course-onboarding__character {
@@ -34,13 +34,15 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .course-onboarding__session {
+  /* Explicit margin: the Theory page's global `li` rules would otherwise leak in. */
+  margin: 0;
   width: 34px;
   height: 34px;
   display: flex;
@@ -56,7 +58,7 @@
 }
 
 .course-onboarding__caption {
-  margin: 0;
+  margin: 16px 0 0;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
