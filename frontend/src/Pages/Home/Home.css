@@ -101,12 +101,12 @@
     outline-offset: 4px;
 }
 
-.home-page__module--journal {
+.home-page__module--education {
     background: var(--dark-brown);
     color: var(--background);
 }
 
-.home-page__module--education {
+.home-page__module--journal {
     background: #fff;
     color: var(--text);
 }
@@ -146,12 +146,12 @@
     letter-spacing: 0.12em;
 }
 
-.home-page__module--journal .home-page__module-tag {
+.home-page__module--education .home-page__module-tag {
     background: var(--background);
     color: var(--dark-brown);
 }
 
-.home-page__module--education .home-page__module-tag {
+.home-page__module--journal .home-page__module-tag {
     background: var(--accent);
     color: var(--background);
 }
@@ -176,7 +176,7 @@
     line-height: 1.2;
 }
 
-.home-page__module--education .home-page__module-title {
+.home-page__module--journal .home-page__module-title {
     color: var(--dark-brown);
 }
 
@@ -198,12 +198,12 @@
     -webkit-mask: url('/icons/arrow_right.svg') no-repeat center / contain;
 }
 
-.home-page__module--journal .home-page__module-arrow {
+.home-page__module--education .home-page__module-arrow {
     background: var(--background);
     color: var(--dark-brown);
 }
 
-.home-page__module--education .home-page__module-arrow {
+.home-page__module--journal .home-page__module-arrow {
     background: var(--accent);
     color: #fff;
 }
@@ -213,7 +213,7 @@
     line-height: 1.5;
 }
 
-.home-page__module--journal .home-page__module-description {
+.home-page__module--education .home-page__module-description {
     color: var(--light-brown);
 }
 
