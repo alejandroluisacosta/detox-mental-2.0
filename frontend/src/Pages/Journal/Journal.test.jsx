@@ -382,6 +382,7 @@ describe('Journal onboarding slideshow', () => {
 
   test('stays closed on later visits once finished', () => {
     const first = renderFirstVisit();
+    fireEvent.click(screen.getByRole('button', { name: 'Show me' }));
     for (let i = 0; i < 3; i += 1) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
@@ -401,6 +402,6 @@ describe('Journal onboarding slideshow', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'How the journal works' }));
     expect(introDialog()).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
+    expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
   });
 });

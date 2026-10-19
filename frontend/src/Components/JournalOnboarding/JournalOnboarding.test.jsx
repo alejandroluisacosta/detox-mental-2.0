@@ -24,6 +24,8 @@ const renderOnboarding = (onClose = vi.fn()) => {
 };
 
 const clipSrc = () => document.querySelector('video')?.getAttribute('src');
+const stepLabel = () => document.querySelector('.onboarding-slideshow__step')?.textContent;
+const startTour = () => fireEvent.click(screen.getByRole('button', { name: 'Show me' }));
 
 describe('JournalOnboarding', () => {
   beforeEach(() => {
@@ -34,15 +36,33 @@ describe('JournalOnboarding', () => {
     cleanup();
   });
 
+  test('opens on Tales\' welcome, prefetching the first clip without playing a video', () => {
+    renderOnboarding();
+    expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
+    expect(document.querySelector('video')).toBeNull();
+    expect(document.querySelector('link[rel="prefetch"]')?.getAttribute('href')).toBe(
+      '/onboarding/journal/desktop/journal.mp4',
+    );
+    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
+  });
+
+  test('the welcome is not counted as a step', () => {
+    renderOnboarding();
+    expect(stepLabel()).toBe('Journal');
+    startTour();
+    expect(stepLabel()).toBe('Journal · 1 of 4');
+  });
+
   test('starts on the composer clip and loads only the current slide video', () => {
     renderOnboarding();
+    startTour();
     expect(document.querySelectorAll('video')).toHaveLength(1);
     expect(clipSrc()).toBe('/onboarding/journal/desktop/journal.mp4');
   });
 
-  test('Next and Back move through History, Summary and Meditations', () => {
+  test('Next and Back move through History, Summary and Meditations, and back to the welcome', () => {
     renderOnboarding();
-    expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
+    startTour();
 
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     expect(clipSrc()).toBe('/onboarding/journal/desktop/history.mp4');
@@ -54,6 +74,11 @@ describe('JournalOnboarding', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     expect(clipSrc()).toBe('/onboarding/journal/desktop/summary.mp4');
     expect(document.querySelectorAll('video')).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
   });
 
   test('a progress dot jumps straight to its slide', () => {
@@ -65,20 +90,23 @@ describe('JournalOnboarding', () => {
   test('serves the mobile clips below the desktop breakpoint', () => {
     mockMedia({ desktop: false });
     renderOnboarding();
+    startTour();
     expect(clipSrc()).toBe('/onboarding/journal/mobile/journal.mp4');
   });
 
   test('shows a still image instead of a video when the user prefers reduced motion', () => {
     mockMedia({ reducedMotion: true });
     renderOnboarding();
+    startTour();
     expect(document.querySelector('video')).toBeNull();
-    expect(screen.getByRole('img').getAttribute('src')).toBe(
-      '/onboarding/journal/desktop/journal.jpg',
-    );
+    expect(
+      screen.getByRole('img', { name: 'Typing a journal entry and selecting topics' }).getAttribute('src'),
+    ).toBe('/onboarding/journal/desktop/journal.jpg');
   });
 
   test('the last slide finishes the slideshow instead of advancing', () => {
     const onClose = renderOnboarding();
+    startTour();
     for (let i = 0; i < 3; i += 1) {
       fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }

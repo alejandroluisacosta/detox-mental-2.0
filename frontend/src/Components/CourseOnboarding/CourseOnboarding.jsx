@@ -86,8 +86,16 @@ const SLIDES = [
   },
 ];
 
+const WELCOME = {
+  title: 'Bienvenido/a al curso Detox Mental',
+  message:
+    'Hola, soy Tales. En menos de un minuto te enseño cómo sacarle todo el partido al curso. Puedes volver a verlo cuando quieras con el botón ?.',
+  start: 'Empezar',
+};
+
 const LABELS = {
   dialog: 'Introducción al curso',
+  module: 'Curso',
   step: (current, total) => `Curso · ${current} de ${total}`,
   skip: 'Saltar',
   back: 'Atrás',
@@ -100,6 +108,7 @@ const CourseOnboarding = ({ onClose }) => (
   <OnboardingSlideshow
     slides={SLIDES}
     clipBase="/onboarding/course"
+    welcome={WELCOME}
     labels={LABELS}
     onClose={onClose}
   />

@@ -88,7 +88,7 @@ describe('Course page first visit', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Cómo funciona el curso' }));
     expect(courseIntro()).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Atrás' })).toBeNull();
+    expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
   });
 
   test('the reward offer waits until the slideshow is closed', () => {
