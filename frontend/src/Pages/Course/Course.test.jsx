@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { SessionsContext } from '../../Context/SessionsContext';
 import { sessionsData } from '../../data';
 import { COURSE_ONBOARDING_SEEN_KEY } from '../../Components/CourseOnboarding/CourseOnboarding.jsx';
-import CourseWrapper from './CourseWrapper.jsx';
+import Course from './Course.jsx';
 
 const mockNavigate = vi.fn();
 const mockPromoEnabled = vi.fn();
@@ -28,7 +28,7 @@ const renderCourse = ({ onboardingSeen = false } = {}) => {
     <SessionsContext.Provider
       value={{ sessions: sessionsData, setSessions: vi.fn(), sessionsLoading: false }}
     >
-      <CourseWrapper />
+      <Course />
     </SessionsContext.Provider>,
   );
 };

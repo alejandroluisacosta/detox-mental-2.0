@@ -20,6 +20,7 @@ import { createLongPressHandlers } from '../../utils/longPress.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
+import OnboardingHelpButton from '../../Components/OnboardingHelpButton/OnboardingHelpButton.jsx';
 import JournalOnboarding, {
   JOURNAL_ONBOARDING_SEEN_KEY,
 } from '../../Components/JournalOnboarding/JournalOnboarding.jsx';
@@ -310,16 +311,12 @@ const Journal = () => {
       <main className="journal-page__main">
         <div className="journal-page__prompt-row">
           <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
-          <button
+          <OnboardingHelpButton
             ref={helpButtonRef}
-            type="button"
-            className={`onboarding-help-button${pulseHelp ? ' onboarding-help-button--pulse' : ''}`}
+            label={t('journalOnboarding.open')}
+            pulse={pulseHelp}
             onClick={openOnboarding}
-            aria-label={t('journalOnboarding.open')}
-            title={t('journalOnboarding.open')}
-          >
-            ?
-          </button>
+          />
         </div>
 
         <div className="journal-page__composer">
