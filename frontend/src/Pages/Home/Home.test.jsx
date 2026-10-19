@@ -41,6 +41,15 @@ describe('Home', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/journal');
     });
 
+    test('lists the Journal card before the Education card', () => {
+        renderHome();
+        const cards = screen.getAllByRole('button', { name: /Clear your mind|Understand your mind/ });
+        expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
+            'home-journal-title',
+            'home-education-title',
+        ]);
+    });
+
     test('is English by default', () => {
         render(
             <LocaleProvider>
