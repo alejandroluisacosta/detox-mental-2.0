@@ -66,8 +66,9 @@
   background: var(--background);
 }
 
-.onboarding-slideshow__media video,
-.onboarding-slideshow__media img {
+/* Direct children only: slides with their own media (e.g. Tales' welcome) style their images. */
+.onboarding-slideshow__media > video,
+.onboarding-slideshow__media > img {
   display: block;
   width: 100%;
   height: 100%;

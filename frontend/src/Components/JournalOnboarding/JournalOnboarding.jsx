@@ -15,8 +15,15 @@ const JournalOnboarding = ({ onClose }) => {
     alt: t(`journalOnboarding.${id}.alt`),
   }));
 
+  const welcome = {
+    title: t('journalOnboarding.welcome.title'),
+    message: t('journalOnboarding.welcome.message'),
+    start: t('journalOnboarding.welcome.start'),
+  };
+
   const labels = {
     dialog: t('journalOnboarding.dialogLabel'),
+    module: t('journalOnboarding.module'),
     step: (current, total) => t('journalOnboarding.step', { current, total }),
     skip: t('journalOnboarding.skip'),
     back: t('journalOnboarding.back'),
@@ -29,6 +36,7 @@ const JournalOnboarding = ({ onClose }) => {
     <OnboardingSlideshow
       slides={slides}
       clipBase="/onboarding/journal"
+      welcome={welcome}
       labels={labels}
       onClose={onClose}
     />

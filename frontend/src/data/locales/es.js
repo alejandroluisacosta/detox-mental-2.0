@@ -102,6 +102,11 @@ export const es = {
   'journal.topicRenameFailed': 'No se pudo cambiar el nombre del tema.',
   'journalOnboarding.dialogLabel': 'Introducción al diario',
   'journalOnboarding.open': 'Cómo funciona el diario',
+  'journalOnboarding.module': 'Diario',
+  'journalOnboarding.welcome.title': 'Bienvenido/a a tu diario',
+  'journalOnboarding.welcome.message':
+    'Hola, soy Tales. Te enseño cómo funciona en menos de un minuto. Puedes volver a verlo cuando quieras con el botón ?.',
+  'journalOnboarding.welcome.start': 'Empezar',
   'journalOnboarding.step': 'Diario · {current} de {total}',
   'journalOnboarding.skip': 'Saltar',
   'journalOnboarding.back': 'Atrás',

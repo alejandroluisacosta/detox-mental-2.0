@@ -20,6 +20,7 @@ const renderOnboarding = (onClose = vi.fn()) => {
 
 const clipSrc = () => document.querySelector('video')?.getAttribute('src');
 const next = () => fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+const startTour = () => fireEvent.click(screen.getByRole('button', { name: 'Empezar' }));
 
 describe('CourseOnboarding', () => {
   beforeEach(() => {
@@ -30,8 +31,18 @@ describe('CourseOnboarding', () => {
     cleanup();
   });
 
+  test('opens on Tales\' welcome, which is not counted as a step', () => {
+    renderOnboarding();
+    expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
+    expect(document.querySelector('video')).toBeNull();
+    expect(document.querySelector('.onboarding-slideshow__step')?.textContent).toBe('Curso');
+    startTour();
+    expect(document.querySelector('.onboarding-slideshow__step')?.textContent).toBe('Curso · 1 de 6');
+  });
+
   test('walks through the article, audio, exercise, tests and unlock clips in order', () => {
     renderOnboarding();
+    startTour();
     const seen = [clipSrc()];
     for (let i = 0; i < 4; i += 1) {
       next();
@@ -49,6 +60,7 @@ describe('CourseOnboarding', () => {
   test('serves the mobile clips below the desktop breakpoint', () => {
     mockMedia({ desktop: false });
     renderOnboarding();
+    startTour();
     expect(clipSrc()).toBe('/onboarding/course/mobile/article.mp4');
   });
 
@@ -61,6 +73,7 @@ describe('CourseOnboarding', () => {
 
   test('the last slide starts the course and closes the slideshow', () => {
     const onClose = renderOnboarding();
+    startTour();
     for (let i = 0; i < 5; i += 1) next();
     expect(screen.queryByRole('button', { name: 'Siguiente' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Empezar el curso' }));
