@@ -64,11 +64,11 @@ describe('Education entry without a forced guided tour', () => {
     expect(window.location.pathname).toBe('/course');
   });
 
-  test('the guided tour opens straight on the chat with Tales', async () => {
+  test('the guided tour opens on its short title, without the old welcome lines', async () => {
     window.history.pushState({}, '', '/onboarding');
     render(<App />);
 
-    expect(await screen.findByText('Hola, soy Tales.')).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Detox Mental' })).toBeTruthy();
     expect(screen.queryByText(/tu gimnasio mental virtual/)).toBeNull();
   });
 });

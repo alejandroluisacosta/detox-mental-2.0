@@ -23,6 +23,9 @@ Onboarding is a **cross-cutting concern** [affects many parts at once] that appl
 - No duplication of conditional checks inside individual components
 - Clear architectural intent: onboarding is a **precondition** for accessing the app
 
+**Updated 2026-10-19 — reversed:**  
+Based on the latest developments of the product, onboarding no longer wraps any route; it is optional for interested users. `OnboardingGate` was removed: the educational module is reachable directly, with `/course` as its entry point, and the guided chat with Tales at `/onboarding` is offered at the end of the course's short slideshow. See the 2026-10-19 entry.
+
 ### 2026-02-01 — Separate Vercel projects for frontend and backend
 
 **Decision:**  
@@ -157,6 +160,9 @@ This is a product-oriented change that comes from experimentation with the produ
 **Why this revisits 2026-01-28:**  
 That decision treated onboarding as a precondition for accessing the app. The gate now guards the educational module only, so journaling can be used and advertised independently.
 
+**Updated 2026-10-19:**  
+The educational module is no longer behind `OnboardingGate`, which was removed (see the 2026-10-19 entry). The split into two modules still stands.
+
 ### 2026-08-26 — Journaling module bilingual UI with English default
 
 **Decision:**  
@@ -266,3 +272,18 @@ Two goals: keep quota-limited services (Resend, Hugging Face) **available to rea
 - Count-then-insert is not atomic, so concurrent requests can slightly overshoot a limit.  
 - A request blocked by the email limit still counts against that IP's hourly allowance, because the IP is checked first.  
 - Chat limits are per IP, not per user (the chat is unauthenticated), so people sharing an IP share the allowance. Once the 100/day global cap is reached, everyone gets the canned fallback until the window passes.
+
+### 2026-10-19 — Quick slideshow onboarding for both modules; the guided chat becomes optional
+
+**Decision:**  
+Each module now opens with a short first-visit slideshow (`OnboardingSlideshow`). Tales welcomes the user, then a few slides show the module's main features with short clips recorded from the real app and one-line descriptions, so the whole tour takes under a minute. The journaling tour covers writing, History, Summary and Meditations. The education tour covers the article, the audio course, the exercises, the thoughts tests, unlocking sessions and the secret characters, and ends by offering the long guided chat with Tales at `/onboarding`. That chat is now optional and opens with a short "Detox Mental" title instead of the previous 14-second intro. Each tour is shown once per browser (`journalOnboardingSeen`, `courseOnboardingSeen`), and a "?" button on the module page replays it.
+
+**Why this option was chosen:**  
+After receiving feedback from several users, it was clear that the previous onboarding was too long for a first-time visitor. People found it interesting, but it had too much text, and they were not willing to spend a few minutes going through it before getting into the course. The slideshows let a new visitor quickly see what each module is about, and those who want more can still take the guided chat.
+
+**Why this revisits 2026-01-28 and 2026-08-19:**  
+Those entries made onboarding a precondition for the educational module. A mandatory multi-minute chat was what made first visits stall, so the gate is removed and the long onboarding becomes an option.
+
+**Downsides (accepted):**  
+- The recorded clips (about 1 MB per device set in each module) must be re-recorded when the screens they show change.
+- "Seen" is stored per browser, not per account, so a user on a new device sees the tour again.
