@@ -65,18 +65,18 @@ const Home = () => {
             </h1>
             <nav className='home-page__modules' aria-label={t('home.modulesLabel')}>
                 <ModuleCard
-                    id='education'
-                    modifier='education'
-                    image='/images/education-background.webp'
-                    path='/theory'
-                    t={t}
-                    navigate={navigate}
-                />
-                <ModuleCard
                     id='journal'
                     modifier='journal'
                     image='/images/journaling-background.webp'
                     path='/journal'
+                    t={t}
+                    navigate={navigate}
+                />
+                <ModuleCard
+                    id='education'
+                    modifier='education'
+                    image='/images/education-background.webp'
+                    path='/course'
                     t={t}
                     navigate={navigate}
                 />
