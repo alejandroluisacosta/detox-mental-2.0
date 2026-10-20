@@ -1,5 +1,7 @@
 .course-onboarding__characters {
-  height: 100%;
+  /* See .tales-welcome: pinned to the box edges so cropping stays symmetric. */
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;

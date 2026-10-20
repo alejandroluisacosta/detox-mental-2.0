@@ -1,5 +1,8 @@
 .tales-welcome {
-  height: 100%;
+  /* Pinned to the media box's real edges: `height: 100%` resolves against the
+     unclamped aspect-ratio height on iOS WebKit, which decentres the content. */
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
