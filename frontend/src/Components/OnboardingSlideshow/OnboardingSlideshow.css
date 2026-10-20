@@ -75,8 +75,11 @@
   object-fit: cover;
 }
 
-/* The box keeps the clip's shape so illustrated slides match recorded ones. */
+/* The box keeps the clip's shape so illustrated slides match recorded ones.
+   Width is explicit: iOS WebKit otherwise carries the max-height clamp through
+   the aspect ratio into an auto width, leaving a narrow box stuck to the left. */
 .onboarding-slideshow--mobile .onboarding-slideshow__media {
+  width: 100%;
   aspect-ratio: 538 / 580;
   max-height: 45svh;
 }
