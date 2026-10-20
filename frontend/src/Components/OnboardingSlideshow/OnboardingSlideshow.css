@@ -60,6 +60,7 @@
 }
 
 .onboarding-slideshow__media {
+  position: relative;
   overflow: hidden;
   border: 1px solid var(--platinum);
   border-radius: 12px;
