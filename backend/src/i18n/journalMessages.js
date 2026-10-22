@@ -26,6 +26,7 @@ const messages = {
     imageProcessFailed: 'Could not process the image.',
     imageUnreadable: 'Could not read the text from the image.',
     transcribeFailed: 'Could not transcribe the image.',
+    transcribeRateLimited: "You've reached today's transcription limit. Try again tomorrow.",
     missingImage: 'No image was received.',
     unsupportedImageFormat: 'Unsupported image format. Use JPG, PNG, or WebP.',
     invalidImage: 'The file does not appear to be a valid image.',
@@ -75,6 +76,8 @@ const messages = {
     imageProcessFailed: 'No se pudo procesar la imagen.',
     imageUnreadable: 'No se pudo leer el texto de la imagen.',
     transcribeFailed: 'No se pudo transcribir la imagen.',
+    transcribeRateLimited:
+      'Has alcanzado el límite de transcripciones de hoy. Inténtalo de nuevo mañana.',
     missingImage: 'No se recibió ninguna imagen.',
     unsupportedImageFormat:
       'Formato de imagen no admitido. Usa JPG, PNG o WebP.',

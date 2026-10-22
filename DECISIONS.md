@@ -252,12 +252,14 @@ There is currently no real demand for the course, so the cost of someone finding
 - **Fix it now alongside the unlock-code change:** Rejected to keep that change scoped to one access-control bug at a time (TDD-friendly, reviewable diff) and because the infra cost isn't justified yet.
 - **Leave it undocumented:** Rejected — an unprotected, unauthenticated resource should never be silently "fine," even when the current risk is low. Revisit this before monetizing the course further or once it has real paying users.
 
-### 2026-10-17 — Postgres-backed rate limiting for login emails and the onboarding chat
+### 2026-10-17 — Postgres-backed rate limiting for login emails, the onboarding chat and journal transcription
 
 **Decision:**  
 This is the **second major vulnerability** found in the app: **no rate limiting** on any endpoint (OWASP API4, unrestricted resource consumption, which includes "denial of wallet"). `POST /auth/login` sent a Resend email on every request, so anyone could email-bomb an address or burn the whole Resend quota, locking real users out of logging in. Added a shared limiter (`rate_limit_events` table, migration `019_rate_limit_events.sql`; `backend/src/rateLimit/`) and applied it first to login: per email (3 per 15 min, 5 per day), per IP (10 per hour) and globally (90 per day, just under Resend's free tier of 100). IPs and emails are stored only as HMAC hashes (same keyed approach as `magic_link_tokens`). Over the limit returns `429`. If the limit check hits a database error, no email is sent (fail closed) and the usual generic 200 is returned.
 
 The same limiter was then applied to the unauthenticated onboarding chat (`POST /chat`), where each request could trigger up to two Hugging Face calls and the server trusted a client-supplied `sessionState` (a forged state could carry a huge `pqaSentence`). Limits are counted per Hugging Face call: per IP (6 per hour, 10 per day) and globally (100 per day, about 50 onboardings). When a limit is hit, onboarding does **not** break: it degrades silently to a canned challenge question and `"medium"` clarity, so the user still finishes. A database error is treated as "limit hit" (fail closed). The client-supplied sentence must also be a single sentence of at most 300 characters, otherwise the state resets to `PQA_PROMPT` with no model call. `chatController` denies LLM calls by default unless an entrypoint passes `allowLlmCall`, so a forgotten wire can't spend money.
+
+The limiter was finally applied to the authenticated journal image transcription (`POST /auth/me/journal-entries/transcribe`), where each request is a Hugging Face vision call and any logged-in account could loop it. The limit is **3 transcriptions per user per day**, keyed by user id (not hashed, since it is neither an IP nor an email), and can be raised if users ask. The check runs after the upload is validated and before the model call, so invalid uploads (missing, too large, wrong type, bad signature) return `400` and do not count. Over the limit returns a localized `429` (`en`/`es`) and makes no Hugging Face call; the Journal page already shows `data.message`. A database error is treated as "limit hit" (fail closed). With this, every endpoint that spends money on Resend or Hugging Face is rate limited.
 
 **Why this option was chosen:**  
 Two goals: keep quota-limited services (Resend, Hugging Face) **available to real users** during an attack, and keep **costs bounded** no matter what an attacker does. The backend runs on Vercel serverless, so in-memory counters would be per-instance and useless. Postgres counters generalize the existing `journal_summary_generate_attempts` pattern and add no dependency. For the chat, falling back to canned output (instead of an error) keeps onboarding usable while the global cap stays a hard cost ceiling.
@@ -272,6 +274,8 @@ Two goals: keep quota-limited services (Resend, Hugging Face) **available to rea
 - Count-then-insert is not atomic, so concurrent requests can slightly overshoot a limit.  
 - A request blocked by the email limit still counts against that IP's hourly allowance, because the IP is checked first.  
 - Chat limits are per IP, not per user (the chat is unauthenticated), so people sharing an IP share the allowance. Once the 100/day global cap is reached, everyone gets the canned fallback until the window passes.
+- Transcription has no global cap, only the per-user limit, so total spend scales with the number of accounts. Someone who creates many accounts can still multiply it by 3 per day each; account creation is gated by the login limits above. A global cap can be added if this becomes a problem.  
+- A fail-closed database error shows the user the "daily limit" message even though they have not reached it.
 
 ### 2026-10-19 — Quick slideshow onboarding for both modules; the guided chat becomes optional
 
