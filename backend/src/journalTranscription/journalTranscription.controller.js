@@ -1,5 +1,7 @@
 import multer from 'multer';
 import { validateTranscriptionInput, MAX_IMAGE_BYTES } from './validateTranscriptionInput.js';
+import pool from '../db/db.js';
+import { allowTranscription } from '../rateLimit/limits.js';
 import { transcribeJournalImage } from './journalTranscription.service.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
@@ -34,8 +36,15 @@ export const postJournalTranscription = async (req, res) => {
     return res.status(400).json({ message: validation.message });
   }
 
+  const allowed = await allowTranscription({ userId: req.user.id, db: req.db ?? pool });
+  if (!allowed) {
+    return res.status(429).json({ message: journalMessage(locale, 'transcribeRateLimited') });
+  }
+
+  const transcribe = req.transcribeJournalImage ?? transcribeJournalImage;
+
   try {
-    const text = await transcribeJournalImage({
+    const text = await transcribe({
       buffer: req.file.buffer,
       mimeType: validation.mimeType,
     });
