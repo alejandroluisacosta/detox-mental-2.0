@@ -96,6 +96,24 @@ an IP share an allowance. If the global daily cap is reached, everyone gets
 the canned replies until it resets. That is a deliberate trade for a hard
 cost ceiling.
 
+### ✅ Journal transcription rate limiting (2026-10)
+
+**Issue:** The journal image transcription endpoint requires login, but each
+request is a Hugging Face vision model call and nothing limited how many a
+single account could make. Anyone with an account could loop it and run up
+model costs (OWASP API4, "denial of wallet").
+
+**Fix:** Each user is now limited to 3 transcriptions per day, using the same
+Postgres-backed limiter as login and the chat. The check runs after the upload
+is validated, so invalid uploads don't count, and a limited user gets a
+localized `429` with no model call. If the limit check hits a database error,
+the request is refused (fail closed). See `DECISIONS.md` (2026-10-17) for
+details.
+
+**Known, accepted gap:** There is no global cap, only the per-user limit, so
+total spend scales with the number of accounts. Account creation is gated by
+the login limits.
+
 ---
 
 ## In progress
