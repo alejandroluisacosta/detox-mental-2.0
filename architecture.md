@@ -57,10 +57,6 @@ to `/?auth=success`. Shared account and auth routes (`/login`, `/auth/error`,
 `/account`) and the journaling module (`/journal`, `/journal/history`,
 `/journal/meditations`, `/journal/summary`) are reachable without onboarding.
 
-The former personal site (`/alejandroluis` and `/alejandroluis/blog/...`) now
-lives at alejandroluis.com. `frontend/vercel.json` permanently redirects the old
-paths there.
-
 The educational module (`/theory`, `/course`, `/session/:sessionId`,
 `/instructions`, `/tests`, `/test/:testId`, `/promo`) is reachable directly.
 Its entry point is `/course`, which opens a short first-visit slideshow; the

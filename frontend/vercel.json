@@ -1,27 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/alejandroluis/blog",
-      "has": [{ "type": "query", "key": "category", "value": "(?<category>personal|technology)" }],
-      "destination": "https://www.alejandroluis.com/blog/category/:category",
-      "permanent": true
-    },
-    {
-      "source": "/alejandroluis/blog/:slug",
-      "destination": "https://www.alejandroluis.com/blog/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/alejandroluis/blog",
-      "destination": "https://www.alejandroluis.com/blog",
-      "permanent": true
-    },
-    {
-      "source": "/alejandroluis",
-      "destination": "https://www.alejandroluis.com/",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]

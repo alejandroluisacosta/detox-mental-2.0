@@ -200,7 +200,7 @@ The first blog implementation treated each chip as a new backend query. Smoke-te
 - **Reuse `AuthContext` / `LocaleContext`:** Those providers own session and copy, not blog posts.
 
 **Later update (2026-10-23): the blog moved out of Detox Mental.**  
-Following feedback from a trusted tech recruiter, the blog now lives on its own domain: its articles are valuable, but their scope goes beyond Detox Mental. It moved to [alejandroluis.com](https://www.alejandroluis.com) (repo `alejandroluisacosta/blog`), where all published posts are available. The old `/alejandroluis` links in Detox Mental redirect there permanently (`frontend/vercel.json`). The blog code was removed from this repo and `020_drop_blog_posts.sql` drops the table, so this decision no longer applies to the app.
+Following feedback from a trusted tech recruiter, the blog now lives on its own domain: its articles are valuable, but their scope goes beyond Detox Mental. It moved to [alejandroluis.com](https://www.alejandroluis.com) (repo `alejandroluisacosta/blog`), where all published posts are available, and the new site links back to Detox Mental (for example, from a section on its home page). Since the blog had no audience yet, it starts fresh on the new domain: the `/alejandroluis` routes were removed without redirects, the blog code was deleted from this repo, and `020_drop_blog_posts.sql` drops the table. This decision no longer applies to the app.
 
 ### 2026-09-24 — Tool-agnostic agent instructions in AGENTS.md
 

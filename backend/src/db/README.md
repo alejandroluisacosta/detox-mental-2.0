@@ -450,8 +450,7 @@ Notes:
 
 ### Drop Blog Posts
 ```sql
--- Back up blog_posts first (see the migration header). Removes the table
--- created by 014; the blog now lives at alejandroluis.com.
+-- Removes the unused blog_posts table created by 014.
 \i backend/src/db/migrations/020_drop_blog_posts.sql
 ```
 
