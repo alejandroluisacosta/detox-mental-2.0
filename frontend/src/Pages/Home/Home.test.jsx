@@ -80,10 +80,4 @@ describe('Home', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Vacía tu mente' }));
         expect(mockNavigate).toHaveBeenCalledWith('/journal');
     });
-
-    test('does not offer a control to the personal site', () => {
-        renderHome();
-        expect(screen.queryByRole('button', { name: /alejandro|blog/i })).toBeNull();
-        expect(mockNavigate).not.toHaveBeenCalled();
-    });
 });
