@@ -27,7 +27,7 @@ about the time window. Make the fake fail the way production fails.
 
 ### 4. Prefer the controller boundary to the mocked component
 Drive controllers with a fake `req`/`res` and an injected `db`, as in
-`blogPosts.controller.test.js`. Services take `db = pool` so tests can pass a
+`journalEntries.controller.test.js`. Services take `db = pool` so tests can pass a
 fake. New services must keep that seam.
 
 ### 5. Assert outcomes, not mock calls

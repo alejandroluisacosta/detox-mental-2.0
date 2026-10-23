@@ -28,7 +28,6 @@ applied one.
 
 ## Additional constraints
 
-- Non-admin callers of blog admin routes get **404**, not 403.
 - Onboarding chat stays stateless; do not add server-held chat session state
   without an explicit decision.
 - Migrations are applied manually via `\i backend/src/db/migrations/<NNN>_<name>.sql`

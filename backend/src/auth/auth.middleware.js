@@ -1,8 +1,6 @@
 import { verifyJwt, COOKIE_NAME } from './jwt.js';
 import { findUserById } from './auth.service.js';
 
-export const isAdminRole = (role) => role === 'admin';
-
 export function createRequireAuth({ findUserById: lookup = findUserById } = {}) {
   return async function requireAuth(req, res, next) {
     const token = req.cookies?.[COOKIE_NAME];
@@ -36,10 +34,3 @@ export function createRequireAuth({ findUserById: lookup = findUserById } = {}) 
 }
 
 export const requireAuth = createRequireAuth();
-
-export async function requireAdmin(req, res, next) {
-  if (!isAdminRole(req.user?.role)) {
-    return res.status(404).json({ message: 'Not found.' });
-  }
-  return next();
-}
