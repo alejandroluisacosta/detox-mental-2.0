@@ -1,0 +1,13 @@
+.course-world-scene {
+  position: absolute;
+  inset: 0;
+}
+
+/* Taps walk the player; they must not scroll or zoom the page. */
+.course-world-scene > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: pointer;
+}
