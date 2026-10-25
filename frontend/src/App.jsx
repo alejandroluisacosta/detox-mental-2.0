@@ -5,6 +5,7 @@ import SessionsProvider from './Context/SessionsContext.jsx';
 import Article from './Pages/Article/Article.jsx';
 import Session from './Components/Session/Session.jsx';
 import Course from './Pages/Course/Course.jsx';
+import CourseWorld from './Pages/CourseWorld/CourseWorld.jsx';
 import Onboarding from './Pages/Onboarding/Onboarding.jsx';
 import ThoughtsTest from './Pages/ThoughtsTest/ThoughtsTest.jsx';
 import Login from './Pages/Login/Login.jsx';
@@ -56,6 +57,7 @@ const App = () => {
                                         <Route path='/payment/cancel' element={<PaymentCancel />} />
                                         <Route path='/theory' element={<Article />} />
                                         <Route path='/course' element={<Course />} />
+                                        <Route path='/course/world' element={<CourseWorld />} />
                                         <Route path='/session/:sessionId' element={<Session />} />
                                         <Route path='/instructions' element={<Instructions />} />
                                         <Route path='/tests' element={<Tests />} />
