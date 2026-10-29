@@ -5,6 +5,7 @@ import './JournalConfirmModal.css';
 const JournalConfirmModal = ({
   title,
   text,
+  note,
   labelledById,
   onClose,
   primary,
@@ -37,6 +38,7 @@ const JournalConfirmModal = ({
           {title}
         </h2>
         <p className="journal-confirm-modal__text">{text}</p>
+        {note ? <p className="journal-confirm-modal__note">{note}</p> : null}
         <button
           type="button"
           className="journal-confirm-modal__button"

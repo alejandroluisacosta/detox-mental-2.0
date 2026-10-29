@@ -20,6 +20,7 @@ import Journal from './Pages/Journal/Journal.jsx';
 import JournalHistory from './Pages/JournalHistory/JournalHistory.jsx';
 import JournalMeditations from './Pages/JournalMeditations/JournalMeditations.jsx';
 import JournalSummary from './Pages/JournalSummary/JournalSummary.jsx';
+import JournalFirstReflection from './Pages/JournalFirstReflection/JournalFirstReflection.jsx';
 import Home from './Pages/Home/Home.jsx';
 import ScrollToTop from './Components/ScrollToTop/ScrollToTop.jsx';
 import { DemoModeProvider } from './Context/DemoModeContext.jsx';
@@ -49,6 +50,7 @@ const App = () => {
                                         <Route path='/journal/history' element={<JournalHistory />} />
                                         <Route path='/journal/meditations' element={<JournalMeditations />} />
                                         <Route path='/journal/summary' element={<JournalSummary />} />
+                                        <Route path='/journal/first-reflection' element={<JournalFirstReflection />} />
 
                                         {/* Educational module */}
                                         <Route path='/onboarding' element={<Onboarding />} />

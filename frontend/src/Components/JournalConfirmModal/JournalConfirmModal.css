@@ -21,6 +21,14 @@
   line-height: 1.5;
 }
 
+.journal-confirm-modal__note {
+  text-align: left;
+  margin: -0.5rem 0 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
 .journal-confirm-modal__button {
   width: 100%;
   padding: 12px 0;
@@ -28,6 +36,11 @@
   background: var(--accent);
   border: 2px solid var(--accent);
   color: var(--background);
+}
+
+.journal-confirm-modal__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .journal-confirm-modal__button--secondary {

@@ -5,11 +5,14 @@ import { writeStoredLocale } from '../../utils/locale.js';
 import { JOURNAL_TOPIC_IDS } from '../../data/journalTopics.js';
 import { emitToast } from '../../lib/toastBus.js';
 import { JOURNAL_ONBOARDING_SEEN_KEY } from '../../Components/JournalOnboarding/JournalOnboarding.jsx';
+import { apiFetch } from '../../api/client.js';
+import { FIRST_REFLECTION_STORAGE_KEY } from '../../utils/firstReflection.js';
 import Journal from './Journal.jsx';
 
 const mockUseAuth = vi.fn();
 const mockUseDemoMode = vi.fn();
 const mockUseJournalTopics = vi.fn();
+const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => (
@@ -17,8 +20,23 @@ vi.mock('react-router-dom', () => ({
       {children}
     </a>
   ),
-  useNavigate: () => vi.fn(),
+  useNavigate: () => mockNavigate,
 }));
+
+vi.mock(
+  '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx',
+  async () => {
+    const { useEffect } = await import('react');
+    return {
+      default: function MockLoadingScreen({ ready, onDone }) {
+        useEffect(() => {
+          if (ready) onDone?.();
+        }, [onDone, ready]);
+        return <div>preparing-reflection</div>;
+      },
+    };
+  },
+);
 
 vi.mock('../../Context/AuthContext.jsx', () => ({
   useAuth: () => mockUseAuth(),
@@ -403,5 +421,102 @@ describe('Journal onboarding slideshow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'How the journal works' }));
     expect(introDialog()).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Tales' })).toBeTruthy();
+  });
+});
+
+describe('Journal first reflection for guests', () => {
+  const ENTRY = 'I keep postponing the conversation with my manager. '.repeat(5);
+  const REFLECTION = {
+    summaryText: 'You name the avoidance yourself.',
+    mainTopics: ['work'],
+    bestQuote: 'I keep postponing the conversation',
+    socraticText: 'What would it cost to have it this week?',
+    machiavelliText: 'Delay protects comfort, not the goal.',
+  };
+
+  const openGuestModal = (text) => {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Journal text' }), {
+      target: { value: text },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'COMPLETE' }));
+  };
+
+  beforeEach(() => {
+    window.localStorage.clear();
+    mockNavigate.mockReset();
+    apiFetch.mockReset();
+    emitToast.mockReset();
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({ demoMode: false, toggleDemoMode: vi.fn() });
+    mockUseJournalTopics.mockReturnValue(defaultTopicsValue);
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('a short entry cannot request a reflection and sends nothing', () => {
+    renderJournal();
+    openGuestModal('Too short to reflect on.');
+
+    const button = screen.getByRole('button', { name: 'GET A FIRST REFLECTION' });
+    expect(button.disabled).toBe(true);
+    expect(screen.getByText(/at least 200 characters/)).toBeTruthy();
+    fireEvent.click(button);
+    expect(apiFetch).not.toHaveBeenCalled();
+  });
+
+  test('discloses that the text goes to an AI provider before it is sent', () => {
+    renderJournal();
+    openGuestModal(ENTRY);
+
+    expect(
+      screen.getByText(/sent to an AI provider to write the reflection and isn.t stored by us/),
+    ).toBeTruthy();
+  });
+
+  test('sends the entry, keeps only the reflection in the browser and opens the preview', async () => {
+    apiFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ reflection: REFLECTION }),
+    });
+    renderJournal();
+    openGuestModal(ENTRY);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'GET A FIRST REFLECTION' }));
+    });
+
+    expect(apiFetch).toHaveBeenCalledWith(
+      '/journal/first-reflection',
+      expect.objectContaining({ method: 'POST', body: { content: ENTRY.trim() } }),
+    );
+    const stored = JSON.parse(window.localStorage.getItem(FIRST_REFLECTION_STORAGE_KEY));
+    expect(stored.reflection).toEqual(REFLECTION);
+    expect(JSON.stringify(stored).includes('postponing the conversation with my manager.')).toBe(false);
+    expect(mockNavigate).toHaveBeenCalledWith('/journal/first-reflection');
+  });
+
+  test('when the daily limit is reached, shows why and keeps the text', async () => {
+    apiFetch.mockResolvedValue({
+      ok: false,
+      status: 429,
+      json: async () => ({
+        code: 'first_reflection_rate_limited',
+        message: "Today's free reflections are used up.",
+      }),
+    });
+    renderJournal();
+    openGuestModal(ENTRY);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'GET A FIRST REFLECTION' }));
+    });
+
+    expect(emitToast).toHaveBeenCalledWith("Today's free reflections are used up.");
+    expect(screen.getByRole('textbox', { name: 'Journal text' }).value).toBe(ENTRY);
+    expect(window.localStorage.getItem(FIRST_REFLECTION_STORAGE_KEY)).toBeNull();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

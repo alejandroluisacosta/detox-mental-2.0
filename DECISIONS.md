@@ -294,3 +294,28 @@ Those entries made onboarding a precondition for the educational module. A manda
 **Downsides (accepted):**  
 - The recorded clips (about 1 MB per device set in each module) must be re-recorded when the screens they show change.
 - "Seen" is stored per browser, not per account, so a user on a new device sees the tour again.
+
+### 2026-10-29 — Anonymous first-entry reflection for new visitors
+
+**Decision:**  
+A visitor who is not signed in can write one entry on `/journal` and get a **first reflection** on it: a preview of the weekly summary, written from that single entry. The guest modal offers it next to logging in, with the disclosure that the text is sent to an AI provider and is not stored by us. The new public endpoint `POST /journal/first-reflection` accepts 200–3,000 characters, makes one Hugging Face call with a first-entry variant of the summary prompt (smaller token budget), returns the result and **stores nothing**. Only the reflection is kept, in the visitor's browser (`localStorage`, 7 days), and shown at `/journal/first-reflection` with an invitation to create an account. The entry itself is lost: it is not carried into the account after sign-up.
+
+Cost is bounded by the shared Postgres limiter: **30 reflections per day globally** (the spend ceiling) and **2 per IP per day** (so one visitor cannot use up the day). Length is validated before the limiter, so invalid requests never count. A limiter database error refuses the request (fail closed), and `FIRST_REFLECTION_DISABLED=true` turns the endpoint off. Errors are logged by code only, never with the request body or the provider's message, since either can carry the visitor's text.
+
+**Why this option was chosen:**  
+Detox Mental started from an article I wrote in 2021, which became the Education module. In mid-2026 I built the Journaling module for myself, as the app's only real user, and that made the product something I can fully stand behind. The overarching goal of the product is to be my portfolio as a Software / Product Developer: proof of what I can build. A conversation with a trusted recruiter made it clear that having other people use the app is too relevant to leave aside. New visitors will mostly arrive from LinkedIn, through blog articles that link to Detox Mental, and a curious reader should be able to write something quick and see what the app does. Requiring an account before the first entry is exactly the friction that loses them.
+
+Each reflection costs a Hugging Face call, so the feature was designed with security in mind from the start rather than patched later: a hard daily ceiling, input bounds, no stored data from people without an account, and an off switch.
+
+**Why obvious alternatives were rejected:**  
+- **Keep the login wall:** Safest for cost, but it hides the product's core experience from the visitors this is for.  
+- **Store anonymous entries on the server and attach them after sign-up:** Would survive the browser switch that magic links often cause (for example, LinkedIn's in-app browser versus the mail app), but it means holding mental-health writing from strangers with no account, needs an expiry job, and opens a way to push text into someone else's journal. The first entry is not worth that.  
+- **Reuse the weekly summary as is:** It needs at least 2 entries from the last 7 days, and a "weekly summary" of one entry would be misleading. The preview says plainly what it is.  
+- **A CAPTCHA from day one:** Adds a dependency and friction for real visitors. The global cap already bounds the cost; a CAPTCHA can be added if the rate-limit records show abuse.
+
+**Downsides (accepted):**  
+- Once the 30 per day are used, every visitor gets the "used up, create an account" message until the window passes. This trades availability for a hard cost ceiling.  
+- IP limits are weak (shared mobile IPs, VPNs, IPv6), so people behind one IP share the 2 per day, and a determined person can spread across IPs. Only the global cap is a real bound.  
+- Someone can still use the endpoint as a free model, within the summary's JSON shape and the daily cap.
+
+**Also in this change:** authenticated journal entries are now capped at 10,000 characters (previously only Express's 100 KB body limit), which bounds what each weekly summary sends to the model.

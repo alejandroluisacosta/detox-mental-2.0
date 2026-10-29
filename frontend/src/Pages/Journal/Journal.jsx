@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import { useAuth } from '../../Context/AuthContext.jsx';
@@ -16,17 +16,25 @@ import {
   MAX_JOURNAL_TOPICS,
 } from '../../data/journalTopics.js';
 import { getTopicsFadeEdges } from '../../utils/journalTopicsFade.js';
+import {
+  FIRST_REFLECTION_MAX_CHARS,
+  FIRST_REFLECTION_MIN_CHARS,
+  saveFirstReflection,
+} from '../../utils/firstReflection.js';
 import { createLongPressHandlers } from '../../utils/longPress.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
 import OnboardingHelpButton from '../../Components/OnboardingHelpButton/OnboardingHelpButton.jsx';
+import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
 import JournalOnboarding, {
   JOURNAL_ONBOARDING_SEEN_KEY,
 } from '../../Components/JournalOnboarding/JournalOnboarding.jsx';
 import './Journal.css';
 
 const ONBOARDING_DELAY_MS = 500;
+// Must match MAX_ENTRY_CHARS in the backend journal entries controller.
+const MAX_ENTRY_CHARS = 10000;
 
 const Journal = () => {
   const navigate = useNavigate();
@@ -54,12 +62,16 @@ const Journal = () => {
   const [showImageSourceSheet, setShowImageSourceSheet] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [pulseHelp, setPulseHelp] = useState(false);
+  const [reflecting, setReflecting] = useState(false);
+  const [reflectionReady, setReflectionReady] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
   const canManageTopics = status === 'ready' && !!user;
   const canShowAddChip =
     canManageTopics && customTopics.length < MAX_CUSTOM_JOURNAL_TOPICS;
-  const busy = saving || transcribing;
+  const busy = saving || transcribing || reflecting;
+  const guestCharCount = text.trim().length;
+  const canRequestReflection = guestCharCount >= FIRST_REFLECTION_MIN_CHARS;
   const topicLimitReached = selectedTopics.length >= MAX_JOURNAL_TOPICS;
 
   const resizeTextarea = () => {
@@ -295,20 +307,53 @@ const Journal = () => {
     setShowOnboarding(true);
   };
 
-  const handleGuestDiscard = () => {
-    clearComposer();
-    setShowGuestModal(false);
-  };
-
   const handleGuestLogin = () => {
     setShowGuestModal(false);
     navigate('/login');
   };
 
+  const requestFirstReflection = async () => {
+    const content = text.trim();
+    if (content.length < FIRST_REFLECTION_MIN_CHARS || busy) return;
+
+    setShowGuestModal(false);
+    setReflectionReady(false);
+    setReflecting(true);
+    try {
+      const res = await apiFetch('/journal/first-reflection', {
+        method: 'POST',
+        body: { content },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.reflection) {
+        throw new Error(data.message || t('journal.reflectionFailed'));
+      }
+      saveFirstReflection(data.reflection);
+      setReflectionReady(true);
+    } catch (err) {
+      // The entry stays in the composer; never log it.
+      setReflecting(false);
+      emitToast(err.message || t('journal.reflectionFailed'));
+    }
+  };
+
+  const finishFirstReflection = useCallback(() => {
+    setText('');
+    setSelectedTopics([]);
+    navigate('/journal/first-reflection');
+  }, [navigate]);
+
   return (
     <div className="journal-page">
       <Navigation />
-      <main className="journal-page__main">
+      {reflecting && (
+        <JournalSummaryLoadingScreen
+          ready={reflectionReady}
+          readingCopyKey="summary.taskReadingFirst"
+          onDone={finishFirstReflection}
+        />
+      )}
+      <main className="journal-page__main" hidden={reflecting}>
         <div className="journal-page__prompt-row">
           <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
           <OnboardingHelpButton
@@ -383,6 +428,7 @@ const Journal = () => {
             onChange={handleTextChange}
             placeholder={t('journal.placeholder')}
             aria-label={t('journal.textLabel')}
+            maxLength={user ? MAX_ENTRY_CHARS : FIRST_REFLECTION_MAX_CHARS}
             disabled={busy}
           />
 
@@ -518,12 +564,21 @@ const Journal = () => {
           labelledById="journal-guest-modal-title"
           title={t('journal.guestTitle')}
           text={t('journal.guestText')}
+          note={
+            canRequestReflection
+              ? t('journal.guestReflectDisclosure')
+              : t('journal.guestReflectMin', {
+                  min: FIRST_REFLECTION_MIN_CHARS,
+                  count: guestCharCount,
+                })
+          }
           onClose={() => setShowGuestModal(false)}
-          primary={{ label: t('journal.guestLogin'), onClick: handleGuestLogin }}
-          secondary={{
-            label: t('journal.guestContinue'),
-            onClick: handleGuestDiscard,
+          primary={{
+            label: t('journal.guestReflect'),
+            onClick: requestFirstReflection,
+            disabled: !canRequestReflection,
           }}
+          secondary={{ label: t('journal.guestLogin'), onClick: handleGuestLogin }}
           closeText={t('journal.close')}
         />
       )}

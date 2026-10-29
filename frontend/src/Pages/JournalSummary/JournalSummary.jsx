@@ -18,6 +18,7 @@ import {
   isGenerateRateLimited,
   shouldRetryGenerate,
 } from '../../utils/journalSummaryGenerate.js';
+import { readFirstReflection } from '../../utils/firstReflection.js';
 import { formatLocaleDate } from '../../utils/locale.js';
 import { resolveSummaryAvailability } from '../../utils/summaryAvailability.js';
 import {
@@ -433,6 +434,15 @@ const JournalSummary = () => {
             <Link to="/login" className="journal-summary__action-link">
               {t('summary.login')}
             </Link>
+            {readFirstReflection() ? (
+              <Link to="/journal/first-reflection" className="journal-summary__action-link">
+                {t('summary.guestSeePreview')}
+              </Link>
+            ) : (
+              <Link to="/journal" className="journal-summary__action-link">
+                {t('summary.guestPreview')}
+              </Link>
+            )}
           </div>
         )}
 

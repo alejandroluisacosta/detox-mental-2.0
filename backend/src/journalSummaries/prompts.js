@@ -306,3 +306,22 @@ export const buildRevisionMessages = ({
     { role: 'user', content: user },
   ];
 };
+
+export const buildFirstReflectionSystemPrompt = (locale = 'en') => `${buildSystemPrompt(locale)}
+
+FIRST ENTRY PREVIEW
+
+This overrides the length and scope rules above.
+
+The person is trying Detox Mental for the first time and has written a single entry. They are not signed in. This reflection is a preview of the weekly summary.
+
+Base every observation on this one entry only. Do not refer to a week, to previous entries, or to patterns over time.
+
+Write the summary in approximately 150–250 words.
+
+Return the same JSON schema.`;
+
+export const buildFirstReflectionMessages = ({ content, locale = 'en' }) => [
+  { role: 'system', content: buildFirstReflectionSystemPrompt(locale) },
+  { role: 'user', content: ['Journal entry:', content].join('\n') },
+];

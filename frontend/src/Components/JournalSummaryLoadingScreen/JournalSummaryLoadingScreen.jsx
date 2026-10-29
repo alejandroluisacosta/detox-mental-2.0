@@ -28,6 +28,7 @@ const LOADING_TASKS = [
 const JournalSummaryLoadingScreen = ({
   ready = false,
   attempt = 1,
+  readingCopyKey = 'summary.taskReading',
   onDone,
 }) => {
   const { locale, t } = useLocale();
@@ -154,7 +155,9 @@ const JournalSummaryLoadingScreen = ({
                     </svg>
                   ) : null}
                 </span>
-                <span className={labelClass}>{t(task.copyKey)}</span>
+                <span className={labelClass}>
+                  {t(index === 0 ? readingCopyKey : task.copyKey)}
+                </span>
                 {task.avatarSrc ? (
                   <img
                     src={task.avatarSrc}

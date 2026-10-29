@@ -22,6 +22,11 @@ export const CHAT_GLOBAL_LIMITS = [{ max: 100, windowMs: DAY_MS }];
 
 export const TRANSCRIBE_LIMITS = [{ max: 3, windowMs: DAY_MS }];
 
+// Anonymous first-entry reflections: one Hugging Face call each. The global
+// cap is the spend ceiling; the IP cap only keeps one visitor from using it up.
+export const FIRST_REFLECTION_IP_LIMITS = [{ max: 2, windowMs: DAY_MS }];
+export const FIRST_REFLECTION_GLOBAL_LIMITS = [{ max: 30, windowMs: DAY_MS }];
+
 /**
  * Checks IP, then email, then the global cap, stopping at the first denial so
  * a blocked IP or email never spends the global budget. Database errors
@@ -74,6 +79,29 @@ export async function allowTranscription({ userId, now = new Date(), db }) {
     });
   } catch (err) {
     console.error('[rate-limit transcribe]', err);
+    return false;
+  }
+}
+
+/**
+ * Checks the IP, then the global cap, for an anonymous first-entry reflection,
+ * stopping at the first denial so a blocked IP never spends the global budget.
+ * Returns false on a database error so the caller fails closed and makes no
+ * model call.
+ */
+export async function allowFirstReflection({ ip, now = new Date(), db }) {
+  const checks = [
+    { bucket: 'first_reflection_ip', subject: hashToken(ip), limits: FIRST_REFLECTION_IP_LIMITS },
+    { bucket: 'first_reflection_global', subject: '*', limits: FIRST_REFLECTION_GLOBAL_LIMITS },
+  ];
+
+  try {
+    for (const check of checks) {
+      if (!(await consumeRateLimit({ ...check, now, db }))) return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('[rate-limit first-reflection]', err);
     return false;
   }
 }
