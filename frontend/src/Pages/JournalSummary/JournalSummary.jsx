@@ -435,11 +435,11 @@ const JournalSummary = () => {
               {t('summary.login')}
             </Link>
             {readFirstReflection() ? (
-              <Link to="/journal/first-reflection" className="journal-summary__action-link">
+              <Link to="/journal/first-reflection" className="journal-summary__preview-button">
                 {t('summary.guestSeePreview')}
               </Link>
             ) : (
-              <Link to="/journal" className="journal-summary__action-link">
+              <Link to="/journal" className="journal-summary__preview-button">
                 {t('summary.guestPreview')}
               </Link>
             )}
