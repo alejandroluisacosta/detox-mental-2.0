@@ -5,6 +5,7 @@ import { writeStoredLocale } from '../../utils/locale.js';
 import JournalSummary from './JournalSummary.jsx';
 import { apiFetch } from '../../api/client.js';
 import { emitToast } from '../../lib/toastBus.js';
+import { FIRST_REFLECTION_STORAGE_KEY } from '../../utils/firstReflection.js';
 
 const mockUseAuth = vi.fn();
 const mockUseDemoMode = vi.fn();
@@ -83,6 +84,31 @@ describe('JournalSummary page states', () => {
     expect(
       screen.getByText(/Sign in to view or create your weekly summary/i),
     ).toBeTruthy();
+  });
+
+  test('offers guests a free first-entry preview', () => {
+    window.localStorage.removeItem(FIRST_REFLECTION_STORAGE_KEY);
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderSummary();
+    expect(
+      screen.getByRole('link', { name: 'Try a free preview with one entry' }).getAttribute('href'),
+    ).toBe('/journal');
+  });
+
+  test('links guests back to the first reflection kept in their browser', () => {
+    window.localStorage.setItem(
+      FIRST_REFLECTION_STORAGE_KEY,
+      JSON.stringify({
+        reflection: { summaryText: 'x', mainTopics: [], bestQuote: 'x', socraticText: 'x', machiavelliText: 'x' },
+        savedAt: new Date().toISOString(),
+      }),
+    );
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    renderSummary();
+    expect(
+      screen.getByRole('link', { name: 'See your first reflection' }).getAttribute('href'),
+    ).toBe('/journal/first-reflection');
+    window.localStorage.removeItem(FIRST_REFLECTION_STORAGE_KEY);
   });
 
   test('shows create CTA when there is quota left and there is no summary', async () => {

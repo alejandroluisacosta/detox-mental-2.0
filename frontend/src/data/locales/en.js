@@ -62,9 +62,14 @@ export const en = {
   'journal.history': 'History',
   'journal.guestTitle': 'This entry will not be saved',
   'journal.guestText':
-    'You are not signed in. If you continue, this text will be lost when you complete. Sign in to save it in your journal.',
+    'You are not signed in, so this entry will not be kept. You can still get a first reflection on it: a preview of the weekly summary. Sign in to save it in your journal instead.',
   'journal.guestLogin': 'LOG IN',
-  'journal.guestContinue': 'CONTINUE WITHOUT SAVING',
+  'journal.guestReflect': 'GET A FIRST REFLECTION',
+  'journal.guestReflectDisclosure':
+    "Your text is sent to an AI provider to write the reflection and isn't stored by us.",
+  'journal.guestReflectMin':
+    'Write at least {min} characters to get a first reflection ({count}/{min}).',
+  'journal.reflectionFailed': 'Could not write the reflection.',
   'journal.close': 'Close',
   'journal.imageTooLarge': 'The image is too large. Try a smaller photo.',
   'journal.transcribeFailed': 'Could not transcribe the image.',
@@ -216,6 +221,8 @@ export const en = {
   'summary.loadingSummary': 'Loading summary…',
   'summary.guestEmpty': 'Sign in to view or create your weekly summary.',
   'summary.login': 'Log in',
+  'summary.guestPreview': 'Try a free preview with one entry',
+  'summary.guestSeePreview': 'See your first reflection',
   'summary.thisWeek': 'This week',
   'summary.mainTopics': 'Main topics',
   'summary.bestQuote': 'The line that stood out',
@@ -242,6 +249,7 @@ export const en = {
   'summary.stillLoading': 'Still loading',
   'summary.tasksAria': 'Summary preparation steps',
   'summary.taskReading': 'Reading your entries of the last 7 days',
+  'summary.taskReadingFirst': 'Reading your entry',
   'summary.taskSocrates': 'Socrates is writing his question',
   'summary.taskMachiavelli': 'Machiavelli is defining his challenge',
   'summary.taskFinishing': 'Finishing your summary',
@@ -259,4 +267,14 @@ export const en = {
   'summary.commentQueued': 'Queued comments',
   'summary.commentMarked': 'This passage has a comment',
   'summary.reviseFailed': 'Could not revise the summary.',
+
+  'firstReflection.title': 'Your first reflection',
+  'firstReflection.lead':
+    'This is a preview of the weekly summary, written from a single entry. Your entry was not saved.',
+  'firstReflection.yourEntry': 'Your entry',
+  'firstReflection.cta':
+    'With an account, Detox Mental keeps your journal and reflects on your whole week.',
+  'firstReflection.signup': 'CREATE AN ACCOUNT',
+  'firstReflection.empty': 'There is no first reflection in this browser.',
+  'firstReflection.write': 'Write your first entry',
 };

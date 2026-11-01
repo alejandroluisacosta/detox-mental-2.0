@@ -20,6 +20,8 @@ export const ALLOWED_JOURNAL_TOPICS = [
 ];
 
 const MAX_TOPICS = 3;
+// Bounds storage and the text each weekly summary sends to the model.
+export const MAX_ENTRY_CHARS = 10000;
 
 const parseTopics = async (raw, locale, userId) => {
   if (raw === undefined || raw === null) {
@@ -87,6 +89,12 @@ export const postJournalEntry = async (req, res) => {
 
   if (!content) {
     return res.status(400).json({ message: journalMessage(locale, 'emptyContent') });
+  }
+
+  if (content.length > MAX_ENTRY_CHARS) {
+    return res.status(400).json({
+      message: journalMessage(locale, 'contentTooLong', { max: MAX_ENTRY_CHARS }),
+    });
   }
 
   try {

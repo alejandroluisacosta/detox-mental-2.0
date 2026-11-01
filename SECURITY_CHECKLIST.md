@@ -114,6 +114,23 @@ details.
 total spend scales with the number of accounts. Account creation is gated by
 the login limits.
 
+### ✅ Anonymous first reflection, limited by design (2026-10)
+
+**Risk:** Visitors who are not signed in can get a first reflection on one
+entry, and each one is a Hugging Face call. Without limits, anyone could
+script the endpoint and run up model costs (OWASP API4, "denial of wallet").
+
+**Design:** Limits were built in from the start: 30 reflections per day
+globally and 2 per IP per day, using the same Postgres-backed limiter. Entries
+must be 200–3,000 characters, checked before the limiter so invalid requests
+don't count. A database error refuses the request (fail closed), and
+`FIRST_REFLECTION_DISABLED=true` turns the endpoint off. Nothing from the
+visitor is stored or logged. See `DECISIONS.md` (2026-10-29) for details.
+
+**Known, accepted gap:** IP limits are easy to spread across, so only the
+global cap is a real bound. Once it's reached, visitors see a "used up"
+message until the window passes.
+
 ---
 
 ## In progress

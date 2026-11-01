@@ -1,5 +1,9 @@
 import { InferenceClient } from '@huggingface/inference';
-import { buildRevisionMessages, buildSummaryMessages } from './prompts.js';
+import {
+  buildFirstReflectionMessages,
+  buildRevisionMessages,
+  buildSummaryMessages,
+} from './prompts.js';
 import {
   findBestQuoteEntryId,
   parseSummaryOutput,
@@ -28,6 +32,7 @@ const completeSummaryFromMessages = async ({
   messages,
   entries,
   signal,
+  maxTokens = 1800,
 }) => {
   if (!process.env.HF_TOKEN) {
     const err = new Error('missing_hf_token');
@@ -41,12 +46,12 @@ const completeSummaryFromMessages = async ({
 
   let response;
   try {
-    // 400–600 word reflections plus quote / topics / socratic / machiavelli.
+    // Default fits 400–600 word reflections plus quote / topics / socratic / machiavelli.
     const completion = client.chatCompletion(
       {
         model: modelId,
         messages,
-        max_tokens: 1800,
+        max_tokens: maxTokens,
         temperature: 0.5,
       },
       { signal: abortSignal },
@@ -126,4 +131,15 @@ export const generateWeeklySummaryRevision = async ({
     comments,
   });
   return completeSummaryFromMessages({ messages, entries, signal });
+};
+
+/** Anonymous preview: one entry, a shorter reflection, a smaller token budget. */
+export const generateFirstReflectionContent = async ({
+  content,
+  locale = 'en',
+  signal,
+}) => {
+  const entries = [{ id: 'first-entry', content, topics: [], createdAt: new Date() }];
+  const messages = buildFirstReflectionMessages({ content, locale });
+  return completeSummaryFromMessages({ messages, entries, signal, maxTokens: 900 });
 };

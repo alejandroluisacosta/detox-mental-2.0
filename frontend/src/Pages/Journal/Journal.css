@@ -338,3 +338,8 @@
   color: var(--muted, #6b7280);
   font-weight: 600;
 }
+
+/* Kept mounted while a first reflection loads so the entry survives a failure. */
+.journal-page__main[hidden] {
+  display: none;
+}

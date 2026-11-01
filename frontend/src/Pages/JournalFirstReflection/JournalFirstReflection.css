@@ -1,0 +1,19 @@
+.first-reflection__lead {
+  margin: 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  line-height: 1.5;
+  color: var(--dark-brown);
+}
+
+.first-reflection__cta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 32px;
+}
+
+.first-reflection__signup {
+  width: 100%;
+  padding: 12px 16px;
+}

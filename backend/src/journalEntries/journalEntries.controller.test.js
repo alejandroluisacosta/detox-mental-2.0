@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { getJournalEntries } from './journalEntries.controller.js';
+import { getJournalEntries, postJournalEntry } from './journalEntries.controller.js';
 
 const mockRes = () => {
   const res = {
@@ -30,4 +30,18 @@ test('getJournalEntries returns 400 for an unsupported topic filter', async () =
 
   assert.equal(res.statusCode, 400);
   assert.match(res.body.message, /not valid/i);
+});
+
+test('postJournalEntry rejects an entry over 10,000 characters before touching the database', async () => {
+  const req = {
+    user: { id: 'user-a' },
+    body: { content: 'x'.repeat(10001) },
+    headers: { 'accept-language': 'en' },
+  };
+  const res = mockRes();
+
+  await postJournalEntry(req, res);
+
+  assert.equal(res.statusCode, 400);
+  assert.match(res.body.message, /10000 characters/);
 });

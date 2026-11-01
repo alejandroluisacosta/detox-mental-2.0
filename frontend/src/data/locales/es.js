@@ -62,9 +62,14 @@ export const es = {
   'journal.history': 'Historial',
   'journal.guestTitle': 'Esta entrada no se guardará',
   'journal.guestText':
-    'No has iniciado sesión. Si continúas, el texto se perderá al completar. Inicia sesión para guardarlo en tu diario.',
+    'No has iniciado sesión, así que esta entrada no se guardará. Aun así, puedes recibir una primera reflexión sobre ella: una vista previa del resumen semanal. O inicia sesión para guardarla en tu diario.',
   'journal.guestLogin': 'INICIAR SESIÓN',
-  'journal.guestContinue': 'CONTINUAR SIN GUARDAR',
+  'journal.guestReflect': 'RECIBIR UNA PRIMERA REFLEXIÓN',
+  'journal.guestReflectDisclosure':
+    'Tu texto se envía a un proveedor de IA para escribir la reflexión y no lo guardamos.',
+  'journal.guestReflectMin':
+    'Escribe al menos {min} caracteres para recibir una primera reflexión ({count}/{min}).',
+  'journal.reflectionFailed': 'No se pudo escribir la reflexión.',
   'journal.close': 'Cerrar',
   'journal.imageTooLarge':
     'La imagen es demasiado grande. Prueba con una foto más ligera.',
@@ -218,6 +223,8 @@ export const es = {
   'summary.loadingSummary': 'Cargando resumen…',
   'summary.guestEmpty': 'Inicia sesión para ver o crear tu resumen semanal.',
   'summary.login': 'Iniciar sesión',
+  'summary.guestPreview': 'Prueba una vista previa gratuita con una entrada',
+  'summary.guestSeePreview': 'Ver tu primera reflexión',
   'summary.thisWeek': 'Esta semana',
   'summary.mainTopics': 'Temas principales',
   'summary.bestQuote': 'La frase que destacó',
@@ -244,6 +251,7 @@ export const es = {
   'summary.stillLoading': 'Todavía cargando',
   'summary.tasksAria': 'Pasos de preparación del resumen',
   'summary.taskReading': 'Leyendo tus entradas de los últimos 7 días',
+  'summary.taskReadingFirst': 'Leyendo tu entrada',
   'summary.taskSocrates': 'Sócrates está escribiendo su pregunta',
   'summary.taskMachiavelli': 'Machiavelli está definiendo su desafío',
   'summary.taskFinishing': 'Terminando tu resumen',
@@ -261,4 +269,14 @@ export const es = {
   'summary.commentQueued': 'Comentarios en cola',
   'summary.commentMarked': 'Este pasaje tiene un comentario',
   'summary.reviseFailed': 'No se pudo revisar el resumen.',
+
+  'firstReflection.title': 'Tu primera reflexión',
+  'firstReflection.lead':
+    'Esta es una vista previa del resumen semanal, escrita a partir de una sola entrada. Tu entrada no se ha guardado.',
+  'firstReflection.yourEntry': 'Tu entrada',
+  'firstReflection.cta':
+    'Con una cuenta, Detox Mental guarda tu diario y reflexiona sobre toda tu semana.',
+  'firstReflection.signup': 'CREAR UNA CUENTA',
+  'firstReflection.empty': 'No hay ninguna primera reflexión en este navegador.',
+  'firstReflection.write': 'Escribe tu primera entrada',
 };

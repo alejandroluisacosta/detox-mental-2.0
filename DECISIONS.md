@@ -294,3 +294,23 @@ Those entries made onboarding a precondition for the educational module. A manda
 **Downsides (accepted):**  
 - The recorded clips (about 1 MB per device set in each module) must be re-recorded when the screens they show change.
 - "Seen" is stored per browser, not per account, so a user on a new device sees the tour again.
+
+### 2026-10-29 — Anonymous first-entry reflection for new visitors
+
+**Decision:**  
+A visitor who is not signed in can write one entry on `/journal` and get a **first reflection** on it: a preview of the weekly summary, written from that single entry. Before sending, the guest modal discloses that the text goes to an AI provider and is not stored by us. The endpoint (`POST /journal/first-reflection`) stores nothing: only the reflection is kept, in the visitor's browser for 7 days, next to an invitation to create an account. The entry is lost; it is not carried into the account after sign-up.
+
+Each reflection is a Hugging Face call, so cost is bounded by the shared Postgres limiter: **30 per day globally** (the spend ceiling) and **2 per IP per day**. Entries must be 200–3,000 characters, the limiter fails closed, and `FIRST_REFLECTION_DISABLED=true` turns the endpoint off.
+
+**Why this option was chosen:**  
+Detox Mental started from an article I wrote in 2021, which became the Education module. In mid-2026 I built the Journaling module for myself, as the app's only real user, and that made the product something I can fully stand behind. Now it is time to open it to other people. Most will arrive from LinkedIn, through blog articles that link here, and a curious reader should be able to write something quick and see what the app does. A login wall before the first entry is exactly the friction that loses them. Because each reflection costs money, security was part of the design from the start rather than patched in later.
+
+**Why obvious alternatives were rejected:**  
+- **Store anonymous entries and attach them after sign-up:** It would survive the browser switch that magic links often cause, but it means holding mental-health writing from strangers and opens a way to push text into someone else's journal. The first entry is not worth that.  
+- **Reuse the weekly summary as is:** It needs at least 2 entries from the last 7 days, and a "weekly summary" of one entry would be misleading.
+
+**Downsides (accepted):**  
+- Once the 30 per day are used, every visitor gets a "used up, create an account" message until the window passes.  
+- IP limits are easy to spread across, so only the global cap is a real bound.
+
+**Also in this change:** authenticated journal entries are now capped at 10,000 characters, which bounds what each weekly summary sends to the model.
