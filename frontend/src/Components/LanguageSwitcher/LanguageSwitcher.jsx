@@ -9,8 +9,18 @@ const LANGUAGE_OPTIONS = [
 const LanguageSwitcher = () => {
   const { locale, setLocale, t } = useLocale();
 
+  const activeIndex = Math.max(
+    LANGUAGE_OPTIONS.findIndex((option) => option.locale === locale),
+    0,
+  );
+
   return (
-    <div className="language-switcher" role="group" aria-label={t('nav.language')}>
+    <div
+      className="language-switcher"
+      role="group"
+      aria-label={t('nav.language')}
+      style={{ '--language-index': activeIndex }}
+    >
       {LANGUAGE_OPTIONS.map((option) => {
         const selected = locale === option.locale;
         const languageName = t(option.labelKey);
