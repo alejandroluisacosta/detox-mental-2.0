@@ -89,7 +89,7 @@ const SLIDES = [
 const WELCOME = {
   title: 'Bienvenido/a al curso Detox Mental',
   message:
-    'Hola, soy Tales. En menos de un minuto te enseño cómo sacarle todo el partido al curso. Puedes volver a verlo cuando quieras con el botón ?.',
+    'Hola, soy Tales. En menos de un minuto te enseño cómo sacarle todo el partido al curso. Puedes volver a verlo cuando quieras con el botón [?].',
   start: 'Empezar',
 };
 

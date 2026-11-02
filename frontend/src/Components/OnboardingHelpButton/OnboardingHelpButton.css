@@ -20,6 +20,23 @@
   inset: -7px;
 }
 
+.onboarding-help-button--inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0 2px;
+  vertical-align: middle;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: default;
+}
+
+.onboarding-help-button--inline::before {
+  display: none;
+}
+
 .onboarding-help-button--pulse {
   animation: onboardingHelpPulse 1.4s ease-out 0.3s 2 both;
 }
