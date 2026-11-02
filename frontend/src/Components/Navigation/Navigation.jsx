@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './Navigation.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext.jsx';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher.jsx';
 import { useLocale } from '../../Context/LocaleContext.jsx';
 import { isPromoEnabled } from '../../data/promoConfig.js';
 import {
@@ -9,11 +10,6 @@ import {
     JOURNALING_LINKS,
     resolveNavModule,
 } from '../../data/navigationModules.js';
-
-const LANGUAGE_OPTIONS = [
-    { locale: 'en', flag: '🇺🇸', labelKey: 'nav.english' },
-    { locale: 'es', flag: '🇪🇸', labelKey: 'nav.spanish' },
-];
 
 const MODULE_OPTIONS = [
     { module: 'educational', labelKey: 'nav.moduleEducation', path: '/course' },
@@ -33,7 +29,7 @@ const Navigation = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, status } = useAuth();
-    const { locale, setLocale, t } = useLocale();
+    const { t } = useLocale();
     const navModule = resolveNavModule(location.pathname);
     const moduleLinks = navModule === 'journaling' ? JOURNALING_LINKS : EDUCATIONAL_LINKS;
     const mainLinks = moduleLinks.map((link) => ({
@@ -154,29 +150,7 @@ const Navigation = () => {
                         )}
                         <div className='navigation__footer'>
                             {renderLink(accountLink)}
-                            <div
-                                className='navigation__segmented'
-                                role='group'
-                                aria-label={t('nav.language')}
-                            >
-                                {LANGUAGE_OPTIONS.map((option) => {
-                                    const selected = locale === option.locale;
-                                    const languageName = t(option.labelKey);
-                                    return (
-                                        <button
-                                            key={option.locale}
-                                            type='button'
-                                            className={`navigation__segment${selected ? ' navigation__segment--active' : ''}`}
-                                            onClick={() => setLocale(option.locale)}
-                                            aria-pressed={selected}
-                                            aria-label={languageName}
-                                        >
-                                            <span aria-hidden='true'>{option.flag}</span>
-                                            <span aria-hidden='true'>{languageName}</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                            <LanguageSwitcher />
                         </div>
                     </div>
                 </div>
