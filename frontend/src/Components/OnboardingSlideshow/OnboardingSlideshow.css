@@ -109,6 +109,10 @@
   color: #4a4a5a;
 }
 
+.onboarding-slideshow__copy .language-switcher {
+  margin-top: 14px;
+}
+
 .onboarding-slideshow__controls {
   display: flex;
   flex-direction: column;

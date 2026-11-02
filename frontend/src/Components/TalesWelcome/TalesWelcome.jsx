@@ -1,6 +1,18 @@
+import '../OnboardingHelpButton/OnboardingHelpButton.css';
 import './TalesWelcome.css';
 
+const HELP_MARKER = '[?]';
+
+// Stands in for the page's real help button, so users recognise it.
+const HelpIcon = () => (
+  <span className="onboarding-help-button onboarding-help-button--inline">?</span>
+);
+
+const renderMessage = (message) =>
+  message.split(HELP_MARKER).flatMap((part, i) => (i === 0 ? [part] : [<HelpIcon key={i} />, part]));
+
 // Tales greets the user like in his test chats: a typing indicator, then his message.
+// A `[?]` in the message becomes the help-button icon.
 // The message is always in the DOM so screen readers get it straight away.
 const TalesWelcome = ({ message }) => (
   <div className="tales-welcome">
@@ -13,7 +25,7 @@ const TalesWelcome = ({ message }) => (
           <span />
           <span />
         </span>
-        <p className="tales-welcome__message">{message}</p>
+        <p className="tales-welcome__message">{renderMessage(message)}</p>
       </div>
     </div>
   </div>

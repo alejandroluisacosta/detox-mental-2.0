@@ -109,7 +109,7 @@ export const en = {
   'journalOnboarding.module': 'Journal',
   'journalOnboarding.welcome.title': 'Welcome to your journal',
   'journalOnboarding.welcome.message':
-    "Hi, I'm Tales. Let me show you around. It takes less than a minute, and you can come back to this tour anytime with the ? button.",
+    "Hi, I'm Tales. Let me show you around. It takes less than a minute, and you can come back to this tour anytime with the [?] button.",
   'journalOnboarding.welcome.start': 'Show me',
   'journalOnboarding.step': 'Journal · {current} of {total}',
   'journalOnboarding.skip': 'Skip',

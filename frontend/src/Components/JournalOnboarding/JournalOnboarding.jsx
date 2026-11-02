@@ -1,4 +1,5 @@
 import { useLocale } from '../../Context/LocaleContext.jsx';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher.jsx';
 import OnboardingSlideshow from '../OnboardingSlideshow/OnboardingSlideshow.jsx';
 
 export const JOURNAL_ONBOARDING_SEEN_KEY = 'journalOnboardingSeen';
@@ -19,6 +20,7 @@ const JournalOnboarding = ({ onClose }) => {
     title: t('journalOnboarding.welcome.title'),
     message: t('journalOnboarding.welcome.message'),
     start: t('journalOnboarding.welcome.start'),
+    extra: <LanguageSwitcher />,
   };
 
   const labels = {

@@ -34,6 +34,7 @@ describe('JournalOnboarding', () => {
 
   afterEach(() => {
     cleanup();
+    window.localStorage.clear();
   });
 
   test('opens on Tales\' welcome, prefetching the first clip without playing a video', () => {
@@ -120,5 +121,23 @@ describe('JournalOnboarding', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Skip' }));
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  test('the welcome lets a first-time visitor switch the tour to Spanish', () => {
+    renderOnboarding();
+    expect(screen.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Spanish' }));
+
+    expect(screen.getByRole('heading', { name: 'Bienvenido/a a tu diario' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Español' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Empezar' })).toBeTruthy();
+  });
+
+  test('the language buttons only appear on the welcome, not on the tour slides', () => {
+    renderOnboarding();
+    startTour();
+    expect(screen.queryByRole('button', { name: 'Spanish' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Language' })).toBeNull();
   });
 });

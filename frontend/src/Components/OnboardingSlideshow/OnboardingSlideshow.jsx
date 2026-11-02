@@ -20,7 +20,8 @@ const muteVideo = (el) => {
  * `${clipBase}/${desktop|mobile}/${id}.mp4` (clips are recorded per layout) with
  * a `.jpg` still of the same name. `clip` ({ src, poster, fit, background, loop })
  * plays another video instead; `media` shows its own node.
- * `welcome`: { title, message, start }: Tales opens the tour with it.
+ * `welcome`: { title, message, start, extra? }: Tales opens the tour with it; `extra`
+ * is an optional node shown under the title (e.g. a language picker).
  * `outro`: { title, body, alt, clip, accept, decline }: a closing choice. `accept`
  * runs `onAccept`; `decline` closes the tour.
  * Neither bookend is counted as a step; the header shows `labels.module` instead.
@@ -127,6 +128,7 @@ const OnboardingSlideshow = ({ slides, clipBase, welcome, outro, labels, onClose
         <div className="onboarding-slideshow__copy">
           <h2 className="onboarding-slideshow__title">{slide.title}</h2>
           {slide.body && <p className="onboarding-slideshow__body">{slide.body}</p>}
+          {slide.id === 'welcome' && welcome.extra}
         </div>
 
         <div className="onboarding-slideshow__controls">
