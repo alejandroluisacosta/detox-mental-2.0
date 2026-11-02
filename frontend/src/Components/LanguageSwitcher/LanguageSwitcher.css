@@ -1,10 +1,11 @@
 .language-switcher {
     --language-count: 2;
+    --language-pad: 4px;
     position: relative;
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(0, 1fr);
-    padding: 4px;
+    padding: var(--language-pad);
     border: 1px solid #E4D5CA;
     border-radius: 999px;
     background: var(--background);
@@ -14,10 +15,10 @@
 .language-switcher::before {
     content: '';
     position: absolute;
-    top: 4px;
-    bottom: 4px;
-    left: 4px;
-    width: calc((100% - 8px) / var(--language-count));
+    top: var(--language-pad);
+    bottom: var(--language-pad);
+    left: var(--language-pad);
+    width: calc((100% - 2 * var(--language-pad)) / var(--language-count));
     border: 1px solid #E4D5CA;
     border-radius: 999px;
     background: #F1E8E1;
@@ -79,5 +80,19 @@
 @media (prefers-reduced-motion: reduce) {
     .language-switcher::before {
         transition: none;
+    }
+}
+
+/* 20% smaller on phones, where the onboarding and drawer have little room. */
+@media (max-width: 599px) {
+    .language-switcher {
+        --language-pad: 3.2px;
+    }
+
+    .language-switcher__option {
+        gap: 6.4px;
+        min-height: 32px;
+        padding: 0 6.4px;
+        font-size: 10.4px;
     }
 }
