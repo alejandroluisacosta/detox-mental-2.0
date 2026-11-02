@@ -8,6 +8,7 @@
     border: 1px solid #E4D5CA;
     border-radius: 999px;
     background: var(--background);
+    margin-top: 22px;
 }
 
 /* One highlight that slides between the options instead of each option repainting. */
