@@ -43,6 +43,8 @@
     font-weight: 500;
     letter-spacing: 0.04em;
     cursor: pointer;
+    /* Safari flashes a grey box over the tapped button, hiding the sliding highlight. */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .language-switcher__option--active {
@@ -52,6 +54,26 @@
 .language-switcher__option:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+}
+
+/* Darker look for the navigation drawer. */
+.language-switcher--accent {
+    border: none;
+    background: var(--header-bg);
+    box-shadow: var(--shadow);
+}
+
+.language-switcher--accent::before {
+    border: none;
+    background: var(--accent);
+}
+
+.language-switcher--accent .language-switcher__option {
+    color: var(--accent);
+}
+
+.language-switcher--accent .language-switcher__option--active {
+    color: var(--background);
 }
 
 @media (prefers-reduced-motion: reduce) {

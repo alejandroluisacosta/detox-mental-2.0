@@ -150,7 +150,7 @@ const Navigation = () => {
                         )}
                         <div className='navigation__footer'>
                             {renderLink(accountLink)}
-                            <LanguageSwitcher />
+                            <LanguageSwitcher variant='accent' />
                         </div>
                     </div>
                 </div>

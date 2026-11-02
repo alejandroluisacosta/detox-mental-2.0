@@ -6,7 +6,7 @@ const LANGUAGE_OPTIONS = [
   { locale: 'es', flag: '🇪🇸', labelKey: 'nav.spanish' },
 ];
 
-const LanguageSwitcher = () => {
+const LanguageSwitcher = ({ variant }) => {
   const { locale, setLocale, t } = useLocale();
 
   const activeIndex = Math.max(
@@ -16,7 +16,7 @@ const LanguageSwitcher = () => {
 
   return (
     <div
-      className="language-switcher"
+      className={`language-switcher${variant === 'accent' ? ' language-switcher--accent' : ''}`}
       role="group"
       aria-label={t('nav.language')}
       style={{ '--language-index': activeIndex }}

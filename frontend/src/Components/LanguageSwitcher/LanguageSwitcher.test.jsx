@@ -25,4 +25,20 @@ describe('LanguageSwitcher', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Inglés' }));
     expect(group().style.getPropertyValue('--language-index')).toBe('0');
   });
+
+  test('the accent variant is opt-in so the onboarding keeps the light look', () => {
+    const { rerender } = render(
+      <LocaleProvider>
+        <LanguageSwitcher />
+      </LocaleProvider>,
+    );
+    expect(group().classList.contains('language-switcher--accent')).toBe(false);
+
+    rerender(
+      <LocaleProvider>
+        <LanguageSwitcher variant="accent" />
+      </LocaleProvider>,
+    );
+    expect(group().classList.contains('language-switcher--accent')).toBe(true);
+  });
 });
