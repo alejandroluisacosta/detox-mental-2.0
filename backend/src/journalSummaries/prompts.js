@@ -206,11 +206,87 @@ The point is practical realism: determine what the user's behavior is actually o
 The observation should feel concrete and consequential rather than merely philosophical.`;
 };
 
+const KIND_HEADINGS = { goal: 'Goals', memory: 'Memories' };
+
+/**
+ * System-prompt rules for Compass: how to use the user's items and how to
+ * suggest changes. Only signed-in summaries (generate and revise) get it.
+ */
+export const buildCompassSystemRules = (locale = 'en') => {
+  const rules = LANGUAGE_RULES[locale] || LANGUAGE_RULES.en;
+  return `COMPASS
+
+The user keeps a short list called Compass: memories (stable facts about their life right now, such as work, projects, where they live, and the people around them) and goals (where they want to go). When the user message lists Compass items, each has a label such as G1 or M3.
+
+Use the items to calibrate the summary, the Socratic question, and the Machiavellian observation to the user's real situation. Treat them as background that may be outdated, not as evidence about this week. Do not repeat them back to the user. Never assume progress beyond what the items and the journal show. Do not suggest something the user is already doing according to Compass.
+
+You may also suggest changes to Compass. Add one optional key to the JSON object:
+
+"compass":[{"action":"add","kind":"memory","content":"string"},{"action":"update","target":"M3","content":"string"},{"action":"remove","target":"G1"}]
+
+- Suggest between 0 and 3 changes. 0 is a fine answer; omit the key or return an empty list.
+- Only suggest a change when the journal gives clear evidence for it.
+- "add" needs "kind": "memory" or "goal". "update" and "remove" need "target": the label of an existing item. Never invent labels.
+- Memories are stable facts only. Never suggest moods, emotional states, diagnoses, or psychological judgments, as memories or as goals.
+- Goals state a direction the user has expressed themselves. Do not invent goals for them.
+- Each content is one short, plain sentence of at most 200 characters, written in ${rules.outputLanguage}, from the user's point of view.
+- Do not suggest anything already in Compass, nor anything listed as recently dismissed.
+- When a kind is full, suggest an update or a removal for that kind instead of an add.`;
+};
+
+/** User-message section: labelled items, full kinds, recently dismissed texts. */
+export const buildCompassPromptSection = (compass) => {
+  if (!compass) return '';
+  const lines = [];
+
+  if (compass.labelled.length > 0) {
+    lines.push(
+      'What the user has told you about themselves (Compass; may be outdated):',
+    );
+    for (const kind of ['goal', 'memory']) {
+      const kindItems = compass.labelled.filter((item) => item.kind === kind);
+      if (kindItems.length === 0) continue;
+      lines.push(`${KIND_HEADINGS[kind]}:`);
+      for (const item of kindItems) {
+        lines.push(`${item.label}: ${JSON.stringify(item.content)}`);
+      }
+    }
+  }
+
+  for (const kind of ['goal', 'memory']) {
+    const count = compass.counts[kind];
+    const limit = compass.limits[kind];
+    if (count >= limit) {
+      lines.push(
+        `${KIND_HEADINGS[kind]} ${count}/${limit}: full. Suggest an update or a removal, not an add.`,
+      );
+    }
+  }
+
+  if (compass.dismissed.length > 0) {
+    lines.push('Recently dismissed by the user, do not suggest again:');
+    for (const entry of compass.dismissed) {
+      lines.push(`- ${entry.action} ${entry.kind}: ${JSON.stringify(entry.text)}`);
+    }
+  }
+
+  return lines.join('\n');
+};
+
+const withCompassSystemRules = (systemPrompt, compass, locale) =>
+  compass ? `${systemPrompt}\n\n${buildCompassSystemRules(locale)}` : systemPrompt;
+
+const compassUserLines = (compass) => {
+  const section = buildCompassPromptSection(compass);
+  return section ? [section, ''] : [];
+};
+
 export const buildSummaryMessages = ({
   entries,
   weekStart,
   weekEnd,
   locale = 'en',
+  compass,
 }) => {
   const entriesSection = buildEntriesPromptSection(entries);
 
@@ -218,12 +294,16 @@ export const buildSummaryMessages = ({
     `Last 7 days from ${weekStart} to ${weekEnd} (Europe/Madrid).`,
     `Number of entries included: ${entries.length}.`,
     '',
+    ...compassUserLines(compass),
     'Journal entries:',
     entriesSection,
   ].join('\n');
 
   return [
-    { role: 'system', content: buildSystemPrompt(locale) },
+    {
+      role: 'system',
+      content: withCompassSystemRules(buildSystemPrompt(locale), compass, locale),
+    },
     { role: 'user', content: user },
   ];
 };
@@ -277,6 +357,7 @@ export const buildRevisionMessages = ({
   generationCount = 1,
   previousSummary,
   comments,
+  compass,
 }) => {
   const entriesSection = buildEntriesPromptSection(entries);
   const commentLines = (Array.isArray(comments) ? comments : []).map(
@@ -294,6 +375,7 @@ export const buildRevisionMessages = ({
     'User comments:',
     commentLines.join('\n'),
     '',
+    ...compassUserLines(compass),
     'Journal entries:',
     entriesSection,
   ].join('\n');
@@ -301,7 +383,11 @@ export const buildRevisionMessages = ({
   return [
     {
       role: 'system',
-      content: buildRevisionSystemPrompt(locale, generationCount),
+      content: compass
+        ? `${withCompassSystemRules(buildRevisionSystemPrompt(locale, generationCount), compass, locale)}
+
+The user's comments are the strongest evidence for Compass suggestions. Still apply every Compass rule above.`
+        : buildRevisionSystemPrompt(locale, generationCount),
     },
     { role: 'user', content: user },
   ];

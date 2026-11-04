@@ -1,0 +1,85 @@
+.compass-nudge {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.compass-nudge__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compass-nudge__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #F1E8E1;
+  color: var(--accent);
+}
+
+.compass-nudge__title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: var(--dark-brown);
+}
+
+.compass-nudge__body {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--dark-brown);
+}
+
+.compass-nudge__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compass-nudge__open,
+.compass-nudge__later {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.compass-nudge__open {
+  flex: 1;
+  background: var(--accent);
+  color: var(--background);
+}
+
+.compass-nudge__later {
+  width: auto;
+  background: transparent;
+  border-color: transparent;
+  color: #6B4A35;
+  font-weight: 600;
+}
+
+.compass-nudge__open:focus-visible,
+.compass-nudge__later:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

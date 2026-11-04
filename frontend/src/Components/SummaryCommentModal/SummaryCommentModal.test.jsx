@@ -71,4 +71,49 @@ describe('SummaryCommentModal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'SAVE COMMENT' }));
     expect(onAdd).toHaveBeenCalledWith('Softer, please.');
   });
+
+  test('with a maxLength, shows a live counter and caps the field', () => {
+    const onAdd = vi.fn();
+    render(
+      <SummaryCommentModal
+        labelledById="compass-edit-title"
+        title="Edit before saving"
+        fieldLabel="New text"
+        placeholder="A fact about your life"
+        addLabel="Save to Compass"
+        cancelLabel="Cancel"
+        initialNote="Living in Madrid."
+        maxLength={200}
+        onClose={vi.fn()}
+        onAdd={onAdd}
+      />,
+    );
+
+    const field = screen.getByLabelText('New text');
+    expect(field.maxLength).toBe(200);
+    expect(screen.getByText('17 / 200')).toBeTruthy();
+    fireEvent.change(field, { target: { value: 'Living in Valencia.' } });
+    expect(screen.getByText('19 / 200')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Save to Compass' }));
+    expect(onAdd).toHaveBeenCalledWith('Living in Valencia.');
+  });
+
+  test('shows the text being replaced when given one', () => {
+    render(
+      <SummaryCommentModal
+        labelledById="compass-edit-title"
+        title="Edit before saving"
+        replaces={{ label: 'Update memory · replaces', text: 'Working at an agency.' }}
+        fieldLabel="New text"
+        addLabel="Save to Compass"
+        cancelLabel="Cancel"
+        initialNote="Working at a startup."
+        maxLength={200}
+        onClose={vi.fn()}
+        onAdd={vi.fn()}
+      />,
+    );
+    expect(screen.getByText('Update memory · replaces')).toBeTruthy();
+    expect(screen.getByText('Working at an agency.')).toBeTruthy();
+  });
 });

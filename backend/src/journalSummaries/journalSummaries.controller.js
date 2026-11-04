@@ -24,8 +24,33 @@ import {
   generateWeeklySummaryRevision,
 } from './journalSummaries.generation.js';
 import { parseRevisionComments } from './parseRevisionComments.js';
+import pool from '../db/db.js';
+import { loadCompassContext } from '../compass/compassContext.js';
+import {
+  countCompassItems,
+  listPendingSuggestionsForSummary,
+  replacePendingSuggestions,
+} from '../compass/compass.service.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
+
+const dbFor = (req) => req.db ?? pool;
+
+/**
+ * Store the new suggestions in place of the summary's pending ones.
+ * The summary is already saved, so a failure here is logged, not surfaced.
+ */
+const saveCompassSuggestions = async (userId, summaryId, suggestions, db) => {
+  try {
+    return await replacePendingSuggestions(
+      { userId, summaryId, suggestions: suggestions ?? [] },
+      db,
+    );
+  } catch (err) {
+    console.error('[journal-summaries compass save]', err);
+    return [];
+  }
+};
 
 const quotaExhausted = (locale) => ({
   message: journalMessage(locale, 'summaryQuotaExhausted'),
@@ -74,14 +99,18 @@ const displayRange = (summary, range) => {
   };
 };
 
-const buildCurrentPayload = async (userId, now = new Date()) => {
+const buildCurrentPayload = async (userId, now = new Date(), db = pool) => {
   const quotaWeek = getWeekBounds(now);
   const range = getRollingEntryRange(now);
-  const [entryCount, summary] = await Promise.all([
-    countJournalEntriesInRange(userId, range.periodStart, range.periodEnd),
-    getWeeklySummaryForUser(userId, quotaWeek.weekStart),
+  const [entryCount, summary, compassItemCount] = await Promise.all([
+    countJournalEntriesInRange(userId, range.periodStart, range.periodEnd, db),
+    getWeeklySummaryForUser(userId, quotaWeek.weekStart, db),
+    countCompassItems(userId, db),
   ]);
   const { weekStart, weekEnd } = displayRange(summary, range);
+  const compassSuggestions = summary
+    ? await listPendingSuggestionsForSummary(userId, summary.id, db)
+    : [];
 
   return {
     weekStart,
@@ -90,13 +119,15 @@ const buildCurrentPayload = async (userId, now = new Date()) => {
     entryCount,
     minEntries: MIN_ENTRIES_FOR_SUMMARY,
     summary,
+    compassSuggestions,
+    compassItemCount,
   };
 };
 
 export const getCurrentJournalSummary = async (req, res) => {
   const locale = localeFromRequest(req);
   try {
-    const payload = await buildCurrentPayload(req.user.id);
+    const payload = await buildCurrentPayload(req.user.id, new Date(), dbFor(req));
     return res.status(200).json(payload);
   } catch (err) {
     console.error('[journal-summaries GET current]', err);
@@ -106,6 +137,7 @@ export const getCurrentJournalSummary = async (req, res) => {
 
 export const postCurrentJournalSummary = async (req, res) => {
   const locale = localeFromRequest(req);
+  const db = dbFor(req);
   try {
     const now = new Date();
     const quotaWeek = getWeekBounds(now);
@@ -114,12 +146,13 @@ export const postCurrentJournalSummary = async (req, res) => {
     const existing = await getWeeklySummaryForUser(
       req.user.id,
       quotaWeek.weekStart,
+      db,
     );
     if ((existing?.generationCount ?? 0) >= SUMMARY_GENERATIONS_PER_WEEK) {
       return res.status(429).json(quotaExhausted(locale));
     }
 
-    const recentAttempts = await countRecentGenerateAttempts(req.user.id, now);
+    const recentAttempts = await countRecentGenerateAttempts(req.user.id, now, db);
     if (recentAttempts >= MAX_GENERATE_ATTEMPTS_IN_WINDOW) {
       return res.status(429).json(rateLimited(locale));
     }
@@ -128,6 +161,7 @@ export const postCurrentJournalSummary = async (req, res) => {
       req.user.id,
       range.periodStart,
       range.periodEnd,
+      db,
     );
 
     if (entries.length < MIN_ENTRIES_FOR_SUMMARY) {
@@ -140,7 +174,8 @@ export const postCurrentJournalSummary = async (req, res) => {
       });
     }
 
-    await recordGenerateAttempt(req.user.id);
+    await recordGenerateAttempt(req.user.id, db);
+    const compass = await loadCompassContext(req.user.id, now, db);
 
     const abort = new AbortController();
     const onClose = () => abort.abort();
@@ -154,6 +189,8 @@ export const postCurrentJournalSummary = async (req, res) => {
         weekEnd: range.rangeEnd,
         locale,
         signal: abort.signal,
+        compass,
+        complete: req.summaryCompletion,
       });
     } catch (genErr) {
       console.error('[journal-summaries POST generate]', genErr);
@@ -178,16 +215,24 @@ export const postCurrentJournalSummary = async (req, res) => {
       modelId: generated.modelId,
       locale,
       limit: SUMMARY_GENERATIONS_PER_WEEK,
-    });
+    }, db);
 
     if (!summary) {
       return res.status(429).json(quotaExhausted(locale));
     }
 
+    const compassSuggestions = await saveCompassSuggestions(
+      req.user.id,
+      summary.id,
+      generated.compassSuggestions,
+      db,
+    );
+
     return res.status(201).json({
       summary,
       weekStart: range.rangeStart,
       weekEnd: range.rangeEnd,
+      compassSuggestions,
     });
   } catch (err) {
     console.error('[journal-summaries POST current]', err);
@@ -197,6 +242,7 @@ export const postCurrentJournalSummary = async (req, res) => {
 
 export const postCurrentJournalSummaryRevision = async (req, res) => {
   const locale = localeFromRequest(req);
+  const db = dbFor(req);
   try {
     const now = new Date();
     const quotaWeek = getWeekBounds(now);
@@ -205,6 +251,7 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
     const existing = await getWeeklySummaryForUser(
       req.user.id,
       quotaWeek.weekStart,
+      db,
     );
     if (!existing) {
       return res.status(404).json({
@@ -223,7 +270,7 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
       });
     }
 
-    const recentAttempts = await countRecentReviseAttempts(req.user.id, now);
+    const recentAttempts = await countRecentReviseAttempts(req.user.id, now, db);
     if (recentAttempts >= MAX_REVISE_ATTEMPTS_IN_WINDOW) {
       return res.status(429).json(rateLimited(locale));
     }
@@ -232,9 +279,11 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
       req.user.id,
       range.periodStart,
       range.periodEnd,
+      db,
     );
 
-    await recordReviseAttempt(req.user.id);
+    await recordReviseAttempt(req.user.id, db);
+    const compass = await loadCompassContext(req.user.id, now, db);
 
     const abort = new AbortController();
     const onClose = () => abort.abort();
@@ -251,6 +300,8 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
         previousSummary: existing,
         comments: parsedComments.value,
         signal: abort.signal,
+        compass,
+        complete: req.summaryCompletion,
       });
     } catch (genErr) {
       console.error('[journal-summaries POST revise]', genErr);
@@ -271,16 +322,24 @@ export const postCurrentJournalSummaryRevision = async (req, res) => {
       entryCount: entries.length,
       modelId: generated.modelId,
       locale,
-    });
+    }, db);
 
     if (!summary) {
       return res.status(429).json(feedbackExhausted(locale));
     }
 
+    const compassSuggestions = await saveCompassSuggestions(
+      req.user.id,
+      summary.id,
+      generated.compassSuggestions,
+      db,
+    );
+
     return res.status(201).json({
       summary,
       weekStart: range.rangeStart,
       weekEnd: range.rangeEnd,
+      compassSuggestions,
     });
   } catch (err) {
     console.error('[journal-summaries POST revise]', err);
