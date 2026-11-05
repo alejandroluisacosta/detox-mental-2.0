@@ -1,4 +1,5 @@
 {
+  "buildCommand": "npm run migrate:vercel",
   "functions": {
     "src/index.js": {
       "maxDuration": 60
