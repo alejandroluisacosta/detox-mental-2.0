@@ -5,9 +5,11 @@ import {
   buildSummaryMessages,
 } from './prompts.js';
 import {
+  extractJsonObject,
   findBestQuoteEntryId,
   parseSummaryOutput,
 } from './parseSummaryOutput.js';
+import { parseCompassSuggestions } from '../compass/parseCompassSuggestions.js';
 
 const DEFAULT_SUMMARY_MODEL = 'moonshotai/Kimi-K2-Instruct-0905:novita';
 
@@ -24,29 +26,20 @@ const combinedSignal = (signal) => {
   return signal ? AbortSignal.any([signal, timeout]) : timeout;
 };
 
-/**
- * Call HF and return normalized summary fields + quote entry match.
- * @throws Error with code-like message prefixes for controller mapping
- */
-const completeSummaryFromMessages = async ({
-  messages,
-  entries,
-  signal,
-  maxTokens = 1800,
-}) => {
+/** Default model call: Hugging Face chat completion, returning the raw text. */
+const huggingFaceCompletion = async ({ messages, maxTokens, signal, modelId }) => {
   if (!process.env.HF_TOKEN) {
     const err = new Error('missing_hf_token');
     err.code = 'missing_hf_token';
     throw err;
   }
 
-  const modelId = getSummaryModelId();
   const client = new InferenceClient(process.env.HF_TOKEN);
   const abortSignal = combinedSignal(signal);
 
   let response;
   try {
-    // Default fits 400–600 word reflections plus quote / topics / socratic / machiavelli.
+    // Default fits 400–600 word reflections plus quote / topics / socratic / machiavelli / compass.
     const completion = client.chatCompletion(
       {
         model: modelId,
@@ -75,7 +68,36 @@ const completeSummaryFromMessages = async ({
     throw err;
   }
 
-  const raw = response.choices?.[0]?.message?.content ?? '';
+  return response.choices?.[0]?.message?.content ?? '';
+};
+
+/** Suggestions never fail the summary: anything unexpected means none. */
+const compassSuggestionsFrom = (raw, compass) => {
+  if (!compass) return [];
+  try {
+    return parseCompassSuggestions(extractJsonObject(raw)?.compass, compass);
+  } catch (err) {
+    console.error('[journal-summaries compass parse]', err);
+    return [];
+  }
+};
+
+/**
+ * Call the model and return normalized summary fields + quote entry match,
+ * plus Compass suggestions when a Compass context was sent.
+ * `complete` replaces the model call (tests); it resolves to the raw text.
+ * @throws Error with code-like message prefixes for controller mapping
+ */
+const completeSummaryFromMessages = async ({
+  messages,
+  entries,
+  signal,
+  maxTokens = 2200,
+  compass,
+  complete = huggingFaceCompletion,
+}) => {
+  const modelId = getSummaryModelId();
+  const raw = await complete({ messages, maxTokens, signal, modelId });
   const parsed = parseSummaryOutput(raw);
   if (!parsed.ok) {
     const err = new Error(parsed.error);
@@ -92,6 +114,7 @@ const completeSummaryFromMessages = async ({
     ...parsed.value,
     bestQuoteEntryId,
     modelId,
+    compassSuggestions: compassSuggestionsFrom(raw, compass),
   };
 };
 
@@ -101,14 +124,17 @@ export const generateWeeklySummaryContent = async ({
   weekEnd,
   locale = 'en',
   signal,
+  compass,
+  complete,
 }) => {
   const messages = buildSummaryMessages({
     entries,
     weekStart,
     weekEnd,
     locale,
+    compass,
   });
-  return completeSummaryFromMessages({ messages, entries, signal });
+  return completeSummaryFromMessages({ messages, entries, signal, compass, complete });
 };
 
 export const generateWeeklySummaryRevision = async ({
@@ -120,6 +146,8 @@ export const generateWeeklySummaryRevision = async ({
   previousSummary,
   comments,
   signal,
+  compass,
+  complete,
 }) => {
   const messages = buildRevisionMessages({
     entries,
@@ -129,8 +157,9 @@ export const generateWeeklySummaryRevision = async ({
     generationCount,
     previousSummary,
     comments,
+    compass,
   });
-  return completeSummaryFromMessages({ messages, entries, signal });
+  return completeSummaryFromMessages({ messages, entries, signal, compass, complete });
 };
 
 /** Anonymous preview: one entry, a shorter reflection, a smaller token budget. */

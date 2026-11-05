@@ -36,8 +36,13 @@ const mapSummaryRow = (row) => ({
   createdAt: toIso(row.created_at),
 });
 
-export const listJournalEntriesInRange = async (userId, periodStart, periodEnd) => {
-  const { rows } = await pool.query(
+export const listJournalEntriesInRange = async (
+  userId,
+  periodStart,
+  periodEnd,
+  db = pool,
+) => {
+  const { rows } = await db.query(
     `SELECT id, content, topics, created_at
      FROM journal_entries
      WHERE user_id = $1
@@ -58,8 +63,9 @@ export const countJournalEntriesInRange = async (
   userId,
   periodStart,
   periodEnd,
+  db = pool,
 ) => {
-  const { rows } = await pool.query(
+  const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count
      FROM journal_entries
      WHERE user_id = $1
@@ -70,8 +76,8 @@ export const countJournalEntriesInRange = async (
   return rows[0]?.count ?? 0;
 };
 
-export const getWeeklySummaryForUser = async (userId, weekStart) => {
-  const { rows } = await pool.query(
+export const getWeeklySummaryForUser = async (userId, weekStart, db = pool) => {
+  const { rows } = await db.query(
     `SELECT ${SUMMARY_RETURNING}
      FROM journal_weekly_summaries
      WHERE user_id = $1 AND week_start = $2`,

@@ -52,6 +52,12 @@ export const JOURNALING_LINKS = [
         icon: 'summary',
         isActive: (pathname) => pathname.startsWith('/journal/summary'),
     },
+    {
+        labelKey: 'nav.compass',
+        path: '/journal/compass',
+        icon: 'compass',
+        isActive: (pathname) => pathname.startsWith('/journal/compass'),
+    },
 ];
 
 export const resolveNavModule = (pathname) => {

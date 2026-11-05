@@ -176,15 +176,18 @@ describe('Navigation', () => {
         );
     });
 
-    test.each(['/theory', '/journal'])(
+    test.each([
+        ['/theory', 7],
+        ['/journal', 8],
+    ])(
         'every icon shown on %s points to an SVG file that exists in public',
-        (pathname) => {
+        (pathname, iconCount) => {
             mockUseLocation.mockReturnValue({ pathname });
             renderNav();
             openMenu();
 
             const icons = [...screen.getByRole('dialog', { name: 'Menu' }).querySelectorAll('.navigation__icon')];
-            expect(icons.length).toBe(7);
+            expect(icons.length).toBe(iconCount);
             icons.forEach((icon) => {
                 const url = icon.getAttribute('style').match(/url\((\/[^)]+\.svg)\)/)?.[1];
                 expect(url, icon.outerHTML).toBeTruthy();

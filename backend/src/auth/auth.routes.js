@@ -28,6 +28,14 @@ import {
   postCurrentJournalSummary,
   postCurrentJournalSummaryRevision,
 } from '../journalSummaries/journalSummaries.controller.js';
+import {
+  acceptCompassSuggestion,
+  deleteCompassItemForUser,
+  dismissCompassSuggestion,
+  getCompass,
+  patchCompassItem,
+  postCompassItem,
+} from '../compass/compass.controller.js';
 import { requireAuth } from './auth.middleware.js';
 
 const router = express.Router();
@@ -74,6 +82,20 @@ router.post(
   '/me/journal-summaries/current/revise',
   requireAuth,
   postCurrentJournalSummaryRevision,
+);
+router.get('/me/compass', requireAuth, getCompass);
+router.post('/me/compass/items', requireAuth, postCompassItem);
+router.patch('/me/compass/items/:id', requireAuth, patchCompassItem);
+router.delete('/me/compass/items/:id', requireAuth, deleteCompassItemForUser);
+router.post(
+  '/me/compass/suggestions/:id/accept',
+  requireAuth,
+  acceptCompassSuggestion,
+);
+router.post(
+  '/me/compass/suggestions/:id/dismiss',
+  requireAuth,
+  dismissCompassSuggestion,
 );
 router.get('/me', requireAuth, me);
 

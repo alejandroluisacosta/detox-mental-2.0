@@ -178,13 +178,59 @@ const DEMO_SUMMARY_ES = {
     'Dices que quieres avanzar, pero sigues priorizando una estrategia que evita exponerte a la incertidumbre. ¿Qué posición esperas ganar si protegerte de decidir se ha convertido en el objetivo real?',
 };
 
-const buildSummaryPayload = (entries, summary) => ({
+// Sample Compass suggestions: accept and dismiss only change local state in demo mode.
+const DEMO_COMPASS_SUGGESTIONS_EN = [
+  {
+    id: 'demo-compass-1',
+    action: 'add',
+    kind: 'goal',
+    content: 'Make decisions with the information I already have.',
+  },
+  {
+    id: 'demo-compass-2',
+    action: 'update',
+    kind: 'memory',
+    targetContent: 'Planning every week in detail.',
+    content: 'Planning less and deciding sooner, one week at a time.',
+  },
+  {
+    id: 'demo-compass-3',
+    action: 'add',
+    kind: 'memory',
+    content: 'My job has frequent meetings that move on short notice.',
+  },
+];
+
+const DEMO_COMPASS_SUGGESTIONS_ES = [
+  {
+    id: 'demo-compass-1',
+    action: 'add',
+    kind: 'goal',
+    content: 'Decidir con la información que ya tengo.',
+  },
+  {
+    id: 'demo-compass-2',
+    action: 'update',
+    kind: 'memory',
+    targetContent: 'Planifico cada semana al detalle.',
+    content: 'Planifico menos y decido antes, semana a semana.',
+  },
+  {
+    id: 'demo-compass-3',
+    action: 'add',
+    kind: 'memory',
+    content: 'En mi trabajo hay reuniones frecuentes que cambian con poco aviso.',
+  },
+];
+
+const buildSummaryPayload = (entries, summary, compassSuggestions) => ({
   weekStart: '2026-07-27',
   weekEnd: '2026-08-02',
   entryCount: entries.length,
   minEntries: 2,
   quota: DEMO_QUOTA,
   summary,
+  compassSuggestions,
 });
 
 export const getDemoEntries = (locale) =>
@@ -192,5 +238,5 @@ export const getDemoEntries = (locale) =>
 
 export const getDemoSummaryPayload = (locale) =>
   parseLocale(locale) === 'es'
-    ? buildSummaryPayload(DEMO_ENTRIES_ES, DEMO_SUMMARY_ES)
-    : buildSummaryPayload(DEMO_ENTRIES_EN, DEMO_SUMMARY_EN);
+    ? buildSummaryPayload(DEMO_ENTRIES_ES, DEMO_SUMMARY_ES, DEMO_COMPASS_SUGGESTIONS_ES)
+    : buildSummaryPayload(DEMO_ENTRIES_EN, DEMO_SUMMARY_EN, DEMO_COMPASS_SUGGESTIONS_EN);

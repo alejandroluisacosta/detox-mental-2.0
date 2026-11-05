@@ -41,6 +41,15 @@ describe('module link active matching', () => {
         expect(isActive(JOURNALING_LINKS, '/journal/meditations', '/journal/history')).toBe(false);
     });
 
+    test('marks Compass on its own path, after the weekly summary', () => {
+        expect(isActive(JOURNALING_LINKS, '/journal/compass', '/journal/compass')).toBe(true);
+        expect(isActive(JOURNALING_LINKS, '/journal/summary', '/journal/compass')).toBe(false);
+        expect(isActive(JOURNALING_LINKS, '/journal/compass', '/journal/summary')).toBe(false);
+        expect(resolveNavModule('/journal/compass')).toBe('journaling');
+        const paths = JOURNALING_LINKS.map((link) => link.path);
+        expect(paths.indexOf('/journal/compass')).toBe(paths.indexOf('/journal/summary') + 1);
+    });
+
     test('marks Curso for both the course grid and session player', () => {
         expect(isActive(EDUCATIONAL_LINKS, '/course', '/course')).toBe(true);
         expect(isActive(EDUCATIONAL_LINKS, '/course', '/session/1')).toBe(true);

@@ -1,0 +1,252 @@
+.journal-compass__main {
+  justify-content: flex-start;
+  gap: 28px;
+  padding-top: 30px;
+}
+
+.journal-compass__header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.journal-compass__title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+.journal-compass__intro {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--dark-brown);
+}
+
+.journal-compass__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 48px;
+  text-align: center;
+  line-height: 1.5;
+  color: var(--muted, #6b7280);
+}
+
+.journal-compass__action-link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.journal-compass__banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  border: 1px solid #E4D5CA;
+  border-radius: 16px;
+  background: #F1E8E1;
+  color: var(--dark-brown);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.journal-compass__banner:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journal-compass__banner-icon {
+  flex: none;
+  color: var(--accent);
+}
+
+.journal-compass__banner-text {
+  flex: 1;
+}
+
+.journal-compass__banner-action {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.journal-compass__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-compass__section-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.journal-compass__heading {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--dark-brown);
+}
+
+.journal-compass__count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B4A35;
+}
+
+.journal-compass__help {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--dark-brown);
+}
+
+.journal-compass__examples {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1.5px dashed #C9AE9B;
+  border-radius: 16px;
+}
+
+.journal-compass__examples-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6B4A35;
+}
+
+.journal-compass__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.journal-compass__chip {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  min-height: 36px;
+  margin: 0;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border: 1px solid #E4D5CA;
+  border-radius: 999px;
+  background: #F1E8E1;
+  color: #6B4A35;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.journal-compass__chip:hover {
+  background: color-mix(in srgb, #F1E8E1 85%, var(--accent));
+}
+
+.journal-compass__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-compass__item {
+  margin: 0;
+  font-size: 1rem;
+  line-height: normal;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 6px 4px 6px 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.journal-compass__item-text {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 8px 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--dark-brown);
+  overflow-wrap: anywhere;
+}
+
+.journal-compass__icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--accent);
+}
+
+.journal-compass__icon-button:focus-visible,
+.journal-compass__chip:focus-visible,
+.journal-compass__add:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.journal-compass__add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  background: var(--background);
+  color: var(--accent);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.journal-compass__full {
+  margin: 0;
+  padding: 12px 16px;
+  border: 1.5px dashed #C9AE9B;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  text-align: center;
+  color: #6B4A35;
+}
+
+.journal-compass__note {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--dark-brown);
+}

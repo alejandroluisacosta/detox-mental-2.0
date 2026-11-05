@@ -773,3 +773,378 @@ describe('JournalSummary page states', () => {
     expect(document.querySelector('.journal-summary__comment-mark')).toBeNull();
   });
 });
+
+describe('JournalSummary and Compass', () => {
+  const summary = {
+    id: 'sum-1',
+    summaryText: 'You wrote about work.',
+    mainTopics: ['Work'],
+    bestQuote: 'Never enough',
+    socraticText: 'What proof do you have?',
+    machiavelliText: 'A challenge.',
+    generationCount: 1,
+    feedbackCount: 0,
+  };
+
+  const currentWith = (extra) => ({
+    weekStart: '2026-07-27',
+    weekEnd: '2026-08-02',
+    quota: quota(1),
+    entryCount: 3,
+    minEntries: 2,
+    summary,
+    compassItemCount: 2,
+    compassSuggestions: [],
+    ...extra,
+  });
+
+  /** Routes the fake API by path; `responses` maps a path to a response. */
+  const mockApi = (current, responses = {}) => {
+    apiFetch.mockImplementation((path) => {
+      if (responses[path]) return Promise.resolve(responses[path]);
+      return Promise.resolve({ ok: true, status: 200, json: async () => current });
+    });
+  };
+
+  const sentTo = (path) =>
+    apiFetch.mock.calls.filter(([p, options]) => p === path && options?.method === 'POST');
+
+  beforeEach(() => {
+    mockUseAuth.mockReset();
+    mockUseDemoMode.mockReset();
+    apiFetch.mockReset();
+    emitToast.mockReset();
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({ demoMode: false, toggleDemoMode: vi.fn() });
+    window.localStorage.removeItem('compassNudgeDismissed');
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('renders suggestions from the payload; accepting one sends it and shows Added', async () => {
+    mockApi(
+      currentWith({
+        compassSuggestions: [
+          { id: 's1', action: 'add', kind: 'memory', content: 'Building a journaling app.' },
+          { id: 's2', action: 'add', kind: 'goal', content: 'Move into a product role.' },
+        ],
+      }),
+      {
+        '/auth/me/compass/suggestions/s1/accept': {
+          ok: true,
+          status: 200,
+          json: async () => ({ item: { id: 'i1', kind: 'memory', content: 'Building a journaling app.' } }),
+        },
+      },
+    );
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'For your Compass' })).toBeTruthy();
+    });
+    expect(screen.getByText('New memory')).toBeTruthy();
+    expect(screen.getByText('Move into a product role.')).toBeTruthy();
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Accept' })[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Added to your Compass')).toBeTruthy();
+    });
+    expect(screen.queryByText('Building a journaling app.')).toBeNull();
+    expect(sentTo('/auth/me/compass/suggestions/s1/accept')).toHaveLength(1);
+    expect(sentTo('/auth/me/compass/suggestions/s1/accept')[0][1].body).toBeUndefined();
+    expect(screen.getByText('Move into a product role.')).toBeTruthy();
+  });
+
+  test('a stale suggestion disappears with a short message', async () => {
+    mockApi(
+      currentWith({
+        compassSuggestions: [
+          {
+            id: 's1',
+            action: 'update',
+            kind: 'memory',
+            targetContent: 'Living in Madrid.',
+            content: 'Moved to Valencia.',
+          },
+        ],
+      }),
+      {
+        '/auth/me/compass/suggestions/s1/accept': {
+          ok: false,
+          status: 409,
+          json: async () => ({
+            code: 'compass_suggestion_stale',
+            message: 'That item changed since this suggestion was made, so it was not applied.',
+          }),
+        },
+      },
+    );
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByText('Moved to Valencia.')).toBeTruthy();
+    });
+    expect(screen.getByText('Living in Madrid.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Accept' }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Moved to Valencia.')).toBeNull();
+    });
+    expect(screen.queryByText('Added to your Compass')).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'For your Compass' })).toBeNull();
+    expect(emitToast).toHaveBeenCalledWith(
+      'That item changed since this suggestion was made, so it was not applied.',
+    );
+  });
+
+  test('editing a suggestion shows the replaced text and accepts the edited text', async () => {
+    mockApi(
+      currentWith({
+        compassSuggestions: [
+          {
+            id: 's1',
+            action: 'update',
+            kind: 'memory',
+            targetContent: 'Working at an agency.',
+            content: 'Working at an agency; looking for a product role.',
+          },
+        ],
+      }),
+      {
+        '/auth/me/compass/suggestions/s1/accept': {
+          ok: true,
+          status: 200,
+          json: async () => ({ item: { id: 'i1', kind: 'memory', content: 'Product role search.' } }),
+        },
+      },
+    );
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Edit' })).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.textContent).toContain('Update memory · replaces');
+    expect(dialog.textContent).toContain('Working at an agency.');
+    const field = screen.getByLabelText('New text');
+    expect(field.value).toBe('Working at an agency; looking for a product role.');
+    fireEvent.change(field, { target: { value: 'Product role search.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save to Compass' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Updated in your Compass')).toBeTruthy();
+    });
+    expect(sentTo('/auth/me/compass/suggestions/s1/accept')[0][1].body).toEqual({
+      content: 'Product role search.',
+    });
+  });
+
+  const editableSuggestion = {
+    id: 's1',
+    action: 'add',
+    kind: 'goal',
+    content: 'Suggested goal.',
+  };
+  const acceptPath = '/auth/me/compass/suggestions/s1/accept';
+
+  const openEditAndType = async (text) => {
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Edit' })).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    fireEvent.change(screen.getByLabelText('New text'), { target: { value: text } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save to Compass' }));
+  };
+
+  test('a failed accept keeps the edit sheet and its text so the user can retry', async () => {
+    const responses = {
+      [acceptPath]: {
+        ok: false,
+        status: 409,
+        json: async () => ({ code: 'compass_full', message: 'Goals are full.' }),
+      },
+    };
+    mockApi(currentWith({ compassSuggestions: [editableSuggestion] }), responses);
+
+    await openEditAndType('My careful edit.');
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalledWith('Goals are full.');
+    });
+    expect(screen.getByLabelText('New text').value).toBe('My careful edit.');
+
+    responses[acceptPath] = {
+      ok: true,
+      status: 200,
+      json: async () => ({ item: { id: 'i1', kind: 'goal', content: 'My careful edit.' } }),
+    };
+    fireEvent.click(screen.getByRole('button', { name: 'Save to Compass' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Added to your Compass')).toBeTruthy();
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(sentTo(acceptPath).at(-1)[1].body).toEqual({ content: 'My careful edit.' });
+  });
+
+  test('a network failure on accept keeps the edit sheet and its text', async () => {
+    mockApi(currentWith({ compassSuggestions: [editableSuggestion] }));
+    const routed = apiFetch.getMockImplementation();
+    apiFetch.mockImplementation((path, options) =>
+      path === acceptPath ? Promise.reject(new Error('offline')) : routed(path, options),
+    );
+
+    await openEditAndType('My careful edit.');
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalled();
+    });
+    expect(screen.getByLabelText('New text').value).toBe('My careful edit.');
+  });
+
+  test('a suggestion that went stale closes the edit sheet: retrying could never work', async () => {
+    mockApi(currentWith({ compassSuggestions: [editableSuggestion] }), {
+      [acceptPath]: {
+        ok: false,
+        status: 409,
+        json: async () => ({ code: 'compass_suggestion_stale', message: 'That item changed.' }),
+      },
+    });
+
+    await openEditAndType('My careful edit.');
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+    expect(emitToast).toHaveBeenCalledWith('That item changed.');
+  });
+
+  test('dismissing a suggestion sends it and explains it may come back', async () => {
+    mockApi(
+      currentWith({
+        compassSuggestions: [{ id: 's1', action: 'add', kind: 'goal', content: 'Run a marathon.' }],
+      }),
+      {
+        '/auth/me/compass/suggestions/s1/dismiss': { ok: true, status: 204, json: async () => ({}) },
+      },
+    );
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Dismiss' })).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Dismissed\. It may come back in a few weeks/)).toBeTruthy();
+    });
+    expect(sentTo('/auth/me/compass/suggestions/s1/dismiss')).toHaveLength(1);
+  });
+
+  test('suggestions returned by a regenerate replace the ones on screen', async () => {
+    const current = currentWith({
+      compassSuggestions: [{ id: 'old', action: 'add', kind: 'goal', content: 'Old suggestion.' }],
+    });
+    apiFetch.mockImplementation((path, options = {}) => {
+      if (options.method === 'POST' && path === '/auth/me/journal-summaries/current') {
+        return Promise.resolve({
+          ok: true,
+          status: 201,
+          json: async () => ({
+            summary: { ...summary, generationCount: 2 },
+            weekStart: '2026-07-27',
+            weekEnd: '2026-08-02',
+            compassSuggestions: [
+              { id: 'new', action: 'add', kind: 'memory', content: 'New suggestion.' },
+            ],
+          }),
+        });
+      }
+      return Promise.resolve({ ok: true, status: 200, json: async () => current });
+    });
+
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByText('Old suggestion.')).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /REGENERATE SUMMARY/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('New suggestion.')).toBeTruthy();
+    });
+    expect(screen.queryByText('Old suggestion.')).toBeNull();
+  });
+
+  test('the nudge shows while Compass is empty and links to it', async () => {
+    mockApi(currentWith({ compassItemCount: 0 }));
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Let your summary know you' })).toBeTruthy();
+    });
+    expect(screen.getByRole('link', { name: 'Open Compass' }).getAttribute('href')).toBe(
+      '/journal/compass',
+    );
+  });
+
+  test('the nudge stays hidden once Compass has an item', async () => {
+    mockApi(currentWith({ compassItemCount: 1 }));
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByText(/You wrote about work/)).toBeTruthy();
+    });
+    expect(screen.queryByRole('heading', { name: 'Let your summary know you' })).toBeNull();
+  });
+
+  test('"Not now" hides the nudge and it stays hidden on the next visit', async () => {
+    mockApi(currentWith({ compassItemCount: 0, summary: null }));
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Not now' })).toBeTruthy();
+    });
+    expect(screen.getByRole('button', { name: /CREATE SUMMARY/i })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Not now' }));
+    expect(screen.queryByRole('heading', { name: 'Let your summary know you' })).toBeNull();
+
+    cleanup();
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /CREATE SUMMARY/i })).toBeTruthy();
+    });
+    expect(screen.queryByRole('heading', { name: 'Let your summary know you' })).toBeNull();
+  });
+
+  test('queued comments get a heading with their count', async () => {
+    mockApi(currentWith({ summary: { ...summary, summaryText: 'First insight.' } }));
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /First insight\./i })).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: /First insight\./i }));
+    fireEvent.change(screen.getByPlaceholderText('What should change?'), {
+      target: { value: 'I am already building one.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ADD COMMENT/i }));
+
+    expect(screen.getByRole('heading', { name: 'Your comments · 1' })).toBeTruthy();
+  });
+
+  test('demo mode shows sample suggestions that change only local state', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({ demoMode: true, toggleDemoMode: vi.fn() });
+    renderSummary();
+
+    expect(screen.getByRole('heading', { name: 'For your Compass' })).toBeTruthy();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Accept' })[0]);
+    await waitFor(() => {
+      expect(screen.getByText('Added to your Compass')).toBeTruthy();
+    });
+    expect(apiFetch).not.toHaveBeenCalled();
+  });
+});

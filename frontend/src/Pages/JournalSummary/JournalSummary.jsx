@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import CompassNudge from '../../Components/CompassNudge/CompassNudge.jsx';
+import CompassSuggestions from '../../Components/CompassSuggestions/CompassSuggestions.jsx';
 import DemoModeToggle from '../../Components/DemoModeToggle/DemoModeToggle.jsx';
 import Navigation from '../../Components/Navigation/Navigation.jsx';
 import SummaryCommentModal from '../../Components/SummaryCommentModal/SummaryCommentModal.jsx';
@@ -30,6 +32,13 @@ import {
   commentTargetId,
   upsertTargetComment,
 } from '../../utils/summaryComments.js';
+import {
+  COMPASS_ITEM_MAX_CHARS,
+  compassItemDelta,
+  compassTagKey,
+  readCompassNudgeDismissed,
+  writeCompassNudgeDismissed,
+} from '../../utils/compass.js';
 import './JournalSummary.css';
 
 const formatWeekLabel = (weekStart, weekEnd, locale) => {
@@ -78,6 +87,11 @@ const JournalSummary = () => {
   const [comments, setComments] = useState([]);
   const [activeTarget, setActiveTarget] = useState(null);
   const [demoFeedbackUsed, setDemoFeedbackUsed] = useState(false);
+  const [pendingCompassSuggestions, setPendingCompassSuggestions] = useState(null);
+  const [suggestionStatus, setSuggestionStatus] = useState({});
+  const [busySuggestionId, setBusySuggestionId] = useState(null);
+  const [editingSuggestion, setEditingSuggestion] = useState(null);
+  const [nudgeDismissed, setNudgeDismissed] = useState(readCompassNudgeDismissed);
   const commentIdRef = useRef(0);
 
   const clearComments = () => {
@@ -106,6 +120,7 @@ const JournalSummary = () => {
         throw new Error(data.message || t('summary.loadFailed'));
       }
       setPayload(data);
+      setSuggestionStatus({});
     } catch (err) {
       console.error('[journal-summaries GET]', err);
       setPayload(null);
@@ -125,6 +140,7 @@ const JournalSummary = () => {
     setPendingSummary(null);
     setPendingRange(null);
     setPendingIsRevise(false);
+    setPendingCompassSuggestions(null);
   };
 
   const markAttemptExhausted = (isRevise) => {
@@ -178,6 +194,9 @@ const JournalSummary = () => {
           );
         }
         setPendingSummary(data.summary ?? null);
+        setPendingCompassSuggestions(
+          Array.isArray(data.compassSuggestions) ? data.compassSuggestions : [],
+        );
         setPendingRange(
           data.weekStart && data.weekEnd
             ? { weekStart: data.weekStart, weekEnd: data.weekEnd }
@@ -274,6 +293,8 @@ const JournalSummary = () => {
         return {
           ...prev,
           summary: pendingSummary,
+          // The new generation replaces the summary's unreviewed suggestions.
+          compassSuggestions: pendingCompassSuggestions ?? [],
           ...(pendingRange ?? {}),
           quota: {
             ...(prev.quota ?? {}),
@@ -286,6 +307,8 @@ const JournalSummary = () => {
     if (pendingIsRevise && demoMode) {
       setDemoFeedbackUsed(true);
     }
+    setSuggestionStatus({});
+    setPendingCompassSuggestions(null);
     setComments([]);
     setActiveTarget(null);
     setGenerating(false);
@@ -293,7 +316,95 @@ const JournalSummary = () => {
     setPendingSummary(null);
     setPendingRange(null);
     setPendingIsRevise(false);
-  }, [demoMode, pendingIsRevise, pendingRange, pendingSummary]);
+  }, [demoMode, pendingCompassSuggestions, pendingIsRevise, pendingRange, pendingSummary]);
+
+  const setSuggestionState = (id, state) =>
+    setSuggestionStatus((prev) => ({ ...prev, [id]: state }));
+
+  /** @returns {Promise<boolean>} false when the user can still retry this suggestion. */
+  const acceptSuggestion = async (suggestion, content) => {
+    if (busySuggestionId) return false;
+    if (demoMode) {
+      setSuggestionState(suggestion.id, 'accepted');
+      return true;
+    }
+
+    setBusySuggestionId(suggestion.id);
+    try {
+      const res = await apiFetch(
+        `/auth/me/compass/suggestions/${encodeURIComponent(suggestion.id)}/accept`,
+        {
+          method: 'POST',
+          ...(content !== undefined ? { body: { content } } : {}),
+        },
+      );
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setSuggestionState(suggestion.id, 'accepted');
+        const delta = compassItemDelta(suggestion.action);
+        if (delta !== 0) {
+          setPayload((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  compassItemCount: Math.max((prev.compassItemCount ?? 0) + delta, 0),
+                }
+              : prev,
+          );
+        }
+        return true;
+      }
+      if (res.status === 404 || data.code === 'compass_suggestion_stale') {
+        // Stale or already resolved elsewhere: it can no longer be applied.
+        setSuggestionState(suggestion.id, 'gone');
+        emitToast(data.message || t('summary.compassStale'));
+        return true;
+      }
+      emitToast(data.message || t('summary.compassFailed'));
+      return false;
+    } catch (err) {
+      console.error('[compass accept]', err);
+      emitToast(t('summary.compassFailed'));
+      return false;
+    } finally {
+      setBusySuggestionId(null);
+    }
+  };
+
+  const dismissSuggestion = async (suggestion) => {
+    if (busySuggestionId) return;
+    if (demoMode) {
+      setSuggestionState(suggestion.id, 'dismissed');
+      return;
+    }
+
+    setBusySuggestionId(suggestion.id);
+    try {
+      const res = await apiFetch(
+        `/auth/me/compass/suggestions/${encodeURIComponent(suggestion.id)}/dismiss`,
+        { method: 'POST' },
+      );
+      if (res.ok) {
+        setSuggestionState(suggestion.id, 'dismissed');
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 404) {
+        setSuggestionState(suggestion.id, 'gone');
+      }
+      emitToast(data.message || t('summary.compassFailed'));
+    } catch (err) {
+      console.error('[compass dismiss]', err);
+      emitToast(t('summary.compassFailed'));
+    } finally {
+      setBusySuggestionId(null);
+    }
+  };
+
+  const dismissNudge = () => {
+    writeCompassNudgeDismissed();
+    setNudgeDismissed(true);
+  };
 
   const addQueuedComment = (note) => {
     if (!activeTarget) return;
@@ -341,6 +452,19 @@ const JournalSummary = () => {
   const atCommentLimit = comments.length >= MAX_QUEUED_COMMENTS;
   const isCommented = (targetId) =>
     comments.some((comment) => comment.targetId === targetId);
+  const compassSuggestions = (effectivePayload?.compassSuggestions ?? [])
+    .filter((suggestion) => suggestionStatus[suggestion.id] !== 'gone')
+    .map((suggestion) => ({
+      ...suggestion,
+      status: suggestionStatus[suggestion.id] ?? 'pending',
+    }));
+  const showCompassNudge =
+    !demoMode &&
+    status === 'ready' &&
+    Boolean(user) &&
+    !loading &&
+    payload?.compassItemCount === 0 &&
+    !nudgeDismissed;
 
   const openComment = (section, quotedText, targetId) => {
     if (commentDisabled) return;
@@ -427,6 +551,8 @@ const JournalSummary = () => {
         {!demoMode && status === 'loading' && (
           <LoadingStatus>{t('summary.loading')}</LoadingStatus>
         )}
+
+        {showCompassNudge && <CompassNudge onDismiss={dismissNudge} />}
 
         {!demoMode && status === 'ready' && !user && (
           <div className="journal-summary__empty">
@@ -526,32 +652,63 @@ const JournalSummary = () => {
               </section>
             )}
 
+            <CompassSuggestions
+              suggestions={compassSuggestions}
+              busyId={busySuggestionId}
+              onAccept={(suggestion) => acceptSuggestion(suggestion)}
+              onEdit={setEditingSuggestion}
+              onDismiss={dismissSuggestion}
+            />
+
             {hasQueuedComments && (
-              <ul className="journal-summary__comment-queue" aria-label={t('summary.commentQueued')}>
-                {comments.map((comment) => (
-                  <li key={comment.id} className="journal-summary__comment-item">
-                    <div className="journal-summary__comment-item-body">
-                      <p className="journal-summary__comment-item-quote">
-                        {truncateSummaryQuote(comment.quotedText)}
-                      </p>
-                      <p className="journal-summary__comment-item-note">
-                        {comment.note}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className="journal-summary__comment-remove"
-                      onClick={() =>
-                        setComments((prev) =>
-                          prev.filter((item) => item.id !== comment.id),
-                        )
-                      }
-                    >
-                      {t('summary.commentRemove')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <section
+                className="journal-summary__comments"
+                aria-labelledby="summary-comments-title"
+              >
+                <h2 id="summary-comments-title" className="journal-summary__comments-heading">
+                  <svg
+                    className="journal-summary__comments-icon"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="M5 5h14v10H10l-5 4z" />
+                  </svg>
+                  {t('summary.commentsHeading', { count: comments.length })}
+                </h2>
+                <ul className="journal-summary__comment-queue" aria-label={t('summary.commentQueued')}>
+                  {comments.map((comment) => (
+                    <li key={comment.id} className="journal-summary__comment-item">
+                      <div className="journal-summary__comment-item-body">
+                        <p className="journal-summary__comment-item-quote">
+                          {truncateSummaryQuote(comment.quotedText)}
+                        </p>
+                        <p className="journal-summary__comment-item-note">
+                          {comment.note}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className="journal-summary__comment-remove"
+                        onClick={() =>
+                          setComments((prev) =>
+                            prev.filter((item) => item.id !== comment.id),
+                          )
+                        }
+                      >
+                        {t('summary.commentRemove')}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             )}
 
             {!demoMode && (generateExhausted || reviseExhausted) && (
@@ -650,6 +807,39 @@ const JournalSummary = () => {
           initialNote={activeTarget.note}
           onClose={() => setActiveTarget(null)}
           onAdd={addQueuedComment}
+        />
+      )}
+
+      {editingSuggestion && (
+        <SummaryCommentModal
+          key={`compass-${editingSuggestion.id}`}
+          labelledById="compass-edit-title"
+          fieldId="compass-edit-text"
+          title={t('summary.compassEditTitle')}
+          replaces={
+            editingSuggestion.action === 'update' && editingSuggestion.targetContent
+              ? {
+                  label: t('summary.compassEditReplaces', {
+                    tag: t(compassTagKey(editingSuggestion)),
+                  }),
+                  text: editingSuggestion.targetContent,
+                }
+              : undefined
+          }
+          fieldLabel={t('summary.compassEditField')}
+          addLabel={t('summary.compassEditSave')}
+          cancelLabel={t('summary.compassEditCancel')}
+          initialNote={editingSuggestion.content ?? ''}
+          maxLength={COMPASS_ITEM_MAX_CHARS}
+          onClose={() => setEditingSuggestion(null)}
+          onAdd={async (text) => {
+            const suggestion = editingSuggestion;
+            const settled = await acceptSuggestion(suggestion, text);
+            if (!settled) return;
+            setEditingSuggestion((current) =>
+              current?.id === suggestion.id ? null : current,
+            );
+          }}
         />
       )}
     </div>

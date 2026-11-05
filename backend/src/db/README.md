@@ -256,6 +256,53 @@ Per-user front matter (title, author, introduction) for the meditations export.
 
 ---
 
+### 10. `compass_items`
+
+The user's Compass: memories (stable facts about their life) and goals. Injected into the weekly summary prompt (added in `021`).
+
+**Columns:**
+- `id` (UUID, PK)
+- `user_id` (UUID, FK → users.id, ON DELETE CASCADE)
+- `kind` (TEXT): `memory` or `goal`
+- `content` (TEXT): Plain text, non-blank, at most 200 characters
+- `created_at`, `updated_at` (TIMESTAMPTZ)
+
+**Rules enforced by the API:** at most 15 memories and 3 goals per user (the insert is conditional on the per-kind count).
+
+**Indexes:**
+- `idx_compass_items_user_kind_created`: Per-user listing by kind, oldest first
+
+---
+
+### 11. `compass_suggestions`
+
+Changes to Compass suggested by a weekly summary (generate or revise). Nothing reaches `compass_items` until the user accepts (added in `021`).
+
+**Columns:**
+- `id` (UUID, PK)
+- `user_id` (UUID, FK → users.id, ON DELETE CASCADE)
+- `summary_id` (UUID, FK → journal_weekly_summaries.id, ON DELETE CASCADE): The summary that produced it. The summary row keeps its id across regenerate and revise.
+- `action` (TEXT): `add`, `update`, or `remove`
+- `kind` (TEXT): `memory` or `goal` (for update/remove, the target's kind)
+- `target_item_id` (UUID, FK → compass_items.id, ON DELETE CASCADE): NULL exactly when `action = 'add'`
+- `target_content` (TEXT): Snapshot of the target's text when suggested. If the item's text differs at accept time, the suggestion is stale and is dropped without being applied.
+- `content` (TEXT): Suggested text; NULL exactly when `action = 'remove'`; at most 200 characters
+- `status` (TEXT): `pending` or `dismissed`
+- `created_at` (TIMESTAMPTZ)
+- `dismissed_at` (TIMESTAMPTZ)
+
+**Lifecycle:**
+- A new generate or revise deletes all the user's `pending` rows, including older weeks' (which are never shown again), and inserts the new set (max 3).
+- Accepted rows are deleted (the item is the record).
+- Dismissed rows are kept for 28 days and passed to the model as "do not suggest again"; older ones are pruned on the user's next generate or revise.
+
+**Indexes:**
+- `idx_compass_suggestions_summary_status`: Pending suggestions of one summary
+- `idx_compass_suggestions_user_status_dismissed`: Recently dismissed texts per user
+- `idx_compass_suggestions_target_item`: Cascade when a Compass item is deleted (added in `022`)
+
+---
+
 ## Relationships Diagram
 
 ```
@@ -269,7 +316,9 @@ users (1) ──────< (N) magic_link_tokens
   │
   ├────── (0..1) journal_meditation_front_matter
   │
-  ├──────< (N) journal_weekly_summaries
+  ├──────< (N) journal_weekly_summaries (1) ──────< (N) compass_suggestions
+  │
+  ├──────< (N) compass_items (1) ──────< (0..N) compass_suggestions (update/remove targets)
   │
   └──────< (N) journal_summary_generate_attempts
 ```
@@ -452,6 +501,15 @@ Notes:
 ```sql
 -- Removes the unused blog_posts table created by 014.
 \i backend/src/db/migrations/020_drop_blog_posts.sql
+```
+
+### Compass
+```sql
+-- Memories and goals for the weekly summary, plus the changes it suggests.
+\i backend/src/db/migrations/021_compass.sql
+
+-- Index for the cascade from a Compass item to its suggestions.
+\i backend/src/db/migrations/022_compass_suggestions_target_index.sql
 ```
 
 ### Verify Migration Success
