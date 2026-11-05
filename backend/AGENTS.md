@@ -30,6 +30,8 @@ applied one.
 
 - Onboarding chat stays stateless; do not add server-held chat session state
   without an explicit decision.
-- Migrations are applied manually via `\i backend/src/db/migrations/<NNN>_<name>.sql`
-  in PostgreSQL (see `backend/src/db/README.md`). Handoffs that add a migration
-  must name the file and note that the schema was checked.
+- Migrations are applied by the runner (`npm run migrate`; automatic on
+  `npm run dev` and in the production Vercel build; see
+  `backend/src/db/README.md`). Handoffs that add a migration must name the file
+  and note that the schema was checked. Migrations must stay backward-compatible
+  with the currently deployed code.

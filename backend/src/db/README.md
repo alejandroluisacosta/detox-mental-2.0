@@ -362,6 +362,16 @@ users (1) ──────< (N) magic_link_tokens
 
 ## Running Migrations
 
+Migrations are applied by a runner (`src/db/migrate.js`, CLI in `scripts/migrate.js`) that records each applied file in a `schema_migrations` table and runs only files not yet recorded. Each file runs in its own transaction; a failure rolls that file back and stops the run.
+
+- **Local:** `npm run dev` applies pending migrations to `DATABASE_URL` before starting. `npm run migrate` does the same on demand.
+- **Production:** the Vercel build runs `npm run migrate:vercel`, which migrates only when `VERCEL_ENV=production`. A failed migration fails the build, so the previous deployment stays live. The production `DATABASE_URL` must be available to the build.
+- **Adding a migration:** add the next numbered `.sql` file. Keep it backward-compatible with the code currently deployed (add first, drop in a later release), because the migration runs just before the new code goes live.
+- **First run on a database migrated by hand:** run `node scripts/migrate.js --baseline <NNN>` once, where `<NNN>` is the last migration already applied. It records files through `<NNN>` without executing them and refuses to run if `schema_migrations` already has entries.
+- **Seed scripts** (e.g. `seedSessionUnlockCodes.js`) are not migrations and are still run by hand.
+
+The manual `\i` instructions below are the history of how migrations `001`–`022` were applied before the runner existed. Do not use them for new migrations.
+
 ### Apply Schema Migration
 ```sql
 -- Run in PostgreSQL

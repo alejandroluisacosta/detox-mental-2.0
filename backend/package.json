@@ -7,6 +7,9 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
+    "migrate": "node scripts/migrate.js",
+    "migrate:vercel": "if [ \"$VERCEL_ENV\" = production ]; then node scripts/migrate.js; fi",
+    "predev": "node scripts/migrate.js",
     "dev": "NODE_ENV=development NODE_OPTIONS='--import=dotenv/config' nodemon src/index.js",
     "dev:secure": "av inject +DOTENV_PRIVATE_KEY -- dotenvx run -- npm run dev",
     "start": "node src/index.js",
