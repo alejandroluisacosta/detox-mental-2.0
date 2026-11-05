@@ -145,3 +145,38 @@ test('never suggests two changes to the same item', () => {
   );
   assert.deepEqual(result.map((s) => s.action), ['update']);
 });
+
+test('drops suggestions the user recently dismissed, ignoring case and spaces', () => {
+  const context = buildCompassContext({
+    items: [item('mem-1', 'memory', 'Living in Madrid.'), item('goal-1', 'goal', 'Launch the app.')],
+    dismissed: [
+      { action: 'add', kind: 'memory', text: 'Works at an agency.' },
+      { action: 'update', kind: 'memory', text: 'Moved to Valencia.' },
+      { action: 'remove', kind: 'goal', text: 'Launch the app.' },
+    ],
+  });
+
+  const result = parseCompassSuggestions(
+    [
+      { action: 'add', kind: 'memory', content: 'works  at an AGENCY.' },
+      { action: 'update', target: 'M1', content: 'Moved to Valencia.' },
+      { action: 'remove', target: 'G1' },
+      { action: 'remove', target: 'M1' },
+    ],
+    context,
+  );
+
+  // "Keep it" on G1 says nothing about M1, so that removal is still offered.
+  assert.deepEqual(result.map((s) => [s.action, s.targetItemId]), [['remove', 'mem-1']]);
+});
+
+test('a dismissed removal does not block a new text equal to it, nor the reverse', () => {
+  const context = buildCompassContext({
+    items: [item('mem-1', 'memory', 'Living in Madrid.')],
+    dismissed: [{ action: 'add', kind: 'memory', text: 'Living in Madrid.' }],
+  });
+
+  const result = parseCompassSuggestions([{ action: 'remove', target: 'M1' }], context);
+
+  assert.deepEqual(result.map((s) => s.action), ['remove']);
+});

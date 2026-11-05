@@ -292,13 +292,14 @@ Changes to Compass suggested by a weekly summary (generate or revise). Nothing r
 - `dismissed_at` (TIMESTAMPTZ)
 
 **Lifecycle:**
-- A new generate or revise deletes the summary's `pending` rows and inserts the new set (max 3).
+- A new generate or revise deletes all the user's `pending` rows, including older weeks' (which are never shown again), and inserts the new set (max 3).
 - Accepted rows are deleted (the item is the record).
 - Dismissed rows are kept for 28 days and passed to the model as "do not suggest again"; older ones are pruned on the user's next generate or revise.
 
 **Indexes:**
 - `idx_compass_suggestions_summary_status`: Pending suggestions of one summary
 - `idx_compass_suggestions_user_status_dismissed`: Recently dismissed texts per user
+- `idx_compass_suggestions_target_item`: Cascade when a Compass item is deleted (added in `022`)
 
 ---
 
@@ -506,6 +507,9 @@ Notes:
 ```sql
 -- Memories and goals for the weekly summary, plus the changes it suggests.
 \i backend/src/db/migrations/021_compass.sql
+
+-- Index for the cascade from a Compass item to its suggestions.
+\i backend/src/db/migrations/022_compass_suggestions_target_index.sql
 ```
 
 ### Verify Migration Success

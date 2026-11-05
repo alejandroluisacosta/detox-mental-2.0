@@ -157,10 +157,10 @@ export const memoryCompassDb = ({ clock = () => new Date() } = {}) => {
           .map(clone),
       };
     }
-    if (/^DELETE FROM compass_suggestions WHERE user_id = \$1 AND summary_id = \$2 AND status = 'pending'$/.test(text)) {
-      const [userId, summaryId] = params;
+    if (/^DELETE FROM compass_suggestions WHERE user_id = \$1 AND status = 'pending'$/.test(text)) {
+      const [userId] = params;
       state.suggestions = state.suggestions.filter(
-        (s) => !(s.user_id === userId && s.summary_id === summaryId && s.status === 'pending'),
+        (s) => !(s.user_id === userId && s.status === 'pending'),
       );
       return { rows: [] };
     }

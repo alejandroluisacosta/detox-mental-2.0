@@ -4,13 +4,18 @@ export const MAX_SUGGESTIONS_PER_SUMMARY = 3;
 
 const ACTIONS = ['add', 'update', 'remove'];
 
+const dismissedKeys = (dismissed, isMatch) =>
+  new Set(
+    dismissed.filter((entry) => isMatch(entry.action)).map((entry) => compassTextKey(entry.text)),
+  );
+
 /**
  * Turn the model's optional `compass` field into suggestions the server can store.
  * Lenient: anything invalid is dropped, never thrown, so a bad suggestion can
  * never fail the summary it came with.
  *
  * @param {unknown} raw The `compass` value from the model JSON.
- * @param {{ labelled: Array<{label, id, kind, content}>, counts, limits }} context
+ * @param {{ labelled: Array<{label, id, kind, content}>, counts, limits, dismissed: Array<{action, text}> }} context
  */
 export const parseCompassSuggestions = (raw, context) => {
   if (!Array.isArray(raw) || !context) return [];
@@ -19,6 +24,8 @@ export const parseCompassSuggestions = (raw, context) => {
     context.labelled.map((item) => [item.label.toUpperCase(), item]),
   );
   const existingKeys = new Set(context.labelled.map((item) => compassTextKey(item.content)));
+  const dismissedRemovals = dismissedKeys(context.dismissed, (action) => action === 'remove');
+  const dismissedTexts = dismissedKeys(context.dismissed, (action) => action !== 'remove');
   const seenKeys = new Set();
   const touchedTargets = new Set();
   const counts = { ...context.counts };
@@ -36,6 +43,7 @@ export const parseCompassSuggestions = (raw, context) => {
     }
 
     if (action === 'remove') {
+      if (dismissedRemovals.has(compassTextKey(target.content))) continue;
       touchedTargets.add(target.id);
       suggestions.push({
         action,
@@ -50,7 +58,7 @@ export const parseCompassSuggestions = (raw, context) => {
     const parsed = parseCompassContent(entry.content);
     if (!parsed.ok) continue;
     const key = compassTextKey(parsed.content);
-    if (existingKeys.has(key) || seenKeys.has(key)) continue;
+    if (existingKeys.has(key) || seenKeys.has(key) || dismissedTexts.has(key)) continue;
 
     if (action === 'add') {
       if (!isCompassKind(entry.kind)) continue;

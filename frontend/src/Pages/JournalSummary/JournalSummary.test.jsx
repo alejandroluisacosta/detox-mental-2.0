@@ -945,6 +945,87 @@ describe('JournalSummary and Compass', () => {
     });
   });
 
+  const editableSuggestion = {
+    id: 's1',
+    action: 'add',
+    kind: 'goal',
+    content: 'Suggested goal.',
+  };
+  const acceptPath = '/auth/me/compass/suggestions/s1/accept';
+
+  const openEditAndType = async (text) => {
+    renderSummary();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Edit' })).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    fireEvent.change(screen.getByLabelText('New text'), { target: { value: text } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save to Compass' }));
+  };
+
+  test('a failed accept keeps the edit sheet and its text so the user can retry', async () => {
+    const responses = {
+      [acceptPath]: {
+        ok: false,
+        status: 409,
+        json: async () => ({ code: 'compass_full', message: 'Goals are full.' }),
+      },
+    };
+    mockApi(currentWith({ compassSuggestions: [editableSuggestion] }), responses);
+
+    await openEditAndType('My careful edit.');
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalledWith('Goals are full.');
+    });
+    expect(screen.getByLabelText('New text').value).toBe('My careful edit.');
+
+    responses[acceptPath] = {
+      ok: true,
+      status: 200,
+      json: async () => ({ item: { id: 'i1', kind: 'goal', content: 'My careful edit.' } }),
+    };
+    fireEvent.click(screen.getByRole('button', { name: 'Save to Compass' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Added to your Compass')).toBeTruthy();
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(sentTo(acceptPath).at(-1)[1].body).toEqual({ content: 'My careful edit.' });
+  });
+
+  test('a network failure on accept keeps the edit sheet and its text', async () => {
+    mockApi(currentWith({ compassSuggestions: [editableSuggestion] }));
+    const routed = apiFetch.getMockImplementation();
+    apiFetch.mockImplementation((path, options) =>
+      path === acceptPath ? Promise.reject(new Error('offline')) : routed(path, options),
+    );
+
+    await openEditAndType('My careful edit.');
+
+    await waitFor(() => {
+      expect(emitToast).toHaveBeenCalled();
+    });
+    expect(screen.getByLabelText('New text').value).toBe('My careful edit.');
+  });
+
+  test('a suggestion that went stale closes the edit sheet: retrying could never work', async () => {
+    mockApi(currentWith({ compassSuggestions: [editableSuggestion] }), {
+      [acceptPath]: {
+        ok: false,
+        status: 409,
+        json: async () => ({ code: 'compass_suggestion_stale', message: 'That item changed.' }),
+      },
+    });
+
+    await openEditAndType('My careful edit.');
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+    expect(emitToast).toHaveBeenCalledWith('That item changed.');
+  });
+
   test('dismissing a suggestion sends it and explains it may come back', async () => {
     mockApi(
       currentWith({

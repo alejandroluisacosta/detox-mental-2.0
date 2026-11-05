@@ -236,3 +236,62 @@ test('suggestions on an old week\'s summary are not returned for the current wee
   const res = await send(getCurrentJournalSummary, { db });
   assert.deepEqual(res.body.compassSuggestions, []);
 });
+
+test('a dismissed suggestion the model offers again is not shown until the cooldown ends', async () => {
+  const db = memoryCompassDb();
+  seedWeek(db);
+  const now = Date.now();
+  const old = db.seedSummary({ userId: USER_A, weekStart: '2020-01-06' });
+  db.seedSuggestion({
+    userId: USER_A,
+    summaryId: old.id,
+    content: 'Recently dismissed.',
+    status: 'dismissed',
+    dismissedAt: new Date(now - 10 * DAY_MS),
+  });
+  db.seedSuggestion({
+    userId: USER_A,
+    summaryId: old.id,
+    content: 'Dismissed long ago.',
+    status: 'dismissed',
+    dismissedAt: new Date(now - 40 * DAY_MS),
+  });
+  const model = fakeModel(
+    summaryJson([
+      { action: 'add', kind: 'memory', content: 'Recently dismissed.' },
+      { action: 'add', kind: 'memory', content: 'Dismissed long ago.' },
+    ]),
+  );
+
+  const res = await send(postCurrentJournalSummary, { db, model });
+
+  assert.equal(res.statusCode, 201);
+  assert.deepEqual(res.body.compassSuggestions.map((s) => s.content), ['Dismissed long ago.']);
+});
+
+test('a new generation removes the user\'s unreviewed suggestions from older weeks only', async () => {
+  const USER_B = 'b0000000-0000-4000-8000-00000000000b';
+  const db = memoryCompassDb();
+  seedWeek(db);
+  const oldA = db.seedSummary({ userId: USER_A, weekStart: '2020-01-06' });
+  const oldB = db.seedSummary({ userId: USER_B, weekStart: '2020-01-06' });
+  db.seedSuggestion({ userId: USER_A, summaryId: oldA.id, content: 'A old pending.' });
+  db.seedSuggestion({
+    userId: USER_A,
+    summaryId: oldA.id,
+    content: 'A old dismissed.',
+    status: 'dismissed',
+    dismissedAt: new Date(),
+  });
+  db.seedSuggestion({ userId: USER_B, summaryId: oldB.id, content: 'B old pending.' });
+  const model = fakeModel(summaryJson([{ action: 'add', kind: 'memory', content: 'A new.' }]));
+
+  const res = await send(postCurrentJournalSummary, { db, model });
+
+  assert.equal(res.statusCode, 201);
+  assert.deepEqual(db.suggestions.map((s) => s.content).sort(), [
+    'A new.',
+    'A old dismissed.',
+    'B old pending.',
+  ]);
+});

@@ -321,11 +321,12 @@ const JournalSummary = () => {
   const setSuggestionState = (id, state) =>
     setSuggestionStatus((prev) => ({ ...prev, [id]: state }));
 
+  /** @returns {Promise<boolean>} false when the user can still retry this suggestion. */
   const acceptSuggestion = async (suggestion, content) => {
-    if (busySuggestionId) return;
+    if (busySuggestionId) return false;
     if (demoMode) {
       setSuggestionState(suggestion.id, 'accepted');
-      return;
+      return true;
     }
 
     setBusySuggestionId(suggestion.id);
@@ -351,18 +352,20 @@ const JournalSummary = () => {
               : prev,
           );
         }
-        return;
+        return true;
       }
       if (res.status === 404 || data.code === 'compass_suggestion_stale') {
         // Stale or already resolved elsewhere: it can no longer be applied.
         setSuggestionState(suggestion.id, 'gone');
         emitToast(data.message || t('summary.compassStale'));
-        return;
+        return true;
       }
       emitToast(data.message || t('summary.compassFailed'));
+      return false;
     } catch (err) {
       console.error('[compass accept]', err);
       emitToast(t('summary.compassFailed'));
+      return false;
     } finally {
       setBusySuggestionId(null);
     }
@@ -829,10 +832,13 @@ const JournalSummary = () => {
           initialNote={editingSuggestion.content ?? ''}
           maxLength={COMPASS_ITEM_MAX_CHARS}
           onClose={() => setEditingSuggestion(null)}
-          onAdd={(text) => {
+          onAdd={async (text) => {
             const suggestion = editingSuggestion;
-            setEditingSuggestion(null);
-            acceptSuggestion(suggestion, text);
+            const settled = await acceptSuggestion(suggestion, text);
+            if (!settled) return;
+            setEditingSuggestion((current) =>
+              current?.id === suggestion.id ? null : current,
+            );
           }}
         />
       )}

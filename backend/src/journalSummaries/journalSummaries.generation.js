@@ -39,7 +39,7 @@ const huggingFaceCompletion = async ({ messages, maxTokens, signal, modelId }) =
 
   let response;
   try {
-    // Default fits 400–600 word reflections plus quote / topics / socratic / machiavelli.
+    // Default fits 400–600 word reflections plus quote / topics / socratic / machiavelli / compass.
     const completion = client.chatCompletion(
       {
         model: modelId,
@@ -92,7 +92,7 @@ const completeSummaryFromMessages = async ({
   messages,
   entries,
   signal,
-  maxTokens = 1800,
+  maxTokens = 2200,
   compass,
   complete = huggingFaceCompletion,
 }) => {

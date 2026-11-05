@@ -159,7 +159,8 @@ export const listRecentlyDismissedSuggestions = async (
 };
 
 /**
- * Replace the summary's unreviewed suggestions with a new set.
+ * Replace the user's unreviewed suggestions with the new summary's set.
+ * Pending rows of older weeks go too: they are never shown again.
  * Dismissed rows stay (they drive the cooldown); ones past it are pruned.
  */
 export const replacePendingSuggestions = async (
@@ -169,8 +170,8 @@ export const replacePendingSuggestions = async (
   withTransaction(db, async (client) => {
     await client.query(
       `DELETE FROM compass_suggestions
-       WHERE user_id = $1 AND summary_id = $2 AND status = 'pending'`,
-      [userId, summaryId],
+       WHERE user_id = $1 AND status = 'pending'`,
+      [userId],
     );
     await client.query(
       `DELETE FROM compass_suggestions
