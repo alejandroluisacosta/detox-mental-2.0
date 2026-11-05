@@ -223,15 +223,18 @@
 
 .journal-summary__comment-item-quote {
   margin: 0 0 6px;
+  font-size: 13px;
   font-style: italic;
-  line-height: 1.4;
+  line-height: 1.45;
   color: var(--muted, #6b7280);
 }
 
 .journal-summary__comment-item-note {
   margin: 0;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.5;
   color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 .journal-summary__comment-remove {
@@ -242,7 +245,9 @@
   background: var(--background);
   border: 2px solid var(--accent);
   color: var(--accent);
-  font-size: 13px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .journal-summary__meta {
