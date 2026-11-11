@@ -287,17 +287,24 @@
   .journal-meditations__empty,
   .journal-meditations__compilation--screen,
   .journal-page--meditations .modal-overlay,
+  .journal-page--meditations .navigation__reveal,
   .demo-mode-toggle {
     display: none !important;
   }
 
   .journal-page--meditations .journal-page__main {
+    width: auto;
+    margin: 0;
     padding: 0;
     max-width: none;
   }
 
+  /* Side margins live here, not in @page, so the full-bleed cover and the
+     text pages share one page width. Keep in sync with --cover-bleed-x in
+     MeditationPrintCover.css. */
   .journal-meditations__print-root {
     display: block !important;
+    padding: 0 2.2cm;
   }
 
   .journal-meditations__compilation--print {
@@ -323,6 +330,6 @@
   }
 
   @page {
-    margin: 2cm 2.2cm;
+    margin: 2cm 0;
   }
 }

@@ -1,50 +1,133 @@
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/CormorantGaramond-Regular.woff2') format('woff2');
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/CormorantGaramond-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}
+
 .meditation-print-cover,
 .meditation-print-cover__introduction-slot:empty {
   display: none;
 }
 
 @media print {
+  /* Only the cover page loses its top and bottom margins. Side margins are
+     padding on the print root (JournalMeditations.css), so every page keeps the
+     same width; without !important Chromium lets the page's later @page win. */
+  @page :first {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
   .meditation-print-cover {
+    --cover-navy: #13203a;
+    --cover-gold: #c8a96a;
+    --cover-ivory: #f4eee2;
+    --cover-bleed-x: 2.2cm;
+
     display: flex !important;
     flex-direction: column;
     align-items: center;
+    position: relative;
     box-sizing: border-box;
-    width: 100%;
-    min-height: calc(100vh - 4cm);
-    margin: 0;
-    padding: 0;
+    /* Cancel the print root's side padding so the cover reaches the paper edge. */
+    width: calc(100% + 2 * var(--cover-bleed-x));
+    height: 100vh;
+    margin: 0 calc(-1 * var(--cover-bleed-x));
+    padding: 3.2cm 2.8cm 2.6cm;
+    overflow: hidden;
     text-align: center;
-    color: #000;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: var(--cover-ivory);
+    background: var(--cover-navy);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
     break-after: page;
     page-break-after: always;
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
+  /* Double gold rule inset from the page edge. */
+  .meditation-print-cover__frame,
+  .meditation-print-cover__frame::after {
+    position: absolute;
+    border: 0.75pt solid var(--cover-gold);
+    pointer-events: none;
+  }
+
+  .meditation-print-cover__frame {
+    inset: 1.1cm;
+  }
+
+  .meditation-print-cover__frame::after {
+    content: '';
+    inset: 0.18cm;
+    border-width: 0.4pt;
+    opacity: 0.7;
+  }
+
   .meditation-print-cover__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: auto;
     margin-bottom: auto;
   }
 
   .meditation-print-cover__title {
+    max-width: 13cm;
     margin: 0;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #000;
+    font-family: inherit;
+    font-size: 2.9rem;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    color: var(--cover-ivory);
   }
 
-  .meditation-print-cover__author,
-  .meditation-print-cover__years {
-    margin: 0;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 0.95rem;
-    color: #333;
+  .meditation-print-cover__ornament {
+    width: 4.2cm;
+    height: auto;
+    margin: 1.1rem 0;
+    fill: var(--cover-gold);
+    stroke: var(--cover-gold);
+    stroke-width: 0.9;
+  }
+
+  .meditation-print-cover__ornament-outline {
+    fill: none;
+  }
+
+  .meditation-print-cover__ornament-fill,
+  .meditation-print-cover__ornament circle {
+    stroke: none;
   }
 
   .meditation-print-cover__author {
-    margin-top: 0.75rem;
+    margin: 0;
+    font-family: inherit;
+    font-size: 1.75rem;
+    font-style: italic;
+    color: var(--cover-gold);
+  }
+
+  .meditation-print-cover__years {
+    margin: 0;
+    font-family: inherit;
+    font-size: 1.15rem;
+    letter-spacing: 0.3em;
+    color: var(--cover-ivory);
+    opacity: 0.75;
   }
 
   .meditation-print-cover__introduction-slot:empty {
