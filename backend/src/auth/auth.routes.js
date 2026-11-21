@@ -36,6 +36,7 @@ import {
   patchCompassItem,
   postCompassItem,
 } from '../compass/compass.controller.js';
+import { getJournalMemory } from '../journalMemory/journalMemory.controller.js';
 import { requireAuth } from './auth.middleware.js';
 
 const router = express.Router();
@@ -49,6 +50,7 @@ router.get('/me/journal-entries', requireAuth, getJournalEntries);
 router.post('/me/journal-entries', requireAuth, postJournalEntry);
 router.delete('/me/journal-entries/:id', requireAuth, deleteJournalEntry);
 router.patch('/me/journal-entries/:id', requireAuth, patchJournalEntryTopics);
+router.get('/me/journal-memory', requireAuth, getJournalMemory);
 router.get(
   '/me/journal-meditation-front-matter',
   requireAuth,

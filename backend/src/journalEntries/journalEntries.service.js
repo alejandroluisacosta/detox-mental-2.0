@@ -39,7 +39,19 @@ export const listJournalEntriesForUser = async (userId, db = pool, filter = null
   return rows.map(mapRow);
 };
 
-export const deleteJournalEntryForUser = async (userId, entryId, db = pool) => {
+// `date` is a UTC calendar day (YYYY-MM-DD); entries come back oldest first.
+export const listJournalEntriesOnUtcDateForUser = async (userId, date, db = pool) => {
+  const { rows } = await db.query(
+    `SELECT id, content, topics, created_at
+     FROM journal_entries
+     WHERE user_id = $1 AND (created_at AT TIME ZONE 'UTC')::date = $2::date
+     ORDER BY created_at ASC`,
+    [userId, date],
+  );
+  return rows.map(mapRow);
+};
+
+export const deleteJournalEntryForUser =async (userId, entryId, db = pool) => {
   const { rows } = await db.query(
     `DELETE FROM journal_entries
      WHERE id = $1 AND user_id = $2

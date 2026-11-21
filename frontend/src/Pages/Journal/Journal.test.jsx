@@ -520,3 +520,133 @@ describe('Journal first reflection for guests', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });
+
+describe('Journal on-this-day memory', () => {
+  const MEMORY_RESPONSE = {
+    today: '2026-11-21',
+    memory: {
+      horizon: '1y',
+      date: '2025-11-21',
+      entries: [
+        {
+          id: 'e1',
+          content: 'The deadline keeps looping in my head.',
+          topics: [],
+          createdAt: '2025-11-21T08:47:00.000Z',
+        },
+      ],
+    },
+  };
+
+  const respondWith = (body, { ok = true } = {}) => {
+    apiFetch.mockImplementation(async (path) => {
+      if (path === '/auth/me/journal-memory') {
+        return { ok, status: ok ? 200 : 500, json: async () => body };
+      }
+      return { ok: true, status: 200, json: async () => ({}) };
+    });
+  };
+
+  const settle = () => act(async () => {});
+
+  beforeEach(() => {
+    apiFetch.mockReset();
+    emitToast.mockReset();
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    mockUseDemoMode.mockReturnValue({ demoMode: false, toggleDemoMode: vi.fn() });
+    mockUseJournalTopics.mockReturnValue(defaultTopicsValue);
+    global.ResizeObserver = class {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    };
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('an anniversary shows a small 1y chip that opens that day’s entries', async () => {
+    respondWith(MEMORY_RESPONSE);
+    renderJournal();
+    await settle();
+
+    const chip = screen.getByRole('button', {
+      name: 'Open your entries from one year ago today',
+    });
+    expect(chip.textContent).toBe('1y');
+
+    fireEvent.click(chip);
+
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.getByText('The deadline keeps looping in my head.')).toBeTruthy();
+  });
+
+  test('opening the memory turns the chip quiet for the rest of the day', async () => {
+    respondWith(MEMORY_RESPONSE);
+    renderJournal();
+    await settle();
+
+    const chip = screen.getByRole('button', {
+      name: 'Open your entries from one year ago today',
+    });
+    expect(chip.className).not.toContain('journal-memory-chip--seen');
+
+    fireEvent.click(chip);
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Open your entries from one year ago today' }).className,
+    ).toContain('journal-memory-chip--seen');
+  });
+
+  test('a memory already opened today starts quiet', async () => {
+    window.localStorage.setItem('journalMemorySeenOn', '2026-11-21');
+    respondWith(MEMORY_RESPONSE);
+    renderJournal();
+    await settle();
+
+    expect(
+      screen.getByRole('button', { name: 'Open your entries from one year ago today' }).className,
+    ).toContain('journal-memory-chip--seen');
+  });
+
+  test('a monthly anniversary is labelled 1m', async () => {
+    respondWith({ ...MEMORY_RESPONSE, memory: { ...MEMORY_RESPONSE.memory, horizon: '1m' } });
+    renderJournal();
+    await settle();
+
+    expect(
+      screen.getByRole('button', { name: 'Open your entries from one month ago today' }).textContent,
+    ).toBe('1m');
+  });
+
+  test('no anniversary today means no chip', async () => {
+    respondWith({ today: '2026-11-21', memory: null });
+    renderJournal();
+    await settle();
+
+    expect(screen.queryByRole('button', { name: /ago today/ })).toBeNull();
+  });
+
+  test('a failed request shows no chip and no error', async () => {
+    respondWith({ message: 'boom' }, { ok: false });
+    renderJournal();
+    await settle();
+
+    expect(screen.queryByRole('button', { name: /ago today/ })).toBeNull();
+    expect(emitToast).not.toHaveBeenCalled();
+    expect(screen.getByRole('textbox', { name: 'Journal text' })).toBeTruthy();
+  });
+
+  test('guests never ask for memories', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    respondWith(MEMORY_RESPONSE);
+    renderJournal();
+    await settle();
+
+    expect(apiFetch.mock.calls.some(([path]) => path === '/auth/me/journal-memory')).toBe(false);
+    expect(screen.queryByRole('button', { name: /ago today/ })).toBeNull();
+  });
+});

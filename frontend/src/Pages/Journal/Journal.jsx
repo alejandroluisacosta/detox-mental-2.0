@@ -22,9 +22,12 @@ import {
   saveFirstReflection,
 } from '../../utils/firstReflection.js';
 import { createLongPressHandlers } from '../../utils/longPress.js';
+import { isJournalMemorySeen, markJournalMemorySeen } from '../../utils/journalMemory.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
+import JournalMemoryChip from '../../Components/JournalMemoryChip/JournalMemoryChip.jsx';
+import JournalMemorySheet from '../../Components/JournalMemorySheet/JournalMemorySheet.jsx';
 import OnboardingHelpButton from '../../Components/OnboardingHelpButton/OnboardingHelpButton.jsx';
 import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
 import JournalOnboarding, {
@@ -64,8 +67,12 @@ const Journal = () => {
   const [pulseHelp, setPulseHelp] = useState(false);
   const [reflecting, setReflecting] = useState(false);
   const [reflectionReady, setReflectionReady] = useState(false);
+  const [memory, setMemory] = useState(null);
+  const [memorySeen, setMemorySeen] = useState(false);
+  const [showMemory, setShowMemory] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
+  const userId = user?.id ?? null;
   const canManageTopics = status === 'ready' && !!user;
   const canShowAddChip =
     canManageTopics && customTopics.length < MAX_CUSTOM_JOURNAL_TOPICS;
@@ -93,6 +100,36 @@ const Journal = () => {
   useEffect(() => {
     resizeTextarea();
   }, [text]);
+
+  // Entries from exactly one year (or else one month) ago. A nice-to-have:
+  // any failure simply means no chip, never an error on the journal screen.
+  useEffect(() => {
+    if (status !== 'ready' || !userId) return undefined;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await apiFetch('/auth/me/journal-memory');
+        if (!res?.ok) return;
+        const data = await res.json();
+        if (cancelled || !data?.memory || !data.today) return;
+        setMemory({ today: data.today, ...data.memory });
+        setMemorySeen(isJournalMemorySeen(data.today));
+      } catch {
+        // Silent by design.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [status, userId]);
+
+  const openMemory = () => {
+    setShowMemory(true);
+    setMemorySeen(true);
+    markJournalMemorySeen(memory.today);
+  };
+
+  const closeMemory = useCallback(() => setShowMemory(false), []);
 
   // Let first-time visitors see the page before the slideshow fades in over it.
   useEffect(() => {
@@ -355,14 +392,28 @@ const Journal = () => {
       )}
       <main className="journal-page__main" hidden={reflecting}>
         <div className="journal-page__prompt-row">
-          <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
-          <OnboardingHelpButton
-            ref={helpButtonRef}
-            label={t('journalOnboarding.open')}
-            pulse={pulseHelp}
-            onClick={openOnboarding}
-          />
+          <div className="journal-page__prompt-group">
+            {memory && (
+              <div className="journal-page__memory">
+                <JournalMemoryChip
+                  horizon={memory.horizon}
+                  seen={memorySeen}
+                  onOpen={openMemory}
+                />
+              </div>
+            )}
+            <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
+            <OnboardingHelpButton
+              ref={helpButtonRef}
+              label={t('journalOnboarding.open')}
+              pulse={pulseHelp}
+              onClick={openOnboarding}
+            />
+          </div>
         </div>
+        {showMemory && memory && (
+          <JournalMemorySheet memory={memory} onClose={closeMemory} />
+        )}
 
         <div className="journal-page__composer">
           <div className="journal-page__topics-block">
