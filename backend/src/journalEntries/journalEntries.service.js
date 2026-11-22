@@ -39,6 +39,18 @@ export const listJournalEntriesForUser = async (userId, db = pool, filter = null
   return rows.map(mapRow);
 };
 
+/** The user's entries created in `[start, end)`, oldest first. */
+export const listJournalEntriesInWindowForUser = async (userId, start, end, db = pool) => {
+  const { rows } = await db.query(
+    `SELECT id, content, topics, created_at
+     FROM journal_entries
+     WHERE user_id = $1 AND created_at >= $2 AND created_at < $3
+     ORDER BY created_at ASC`,
+    [userId, start, end],
+  );
+  return rows.map(mapRow);
+};
+
 export const deleteJournalEntryForUser = async (userId, entryId, db = pool) => {
   const { rows } = await db.query(
     `DELETE FROM journal_entries

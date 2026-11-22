@@ -7,6 +7,23 @@
   padding-top: clamp(22px, 10svh, 70px);
 }
 
+/* Prompt and ? button; the memory chip hangs off its right edge without taking space. */
+.journal-page__prompt-cluster {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Bottom of the 44px tap target sits ~34px above the prompt, leaving ~44px of visible gap. */
+.journal-page__memory {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 34px);
+}
+
 .journal-page__prompt {
   margin: 0;
   text-align: center;
