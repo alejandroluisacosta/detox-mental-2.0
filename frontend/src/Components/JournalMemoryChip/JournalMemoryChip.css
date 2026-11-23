@@ -37,6 +37,16 @@
   -webkit-mask: url('/icons/calendar.svg') no-repeat center / contain;
 }
 
+/* Unseen marker; it is not rendered once the memory has been opened today. */
+.journal-memory-chip__dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
 .journal-memory-chip--seen .journal-memory-chip__pill {
   border-color: var(--light-brown);
   background: transparent;

@@ -16,6 +16,7 @@ const JournalMemoryChip = ({ ref, horizon, seen = false, onOpen }) => {
       aria-haspopup="dialog"
     >
       <span className="journal-memory-chip__pill">
+        {!seen && <span className="journal-memory-chip__dot" aria-hidden="true" />}
         <span className="journal-memory-chip__icon" aria-hidden="true" />
         <span>{t(isYear ? 'journalMemory.chipYear' : 'journalMemory.chipMonth')}</span>
       </span>

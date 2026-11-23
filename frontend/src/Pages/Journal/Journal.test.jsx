@@ -547,6 +547,7 @@ describe('Journal "on this day" memory chip', () => {
     apiFetch.mock.calls.map(([path]) => path).filter((path) => path.startsWith(MEMORY_PATH));
 
   const chip = (name = /one year ago today/i) => screen.findByRole('button', { name });
+  const unseenDot = (button) => button.querySelector('.journal-memory-chip__dot');
 
   beforeEach(() => {
     mockUseAuth.mockReset();
@@ -600,25 +601,25 @@ describe('Journal "on this day" memory chip', () => {
     respondWith(okJson(yearMemory));
     renderJournal();
     const button = await chip();
-    expect(button).not.toHaveClass('journal-memory-chip--seen');
+    expect(unseenDot(button)).not.toBeNull();
 
     fireEvent.click(button);
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(await chip()).toHaveClass('journal-memory-chip--seen');
+    expect(unseenDot(await chip())).toBeNull();
     expect(document.activeElement).toBe(await chip());
 
     cleanup();
     respondWith(okJson(yearMemory));
     renderJournal();
-    expect(await chip()).toHaveClass('journal-memory-chip--seen');
+    expect(unseenDot(await chip())).toBeNull();
   });
 
   test('a memory seen on an earlier day starts fresh again', async () => {
     window.localStorage.setItem('journalMemorySeenDate', '2026-11-18');
     respondWith(okJson(yearMemory));
     renderJournal();
-    expect(await chip()).not.toHaveClass('journal-memory-chip--seen');
+    expect(unseenDot(await chip())).not.toBeNull();
   });
 
   test.each([
