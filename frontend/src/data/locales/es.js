@@ -41,8 +41,8 @@ export const es = {
   'demo.enable': 'Activar modo demo',
   'demo.disable': 'Desactivar modo demo',
 
-  'journalMemory.chipYear': '1a',
-  'journalMemory.chipMonth': '1m',
+  'journalMemory.chipYear': '1 A',
+  'journalMemory.chipMonth': '1 M',
   'journalMemory.openYear': 'Abrir tus entradas de hoy hace un año',
   'journalMemory.openMonth': 'Abrir tus entradas de hoy hace un mes',
   'journalMemory.labelYear': 'Hoy hace un año',

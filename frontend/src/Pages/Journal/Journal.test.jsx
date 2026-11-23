@@ -570,12 +570,12 @@ describe('Journal "on this day" memory chip', () => {
     cleanup();
   });
 
-  test('a one-year anniversary shows a 1y chip that opens the entry', async () => {
+  test('a one-year anniversary shows a 1 Y chip that opens the entry', async () => {
     respondWith(okJson(yearMemory));
     renderJournal();
 
     const button = await chip();
-    expect(button).toHaveTextContent('1y');
+    expect(button).toHaveTextContent('1 Y');
     expect(memoryRequests()).toEqual([MEMORY_PATH]);
 
     fireEvent.click(button);
@@ -583,18 +583,18 @@ describe('Journal "on this day" memory chip', () => {
     expect(dialog).toHaveTextContent('A year ago I wrote this');
   });
 
-  test('a one-month anniversary shows a 1m chip', async () => {
+  test('a one-month anniversary shows a 1 M chip', async () => {
     respondWith(
       okJson({ ...yearMemory, memory: { ...yearMemory.memory, horizon: '1m', date: '2026-10-19' } }),
     );
     renderJournal();
-    expect(await chip(/one month ago today/i)).toHaveTextContent('1m');
+    expect(await chip(/one month ago today/i)).toHaveTextContent('1 M');
   });
 
-  test('Spanish UI labels the yearly chip 1a', async () => {
+  test('Spanish UI labels the yearly chip 1 A', async () => {
     respondWith(okJson(yearMemory));
     renderJournal('es');
-    expect(await chip(/hace un año/i)).toHaveTextContent('1a');
+    expect(await chip(/hace un año/i)).toHaveTextContent('1 A');
   });
 
   test('opening the memory turns the chip quiet, and it stays quiet on reload that day', async () => {
