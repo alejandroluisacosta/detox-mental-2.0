@@ -520,3 +520,140 @@ describe('Journal first reflection for guests', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });
+
+describe('Journal "on this day" memory chip', () => {
+  const MEMORY_PATH = '/auth/me/journal-memory';
+  const yearMemory = {
+    today: '2026-11-19',
+    memory: {
+      horizon: '1y',
+      date: '2025-11-19',
+      entries: [
+        { id: 'a', content: 'A year ago I wrote this', topics: [], createdAt: '2025-11-19T08:47:00.000Z' },
+      ],
+    },
+  };
+
+  const respondWith = (memoryResponse) => {
+    apiFetch.mockImplementation((path) => {
+      if (path.startsWith(MEMORY_PATH)) return memoryResponse();
+      return Promise.resolve({ ok: true, json: async () => ({}) });
+    });
+  };
+
+  const okJson = (body) => () => Promise.resolve({ ok: true, json: async () => body });
+
+  const memoryRequests = () =>
+    apiFetch.mock.calls.map(([path]) => path).filter((path) => path.startsWith(MEMORY_PATH));
+
+  const chip = (name = /one year ago today/i) => screen.findByRole('button', { name });
+  const unseenDot = (button) => button.querySelector('.journal-memory-chip__dot');
+
+  beforeEach(() => {
+    mockUseAuth.mockReset();
+    mockUseDemoMode.mockReset();
+    mockUseJournalTopics.mockReset();
+    apiFetch.mockReset();
+    emitToast.mockReset();
+    mockUseDemoMode.mockReturnValue({ demoMode: false, toggleDemoMode: vi.fn() });
+    mockUseJournalTopics.mockReturnValue(defaultTopicsValue);
+    mockUseAuth.mockReturnValue({ user: { id: 'u1' }, status: 'ready' });
+    global.ResizeObserver = class {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    };
+    window.history.replaceState(null, '', '/journal');
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test('a one-year anniversary shows a 1 Y chip that opens the entry', async () => {
+    respondWith(okJson(yearMemory));
+    renderJournal();
+
+    const button = await chip();
+    expect(button).toHaveTextContent('1 Y');
+    expect(memoryRequests()).toEqual([MEMORY_PATH]);
+
+    fireEvent.click(button);
+    const dialog = screen.getByRole('dialog', { name: 'Wednesday, November 19, 2025' });
+    expect(dialog).toHaveTextContent('A year ago I wrote this');
+  });
+
+  test('a one-month anniversary shows a 1 M chip', async () => {
+    respondWith(
+      okJson({ ...yearMemory, memory: { ...yearMemory.memory, horizon: '1m', date: '2026-10-19' } }),
+    );
+    renderJournal();
+    expect(await chip(/one month ago today/i)).toHaveTextContent('1 M');
+  });
+
+  test('Spanish UI labels the yearly chip 1 A', async () => {
+    respondWith(okJson(yearMemory));
+    renderJournal('es');
+    expect(await chip(/hace un año/i)).toHaveTextContent('1 A');
+  });
+
+  test('opening the memory turns the chip quiet, and it stays quiet on reload that day', async () => {
+    respondWith(okJson(yearMemory));
+    renderJournal();
+    const button = await chip();
+    expect(unseenDot(button)).not.toBeNull();
+
+    fireEvent.click(button);
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(unseenDot(await chip())).toBeNull();
+    expect(document.activeElement).toBe(await chip());
+
+    cleanup();
+    respondWith(okJson(yearMemory));
+    renderJournal();
+    expect(unseenDot(await chip())).toBeNull();
+  });
+
+  test('a memory seen on an earlier day starts fresh again', async () => {
+    window.localStorage.setItem('journalMemorySeenDate', '2026-11-18');
+    respondWith(okJson(yearMemory));
+    renderJournal();
+    expect(unseenDot(await chip())).not.toBeNull();
+  });
+
+  test.each([
+    ['no memory today', okJson({ today: '2026-11-19', memory: null })],
+    ['a server error', () => Promise.resolve({ ok: false, json: async () => ({ message: 'boom' }) })],
+    ['a network failure', () => Promise.reject(new TypeError('Failed to fetch'))],
+  ])('%s shows no chip, no toast, and leaves the composer usable', async (_label, response) => {
+    respondWith(response);
+    renderJournal();
+    await act(async () => {});
+
+    expect(memoryRequests()).toHaveLength(1);
+    expect(screen.queryByRole('button', { name: /ago today/i })).toBeNull();
+    expect(emitToast).not.toHaveBeenCalled();
+    const textarea = screen.getByRole('textbox', { name: 'Journal text' });
+    fireEvent.change(textarea, { target: { value: 'still writing' } });
+    expect(screen.getByRole('button', { name: 'COMPLETE' })).toBeEnabled();
+  });
+
+  test('guests never request a memory and never see the chip', async () => {
+    mockUseAuth.mockReturnValue({ user: null, status: 'ready' });
+    respondWith(okJson(yearMemory));
+    renderJournal();
+    await act(async () => {});
+
+    expect(memoryRequests()).toEqual([]);
+    expect(screen.queryByRole('button', { name: /ago today/i })).toBeNull();
+  });
+
+  test('in dev builds the page ?date override is forwarded to the endpoint', async () => {
+    window.history.replaceState(null, '', '/journal?date=2027-11-19');
+    respondWith(okJson(yearMemory));
+    renderJournal();
+    await chip();
+    expect(memoryRequests()).toEqual([`${MEMORY_PATH}?date=2027-11-19`]);
+  });
+});

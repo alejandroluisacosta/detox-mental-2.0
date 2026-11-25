@@ -22,10 +22,17 @@ import {
   saveFirstReflection,
 } from '../../utils/firstReflection.js';
 import { createLongPressHandlers } from '../../utils/longPress.js';
+import {
+  journalMemoryPath,
+  readMemorySeenDate,
+  writeMemorySeenDate,
+} from '../../utils/journalMemory.js';
 import JournalConfirmModal from '../../Components/JournalConfirmModal/JournalConfirmModal.jsx';
 import JournalImageSourceSheet from '../../Components/JournalImageSourceSheet/JournalImageSourceSheet.jsx';
 import JournalTopicNameModal from '../../Components/JournalTopicNameModal/JournalTopicNameModal.jsx';
 import OnboardingHelpButton from '../../Components/OnboardingHelpButton/OnboardingHelpButton.jsx';
+import JournalMemoryChip from '../../Components/JournalMemoryChip/JournalMemoryChip.jsx';
+import JournalMemorySheet from '../../Components/JournalMemorySheet/JournalMemorySheet.jsx';
 import JournalSummaryLoadingScreen from '../../Components/JournalSummaryLoadingScreen/JournalSummaryLoadingScreen.jsx';
 import JournalOnboarding, {
   JOURNAL_ONBOARDING_SEEN_KEY,
@@ -49,6 +56,7 @@ const Journal = () => {
   const topicHoldRef = useRef(null);
   const chipPressRef = useRef(new Map());
   const helpButtonRef = useRef(null);
+  const memoryChipRef = useRef(null);
   const [text, setText] = useState('');
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -64,6 +72,9 @@ const Journal = () => {
   const [pulseHelp, setPulseHelp] = useState(false);
   const [reflecting, setReflecting] = useState(false);
   const [reflectionReady, setReflectionReady] = useState(false);
+  const [journalMemory, setJournalMemory] = useState(null);
+  const [memorySeen, setMemorySeen] = useState(false);
+  const [showMemory, setShowMemory] = useState(false);
 
   const canUseImages = status === 'ready' && !!user;
   const canManageTopics = status === 'ready' && !!user;
@@ -100,6 +111,31 @@ const Journal = () => {
     const timer = setTimeout(() => setShowOnboarding(true), ONBOARDING_DELAY_MS);
     return () => clearTimeout(timer);
   }, []);
+
+  // "On this day" memory: best effort, never blocks or interrupts the composer.
+  const userId = user?.id;
+  useEffect(() => {
+    if (status !== 'ready' || !userId) return undefined;
+    let cancelled = false;
+    const loadMemory = async () => {
+      try {
+        const res = await apiFetch(
+          journalMemoryPath(window.location.search, import.meta.env.DEV),
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled || !data?.memory?.entries?.length) return;
+        setJournalMemory(data);
+        setMemorySeen(readMemorySeenDate() === data.today);
+      } catch {
+        // Any failure simply means no chip.
+      }
+    };
+    loadMemory();
+    return () => {
+      cancelled = true;
+    };
+  }, [status, userId]);
 
   useEffect(() => {
     const el = topicsRef.current;
@@ -307,6 +343,17 @@ const Journal = () => {
     setShowOnboarding(true);
   };
 
+  const openMemory = () => {
+    writeMemorySeenDate(journalMemory.today);
+    setMemorySeen(true);
+    setShowMemory(true);
+  };
+
+  const closeMemory = useCallback(() => {
+    setShowMemory(false);
+    memoryChipRef.current?.focus();
+  }, []);
+
   const handleGuestLogin = () => {
     setShowGuestModal(false);
     navigate('/login');
@@ -355,13 +402,25 @@ const Journal = () => {
       )}
       <main className="journal-page__main" hidden={reflecting}>
         <div className="journal-page__prompt-row">
-          <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
-          <OnboardingHelpButton
-            ref={helpButtonRef}
-            label={t('journalOnboarding.open')}
-            pulse={pulseHelp}
-            onClick={openOnboarding}
-          />
+          <div className="journal-page__prompt-cluster">
+            {journalMemory && (
+              <div className="journal-page__memory">
+                <JournalMemoryChip
+                  ref={memoryChipRef}
+                  horizon={journalMemory.memory.horizon}
+                  seen={memorySeen}
+                  onOpen={openMemory}
+                />
+              </div>
+            )}
+            <h1 className="journal-page__prompt">{t('journal.prompt')}</h1>
+            <OnboardingHelpButton
+              ref={helpButtonRef}
+              label={t('journalOnboarding.open')}
+              pulse={pulseHelp}
+              onClick={openOnboarding}
+            />
+          </div>
         </div>
 
         <div className="journal-page__composer">
@@ -555,6 +614,10 @@ const Journal = () => {
           onSave={handleSaveTopicName}
           saving={topicNameSaving}
         />
+      )}
+
+      {showMemory && journalMemory && (
+        <JournalMemorySheet memory={journalMemory.memory} onClose={closeMemory} />
       )}
 
       {showOnboarding && <JournalOnboarding onClose={closeOnboarding} />}

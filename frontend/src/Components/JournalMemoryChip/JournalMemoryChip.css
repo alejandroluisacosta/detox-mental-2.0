@@ -1,0 +1,63 @@
+/* The button is the 44px tap target; the visible pill sits flush right inside it. */
+.journal-memory-chip {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.journal-memory-chip__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--accent);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.journal-memory-chip__icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask: url('/icons/calendar.svg') no-repeat center / contain;
+  -webkit-mask: url('/icons/calendar.svg') no-repeat center / contain;
+}
+
+/* Unseen marker; it is not rendered once the memory has been opened today. */
+.journal-memory-chip__dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.journal-memory-chip--seen .journal-memory-chip__pill {
+  border-color: var(--light-brown);
+  background: transparent;
+  color: #7a5e4c;
+}
+
+.journal-memory-chip:focus-visible {
+  outline: none;
+}
+
+.journal-memory-chip:focus-visible .journal-memory-chip__pill {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

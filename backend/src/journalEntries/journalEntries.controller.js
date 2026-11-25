@@ -1,6 +1,7 @@
 import {
   createJournalEntry,
   listJournalEntriesForUser,
+  listJournalEntriesInWindowForUser,
   deleteJournalEntryForUser,
   updateJournalEntryTopicsForUser,
 } from './journalEntries.service.js';
@@ -8,6 +9,12 @@ import pool from '../db/db.js';
 import { listCustomTopicsForUser } from '../journalTopics/journalTopics.service.js';
 import { journalMessage } from '../i18n/journalMessages.js';
 import { localeFromRequest } from '../i18n/locale.js';
+import {
+  memoryLookupDates,
+  parseIsoDate,
+  utcDateOf,
+  utcDayWindow,
+} from './journalMemoryDates.js';
 
 export const ALLOWED_JOURNAL_TOPICS = [
   'work',
@@ -161,5 +168,43 @@ export const patchJournalEntryTopics = async (req, res) => {
   } catch (err) {
     console.error('[journal-entries PATCH]', err);
     return res.status(500).json({ message: journalMessage(locale, 'topicsUpdateFailed') });
+  }
+};
+
+/**
+ * Picks "today" as a UTC date. Outside production `?date=YYYY-MM-DD` overrides
+ * it so anniversaries can be tested without waiting for one.
+ */
+const memoryToday = (req) => {
+  const now = req.now ?? new Date();
+  const raw = req.query?.date;
+  if (process.env.NODE_ENV === 'production' || raw === undefined) {
+    return { ok: true, today: utcDateOf(now) };
+  }
+  const today = parseIsoDate(raw);
+  return today ? { ok: true, today } : { ok: false };
+};
+
+export const getJournalMemory = async (req, res) => {
+  const locale = localeFromRequest(req);
+  const resolved = memoryToday(req);
+  if (!resolved.ok) {
+    return res.status(400).json({ message: journalMessage(locale, 'memoryDateInvalid') });
+  }
+
+  const { today } = resolved;
+  const db = req.db ?? pool;
+  try {
+    for (const { horizon, date } of memoryLookupDates(today)) {
+      const { start, end } = utcDayWindow(date);
+      const entries = await listJournalEntriesInWindowForUser(req.user.id, start, end, db);
+      if (entries.length > 0) {
+        return res.status(200).json({ today, memory: { horizon, date, entries } });
+      }
+    }
+    return res.status(200).json({ today, memory: null });
+  } catch (err) {
+    console.error('[journal-memory GET]', err);
+    return res.status(500).json({ message: journalMessage(locale, 'memoryLoadFailed') });
   }
 };
