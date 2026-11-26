@@ -26,9 +26,14 @@ const renderSheet = (memory = twoEntries, { locale = 'en', onClose = vi.fn() } =
 const currentCard = () =>
   screen.getAllByRole('article').find((card) => card.getAttribute('aria-hidden') !== 'true');
 
-// jsdom has no PointerEvent, so fireEvent.pointer* would drop clientX and pointerType.
 const originalPointerEvent = window.PointerEvent;
+const originalScrollTo = window.scrollTo;
 beforeAll(() => {
+  // jsdom does not scroll; record the position the sheet restores on close.
+  window.scrollTo = (x, y) => {
+    window.scrollY = y;
+  };
+  // jsdom has no PointerEvent, so fireEvent.pointer* would drop clientX and pointerType.
   if (window.PointerEvent) return;
   window.PointerEvent = class PointerEvent extends MouseEvent {
     constructor(type, init = {}) {
@@ -40,6 +45,7 @@ beforeAll(() => {
 });
 afterAll(() => {
   window.PointerEvent = originalPointerEvent;
+  window.scrollTo = originalScrollTo;
 });
 
 describe('JournalMemorySheet', () => {
@@ -100,6 +106,69 @@ describe('JournalMemorySheet', () => {
     const { onClose } = renderSheet();
     fireEvent.click(screen.getByRole('dialog'));
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  test('pulling the handle down far enough closes the sheet; a short pull or a pull up does not', () => {
+    let now = 1000;
+    const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => now);
+    const { onClose } = renderSheet();
+    const handle = screen.getByTestId('journal-memory-sheet-handle');
+    // Slow drags, so only the distance decides.
+    const drag = (toY) => {
+      fireEvent.pointerDown(handle, { clientY: 100, pointerId: 1 });
+      now += 600;
+      fireEvent.pointerMove(handle, { clientY: toY, pointerId: 1 });
+      now += 200;
+      fireEvent.pointerUp(handle, { clientY: toY, pointerId: 1 });
+    };
+
+    drag(130);
+    expect(onClose).not.toHaveBeenCalled();
+    drag(-100);
+    expect(onClose).not.toHaveBeenCalled();
+    drag(260);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    nowSpy.mockRestore();
+  });
+
+  test('a quick downward flick on the handle closes the sheet even when short', () => {
+    let now = 1000;
+    const nowSpy = vi.spyOn(performance, 'now').mockImplementation(() => now);
+    const { onClose } = renderSheet();
+    const handle = screen.getByTestId('journal-memory-sheet-handle');
+
+    fireEvent.pointerDown(handle, { clientY: 100, pointerId: 1 });
+    now += 40;
+    fireEvent.pointerMove(handle, { clientY: 140, pointerId: 1 });
+    fireEvent.pointerUp(handle, { clientY: 140, pointerId: 1 });
+    expect(onClose).toHaveBeenCalledTimes(1);
+    nowSpy.mockRestore();
+  });
+
+  test('a press on the close button inside the handle area still closes via click, not drag', () => {
+    const { onClose } = renderSheet();
+    const close = screen.getByRole('button', { name: 'Close' });
+    fireEvent.pointerDown(close, { clientY: 100, pointerId: 1 });
+    fireEvent.pointerUp(close, { clientY: 100, pointerId: 1 });
+    fireEvent.click(close);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('locks page scroll while open and restores the scroll position on close', () => {
+    window.scrollY = 420;
+    const { unmount } = render(
+      <LocaleProvider>
+        <JournalMemorySheet memory={twoEntries} onClose={vi.fn()} />
+      </LocaleProvider>,
+    );
+    expect(document.body.style.position).toBe('fixed');
+    expect(document.body.style.top).toBe('-420px');
+
+    window.scrollY = 0; // a fixed body reports no scroll
+    unmount();
+    expect(document.body.style.position).toBe('');
+    expect(document.body.style.top).toBe('');
+    expect(window.scrollY).toBe(420);
   });
 
   test('shows Spanish labels and a Spanish date', () => {

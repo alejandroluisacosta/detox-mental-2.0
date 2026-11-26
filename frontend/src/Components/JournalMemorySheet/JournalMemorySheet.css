@@ -23,11 +23,33 @@
   margin: 0 auto;
   max-height: calc(100svh - 24px);
   box-sizing: border-box;
-  padding: 10px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+  padding: 0 20px calc(28px + env(safe-area-inset-bottom, 0px));
   border-radius: 24px 24px 0 0;
   background: var(--background);
   overflow: hidden;
   animation: journalMemorySheetRise 260ms ease both;
+  /* `translate`, not `transform`: the rise animation holds `transform`. */
+  translate: 0 var(--memory-sheet-drag, 0px);
+  transition: translate 220ms ease;
+}
+
+.journal-memory-sheet__panel--dragging {
+  transition: none;
+}
+
+/* Grabber + header: pull down here to close. */
+.journal-memory-sheet__handle {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 10px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.journal-memory-sheet__panel--dragging .journal-memory-sheet__handle {
+  cursor: grabbing;
 }
 
 .journal-memory-sheet__grabber {
@@ -147,6 +169,7 @@
   max-height: min(300px, 45svh);
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   /* A scroll container does not inherit the viewport's pan-y; without this, a
      horizontal swipe over long text is taken by the browser and never snaps. */
   touch-action: pan-y;
@@ -232,6 +255,7 @@
     animation: none;
   }
 
+  .journal-memory-sheet__panel,
   .journal-memory-sheet__track,
   .journal-memory-sheet__dot-mark {
     transition: none;
