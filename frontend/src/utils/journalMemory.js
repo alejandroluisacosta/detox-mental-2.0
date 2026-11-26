@@ -33,3 +33,10 @@ export const journalMemoryPath = (search, allowDateOverride) => {
   const date = new URLSearchParams(search).get('date');
   return date ? `${MEMORY_ENDPOINT}?date=${encodeURIComponent(date)}` : MEMORY_ENDPOINT;
 };
+
+export const MEMORY_SHEET_DISMISS_PX = 120;
+export const MEMORY_SHEET_FLICK_PX_PER_MS = 0.5;
+
+/** Whether a downward drag on the sheet handle should close it: far enough, or a quick flick. */
+export const shouldDismissMemorySheet = ({ drag, velocity }) =>
+  drag >= MEMORY_SHEET_DISMISS_PX || (drag > 0 && velocity >= MEMORY_SHEET_FLICK_PX_PER_MS);
