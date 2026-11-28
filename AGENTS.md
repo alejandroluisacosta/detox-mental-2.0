@@ -96,3 +96,4 @@ authorization.
 - Do not introduce a dependency unless its long-term value clearly outweighs
   its maintenance cost.
 - Do not edit `DECISIONS.md` unless the user asks.
+- My questions are literal: answer them; don't treat them as indirect requests to change course.

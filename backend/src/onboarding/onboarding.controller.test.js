@@ -115,6 +115,16 @@ test('call allowed: the model output is used', async () => {
   assert.equal(llmCalls, 2);
 });
 
+test('call allowed: a fenced JSON evaluation reply is parsed', async () => {
+  const fencedClient = {
+    chatCompletion: async () => ({
+      choices: [{ message: { content: '```json\n{\n  "clarity": "high"\n}\n```' } }],
+    }),
+  };
+  const result = await run(evaluationState(), { client: fencedClient });
+  assert.equal(result.reply, buildRecommendationReply('high'));
+});
+
 test('a database error while checking the limit falls back instead of calling the LLM', async () => {
   const db = {
     query: async () => {
