@@ -5,7 +5,7 @@ import { isValidPqaSentence } from "../parsers/isValidPqaSentence.js";
 export const FALLBACK_CHALLENGE =
   "¿Qué te hace pensar eso? ¿Puedes elaborar un poco más?";
 
-const PQA_CHALLENGE_MODEL = "meta-llama/Llama-3.1-8B-Instruct:novita";
+const PQA_CHALLENGE_MODEL = "google/gemma-4-26B-A4B-it";
 
 function buildPqaChallengeMessages(pqaSentence) {
   return [

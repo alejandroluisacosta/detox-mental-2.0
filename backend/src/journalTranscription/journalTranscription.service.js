@@ -2,7 +2,7 @@ import { InferenceClient } from '@huggingface/inference';
 import { normalizeLlmOutput } from '../onboarding/parsers/normalizeLlmOutput.js';
 import { buildTranscriptionMessages } from './buildTranscriptionMessages.js';
 
-const DEFAULT_VISION_MODEL = 'Qwen/Qwen3-VL-30B-A3B-Instruct:novita';
+const DEFAULT_VISION_MODEL = 'Qwen/Qwen3-VL-30B-A3B-Instruct';
 
 /**
  * Sends a handwritten image to a Hugging Face vision-language model and returns

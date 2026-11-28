@@ -11,7 +11,7 @@ import {
 } from './parseSummaryOutput.js';
 import { parseCompassSuggestions } from '../compass/parseCompassSuggestions.js';
 
-const DEFAULT_SUMMARY_MODEL = 'moonshotai/Kimi-K2-Instruct-0905:novita';
+const DEFAULT_SUMMARY_MODEL = 'Qwen/Qwen3-235B-A22B-Instruct-2507';
 
 export const SUMMARY_GENERATE_TIMEOUT_MS = 45_000;
 
